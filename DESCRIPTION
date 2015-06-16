@@ -1,11 +1,9 @@
 Package: PacFINcomps
 Title: Generate fishery composition data from PacFIN data for the NWFSC.
 Version: 0.0.0.9000
-Authors@R: person("Andi", "Stephens", , "first.last@example.com", role = c("aut", "cre"))
-Description: Manipulates data from the PacFIN database, which houses all
-fishery-dependent data for the Northwest Fisheries Science Center (NWFSC).
-Outputs are used in stock synthesis models and for general exploration of
-length- and age-composition data, including conditional-age-at-length data.
+Authors@R: person("Andi", "Stephens", , "andi.stephens@noaa.gov", role = c("aut", "cre"),
+           person("Kelli Faye", "Johnson", , "kellifayejohnson@gmail.com", role = c("aut", "cre")))
+Description: Manipulates data from the PacFIN database for stock synthesis.
 Depends: R (>= 3.1.2)
 License: none
 LazyData: true
