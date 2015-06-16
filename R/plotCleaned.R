@@ -1,4 +1,16 @@
-plotCleaned = function (Pdata, length = TRUE) {
+#' Plot cleaned fishery age or length composition data.
+#'
+#' @param Pdata A matrix of age or length data returned from
+#'   \code{\link{cleanAges}} or \code{\link{cleanPacFIN}}.
+#' @param length A logical value defining whether or not \code{Pdata} is length-
+#'   or age-composition data.
+#' @return A plot of either 3 x 2 or 2 x 2 depending on whether or not unique
+#'   gear groups exist. Left column are plots of sample size by type and right
+#'   column is boxplots of either length or age and depth by year.
+#' @author Andi Stephens, Kelli Faye Johnson
+#' @seealso \code{\link{cleanAges}}, \code{\link{cleanPacFIN}}
+#'
+plotCleaned <- function (Pdata, length = TRUE) {
   SPID = sort(unique(Pdata$SPID))
 
   geargroups <- ifelse(length(Pdata$geargroup) > 0, TRUE, FALSE)
