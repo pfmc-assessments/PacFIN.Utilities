@@ -38,10 +38,12 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       maxAge=Inf, partition=0, ageErr=0, out = "FthenM",
                       dummybins = FALSE, verbose = TRUE) {
 
-  cat(paste("Writing comps to file", fname, "\n", sep=" "))
-  flush.console()
-
-  cat("\nNote that if you didn't run doSexRatio, all unsexed fish disappear at this point.\n\n")
+  if (verbose){
+    cat(paste("Writing comps to file", fname, "\n"))
+    cat(paste("\nNote that if you didn't run doSexRatio,"
+      "all unsexed fish disappear at this point.\n\n"))
+    flush.console()
+  }
 
   # Unsexed fish should have been assigned gender with doSexRatio.  Re-using
   # those columns to represent males + females
@@ -62,7 +64,9 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
     if ( is.null(lbins) ) {
 
-      cat("\nNo length bins provided, using data as-is\n\n")
+      if (verbose) {
+        cat("\nNo length bins provided, using data as-is\n\n")
+      }
 
       lbins = sort(unique(inComps$lengthcm))
 
@@ -97,11 +101,11 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
     LbinHi = c(LbinHi, 999)
 
-    cat("Bins:\n\n")
-    cat(LbinLo, "\n")
-    cat(LbinHi, "\n\n")
-    cat("Note that last bin is a dummy bin\n\n")
-
+    if (verbose) {
+      cat(paste("Bins:\n\n", LbinLo, "\n",
+        LbinHi, "\n\n",
+        "Note that last bin is a dummy bin\n\n"))
+    }
   } # End if
 
   # Fix age bins
@@ -110,7 +114,9 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
     if ( is.null(abins) ) {
 
-      cat("\nNo age bins provided, using data as-is\n\n")
+      if (verbose){
+        cat("\nNo age bins provided, using data as-is\n\n")
+      }
 
       abins = sort(unique(inComps$age))
 
@@ -136,10 +142,10 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
     inComps$abin = findInterval(inComps$age, abins, all.inside=T)
 
-    cat("Abins:\n\n")
-    cat(abins, "\n\n")
-    cat("Note that last bin is a dummy bin\n\n")
-
+    if (verbose) {
+      cat(paste("Abins:\n\n", abins, "\n\n",
+        "Note that last bin is a dummy bin\n\n"))
+    }
   } # End if
 
   AAL = FALSE
@@ -167,9 +173,6 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
       KeyNames = c(Names[1:STRAT], "lbin")
       inComps$key = paste.col(inComps[,KeyNames])
-
-      cat("\n\nAge-at-length takes awhile to assemble.  Be patient!\n")
-      flush.console()
 
       # matrix will be Ages, LbinLo, LbinHi, Ntows, Nsamps.
       # it gets re-ordered later.
@@ -221,23 +224,22 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
   uStrat = inComps[!duplicated(inComps$key), 1:STRAT]
 
-  cat(length(uKeys), "unique keys for", nrow(inComps), "records\n\n")
-  flush.console()
-
-  head(inComps)
-
-  cat("\n\n")
-  flush.console()
-
+  if (verbose) {
+    cat(length(uKeys), "unique keys for", nrow(inComps), "records\n\n")
+    head(inComps)
+    cat("\n\n")
+    flush.console()
+  }
   # For each gender in turn
 
   for ( g in c("m","f","u")) {
 
     myname = g
     if (myname == "u") { myname = "b" }
-    cat(paste("Assembling, sex is:", myname, "\n", sep=" "))
-    flush.console()
-
+    if (verbose) {
+      cat(paste("Assembling, sex is:", myname, "\n"))
+      flush.console()
+    }
     tows = which(names(inComps) == paste(g,"tows",sep=""))
     samps = which(names(inComps) == paste(g,"samps",sep=""))
 
