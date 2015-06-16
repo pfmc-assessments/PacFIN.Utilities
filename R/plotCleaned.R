@@ -39,11 +39,9 @@ plotCleaned <- function (Pdata, length = TRUE) {
   boxplot(x ~ Pdata$fishyr, ylab = ifelse(length, "Length (cm)", "Age"),
     xaxt = "n", frame.plot = FALSE, ylim = ylim2)
 
-  # if (.Platform$OS.type == "unix") { quartz() } else { x11() }
+  nGRID <- length(unique(Pdata$GRID))
 
-  nGRID = length(unique(Pdata$GRID))
-
-  barplot(xtabs(Pdata$FREQ ~ Pdata$GRID + Pdata$fishyr), col=rainbow(nGRID),
+  barplot(xtabs(Pdata$FREQ ~ Pdata$GRID + Pdata$fishyr), col = rainbow(nGRID),
     legend.text = TRUE, xaxt = ifelse(geargroups, "n", "t"),
     ylab = "Samples per gear",
     args.legend = list(x = "topleft", bty = "n", ncol = ceiling(nGRID / 4)))
