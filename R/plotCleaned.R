@@ -22,8 +22,10 @@ plotCleaned <- function (Pdata, length = TRUE) {
   # Number of lengths by state per year
   if (length) {
     Pdata <- Pdata[Pdata$length > -1, ]
+    x <- Pdata$lengthcm
     ylim2 <- c(0, max(Pdata$lengthcm, na.rm = TRUE))
   } else {
+    x <- Pdata$age
     ylim2 <- c(0, max(Pdata$age, na.rm = TRUE))
   }
   barplot(xtabs(Pdata$FREQ ~ Pdata$state + Pdata$fishyr), col = rainbow(3),
@@ -32,11 +34,9 @@ plotCleaned <- function (Pdata, length = TRUE) {
   mtext(side = 3, outer = TRUE, line = 1,
     paste(paste(SPID, collapse = ","), "Fishery", ifelse(length, "length", "age"),
     "compositions"))
- # Lengths
 
-  boxplot(Pdata$lengthcm ~ Pdata$fishyr,
-    ylab = ifelse(length, "Length (cm)", "Age"), xaxt = "n",
-    frame.plot = FALSE, ylim = ylim2)
+  boxplot(x ~ Pdata$fishyr, ylab = ifelse(length, "Length (cm)", "Age"),
+    xaxt = "n", frame.plot = FALSE, ylim = ylim2)
 
   # if (.Platform$OS.type == "unix") { quartz() } else { x11() }
 
