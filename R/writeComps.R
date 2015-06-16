@@ -35,7 +35,8 @@
 #'   proportions. To create proportions use \code{prop.table} on the columns
 #'   containing composition data.
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
-                      maxAge=Inf, partition=0, ageErr=0, out = "FthenM") {
+                      maxAge=Inf, partition=0, ageErr=0, out = "FthenM",
+                      dummybins = FALSE, verbose = TRUE) {
 
   cat(paste("Writing comps to file", fname, "\n", sep=" "))
   flush.console()
