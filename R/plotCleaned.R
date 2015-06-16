@@ -2,8 +2,11 @@ plotCleaned = function (Pdata) {
 
   SPID = sort(unique(Pdata$SPID))
 
-  par(mfrow=c(2,2))
+  geargroups <- ifelse(length(Pdata$geargroup) > 0, TRUE, FALSE)
 
+  par(mfrow = c(ifelse(geargroups, 3, 2), 2),
+    oma = c(1, 1, 3, 0.25), mar = c(0.5, 3.25, 0, 0),
+    mgp = c(1.5, 0.5, 0))
   # Number of lengths by state per year
 
   lenData = Pdata[Pdata$length > -1,]
