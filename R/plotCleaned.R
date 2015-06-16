@@ -51,9 +51,8 @@ plotCleaned <- function (Pdata, length = TRUE) {
 
   if (geargroups) {
 
-    nGG = length(unique(Pdata$geargroup))
-
-    barplot(xtabs(Pdata$FREQ ~ Pdata$geargroup + Pdata$fishyr), col=rainbow(nGG),
+    barplot(xtabs(Pdata$FREQ ~ Pdata$geargroup + Pdata$fishyr),
+      col = rainbow(length(unique(Pdata$geargroup))),
       legend.text = T, xlab = "", ylab = "Samples per gear group",
       args.legend = list(x = "topleft", bty = "n"))
 
