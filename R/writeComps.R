@@ -1,0 +1,384 @@
+##############################################################################
+#
+# Write out comps
+#
+# Expecting composition data with columns for male and female numbers.
+#
+# May be ID'd as to state, depth, etc. factors.
+#
+# KFJ: return a value based on "out" argument
+#
+##############################################################################
+
+writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
+                      maxAge=Inf, partition=0, ageErr=0, out = "FthenM") {
+
+  cat(paste("Writing comps to file", fname, "\n", sep=" "))
+  flush.console()
+
+  cat("\nNote that if you didn't run doSexRatio, all unsexed fish disappear at this point.\n\n")
+
+  # Unsexed fish should have been assigned gender with doSexRatio.  Re-using
+  # those columns to represent males + females
+
+  inComps$unsexed = inComps$male + inComps$female
+  inComps$usamps = inComps$msamps + inComps$fsamps
+  inComps$utows = inComps$alltows
+
+  # Which comps are we doing?
+
+  Names = names(inComps)
+  AGE = which(Names == "age")
+  LEN = which(Names == "lengthcm")
+
+  # Fix length bins
+
+  if ( !is.null(inComps$lengthcm) ) {
+
+    if ( is.null(lbins) ) {
+
+      cat("\nNo length bins provided, using data as-is\n\n")
+
+      lbins = sort(unique(inComps$lengthcm))
+
+    } # End if
+
+    # Re-code actual lengths to be lbins
+
+    if ( min(lbins) > 0 ) { lbins = c(0,lbins) }
+
+    # Adding last, dummy bin
+
+    lbins = c(lbins, (999))
+
+    inComps$lbin = findInterval(inComps$lengthcm, lbins, all.inside=T)
+
+    LbinLo = lbins
+    LbinHi = lbins[-1] - 1
+
+    # Last length bin is supposed to include the largest bin, right?
+
+    LbinHi[length(LbinHi)] = max(inComps$lengthcm)
+
+    # Note that the last bin is a dummy bin, created because of how findInterval works.
+    # It gets stripped in the end.
+
+    # KFJ(2015-05-01) TODO:
+
+    # The last value of LbinHi should be the maximum
+    # of the observed lengths, not just the -1 of Lbins
+
+    # Andi:  Not sure.  Leaving as is for now.
+
+    LbinHi = c(LbinHi, 999)
+
+    cat("Bins:\n\n")
+    cat(LbinLo, "\n")
+    cat(LbinHi, "\n\n")
+    cat("Note that last bin is a dummy bin\n\n")
+
+  } # End if
+
+  # Fix age bins
+
+  if ( !is.null(inComps$age) ) {
+
+    if ( is.null(abins) ) {
+
+      cat("\nNo age bins provided, using data as-is\n\n")
+
+      abins = sort(unique(inComps$age))
+
+      abins = abins[abins < maxAge]
+
+    } # End if
+
+    # Re-code actual ages to be abins
+
+    if ( min(abins) > 0 ) { abins = c(0,abins) }
+
+    # add extra, dummy bin because all.inside=T
+
+    # KFJ(2015-05-01) Comment
+
+    # all.inside = TRUE
+    # returned indices are coerced into 1,...,N-1,
+    # i.e., 0 is mapped to 1 and N to N-1.
+
+    # Andi:  YES!  Sorry, I should have documented that I'm playing index math games.
+
+    abins = c(abins, 999)
+
+    inComps$abin = findInterval(inComps$age, abins, all.inside=T)
+
+    cat("Abins:\n\n")
+    cat(abins, "\n\n")
+    cat("Note that last bin is a dummy bin\n\n")
+
+  } # End if
+
+  AAL = FALSE
+
+  if ( length(AGE) > 0 ) {
+
+    target = "abin"
+
+    STRAT = AGE-1
+
+    KeyNames = c(Names[1:STRAT])
+    inComps$key = paste.col(inComps[,KeyNames])
+
+    # matrix will be Ages, Ntows, Nsamps.
+    # it gets re-ordered later.
+
+    NCOLS = 2 + length(abins)
+    OutNames = c(paste("A",abins, sep=""), "Ntows","Nsamps")
+
+    if ( length(LEN) > 0 ) {
+
+      AAL = TRUE
+
+      STRAT = AGE-2
+
+      KeyNames = c(Names[1:STRAT], "lbin")
+      inComps$key = paste.col(inComps[,KeyNames])
+
+      cat("\n\nAge-at-length takes awhile to assemble.  Be patient!\n")
+      flush.console()
+
+      # matrix will be Ages, LbinLo, LbinHi, Ntows, Nsamps.
+      # it gets re-ordered later.
+
+      NCOLS =  4 + length(abins)
+      OutNames = c(paste("A",abins,sep=""), "lbin","Ntows","Nsamps")
+
+    } # End if
+
+    # Note that ages run from 0, but output columns numbers start at 1.
+    # Adjust the "abins" to match the columns.  The column names are
+    # already correct.
+
+    # KFJ(2015-05-01) BUG ... But findInterval uses numbers not the bins
+    # so now you are creating an additional bin that does not get used.
+
+    # Andi:  indeed.  It was making the bin assignments INCORRECT!  Thanks!
+
+    # inComps$abin = inComps$abin + 1
+
+  } else {
+
+    target = "lbin"
+
+    STRAT = LEN-1
+
+    KeyNames = c(Names[1:STRAT])
+    inComps$key = paste.col(inComps[,KeyNames])
+
+    # matrix will have Lbins, Ntows, Nsamps
+    # it gets re-ordered later.
+
+    NCOLS = 2 + length(lbins)
+    OutNames = c(paste("L",lbins, sep=""), "Ntows","Nsamps")
+
+  } # End if-else
+
+  # Rename columns to be used below
+
+  names(inComps)[which(names(inComps) == "female")] = "f"
+  names(inComps)[which(names(inComps) == "male")] = "m"
+  names(inComps)[which(names(inComps) == "unsexed")] = "u"
+
+  # We'll work key by key
+
+  uKeys = inComps$key[!duplicated(inComps$key)]
+
+  # Save the matching stratification columns
+
+  uStrat = inComps[!duplicated(inComps$key), 1:STRAT]
+
+  cat(length(uKeys), "unique keys for", nrow(inComps), "records\n\n")
+  flush.console()
+
+  head(inComps)
+
+  cat("\n\n")
+  flush.console()
+
+  # For each gender in turn
+
+  for ( g in c("m","f","u")) {
+
+    myname = g
+    if (myname == "u") { myname = "b" }
+    cat(paste("Assembling, sex is:", myname, "\n", sep=" "))
+    flush.console()
+
+    tows = which(names(inComps) == paste(g,"tows",sep=""))
+    samps = which(names(inComps) == paste(g,"samps",sep=""))
+
+    # Create output matrix
+
+    output = data.frame(matrix(nrow=length(uKeys), ncol=NCOLS, 0))
+
+    names(output) = OutNames
+
+    for ( k in 1:length(uKeys) ) {
+
+      # Get the matching records
+
+      slice = inComps[inComps$key == uKeys[k],]
+
+      if ( AAL ) {
+
+        output$lbin[k] = slice$lbin[1]
+
+      } # End if
+
+      output$Nsamps[k] = sum(slice[,samps], na.rm=T)
+
+      # Use max here to take care of spurious NA problem that arises in getComps
+      # for lengths where there are unsexed fish and no sexed fish.
+
+      output$Ntows[k] = max(slice[,tows], na.rm=T)
+
+      for ( s in 1:length(slice[,target]) ) {
+
+          index = slice[s,target]
+
+          #KFJ(2015-05-01) TODO:
+          # BUG ... If there is more than one row for a given index or bin
+          # then the value will overwrite the previous value instead of summing
+
+          # It would actually be a bug if there were more than one row for a given
+          # index or bin!  The output from getComps shouldn't have any way of producing
+          # an extra.  And we have no way here of detecting that, since we're accessing
+          # the target vector sequentially, without checking the corresponding length/age.
+
+          # But summing the bin doesn't hurt anything.
+
+          output[k,index] = slice[s,g] + output[k, index]
+
+      } # End for s
+
+    } # End for k
+
+    # Save and identify
+
+    output[is.na(output)] = 0
+
+    if ( AAL ) {
+
+      output$LbinLo = LbinLo[output$lbin]
+      output$LbinHi = LbinHi[output$lbin]
+
+    } # End if
+
+    assign(paste(g, "Comps", sep=""), output)
+
+  } # End for g
+
+
+  # Now assemble everything and write to a file
+  # Note that we are stripping the last, dummy bin.
+
+  NCOLS = ifelse(AAL, NCOLS-5, NCOLS-3)
+
+  blanks = mComps[1:NCOLS]
+  blanks[,] = 0
+
+  # correctOrder = c("fishyr", "season", "fleet", "gender", "partition",
+  #                  "ageErr", "LbinLo", "LbinHi", "Nsamp")
+
+  fleetWas = which(names(uStrat) == "fleet")
+
+  tmp = uStrat$fleet
+  uStrat$fleet = uStrat$fishyr
+  uStrat$fishyr = tmp
+
+  names(uStrat)[fleetWas] = "fishyr"
+  names(uStrat)[(fleetWas + 1)] = "fleet"
+
+  # Fill the rest of the values
+
+  uStrat$gender = 0
+  uStrat$partition = partition
+  uStrat$ageErr = ageErr
+
+  if ( AAL ) {
+
+    # Note that until empty rows are removed, the LbinLo and LbinHi columns
+    # are the same in each dataset
+
+    uStrat$LbinLo = fComps$LbinLo
+    uStrat$LbinHi = fComps$LbinHi
+
+  }
+
+
+  Nsamps = rowSums(cbind(fComps$Nsamps, mComps$Nsamps), na.rm=T)
+
+  # Corrected Ntows for FthenM case.
+
+  FthenM = cbind(uStrat, uComps$Ntows, Nsamps, fComps[,1:NCOLS], mComps[,1:NCOLS])
+
+  Mout = cbind(uStrat, mComps$Ntows, mComps$Nsamps, blanks, mComps[1:NCOLS])
+  Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, fComps[1:NCOLS], blanks)
+  Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, uComps[1:NCOLS], blanks)
+
+
+  # Make it pretty
+
+  index = which(names(Fout) == "fComps$Ntows")
+
+  names(Mout)[index] = "Ntows"
+  names(Fout)[index] = "Ntows"
+  names(Uout)[index] = "Ntows"
+  names(FthenM)[index] = "Ntows"
+
+  names(Mout)[index + 1] = "Nsamps"
+  names(Fout)[index + 1] = "Nsamps"
+  names(Uout)[index + 1] = "Nsamps"
+  names(FthenM)[index + 1] = "Nsamps"
+
+  # Remove empty rows
+
+  Fout = Fout[Fout$Nsamps > 0,]
+  Mout = Mout[Mout$Nsamps > 0,]
+
+  Fout$gender=1
+  Mout$gender=2
+  Uout$gender=3
+
+  # Print the whole shebang out to a file.
+
+  # Turn off meaningless warnings.
+  oldwarn = options("warn")
+  options("warn" = -1)
+
+  cat("\nWriting FthenM, dimensions:", dim(FthenM), "\n")
+  IDstring = paste("\n\n", "Females then males")
+  cat(file=fname, IDstring, "\n")
+  write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
+
+  cat("Writing F only, dimensions:", dim(Fout), "\n")
+  IDstring = paste("\n\n", "Females only")
+  cat(file=fname, IDstring, "\n", append=T)
+  write.table(file=fname, Fout, sep=",", col.names=T, row.names=F, append=T)
+
+  cat("Writing M only, dimensions:", dim(Mout), "\n")
+  IDstring = paste("\n\n",  "Males only")
+  cat(file=fname, IDstring, "\n", append=T)
+  write.table(file=fname, Mout, sep=",", col.names=T, row.names=F, append=T)
+
+  cat("Writing combined sexes as females, dimensions:", dim(Uout), " \n")
+  IDstring = paste("\n\n", "Sexes combined")
+  cat(file=fname, IDstring, "\n", append=T)
+  write.table(file=fname, Uout, sep=",", col.names=T, row.names=F, append=T)
+
+  # Reset warnings
+
+  options("warn" = oldwarn[[1]])
+
+  invisible(eval(parse(text = out)))
+
+} # End function writeComps
