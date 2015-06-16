@@ -28,7 +28,8 @@ plotCleaned <- function (Pdata, length = TRUE) {
     x <- Pdata$age
     ylim2 <- c(0, max(Pdata$age, na.rm = TRUE))
   }
-  barplot(xtabs(Pdata$FREQ ~ Pdata$state + Pdata$fishyr), col = rainbow(3),
+  barplot(xtabs(Pdata$FREQ ~ Pdata$state + Pdata$fishyr),
+    col = rainbow(length(unique(Pdata$state))),
     legend.text = TRUE, xaxt = "n", xlab = "", ylab = "Samples per state",
     args.legend = list(x = "topleft", bty = "n"))
   mtext(side = 3, outer = TRUE, line = 1,
