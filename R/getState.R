@@ -1,14 +1,18 @@
-##############################################################################
-#
-#  getState creates a state field that is developed from SOURCE_AGID, from
-#  PSMFC_ARID, or from SAMPLE_AGENCY depending on the option selected.
-#
-#  If CLEAN is TRUE, records for which a state could not be assigned are
-#  removed.
-#
-##############################################################################
+#' Create a state field from \code{source} for the \code{data.frame}
+#' \code{Pdata}, where \code{Pdata} is a \code{data.frame} from
+#' PacFIN.
+#' @param Pdata
+#' @param source The column name where state information is located in
+#'   \code{Pdata}. Typical options are \code{'SOURCE_AGID'},
+#'   \code{'PSMFC_ARID'}, or \code{'SAMPLE_AGENCY'}.
+#' @param CLEAN A logical value indicating if records for which state
+#'   cannot be assigned are removed or if just summary stats on what would
+#'   have been removed are generated.
+#' @param keepPW A logival value indicating if records for Pacific Whiting
+#'   should be removed or kept in as their own state.
 
-getState = function ( Pdata, source="SOURCE_AGID", CLEAN=TRUE, keepPW=FALSE) {
+getState <- function (Pdata, source = "SOURCE_AGID", CLEAN = TRUE,
+  keepPW = FALSE) {
 
   cat("\nGetting state information from", source, "\n\n")
 
