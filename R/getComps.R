@@ -1,17 +1,21 @@
-##############################################################################
-#
-# getComps aggregates by length, by age, or by age-at-length according to the
-# given stratification.
-#
-# Note that the aggregation is of the Pdata$Final_Sample_Size value, which should be
-# set to the desired expansion, e.g. Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1
-# or Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2
-#
-# The default stratification is by fleet, fishyr, and season.
-# The lengthcm, age or both are appended depending on the "Comps" argument.
-# The "strat" argument is prepended to this list.
-#
-##############################################################################
+#' Aggregate composition data by length, age, or age-at-length according to the
+#' given stratification.
+#'
+#' @details The aggregation is of the \code{Pdata$Final_Sample_Size} column value,
+#'   which should be set to the desired expansion, e.g.
+#'   \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1} or
+#'   \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
+#'   The default stratification is by fleet, fishyr, and season.
+#'   The following columns \code{lengthcm}, \code{age} or both are appended
+#'   depending on the \code{Comps} argument.
+#' @template Pdata
+#' @param strat A character value or vector of character values, of which are
+#'   prepended to the default stratification.
+#' @param Comps The type of composition data to create. Options are length
+#'   (\code{'LEN'}, age (\code{'AGE'}), or conditional age-at-length (\code{'AAL'}).
+#' @return A \code{data.frame} with composition data specific to the type specified
+#'   in \code{Comps} for males, females, and unsexed records.
+#' @author Andi Stephens, Kelli Faye Johnson
 
 getComps = function( Pdata, strat=NULL, Comps="AAL" ) {
 
