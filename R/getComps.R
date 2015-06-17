@@ -103,7 +103,6 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
   unTows = aggregate(tmp$SAMPLE_NO, tmp[,TowStrat], lenique)
 
   # Used to partition tows in doSexRatio
-
   uONLYTows = aggregate(tmp$Uonly, tmp[,TowStrat], lenique)
 
   names(maleAgeComps) = c(Cstrat, "male")
@@ -139,6 +138,20 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
   # Needed for arithmetic.
 
   ageComps[is.na(ageComps)] = 0
+
+  # KFJ(2015-06-16): Do the above in few lines
+  # ageComps <- merge(by = c(TowStrat, "SEX"), all = TRUE,
+  #   aggregate(Pdata[, c("Final_Sample_Size", "FREQ")], Pdata[, c(Cstrat, "SEX")],
+  #     sum, na.rm = TRUE),
+  #   aggregate(Pdata[, c("SAMPLE_NO", "Uonly")], Pdata[, c(TowStrat, "SEX")],
+  #     lenique))
+  # ageComps <- reshape(ageComps, timevar = "SEX", idvar = Cstrat, direction = "wide")
+  # ageComps <- merge(ageComps, aggregate(Pdata$SAMPLE_NO, Pdata[, TowStrat], lenique),
+  #   by = TowStrat, all.x = TRUE)
+  # ageComps <- ageComps[, -grep("Uonly.F|Uonly.M", colnames(ageComps))]
+  # colnames(ageComps) <- c(Cstrat, "female", "fsamps", "ftows",
+  #   "male", "msamps", "mtows", "unsexed", "usamps", "utows", "ONLY_U_TOWS", "alltows")
+  # ageComps[is.na(ageComps)] <- 0
 
   invisible(ageComps)
 
