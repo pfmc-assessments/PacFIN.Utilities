@@ -300,7 +300,8 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   blanks[,] = 0
 
   # KFJ(2015-06-16): Reorder using colnames rather than overwriting
-  uStrat[, 1:2] <- uStrat[, c("fishyr", "fleet")]
+  uStrat <- cbind(uStrat[, c("fishyr", "fleet"), drop = FALSE],
+    uStrat[, -c(1:2), drop = FALSE])
 
   # Fill the rest of the values
 
@@ -329,7 +330,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, fComps[1:NCOLS], blanks)
   Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, uComps[1:NCOLS], blanks)
 
-
+  browser()
   # Make it pretty
 
   index = which(names(Fout) == "fComps$Ntows")
