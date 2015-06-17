@@ -10,34 +10,35 @@
 #'   have been removed are generated.
 #' @param keepPW A logival value indicating if records for Pacific Whiting
 #'   should be removed or kept in as their own state.
+#' @template verbose
 
 getState <- function (Pdata, source = "SOURCE_AGID", CLEAN = TRUE,
-  keepPW = FALSE) {
+  keepPW = FALSE, verbose = FALSE) {
 
-  cat("\nGetting state information from", source, "\n\n")
+  if (verbose) {
+    cat("\nGetting state information from", source, "\n\n")
+  }
+  sources = c("SOURCE_AGID", "PSMFC_ARID", "SAMPLE_AGENCY")
 
-  sources = c("SOURCE_AGID", "PSMFC_ARID", "SAMPLE_AGENCY" )
-
-  if ( ! source %in% sources) {
-
-    cat("\nError! Legitimate sources for getState are: ", sources, "\n")
-    stop(" ")
-
+  if (!source %in% sources) {
+    stop(paste("Legitimate sources for getState are:", sources))
   } # End if
 
-  cat("\nOriginal data: \n\n")
+  if (verbose) {
+    cat("\nOriginal data: \n\n")
+    print(summary(as.factor(eval(parse(text=paste0("Pdata$", source))))))
+  }
 
-  print(summary(as.factor(eval(parse(text=paste("Pdata$", source, sep=""))))))
 
   if (!CLEAN) {
-
-    cat("\nGenerating data report only.  No data will be removed.\n\n")
-
+    if (verbose){
+      cat("\nGenerating data report only. No data will be removed.\n\n")
+    }
     Original_data = Pdata
 
   }
 
-  Pdata$state = Pdata[, source]
+  Pdata$state = as.character(Pdata[, source])
 
   if ( source == "PSMFC_ARID" ) {
 
@@ -70,19 +71,20 @@ getState <- function (Pdata, source = "SOURCE_AGID", CLEAN = TRUE,
 
     Pdata = Pdata[Pdata$state %in% states,]
 
-    cat("\n\nData retained: \n\n")
-
-    print(summary(as.factor(eval(parse(text="Pdata$state")))))
-
-    cat("\n\n", nostate, " records were removed because no state id could be assigned\n\n")
+    if (verbose) {
+      cat("\n\nData retained: \n\n")
+      print(summary(as.factor(eval(parse(text="Pdata$state")))))
+      cat("\n\n", nostate,
+        " records were removed because no state id could be assigned\n\n")
+    }
 
   } else {
-
-    cat("There are ", nostate, " records for which no state id could be assigned\n")
-    cat("\nReturning original data because CLEAN=FALSE\n\n")
-
+    if (verbose){
+      cat("There are ", nostate, " records for which no state id could be assigned\n")
+      cat("\nReturning original data because CLEAN=FALSE\n\n")
+    }
   } # End if CLEAN
 
-  return( Pdata )
+  return(Pdata)
 
 } # end getState
