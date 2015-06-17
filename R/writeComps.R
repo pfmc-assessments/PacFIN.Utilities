@@ -361,24 +361,33 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   oldwarn = options("warn")
   options("warn" = -1)
 
-  cat("\nWriting FthenM, dimensions:", dim(FthenM), "\n")
-  IDstring = paste("\n\n", "Females then males")
-  cat(file=fname, IDstring, "\n")
+  if (verbose) {
+    cat("\nWriting FthenM, dimensions:", dim(FthenM), "\n")
+    IDstring = paste("\n\n", "Females then males")
+    cat(file=fname, IDstring, "\n")
+  }
+
   write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
 
-  cat("Writing F only, dimensions:", dim(Fout), "\n")
-  IDstring = paste("\n\n", "Females only")
-  cat(file=fname, IDstring, "\n", append=T)
+  if (verbose) {
+    cat("Writing F only, dimensions:", dim(Fout), "\n")
+    IDstring = paste("\n\n", "Females only")
+    cat(file=fname, IDstring, "\n", append=T)
+  }
   write.table(file=fname, Fout, sep=",", col.names=T, row.names=F, append=T)
 
-  cat("Writing M only, dimensions:", dim(Mout), "\n")
-  IDstring = paste("\n\n",  "Males only")
-  cat(file=fname, IDstring, "\n", append=T)
+  if (verbose) {
+    cat("Writing M only, dimensions:", dim(Mout), "\n")
+    IDstring = paste("\n\n",  "Males only")
+    cat(file=fname, IDstring, "\n", append=T)
+  }
   write.table(file=fname, Mout, sep=",", col.names=T, row.names=F, append=T)
 
-  cat("Writing combined sexes as females, dimensions:", dim(Uout), " \n")
-  IDstring = paste("\n\n", "Sexes combined")
-  cat(file=fname, IDstring, "\n", append=T)
+  if (verbose) {
+    cat("Writing combined sexes as females, dimensions:", dim(Uout), " \n")
+    IDstring = paste("\n\n", "Sexes combined")
+    cat(file=fname, IDstring, "\n", append=T)
+  }
   write.table(file=fname, Uout, sep=",", col.names=T, row.names=F, append=T)
 
   # Reset warnings
