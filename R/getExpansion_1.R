@@ -1,23 +1,16 @@
-#############################################################################
-#
-# getExpansion_1 returns the level-1 expansion factor which is intended to
-# account for the unsampled fish in the tow.
-#
-# getExpansion_1 calls the functions for calculating the numerator and denominator
-# of the expansion factor (the weight of sampled fish, and the weight of all fish
-# of this species in the tow), and returns their ratio.
-#
-# No original data columns are altered in this process.  The original
-# data are supplemented with new columns containing the values to be used.
-#
-# Arguments:
-#
-#    Arguments for individual weight calculations are passed to EF1_Denominator.
-#
-#    Pdata            the data set.
-#    maxExp           the maximum expansion factor (either a number or a quantile).
-#
-#############################################################################
+#' Complete a first level expansion for composition data where the unsampled
+#' fish in a tow are accounted for.
+#'
+#' @details \code{getExpansion_1} calls \link{\code{EF1_Numerator}} and
+#'   \link{\code{EF1_Denominator}} (i.e., the weight of sampled fish and
+#'   the weight of all fish of the respective species in the tow) and returns
+#'   their ratio.
+#' @template Pdata
+#' @param maxExp The maximum expansion factor (either a number or a quantile).
+#' @param Indiv_Wgts
+#' @template weightlengthparams
+#' @return A \code{data.frame} where all of the original columns in
+#'   \code{Pdata} remain unaltered but additional columns are added.
 
 getExpansion_1 = function( Pdata, maxExp=0.95, Indiv_Wgts=TRUE,
                            fa=2e-06, fb=3.5, ma=2e-06, mb=3.5, ua=2e-06, ub=3.5 ) {
