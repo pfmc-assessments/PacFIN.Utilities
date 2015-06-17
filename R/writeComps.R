@@ -40,7 +40,7 @@
 #'   containing composition data.
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       maxAge=Inf, partition=0, ageErr=0, out = "FthenM",
-                      dummybins = FALSE, verbose = TRUE) {
+                      dummybins = FALSE, verbose = FALSE) {
 
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
