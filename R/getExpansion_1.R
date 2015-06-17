@@ -9,11 +9,12 @@
 #' @param maxExp The maximum expansion factor (either a number or a quantile).
 #' @param Indiv_Wgts
 #' @template weightlengthparams
+#' @template verbose
 #' @return A \code{data.frame} where all of the original columns in
 #'   \code{Pdata} remain unaltered but additional columns are added.
 
-getExpansion_1 = function( Pdata, maxExp=0.95, Indiv_Wgts=TRUE,
-                           fa=2e-06, fb=3.5, ma=2e-06, mb=3.5, ua=2e-06, ub=3.5 ) {
+getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
+  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = FALSE ) {
 
   # Get the Wt_Sampled
 
