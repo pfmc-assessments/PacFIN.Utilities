@@ -10,11 +10,17 @@
 #' @param Indiv_Wgts
 #' @template weightlengthparams
 #' @template verbose
+#' @plot Argument takes either a logical or character value specifying the file
+#'   name if you want to write the plots to a disk rather than printing them
+#'   to the console. If \code{plot = FALSE} no plots will be generated.
+#'   If printing to the disk the character value should end in \code{.png}
+#'   as \code{png()} is used to save the plotting device.
 #' @return A \code{data.frame} where all of the original columns in
 #'   \code{Pdata} remain unaltered but additional columns are added.
 
 getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
-  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = FALSE ) {
+  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = FALSE,
+  plot = FALSE) {
 
   # Get the Wt_Sampled
 
@@ -31,36 +37,52 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
 
   Pdata$Expansion_Factor_1[Pdata$Expansion_Factor_1 < 1] = 1
 
-  # Plot NA values by year and state.  Early years data or CALCOM data?
+
 
   NA_EF1 = Pdata[is.na(Pdata$Expansion_Factor_1),]
   nNA = nrow(NA_EF1)
 
-  cat("\n", nNA, "NA Expansion_Factor_1 values replaced by 1.\n\n")
-
-  if (nNA > 0) {
-
-    barplot(xtabs(NA_EF1$FREQ ~ NA_EF1$state + NA_EF1$fishyr),
-            col=rainbow(3),
-            legend.text = T, xlab = "Year", ylab = "Samples",
-            main="NA Expansion_Factor_1 replaced by 1")
-
-  } # End if
+  if (verbose) {
+    cat("\n", nNA, "NA Expansion_Factor_1 values replaced by 1.\n\n")
+  }
 
   # Now replace NAs with 1.
-
   Pdata$Expansion_Factor_1[is.na(Pdata$Expansion_Factor_1)] = 1
-
-  cat("\nCapping Expansion_Factor_1 at ", maxExp, "\n\n")
 
   Pdata$Expansion_Factor_1 = capValues(Pdata$Expansion_Factor_1, maxExp)
 
-  cat("\nExpansion Factor 1:\n\n")
+  if (verbose) {
+    cat("\nCapping Expansion_Factor_1 at ", maxExp, "\n\n")
+    print(summary(Pdata$Expansion_Factor_1))
+  }
 
-  print(summary(Pdata$Expansion_Factor_1))
+  # KFJ(2015-06-16): Generate plots and save them to the disk if specified.
+  if (plot != FALSE){
+    if (is.character(plot)) png(plot)
+    if (nNA > 0) {
+      # Plot NA values by year and state.  Early years data or CALCOM data?
+      par(mfrow = c(2, 1), mar = c(0, 3, 0, 0), oma = c(4, 1, 3, 0),
+        mgp = c(2.0, 0.5, 0))
+      allyears <- seq(min(Pdata$fishyr), max(Pdata$fishyr), by = 1)
+      vals <- matrix(0, nrow = length(unique(NA_EF1$state)), ncol = length(allyears))
+      rownames(vals) <- unique(NA_EF1$state)
+      colnames(vals) <- allyears
+      bad <- as.matrix(table(NA_EF1$state, NA_EF1$fishyr))
+      vals[, colnames(vals) %in% colnames(bad)] <- bad
+      barplot(vals,
+        col = rainbow(length(unique(NA_EF1$state))),
+        legend.text = TRUE, xlab = "", xaxt = "n",
+        ylab = "Replace NA in Exp_1 with 1",
+        args.legend = list(bty = "n"))
+    } else {
+      par(mgp = c(2, 0.5, 0), mar = c(1.5, 3, 1, 0), mfrow = c(1, 1))
+    } # End if
 
-  boxplot(Pdata$Expansion_Factor_1 ~ Pdata$fishyr, main="Expansion_Factor_1")
-
+    boxplot(Pdata$Expansion_Factor_1 ~ Pdata$fishyr, ylab ="Expansion_Factor_1",
+      xlab = "", frame.plot = FALSE)
+    mtext(side = 1, outer = TRUE, "Year", line = 2)
+    if (is.character(plot)) dev.off()
+  }
   return(Pdata)
 
 } # End function getExpansion_1
