@@ -349,9 +349,11 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   Fout = Fout[Fout$Nsamps > 0,]
   Mout = Mout[Mout$Nsamps > 0,]
 
+  # KFJ(2015-06-16): Fix genders as specified by SS
+  Uout$gender=0
   Fout$gender=1
   Mout$gender=2
-  Uout$gender=3
+  FthenM$gender = 3
 
   # Print the whole shebang out to a file.
 
