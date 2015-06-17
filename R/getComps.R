@@ -10,27 +10,32 @@
 #'   depending on the \code{Comps} argument.
 #' @template Pdata
 #' @param strat A character value or vector of character values, of which are
-#'   prepended to the default stratification.
+#'   prepended to \code{defaults}. For instance if you wish to add ageing method
+#'   as a stratification use \code{strat = 'agemethod'}.
 #' @param Comps The type of composition data to create. Options are length
 #'   (\code{'LEN'}, age (\code{'AGE'}), or conditional age-at-length (\code{'AAL'}).
+#' @param defaults The default stratification columns
+#'   which will typically be left at their default value of
+#'   \code{c('fleet', 'fishyr', 'season')}.
 #' @return A \code{data.frame} with composition data specific to the type specified
 #'   in \code{Comps} for males, females, and unsexed records.
 #' @author Andi Stephens, Kelli Faye Johnson
 
-getComps = function( Pdata, strat=NULL, Comps="AAL" ) {
+getComps = function( Pdata, strat = NULL, Comps = "AAL",
+  defaults = c("fleet", "fishyr", "season")) {
 
   # Check for expansion factor
 
   if (length(Pdata$Final_Sample_Size) == 0) {
-    stop(paste("getComps relies on the column labeled 'Final_Sample_Size'\n",
-      "please make sure this column (the expansion factor) has a value\n\n",
+    stop(paste("\ngetComps relies on the column labeled 'Final_Sample_Size'\n",
+      "please make sure this column (the expansion factor) has a value.\n\n",
       "Example: Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1",
       "* Pdata$Expansion_Factor_2\n"))
   } # End if
 
   # Set up stratification
 
-  usualSuspects = c("fleet", "fishyr", "season")
+  usualSuspects <- defaults
 
   # Avoid duplication
 
@@ -43,13 +48,13 @@ getComps = function( Pdata, strat=NULL, Comps="AAL" ) {
 
   } else if (Comps == "AGE") {
 
-    TowStrat = c(usualSuspects, "agemethod")
-    usualSuspects = c(usualSuspects, "agemethod", "age")
+    TowStrat = usualSuspects
+    usualSuspects = c(usualSuspects, "age")
 
   } else {
 
-    TowStrat = c(usualSuspects, "agemethod", "age")
-    usualSuspects = c(usualSuspects, "agemethod", "lengthcm", "age")
+    TowStrat = c(usualSuspects, "age")
+    usualSuspects = c(usualSuspects, "lengthcm", "age")
 
   } # End if-else-else
 
