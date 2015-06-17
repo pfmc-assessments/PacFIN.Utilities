@@ -141,7 +141,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
     if (verbose) {
       cat(paste("Abins:\n\n", abins, "\n\n",
-        "Note that last bin is a dummy bin\n\n"))
+        "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
     }
   } # End if
 
@@ -299,17 +299,8 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   blanks = mComps[1:NCOLS]
   blanks[,] = 0
 
-  # correctOrder = c("fishyr", "season", "fleet", "gender", "partition",
-  #                  "ageErr", "LbinLo", "LbinHi", "Nsamp")
-
-  fleetWas = which(names(uStrat) == "fleet")
-
-  tmp = uStrat$fleet
-  uStrat$fleet = uStrat$fishyr
-  uStrat$fishyr = tmp
-
-  names(uStrat)[fleetWas] = "fishyr"
-  names(uStrat)[(fleetWas + 1)] = "fleet"
+  # KFJ(2015-06-16): Reorder using colnames rather than overwriting
+  uStrat[, 1:2] <- uStrat[, c("fishyr", "fleet")]
 
   # Fill the rest of the values
 
