@@ -16,7 +16,11 @@
 #'   current working directory.
 #' @param abins
 #' @param lbins
-#' @param maxAge
+#' @param maxAge A numeric value specifying the maximum age of fish that
+#'   should be included in the composition data, unless \code{dummybins = TRUE},
+#'   then those fish will be included in a plus group which you can investigate
+#'   later. Note that \code{maxAge} is only used if \code{abins = NULL}, else
+#'   fish are binned according to user specified bins irregardless of \code{maxAge}.
 #' @param partition
 #' @param ageErr
 #' @param out
@@ -40,7 +44,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
-    cat(paste("\nNote that if you didn't run doSexRatio,"
+    cat(paste("\nNote that if you didn't run doSexRatio,",
       "all unsexed fish disappear at this point.\n\n"))
     flush.console()
   }
@@ -73,38 +77,35 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     } # End if
 
     # Re-code actual lengths to be lbins
-
-    if ( min(lbins) > 0 ) { lbins = c(0,lbins) }
-
-    # Adding last, dummy bin
-
-    lbins = c(lbins, (999))
+    # Note that the last bin is a dummy bin,
+    # created because of how findInterval works. It is stripped later.
+    if (dummybins) {
+      # KFJ(2015-06-15): Only add zero to the left tail if the user
+      # does not want this data included in the compositions and
+      # wants to investigate dummy bins, else just include it in the
+      # smallest group because it is a pain to have to add back later.
+      if (min(lbins) > 0) {
+        lbins <- c(0, lbins)
+        LbinLo <- lbins
+      }
+      # KFJ(2015-06-15): Add a bin at the end of the userspecified
+      # bins that is of the same bin width to capture the plus group
+      # if people want to look at this separately and add back later
+      # The Inf bin will work better than 999 b/c you theoretically
+      # can have a fish with length larger than 999, but not Inf.
+      lbins <- c(lbins, max(lbins) + diff(tail(lbins, 2)), Inf)
+    } else {
+      lbins <- c(lbins, Inf)
+      LbinLo <- c(0, lbins[-1])
+    }
+    LbinHi = c(lbins[-1] - 1, Inf)
 
     inComps$lbin = findInterval(inComps$lengthcm, lbins, all.inside=T)
-
-    LbinLo = lbins
-    LbinHi = lbins[-1] - 1
-
-    # Last length bin is supposed to include the largest bin, right?
-
-    LbinHi[length(LbinHi)] = max(inComps$lengthcm)
-
-    # Note that the last bin is a dummy bin, created because of how findInterval works.
-    # It gets stripped in the end.
-
-    # KFJ(2015-05-01) TODO:
-
-    # The last value of LbinHi should be the maximum
-    # of the observed lengths, not just the -1 of Lbins
-
-    # Andi:  Not sure.  Leaving as is for now.
-
-    LbinHi = c(LbinHi, 999)
 
     if (verbose) {
       cat(paste("Bins:\n\n", LbinLo, "\n",
         LbinHi, "\n\n",
-        "Note that last bin is a dummy bin\n\n"))
+        "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
     }
   } # End if
 
@@ -125,20 +126,16 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     } # End if
 
     # Re-code actual ages to be abins
-
-    if ( min(abins) > 0 ) { abins = c(0,abins) }
+    if (dummybins) {
+      if (min(abins) > 0) {
+        abins = c(0, abins)
+      }
+      abins <- c(abins, max(abins) + diff(tail(abins, 2)), Inf)
+    } else {
+      abins <- c(abins, Inf)
+    }
 
     # add extra, dummy bin because all.inside=T
-
-    # KFJ(2015-05-01) Comment
-
-    # all.inside = TRUE
-    # returned indices are coerced into 1,...,N-1,
-    # i.e., 0 is mapped to 1 and N to N-1.
-
-    # Andi:  YES!  Sorry, I should have documented that I'm playing index math games.
-
-    abins = c(abins, 999)
 
     inComps$abin = findInterval(inComps$age, abins, all.inside=T)
 
@@ -181,17 +178,6 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
       OutNames = c(paste("A",abins,sep=""), "lbin","Ntows","Nsamps")
 
     } # End if
-
-    # Note that ages run from 0, but output columns numbers start at 1.
-    # Adjust the "abins" to match the columns.  The column names are
-    # already correct.
-
-    # KFJ(2015-05-01) BUG ... But findInterval uses numbers not the bins
-    # so now you are creating an additional bin that does not get used.
-
-    # Andi:  indeed.  It was making the bin assignments INCORRECT!  Thanks!
-
-    # inComps$abin = inComps$abin + 1
 
   } else {
 
