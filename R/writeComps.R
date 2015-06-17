@@ -295,6 +295,11 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   # Note that we are stripping the last, dummy bin.
 
   NCOLS = ifelse(AAL, NCOLS-5, NCOLS-3)
+  # KFJ(2015-06-16): Can also use the following b/c
+  # with Inf as the last dummy column it will not be
+  # selected as a number, and if other columns are later
+  # added for some reason then the code will not break.
+  # NCOLS <- max(grep("[A-Z]{1}[0-9]+", colnames(output)))
 
   blanks = mComps[1:NCOLS]
   blanks[,] = 0
