@@ -17,12 +17,13 @@
 #' @param defaults The default stratification columns
 #'   which will typically be left at their default value of
 #'   \code{c('fleet', 'fishyr', 'season')}.
+#' @template verbose
 #' @return A \code{data.frame} with composition data specific to the type specified
 #'   in \code{Comps} for males, females, and unsexed records.
 #' @author Andi Stephens, Kelli Faye Johnson
 
 getComps = function( Pdata, strat = NULL, Comps = "AAL",
-  defaults = c("fleet", "fishyr", "season")) {
+  defaults = c("fleet", "fishyr", "season"), verbose = FALSE) {
 
   # Check for expansion factor
 
@@ -60,9 +61,10 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 
   Cstrat = c(strat, usualSuspects)
 
-  cat("\nAggregating, stratification is by", paste(Cstrat, collapse=", "), "\n\n")
-  flush.console()
-
+  if (verbose) {
+    cat("\nAggregating, stratification is by", paste(Cstrat, collapse=", "), "\n\n")
+    flush.console()
+  }
   # Used to get the number of SAMPLE_NOs per aggregation
 
   lenique = function(x) { return(length(unique(x))) }
@@ -85,21 +87,15 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 
   AllTows = aggregate(Pdata$SAMPLE_NO, Pdata[,TowStrat], lenique)
 
-  cat("\nGetting Males\n\n")
-
   tmp = Pdata[Pdata$SEX == "M",]
   maleAgeComps = aggregate(tmp$Final_Sample_Size, tmp[,Cstrat], sum, na.rm=T)
   maleSamples = aggregate(tmp$FREQ, tmp[,Cstrat], sum, na.rm=T)
   maleTows = aggregate(tmp$SAMPLE_NO, tmp[,TowStrat], lenique)
 
-  cat("\nGetting Females\n\n")
-
   tmp = Pdata[Pdata$SEX == "F",]
   femaleAgeComps = aggregate(tmp$Final_Sample_Size, tmp[,Cstrat], sum, na.rm=T)
   femaleSamples = aggregate(tmp$FREQ, tmp[,Cstrat], sum, na.rm=T)
   femaleTows = aggregate(tmp$SAMPLE_NO, tmp[,TowStrat], lenique)
-
-  cat("\nGetting Unsexed\n\n")
 
   tmp = Pdata[Pdata$SEX == "U",]
   unSexedAgeComps = aggregate(tmp$Final_Sample_Size, tmp[,Cstrat], sum, na.rm=T)
@@ -125,8 +121,6 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
   names(AllTows) = c(TowStrat, "alltows")
 
   # Add tows and samples to the Comps
-
-  cat("Getting tows and samples\n\n")
 
   maleAgeComps = merge(maleAgeComps, maleSamples, by=Cstrat, all=T)
   maleAgeComps = merge(maleAgeComps, maleTows, by=TowStrat, all=T)
