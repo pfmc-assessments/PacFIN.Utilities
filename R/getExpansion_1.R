@@ -10,7 +10,7 @@
 #' @param Indiv_Wgts
 #' @template weightlengthparams
 #' @template verbose
-#' @plot Argument takes either a logical or character value specifying the file
+#' @param plot Argument takes either a logical or character value specifying the file
 #'   name if you want to write the plots to a disk rather than printing them
 #'   to the console. If \code{plot = FALSE} no plots will be generated.
 #'   If printing to the disk the character value should end in \code{.png}
