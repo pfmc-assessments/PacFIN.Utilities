@@ -2,9 +2,12 @@
 #'
 #' @details \code{Trip_Sampled_Lbs} is calculated differently for each state:
 #' \itemize{
-#' \item {California}{ = Species_Percent_Sampled * TOTAL_WGT;}
-#' \item {Oregon}{ = EXP_WT.  Where missing, use Species_Percent_Sampled, as for CA;}
-#' \item {Washington}{ = RWT_LBS, TOTAL_WGT, median(RWT_LBS), or median(TOTAL_WGT);}
+#' \item {California}{ = \code{Pdata$Species_Percent_Sampled} *
+#'   \code{Pdata$TOTAL_WGT};}
+#' \item {Oregon}{ = \code{Pdata$EXP_WT}.  Where missing,
+#'   use \code{Pdata$Species_Percent_Sampled}, as for CA;}
+#' \item {Washington}{ = \code{Pdata$RWT_LBS}, \code{Pdata$TOTAL_WGT},
+#'   median(RWT_LBS), or median(\code{Pdata$TOTAL_WGT});}
 #' \item {if all else fails}{ = use per-year, state-specific medians.}
 #' }
 #' @return A \code{Pdata} with additional columns, where
