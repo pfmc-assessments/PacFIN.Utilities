@@ -1,33 +1,20 @@
-##############################################################################
-#
-# EF1_Numerator is used to calculate the numerator for the level-1
-# expansion; this is Trip_Sampled_Lbs, the total weight of the species in the tow.
-#
-# Trip_Sampled_Lbs is calculated differently for each state:
-#
-#     For California, Trip_Sampled_Lbs = Species_Percent_Sampled * TOTAL_WGT.
-#
-#     For Oregon, Trip_Sampled_Lbs = EXP_WT.  Where missing, use Species_Percent
-#     _Sampled, as above.
-#
-#     For Washington, use RWT_LBS, TOTAL_WGT, median(RWT_LBS) or median(TOTAL_WGT).
-#
-#     If all else fails, use per-year, state-specific medians.
-#
-#     The TOTAL_WGT is the weight of final resort.
-#
-# Arguments:
-#
-#    Pdata                    the data set.
-#
-# New columns:
-#
-#    Use_acs                all_cluster_sum with NAs replaced by
-#                             year-specific, state-specific medians.
-#    Species_Percent_Sampled  Percentage of this species in samples.
-#    Trip_Sampled_Lbs          Sampled weights.
-#
-##############################################################################
+#' Calculate the numerator for the first level expansion factor.
+#'
+#' @details \code{Trip_Sampled_Lbs} is calculated differently for each state:
+#' \itemize{
+#' \item {California}{ = Species_Percent_Sampled * TOTAL_WGT;}
+#' \item {Oregon}{ = EXP_WT.  Where missing, use Species_Percent_Sampled, as for CA;}
+#' \item {Washington}{ = RWT_LBS, TOTAL_WGT, median(RWT_LBS), or median(TOTAL_WGT);}
+#' \item {if all else fails}{ = use per-year, state-specific medians.}
+#' }
+#' @return A \code{Pdata} with additional columns, where
+#'   \code{Species_Percent_Sampled} is the percentage of this species in the samples;
+#'   \code{Use_acs} is \code{all_cluster_sum} with NAs replaced by year-specific,
+#'   state-specific medians;
+#'   \code{Trip_Sampled_Lbs} is the sample weight in pounds;
+#'
+#' @template Pdata
+#' @author Andi Stephens
 
 EF1_Numerator = function(Pdata) {
 
