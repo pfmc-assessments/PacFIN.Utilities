@@ -1,8 +1,8 @@
 #' Complete a first level expansion for composition data where the unsampled
 #' fish in a tow are accounted for.
 #'
-#' @details \code{getExpansion_1} calls \link{\code{EF1_Numerator}} and
-#'   \link{\code{EF1_Denominator}} (i.e., the weight of sampled fish and
+#' @details \code{getExpansion_1} calls \code{\link{EF1_Numerator}} and
+#'   \code{\link{EF1_Denominator}} (i.e., the weight of sampled fish and
 #'   the weight of all fish of the respective species in the tow) and returns
 #'   their ratio.
 #' @template Pdata
