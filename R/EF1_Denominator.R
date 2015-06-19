@@ -31,7 +31,7 @@
 #' @seealso \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
 
 EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
-                          fa=2e-06, fb=3.5, ma=2e-06, mb=3.5, ua=2e-06, ub=3.5 ) {
+  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = FALSE ) {
 
 # For testing: fa=2e-06; fb=3.5; ma=2e-06; mb=3.5; ua=2e-06; ub=3.5
 
@@ -45,9 +45,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   Pdata$Wt_Sampled     = NA
   Pdata$Wt_Method      = NA
 
-  cat("\nGetting level-1 expansions\n\n")
-
-  if ( Indiv_Wgts == TRUE ) {
+  if ( Indiv_Wgts == TRUE & verbose) {
 
     cat("\nIndividual weights will be generated from the following values:\n\n")
     cat("Females:", fa,fb, "Males:",  ma,mb, "Unknowns:",  ua,ub, "\n\n")
@@ -58,8 +56,10 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   if (length(which(names(Pdata) == "state")) == 0) {
 
-    cat("State variable is not assigned, getting state.\n\n")
-    Pdata = getState(Pdata, CLEAN=T)
+    if (verbose){
+      cat("State variable was not assigned, getting state.\n\n")
+    }
+    Pdata = getState(Pdata, CLEAN=T, verbose = verbose)
 
   }
 
@@ -67,13 +67,9 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
-  cat("\nGetting the summed weights of the sexed fish for each SAMPLE_NO\n\n")
-
   tows$Wt_Sampled_1 = tows$MALES_WGT + tows$FEMALES_WGT
 
   Pdata$Wt_Sampled_1 = tows$Wt_Sampled_1[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
-
-  cat("\nSumming the SPECIES_WEIGHTS for all clusters in a SAMPLE_NO\n\n")
 
   Pdata$SAMP_CLUST = paste(Pdata$SAMPLE_NO, Pdata$CLUSTER_NO, sep="_")
   uniqueClusters = Pdata[!duplicated(Pdata$SAMP_CLUST),]
@@ -92,8 +88,6 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   # Only if there are individual weight factor and coefficients available
 
   if (Indiv_Wgts) {
-
-    cat("\nCalculating individual weights from lengths.\n\n")
 
     ############################################################################
     #
@@ -168,7 +162,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   Pdata$Wt_Method = tows$Wt_Method[match(Pdata$SAMPLE_NO,tows$SAMPLE_NO)]
   Pdata$Wt_Sampled = tows$Wt_Sampled[match(Pdata$SAMPLE_NO,tows$SAMPLE_NO)]
 
-  cat("\nDone calculating sample weights\n\n")
+
 
   # Summary and boxplot
 
@@ -177,12 +171,12 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   names(printemp) = c("M+F","SPECIES_WT","L-W","Final Wt_Sampled")
 
-  print(summary(printemp))
-
-  cat("\nWt_Methods:\n\n")
-
-  print(summary(as.factor(Pdata$Wt_Method)))
-
+  if (verbose) {
+    cat("\nDone calculating sample weights\n\n")
+    print(summary(printemp))
+    cat("\nWt_Methods:\n\n")
+    print(summary(as.factor(Pdata$Wt_Method)))
+  }
 
   par(mfrow=c(2,2))
 
@@ -201,9 +195,9 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
             main="NA Sampled Wts -- Denominator")
 
   } else {
-
-    cat("\nSample Wts found for all samples.\n\n")
-
+    if (verbose){
+      cat("\nSample Wts found for all samples.\n\n")
+    }
   } # End if
 
   return(Pdata)
