@@ -183,9 +183,9 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
 
   if (plot != FALSE) {
     numstate <- length(unique(Pdata$state))
+    if (is.character(plot)) png(plot)
     par(mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
       oma = c(4, 5, 3, 0.5))
-    if (is.character(plot)) png(plot)
     for (st in unique(Pdata$state)) {
       plotdata <- subset(Pdata, state == st)
       boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
