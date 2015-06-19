@@ -1,21 +1,22 @@
-##############################################################################
-#
-#  getGearGroups adds a column to Pdata containing the GRIDS recoded according
-#  to the table taken from
-#
-#  http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
-#
-##############################################################################
-
-# KFJ: changed to accomodate reading in a dataframe
-#' @param Pdata
+#' Create column for gears according to PacFIN gears
+#'
+#' Data from the PacFIN
+#' [gear table](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
+#' is used to create a column in \code{Pdata} labeled \code{geargroup}, where
+#' \code{Pdata$GRID} is recoded to \code{geargroup} according to the gear table.
+#'
+#' @template Pdata
 #' @param gears A data.frame or \code{file.path} to a \code{.csv} file
 #'   that contains GRIDS according to the table taken from
-#'   http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
+#'   [gear table](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt).
 #'   Path name must be the full path or in your current working directory
-#'   and end in \code{.csv}.
-
-# Andi -- thanks!
+#'   and end in \code{.csv}. If \code{gears = NULL} then the function assumes
+#'   that the appropriate table is downloaded and available in your working
+#'   directory saved as \code{'GearTable.csv'}.
+#' @return A modified \code{data.frame} where an additional column labeled
+#'   \code{geargroups} is added to \code{Pdata}. No original columns are modified
+#'   in the process.
+#' @author Andi Stephens
 
 getGearGroups = function (Pdata, gears = NULL) {
 
