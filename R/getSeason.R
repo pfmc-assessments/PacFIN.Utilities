@@ -1,19 +1,30 @@
-
-##############################################################################
-#
-#  getSeason adds a field for season to the data.  Several seasonal schemes
-#  may be provided, including the Petrale seasons ( 1 = winter months, 2 else ).
-#
-#  Other schemes may be provided as needed.
-#
-#  The yearUp and yearDown can be used to provide a list of SAMPLE_MONTHS
-#  (1 through 12) for which to adjust the fishyr (the fishing year) up or down.
-#  In other words, the winter months might belong to the following year, or to
-#  the previous year:
-#
-#      yearUP = c(11,12)    or    yearDown = c(1,2)
-#
-##############################################################################
+#' Add a column to \code{Pdata} for season.
+#'
+#' Several seasonal schemes are available, including the Petrale seasons
+#' (1 = winter months, 2 else).
+#' Contact the function author for more schemes if needed.
+#'
+#' @template Pdata
+#' @param season_type Specify a \code{numeric} value for season type.
+#'   If negative then all months will be assigned to season \code{1}.
+#'   If \code{0} then seasons will be assinged from \code{Pdata$SAMPLE_MONTH},
+#'   where each month is a unique season.
+#'   If \code{1} then seasons are assigned according to methods used for Petrale,
+#'   where winter months (\code{c(11:12, 1:2)}) are season \code{1} and
+#'   the remaining months (summer) are assigned to season \code{2}.
+#'   Please contact the function author if you wish to include an
+#'   additional seasonal scheme.
+#' @param yearUp Used to provide a list of months (i.e., \code{1:12})
+#'   for which to adjust the year (\code{Pdata$fishyr}) up. For example,
+#'   if winter months belong to the following year then use \code{yearUp = 11:12}.
+#' @param yearDown Used to provide a list of months (i.e., \code{1:12})
+#'   for which to adjust the year (\code{Pdata$fishyr}) down. For example,
+#'   if winter months belong to the previous year then use \code{yearUp = 1:2}.
+#' @param plotResults A logical value specifying if plots should or should not
+#'   be created and shown in the console.
+#' @return An additional column \code{season} is added to \code{Pdata}.
+#'   No columns are modified.
+#' @author Andi Stephens
 
 getSeason = function ( Pdata, season_type=-1, yearUp=NULL, yearDown=NULL, plotResults=F) {
 
