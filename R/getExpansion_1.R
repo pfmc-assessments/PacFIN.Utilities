@@ -7,14 +7,10 @@
 #'   their ratio.
 #' @template Pdata
 #' @param maxExp The maximum expansion factor (either a number or a quantile).
-#' @param Indiv_Wgts
+#' @template Indiv_Wgts
 #' @template weightlengthparams
 #' @template verbose
-#' @param plot Argument takes either a logical or character value specifying the file
-#'   name if you want to write the plots to a disk rather than printing them
-#'   to the console. If \code{plot = FALSE} no plots will be generated.
-#'   If printing to the disk the character value should end in \code{.png}
-#'   as \code{png()} is used to save the plotting device.
+#' @template plot
 #' @return A \code{data.frame} where all of the original columns in
 #'   \code{Pdata} remain unaltered but additional columns are added.
 
@@ -23,7 +19,6 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
   plot = FALSE) {
 
   # Get the Wt_Sampled
-
   Pdata = EF1_Denominator( Pdata, Indiv_Wgts,
                            fa, fb, ma, mb, ua, ub )
 
