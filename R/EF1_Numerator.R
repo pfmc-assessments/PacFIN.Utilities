@@ -17,9 +17,10 @@
 #'   \code{Trip_Sampled_Lbs} is the sample weight in pounds;
 #'
 #' @template Pdata
+#' @template verbose
 #' @author Andi Stephens
 
-EF1_Numerator = function(Pdata) {
+EF1_Numerator = function(Pdata, verbose = FALSE) {
 
   # Start clean
 
@@ -34,15 +35,14 @@ EF1_Numerator = function(Pdata) {
   # First the all_cluster_sums, replacing NA with medians.
   #
   #############################################################################
-
-  cat("\nGetting cluster sums\n\n")
-
   tows$Use_acs = tows$all_cluster_sum
 
   tows$Use_acs[tows$Use_acs == 0] = NA
 
   # Use median from the state and year where total landed weights are missing
 
+  # KFJ(2015-06-17): Should use state x year x gear then most recent year
+  # if not available.
   median_use_acs = aggregate(tows$Use_acs, list(tows$state, tows$fishyr), median, na.rm=T)
   names(median_use_acs) = c("state","fishyr","Median")
 
@@ -87,8 +87,6 @@ EF1_Numerator = function(Pdata) {
   #
   ############################################################################
 
-  cat("\nGetting total weights per sample\n\n")
-
   # Default
 
   tows$Trip_Sampled_Lbs = tows$TOTAL_WGT
@@ -118,8 +116,9 @@ EF1_Numerator = function(Pdata) {
     tows$Trip_Sampled_Lbs[tows$state=="WA"] = tows$RWT_LBS[tows$state=="WA"]
 
   } else {
-
-    cat("\nWarning:  data does not contain column RWT_LBS required for WA data\n\n")
+    if (verbose) {
+      cat("\nWarning:  data does not contain column RWT_LBS required for WA data\n\n")
+    }
 
     Pdata$RWT_LBS = NA
     tows$RWT_LBS = NA
@@ -176,9 +175,10 @@ EF1_Numerator = function(Pdata) {
 
   Pdata$Trip_Sampled_Lbs = tows$Trip_Sampled_Lbs[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
 
-  cat("\nSampled pounds per trip:\n\n")
-
-  print(summary(Pdata$Trip_Sampled_Lbs))
+  if (verbose){
+    cat("\nSampled pounds per trip:\n\n")
+    print(summary(Pdata$Trip_Sampled_Lbs))
+  }
 
   par(mfrow=c(2,2))
 
