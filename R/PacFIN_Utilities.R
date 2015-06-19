@@ -281,6 +281,7 @@ cleanAges = function( Pdata, keep_age_methods=c("B","S",""), minAge=0, maxAge=NU
   # Fix Ages
 
   Pdata$age = Pdata$FISH_AGE_YEARS_FINAL
+  Pdata$age[is.na(Pdata$age)] <- -1
   Pdata$age = ifelse(Pdata$age > 0, Pdata$age, Pdata$age1)
   Pdata$age[is.na(Pdata$age)] = -1
   Pdata$age = ifelse(Pdata$age > 0, Pdata$age, Pdata$age2)
@@ -651,7 +652,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   tows$EF2 = tows$catch/tows$Sum_Sampled_Lbs
 
   tows$EF2[tows$EF2 < 1] = 1
-
+  tows$EF2[!is.finite(tows$EF2)] <- 1
   # Match EF2 to the larger dataset.
 
   # Scale up from tows to Pdata

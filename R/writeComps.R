@@ -309,7 +309,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
   # Fill the rest of the values
 
-  uStrat$gender = 0
+  uStrat$gender = NA
   uStrat$partition = partition
   uStrat$ageErr = ageErr
 
@@ -354,7 +354,6 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   Fout = Fout[Fout$Nsamps > 0,]
   Mout = Mout[Mout$Nsamps > 0,]
 
-  # KFJ(2015-06-16): Fix genders as specified by SS
   Uout$gender=0
   Fout$gender=1
   Mout$gender=2
@@ -366,13 +365,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   oldwarn = options("warn")
   options("warn" = -1)
 
-  if (verbose) {
-    cat("\nWriting FthenM, dimensions:", dim(FthenM), "\n")
-    IDstring = paste("\n\n", "Females then males")
-    cat(file=fname, IDstring, "\n")
-  }
 
-  write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
 
   if (verbose) {
     cat("Writing F only, dimensions:", dim(Fout), "\n")
@@ -394,6 +387,13 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     cat(file=fname, IDstring, "\n", append=T)
   }
   write.table(file=fname, Uout, sep=",", col.names=T, row.names=F, append=T)
+
+  if (verbose) {
+    cat("\nWriting FthenM, dimensions:", dim(FthenM), "\n")
+    IDstring = paste("\n\n", "Females then males")
+    cat(file=fname, IDstring, "\n")
+  }
+  write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
 
   # Reset warnings
 
