@@ -22,19 +22,25 @@
 #'   if winter months belong to the previous year then use \code{yearUp = 1:2}.
 #' @param plotResults A logical value specifying if plots should or should not
 #'   be created and shown in the console.
+#' @template verbose
 #' @return An additional column \code{season} is added to \code{Pdata}.
 #'   No columns are modified.
 #' @author Andi Stephens
 
-getSeason = function ( Pdata, season_type=-1, yearUp=NULL, yearDown=NULL, plotResults=F) {
+getSeason = function ( Pdata, season_type=-1, yearUp=NULL, yearDown=NULL, plotResults=F,
+  verbose = FALSE) {
 
-  cat( "\nDefault season = 1\n\n")
+  if (verbose){
+    cat( "\nDefault season = 1\n\n")
+  }
 
   Pdata$season = 1
 
   if ( season_type == 0 ) {
 
-    cat( "Assigning season from SAMPLE_MONTH\n\n")
+    if (verbose){
+      cat( "Assigning season from SAMPLE_MONTH\n\n")
+    }
 
     Pdata$season = as.numeric(Pdata$SAMPLE_MONTH)
 
@@ -44,7 +50,9 @@ getSeason = function ( Pdata, season_type=-1, yearUp=NULL, yearDown=NULL, plotRe
 
   if ( season_type == 1 ) {
 
-    cat("Assigning season ala Petrale; winter is season 1, summer is 2.\n\n")
+    if (verbose){
+      cat("Assigning season ala Petrale; winter is season 1, summer is 2.\n\n")
+    }
 
     Pdata$season = 2
     Pdata$season[Pdata$SAMPLE_MONTH %in%  c(11,12,1,2)] = 1
@@ -56,7 +64,9 @@ getSeason = function ( Pdata, season_type=-1, yearUp=NULL, yearDown=NULL, plotRe
     Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearUp] =
     Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearUp] + 1
 
-    cat("Incremented fishyr for months", yearUp, "to the next year.\n\n")
+    if (verbose){
+      cat("Incremented fishyr for months", yearUp, "to the next year.\n\n")
+    }
 
   } # End if yearUp
 
@@ -65,7 +75,9 @@ getSeason = function ( Pdata, season_type=-1, yearUp=NULL, yearDown=NULL, plotRe
     Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearDown] =
     Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearDown] - 1
 
-    cat("Decremented fishyr for months", yearDown, "to the previous year.\n\n")
+    if (verbose){
+      cat("Decremented fishyr for months", yearDown, "to the previous year.\n\n")
+    }
 
   } # End if yearDown
 
