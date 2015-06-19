@@ -1,49 +1,34 @@
-##############################################################################
-#
-# EF1_Denominator calculates the denominator for the level-1 expansion factor,
-# the weight of sampled fish in the tow.
-#
-# Indiv_Wgts controls whether or not individual Length-Weight calculations will
-# be used.
-#
-# The weight of the fish is calculated three ways.
-#
-# First, FEMALES_WGT and MALES_WGT are summed per SAMPLE_NO.
-#
-# The SPECIES_WGT is summed across all clusters in a sample to provide
-# the second per SAMPLE_NO weight.
-#
-# Finally, weights of the male and female fish are calculated from their
-# lengths.  These are summed per SAMPLE_NO to provide a per-sample weight.
-# Zero weights might occur for some fish. These are filled in with the
-# median weight of fish in the sample.
-#
-# Arguments:
-#
-#    Pdata              the data set.
-#    Indiv_Wgts         whether or not to calculate individual fish weights
-#                       from a length-weight relationship.
-#
-#    fa, fb             the coefficient and factor for female Length-Weights.
-#    ma, mb             the coefficient and factor for male Length-Weights.
-#    ua, ub             the coefficient and factor for unsexed Length-Weights.
-#
-# New columns:
-#
-#    Wt_Sampled_1    per-SAMPLE_NO summed MALES_WGT + FEMALES_WGT
-#    Wt_Sampled_2    per-SAMPLE_NO summed cluster_wt
-#    LW_Calc_Wt        individual weights predicted from L-W
-#    Wt_Sampled_3    per-SAMPLE_NO summed LW_Calc_Wts
-#
-#    Wt_Sampled        per-SAMPLE_NO combined weights.
-#                       This is preferentially Wt_Sampled_1, with NAs
-#                       replaced with values from Wt_Sampled_2, and NAs
-#            remaining replaced with values from Wt_Sampled_3.
-#
-#    Wt_Method        Denotes by which method the Wt_Sampled was filled.
-#
-#
-##############################################################################
+#' Calculate the denominator for the level-1 expansion factor.
+#'
+#' The denominator of the level-1 expansion factor is the weight of the sampled
+#' fish in a given tow. The calcuation is done one of three ways, all of which
+#' are returned, though the column used in subsequent analyses is based on
+#' the hierarchical structure of:
+#' \enumerate{
+#' \item{\code{sum(Pdata$FEMALES_WGT + Pdata$MALES_WGT)} per unique \code{SAMPLE_NO}}
+#' \item{\code{sum(Pdata$SPECIES_WGT)} across all clusters in a sample, where the
+#'   species weight is determined from the \code{cluster_wt}}
+#' \item{Calculate weights of males and females given the weight length relationship,
+#' if the length of a fish does not exist, then the median weight of all
+#' weighed fish in the sample is used.}
+#' }
+#'
+#' @template Pdata
+#' @template Indiv_Wgts
+#' @template weightlengthparams
+#' @return Additional columns are added to \code{Pdata}:
+#' \itemize{
+#' \item Wt_Sampled_1
+#' \item Wt_Sampled_2
+#' \item LW_Calc_Wt: individual weights predicted from the specified length-weight relationships.
+#' \item Wt_Sampled_3
+#' \item Wt_Sampled: the sample weight that will be used in subsequent analyses,
+#'   where this is preferentially Wt_Sampled_1, with NAs replaced with values from Wt_Sampled_2,
+#'   and NAs remaining replaced with values from Wt_Sampled_3.
+#' \item Wt_Method: a \code{numeric} value denoting which method was used for \code{Wt_Sampled}.
+#' }
+#' @author Andi Stephens
+#' @seealso \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
 
 EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
                           fa=2e-06, fb=3.5, ma=2e-06, mb=3.5, ua=2e-06, ub=3.5 ) {
