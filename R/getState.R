@@ -1,7 +1,7 @@
 #' Create a state field from \code{source} for the \code{data.frame}
 #' \code{Pdata}, where \code{Pdata} is a \code{data.frame} from
 #' PacFIN.
-#' @param Pdata
+#' @template Pdata
 #' @param source The column name where state information is located in
 #'   \code{Pdata}. Typical options are \code{'SOURCE_AGID'},
 #'   \code{'PSMFC_ARID'}, or \code{'SAMPLE_AGENCY'}.
