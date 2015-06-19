@@ -19,12 +19,30 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
   plot = FALSE) {
 
   # Get the Wt_Sampled
-  Pdata = EF1_Denominator( Pdata, Indiv_Wgts,
-                           fa, fb, ma, mb, ua, ub )
+  if (is.character(plot)) {
+    fn <- gsub(".png", "", plot)
+    plot.denom <- paste0(fn, "_denom.png")
+  } else {
+    if (plot == TRUE) {
+      plot.denom <- TRUE
+      dev.new()
+    } else plot.denom <- FALSE
+  }
+
+  Pdata = EF1_Denominator(Pdata, Indiv_Wgts,
+    fa, fb, ma, mb, ua, ub, verbose = verbose, plot = plot.denom)
 
   # Get Trip_Sampled_Lbs
-
-  Pdata = EF1_Numerator( Pdata )
+  if (is.character(plot)) {
+    fn <- gsub(".png", "", plot)
+    plot.num <- paste0(fn, "_numer.png")
+  } else {
+    if (plot == TRUE) {
+      plot.num <- TRUE
+      dev.new()
+    } else plot.num <- FALSE
+  }
+  Pdata = EF1_Numerator(Pdata, verbose = verbose, plot = plot.num)
 
   # Expansion_Factor_1
 
@@ -53,7 +71,7 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
 
   # KFJ(2015-06-16): Generate plots and save them to the disk if specified.
   if (plot != FALSE){
-    if (is.character(plot)) png(plot)
+    if (is.character(plot)) png(plot) else dev.new()
     if (nNA > 0) {
       # Plot NA values by year and state.  Early years data or CALCOM data?
       par(mfrow = c(2, 1), mar = c(0, 3, 0, 0), oma = c(4, 1, 3, 0),
