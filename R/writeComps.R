@@ -29,8 +29,7 @@
 #'   in the specified bins. Default is \code{TRUE}, which will create dummy
 #'   bins, which are useful for determining if your current bin structure
 #'   captures the data or if additional bins should be created.
-#' @param vebose A logical value specifying if comments should be output to
-#'   the screen while running \code{writeComps}.
+#' @template verbose
 #' @return A \code{data.frame} is returned provided \code{out} is specified
 #'   to determine which type of composition (male, female, females then males,
 #'   or unsexed) to return. Even if no value is returned, all types of
