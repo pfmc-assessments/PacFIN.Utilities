@@ -18,9 +18,10 @@
 #'
 #' @template Pdata
 #' @template verbose
+#' @template plot
 #' @author Andi Stephens
 
-EF1_Numerator = function(Pdata, verbose = FALSE) {
+EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
 
   # Start clean
 
@@ -180,9 +181,24 @@ EF1_Numerator = function(Pdata, verbose = FALSE) {
     print(summary(Pdata$Trip_Sampled_Lbs))
   }
 
-  par(mfrow=c(2,2))
+  if (plot != FALSE) {
+    numstate <- length(unique(Pdata$state))
+    par(mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
+      oma = c(4, 5, 3, 0.5))
+    if (is.character(plot)) png(plot)
+    for (st in unique(Pdata$state)) {
+      plotdata <- subset(Pdata, state == st)
+      boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
+        ylab = "", xlab = "", xaxt = "n",
+        at = unique(plotdata$fishyr), xlim = range(Pdata$fishyr))
+      legend("topleft", legend = st, bty = "n")
+    }
+    axis(1)
+    mtext(side = 1, "Expansion factor 1 numerator", outer = TRUE, line = 2)
+    mtext(side = 2, "sample weight per trip (lbs)", outer = TRUE, line = 2)
 
-  boxplot(Pdata$Trip_Sampled_Lbs ~ Pdata$fishyr, main="Sampled Lbs per Trip -- Numerator")
+    if (is.character(plot)) dev.off()
+  }
 
   return(Pdata)
 
