@@ -31,7 +31,7 @@
 #' @seealso \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
 
 EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
-  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = FALSE ) {
+  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = FALSE, plot = FALSE) {
 
 # For testing: fa=2e-06; fb=3.5; ma=2e-06; mb=3.5; ua=2e-06; ub=3.5
 
@@ -178,27 +178,25 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     print(summary(as.factor(Pdata$Wt_Method)))
   }
 
-  par(mfrow=c(2,2))
+  NA_Wt_Sampled <- Pdata[is.na(Pdata$Wt_Sampled), ]
+  nNA <- NROW(NA_Wt_Sampled)
 
-
-  boxplot(as.data.frame(printemp), names=c("M+F","SPECIES","L-W","Final Wt"),
-          main = "Weight Sampled (Lbs) -- Denominator")
-
-  NA_Wt_Sampled = Pdata[is.na(Pdata$Wt_Sampled),]
-  nNA = nrow(NA_Wt_Sampled)
-
-  if ( nNA > 0 ) {
-
-    barplot(xtabs(NA_Wt_Sampled$FREQ ~ NA_Wt_Sampled$state + NA_Wt_Sampled$fishyr),
-            col=rainbow(3),
-            legend.text = T, xlab = "Year", ylab = "Samples",
-            main="NA Sampled Wts -- Denominator")
-
-  } else {
-    if (verbose){
-      cat("\nSample Wts found for all samples.\n\n")
+  if (plot != FALSE){
+    if (is.character(plot)) png(plot)
+    par(mfrow = c(1, ifelse(nNA > 0, 2, 1)), mgp = c(2.5, 0.5, 0))
+    boxplot(as.data.frame(printemp),
+      names = c("M+F", "species", "pred. w/ L-W","final"),
+      ylab = "Sample weight (lbs)", xlab = "Expansion factor 1 denominator")
+    if (nNA > 0) {
+      barplot(xtabs(NA_Wt_Sampled$FREQ ~ NA_Wt_Sampled$state + NA_Wt_Sampled$fishyr),
+        col = rainbow(length(unique(NA_Wt_Sampled$state))),
+        legend.text = TRUE, xlab = "Year",
+        ylab = "Num samples w/ denominator = NA",
+        args.legend = list(x = "topleft", bty = "n"))
     }
-  } # End if
+    if (is.character(plot)) dev.off()
+  }
+  if (nNA == 0 & verbose) cat("\nSample Wts found for all samples.\n\n")
 
   return(Pdata)
 
