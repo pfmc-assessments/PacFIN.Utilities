@@ -98,13 +98,13 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     ############################################################################
 
     Pdata$LW_Calc_Wt = NA
-    Pdata$LW_Calc_Wt[Pdata$SEX=="F"] = fa*Pdata$length[Pdata$SEX=="F"]^fb
-    Pdata$LW_Calc_Wt[Pdata$SEX=="M"] = ma*Pdata$length[Pdata$SEX=="M"]^mb
-    Pdata$LW_Calc_Wt[Pdata$SEX=="U"] = ua*Pdata$length[Pdata$SEX=="U"]^ub
+    Pdata$LW_Calc_Wt[Pdata$SEX=="F"] = fa*(Pdata$length[Pdata$SEX=="F"] / 10)^fb
+    Pdata$LW_Calc_Wt[Pdata$SEX=="M"] = ma*(Pdata$length[Pdata$SEX=="M"] / 10)^mb
+    Pdata$LW_Calc_Wt[Pdata$SEX=="U"] = ua*(Pdata$length[Pdata$SEX=="U"] / 10)^ub
 
     # Convert to pounds
 
-    Pdata$LW_Calc_Wt = Pdata$LW_Calc_Wt * 0.00220462
+    Pdata$LW_Calc_Wt = Pdata$LW_Calc_Wt * 2.20462
     #KFJ(2015-06-20): I think this calculation is wrong and SS
     # uses parameters that assume length is in cm and weight
     # is in kg, thus making the correct calculation
