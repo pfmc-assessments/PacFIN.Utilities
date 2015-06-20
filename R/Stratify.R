@@ -1,17 +1,20 @@
-##############################################################################
-#
-# Stratify takes an input vector and list of values used to designate
-# the values returned in the strats vector.
-#
-# Any values not given in splits will be assigned to stratum 0.
-#
-# If numeric=T, this defaults to a call to findInterval, and stratum 0
-# will be assigned to values smaller than the first value in splits.
-#
-# Note that this can be used to designate fleet or for stratification
-# based on depth or INPFC area.
-#
-##############################################################################
+#' Create a vector of strafications
+#'
+#' \code{Stratify} takes an input vector and list of values used to designate
+#' the values returned in the strats vector.
+#' Any values not given in splits will be assigned to stratum 0.
+#' This function can be used to designate fleet or for stratification
+#' based on depth or INPFC area.
+#'
+#' @param inVector Todo.
+#' @param splits Todo.
+#' @param names Todo.
+#' @param numeric A logical value, where if \code{TRUE} then
+#'   \code{findInterval} will be used and stratum 0 will be assigned to values
+#'   smaller than the first value in splits.
+#'
+#' @return Todo.
+#' @author Andi Stephens
 
 Stratify = function ( inVector=NULL, splits=NULL, names=NULL, numeric=F ) {
 
