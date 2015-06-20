@@ -334,7 +334,6 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, fComps[1:NCOLS], blanks)
   Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, uComps[1:NCOLS], blanks)
 
-  browser()
   # Make it pretty
 
   index = which(names(Fout) == "fComps$Ntows")
