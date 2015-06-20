@@ -105,6 +105,10 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     # Convert to pounds
 
     Pdata$LW_Calc_Wt = Pdata$LW_Calc_Wt * 0.00220462
+    #KFJ(2015-06-20): I think this calculation is wrong and SS
+    # uses parameters that assume length is in cm and weight
+    # is in kg, thus making the correct calculation
+    # a * (Pdata$length / 10)^b * 2.20462
 
     # Get the number of observed lengths and weights to use for each sample
 
