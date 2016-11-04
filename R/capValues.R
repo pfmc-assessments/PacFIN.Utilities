@@ -1,9 +1,16 @@
+##########################################################################
+#
 #' Decrease all values greater than a maximum specified value.
 #'
 #' \code{capValues} takes a numeric vector and returns a vector in which all
 #' values greater than a specified maximum are reset to that maximum
 #' value. 
 #' 
+#' 
+# \if{html}{\figure{workflow.png}{\options: alt=\"Figure: workspace_id.png\"}}
+#'
+#\if{latex}{\figure{workflow.png}{\options: alt=\"Figure: workspace_id.png\"}}
+#'
 #' @details The maximum may be specified either as a
 #' quantile or as a number. 
 #' 
@@ -28,6 +35,8 @@
 #' rbind(x, y, z)
 #'
 #' @author Andi Stephens
+#' 
+###########################################################################
 
 capValues = function( DataCol, maxVal=0.95 ) {
 

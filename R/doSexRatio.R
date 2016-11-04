@@ -1,7 +1,16 @@
+############################################################################
+#
 #' Assign gender for unsexed fish in compiled Comp data.
 #' 
 #' @description
 #' doSexRatio determines gender for unsexed fish in Age or Length comps.
+#' \subsection{Workflow}{
+#' Sex ratios are assigned after the data is stratified by \code{\link{getComps}}
+#' and before running \code{\link{writeComps}}.
+#' 
+#'   If writeComps is run without running \code{doSexRatio}, all unsexed
+#'   fish will be discarded.
+#' }
 #'
 #' @param CompData data that have already been aggregated by \code{getComps}.
 #' @param findRatio logical.  Default: FALSE.  If TRUE, use the observed per-stratum ratio
@@ -13,40 +22,41 @@
 #' @param GTsizeU the size above which the ratio is assumed to be 1.0 (big mamas).
 #'
 #' @details
-#'
+#' Sex ratios may be assigned in one of four different ways.
+#' 
 #' The default is to use a single-valued Rvector (0.5 or user-set) as the ratio to use for all
 #' unsexed fish.
+#' \itemize{
+#' \item{\code{C1 = doSexRatio(CompData)}}
+#' }
 #' 
 #' If findRatio is TRUE, then the observed per-stratum ratio of females to males is used for 
 #' the usexed fish in each stratum, and no other parameters apply.
+#' \itemize{
+#' \item{\code{C1 = doSexRatio(Compdata, findRatio=T)}}
+#' }
 #' 
 #' If maxsizeU is set, then all fish below that size (or age) will be set to the value in
-#' ratioU.  This will not work when using an Rvector with more than one value.
+#' ratioU.  If GTsizeU is set, then all unsexed fish above that size will be female.
 #' 
-#' If GTsizeU is set, then all unsexed fish above that size will be female.  This will not
-#' work when using an Rvector with more than one value.
+#' In this example, the ratio for fish less than 3 is 0.4, for fish greater than 12 is 1,
+#' and for the fish in between is 0.6.
+#' 
+#' \itemize{
+#' \item{\code{C1 = doSexRatio(Compdata, Rvector=0.6, RatioU=0.4, maxsizeU=3, GTsizeU=12)}
+#' }}
 #' 
 #' Bins are the length or age bins (for AGE comps) corresponding to the vector
 #' of ratios (unused for a single ratio).  If Age-at-Length comps, the bins are Lengths.
-#' You can circumvent this by renaming the column "lengthcm" to "notlengthcm".
-#' Remember to rename it back!
-#' 
-#' An example run: the ratio for fish less than 3 is 0.4, for fish greater and 12 is 1,
-#' and for the fish in between is 0.6
-#' 
-#' \code{C1 = doSexRatio(Compdata, Rvector=0.6, RatioU=0.4, maxsizeU=3, GTsizeU=12)}
 #'
-#' An example with vectors:  lengths (ages) below the lowest Bin will fall into the
+#' In this example, lengths (ages) below the lowest Bin will fall into the
 #' lowest bin; i.e., lengths from 0-15 will have ratio .5, and fish above 36 will have ratio 
 #' 0.7 applied.
 #' 
-#' \code{C1 = doSexRatio(Compdata, Rvector=c(.5, .6, .7), Bins=c(10, 15, 36))}
-#' 
-#' With findRatio:
-#' 
-#' \code{C1 = doSexRatio(Compdata, findRatio=T)}
-#' 
-#' 
+#' \itemize{
+#' \item{\code{C1 = doSexRatio(Compdata, Rvector=c(.5, .6, .7), Bins=c(10, 15, 36))}
+#' }}
+#'  
 #' @return
 #' 
 #' Returns Comp data with unsexed fish now assigned sexes (the values for males and

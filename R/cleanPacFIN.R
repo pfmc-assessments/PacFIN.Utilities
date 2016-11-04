@@ -1,3 +1,5 @@
+######################################################################
+#
 #' Filter PacFIN samples.
 #'
 #' @description
@@ -5,6 +7,12 @@
 #' fish lengths to cm. The original fields in the returned data are left untouched,
 #' with the exception of SEX, which is modified so that unidentified fish are labeled
 #' “U”.
+#' 
+#' \subsection{Workflow}{
+#' Unless there are CALCOM samples to be integrated with PacFIN data via
+#' \code{\link{getCALCOM}}, \code{cleanPacFIN} is the first function to run
+#' in the PacFIN workflow.
+#' }
 #' 
 #'
 #' @param Pdata a PacFIN dataset
