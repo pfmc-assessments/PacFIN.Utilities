@@ -1,9 +1,11 @@
-
 ##############################################################################
 #
-# Function paste.col
-#
-# Converts a row to a string, "pasting" the columns together.
+#' Utility function.
+#' 
+#' Used by \code{\link{find.matching.rows}}.
+#'
+#' Converts each row in the input dataframe to a string, 
+#' "pasting" the columns together.
 #
 #############################################################################
 paste.col <- function(x) {

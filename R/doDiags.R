@@ -1,9 +1,15 @@
-#' Diagnostic plots and summaries for a raw PacFIN dataset pre-cleaning.
+#############################################################################
+#
+#' Diagnostic plots and summaries for a raw PacFIN dataset pre-filtering.
 #' 
-#' \code{doRawDiags} creates a set of diagnostic plots and summaries, writing pdfs and
-#' a text file in addition to plotting onscreen and console.
+#' \code{doRawDiags} creates a set of diagnostic plots and summaries, writing 
+#' pdfs and a text file in addition to plotting onscreen and console.
+#' \subsection{Workflow}{
+#' Run \code{doRawDiags} to visualize and summarize the PacFIN data prior to
+#' running \code{\link{cleanPacFIN}}.
+#' }
 #'
-#' @param Pdata a PacFIN dataset
+#' @param Rawdata an unfiltered PacFIN dataset
 #' @param fname a filename
 #'
 #' @details
@@ -11,7 +17,7 @@
 #' 
 ##############################################################################
 
-doRawDiags = function( Pdata, fname=NULL ) {
+doRawDiags = function( Rawdata, fname=NULL ) {
 
   cat( "\nRunning diagnostics\n\n" )
 

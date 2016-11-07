@@ -1,3 +1,5 @@
+###########################################################################
+#
 #' Aggregate composition data by length, age, or age-at-length according to the
 #' given stratification.
 #'
@@ -18,9 +20,12 @@
 #'   which will typically be left at their default value of
 #'   \code{c('fleet', 'fishyr', 'season')}.
 #' @template verbose
-#' @return A \code{data.frame} with composition data specific to the type specified
+#' @return A dataframe with composition data specific to the type specified
 #'   in \code{Comps} for males, females, and unsexed records.
 #' @author Andi Stephens, Kelli Faye Johnson
+#' 
+############################################################################
+
 
 getComps = function( Pdata, strat = NULL, Comps = "AAL",
   defaults = c("fleet", "fishyr", "season"), verbose = TRUE) {

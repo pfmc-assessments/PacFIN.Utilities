@@ -1,3 +1,5 @@
+###########################################################################
+#
 #' Calculate the denominator for the level-1 expansion factor.
 #'
 #' The denominator of the level-1 expansion factor is the weight of the sampled
@@ -29,6 +31,8 @@
 #' }
 #' @author Andi Stephens
 #' @seealso \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
+#
+###########################################################################
 
 EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = TRUE, plot = FALSE) {

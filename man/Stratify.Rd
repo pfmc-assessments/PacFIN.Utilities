@@ -4,21 +4,24 @@
 \alias{Stratify}
 \title{Create a vector of stratifications}
 \usage{
-Stratify(inVector = NULL, splits = NULL, names = NULL, numeric = F)
+Stratify(inVector = NULL, splits = NULL, Nnames = NULL, numeric = F)
 }
 \arguments{
 \item{inVector}{Input vector of values.  May be numeric or character.}
 
-\item{splits}{Vector of values to use to stratify the input vector.}
+\item{splits}{List of values to use to stratify the input vector.  May be
+character literals or numeric ranges.}
 
-\item{names}{Vector the length of \code{splits} naming the strata.}
+\item{Nnames}{Vector the length of \code{splits} naming the strata.}
 
 \item{numeric}{A logical value, where if \code{TRUE} then
   \code{findInterval} will be used and stratum 0 will be assigned to values
   smaller than the first value in splits.}
 }
 \value{
-Todo.
+Returns a vector the length of the input vector, with either numeric
+levels indicating the stratification of the input, or with Nnames assigning
+levels of the input vector.
 }
 \description{
 \code{Stratify} takes an input vector and list of values used to designate
@@ -38,7 +41,7 @@ Pdata$use_depth = Stratify( Pdata$DEPTH_AVG, splits=c(0, 50, 100, 250, 500), num
 
 Pdata$my_fleets = Stratify(( Pdata$GEAR,
            splits=list("GFS", c("MDT","TB"), "TR", c("LGL","FTS")),
-           names=list(“G1”,”Troll”,”Trawl”,”G3”) )
+           Nnames=list(“G1”,”G2”,”G3”,”G4”) )
 }
 \author{
 Andi Stephens

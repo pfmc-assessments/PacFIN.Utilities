@@ -1,3 +1,5 @@
+############################################################################
+#
 #' Plot cleaned fishery age or length composition data.
 #'
 #' @param Pdata A matrix of age or length data returned from
@@ -9,7 +11,9 @@
 #'   column is boxplots of either length or age and depth by year.
 #' @author Andi Stephens, Kelli Faye Johnson
 #' @seealso \code{\link{cleanAges}}, \code{\link{cleanPacFIN}}
-#'
+#' 
+#############################################################################
+
 plotCleaned <- function (Pdata, length = TRUE) {
   SPID = sort(unique(Pdata$SPID))
 

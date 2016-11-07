@@ -28,7 +28,7 @@ can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
 }
 \value{
-A \code{data.frame} with composition data specific to the type specified
+A dataframe with composition data specific to the type specified
   in \code{Comps} for males, females, and unsexed records.
 }
 \description{
