@@ -39,6 +39,7 @@ specified, with added columns
   season \tab initialized to 1.  Change using \code{\link{getSeason}}\cr
   state \tab initialized from SOURCE_AGID.  Change using \code{\link{getState}}\cr
   lengthcm \tab floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH\cr
+  geargroup \tab the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
 }
 }
 \description{
