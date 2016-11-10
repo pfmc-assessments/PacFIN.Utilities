@@ -39,10 +39,14 @@ A dataframe with composition data specific to the type specified
 \details{
 The aggregation is of the \code{Pdata$Final_Sample_Size} column value,
   which should be set to the desired expansion, e.g.
-  \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1} or
+  \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1}
+
+  or
+
   \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
+
   The default stratification is by fleet, fishyr, and season.
-  The following columns \code{lengthcm}, \code{age} or both are appended
+  Columns \code{lengthcm}, \code{age} or both are added
   depending on the \code{Comps} argument.
 }
 \author{
