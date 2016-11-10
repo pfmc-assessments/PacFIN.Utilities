@@ -28,7 +28,10 @@ A \code{Pdata} with additional columns, where
   \code{Trip_Sampled_Lbs} is the sample weight in pounds;
 }
 \description{
-Calculate the numerator for the first level expansion factor.
+\subsection{\code{\link{Workflow}}}{
+\code{EF1_Numerator} is not run by the user.  It is a sub-function of
+\code{\link{getExpansion_1}}
+}
 }
 \details{
 \code{Trip_Sampled_Lbs} is calculated differently for each state:

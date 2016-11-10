@@ -27,17 +27,19 @@ output to the console.
 }
 \description{
 \code{cleanAges} removes the samples with bad ages or agemethods.
-Data should first be filtered with \code{cleanPacFIN}.
 }
 \details{
+\subsection{\code{\link{Workflow}}}{
+In most cases, you should run \code{\link{cleanPacFIN}}
+before \code{cleanAges}.  There may be cases where initial exploration of the
+age data can be better accomplished without it.
+}
+
 Age methods "1" and "2" are equivalent to "B" and "S" respectively,
 and are reset to those values.
 
 No ages less than one occur in the commercial dataset.  Zero ages are
 equivalent to NA.
-
-The \code{sink} command can be used to save the filtering report to a
-file, in addition to printing it to the console.
 }
 \author{
 Andi Stephens

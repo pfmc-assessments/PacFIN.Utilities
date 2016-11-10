@@ -2,9 +2,7 @@
 % Please edit documentation in R/getState.R
 \name{getState}
 \alias{getState}
-\title{Create a state field from \code{source} for the \code{data.frame}
-\code{Pdata}, where \code{Pdata} is a \code{data.frame} from
-PacFIN.}
+\title{Create a state field from \code{source} for the \code{data.frame}}
 \usage{
 getState(Pdata, source = "SOURCE_AGID", CLEAN = TRUE, keepPW = FALSE,
   verbose = TRUE)
@@ -29,8 +27,9 @@ can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
 }
 \description{
-Create a state field from \code{source} for the \code{data.frame}
 \code{Pdata}, where \code{Pdata} is a \code{data.frame} from
-PacFIN.
+PacFIN.#' \subsection{\code{\link{Workflow}}}{
+\code{getState} is run by \code{\link{cleanPacFIN}}.
+}
 }
 

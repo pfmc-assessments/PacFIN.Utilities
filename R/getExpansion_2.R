@@ -1,11 +1,66 @@
 #############################################################################
 #
-# getExpansion_2 is the second-stage expansion
-#
+#' Expand PacFIN samples to Catch.
+#' 
+#' The second-stage expansion calculates the per-year, per-trip, per-stratum total catch
+#' divided by the sampled catch, and appends it to the input data as
+#' \code{Expansion_Factor_2}.
+#' 
+#' \subsection{\code{\link{Workflow}}}{
+#' \code{getExpansion_2} depends upon variables created by \code{\link{getExpansion_1}}
+#' }
+#' 
+#' @author Andi Stephens
+#' 
+#' @seealso \code{\link{Stratify}}
+#' 
+#' @param Pdata A cleaned PacFIN dataframe with column "stratification" appended.
+#' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
+#' @param Convert Logical.  Should catch be converted to pounds from MT?  Default FALSE.
+#' @param maxExp  maximum expansion factor to return.  Either a quantile (< 1) or a number.
+#' Default is 0.95.  Set \code{maxExp=Inf} to see largest values.
+#' 
+#' @details
+#' The input PacFIN dataset must contain a column called \code{stratification},
+#' a character-valued user-designed stratification of the data whose values match the
+#' column-names in the Catch dataset.
+#' 
+#' For example, if you've set \code{stratification} so that:
+#' 
+#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$state == CA ] = "S_TWL"}
+#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$state != CA ] = "N_TWL"}
+#' 
+#' then the columns in Catch must be named "Year", "S_TWL" and "N_TWL"
+#' 
+#' or if you used:
+#'
+#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$season == 1 ] = "WINTER_TWL"} 
+#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$season == 2 ] = "SUMMER_TWL"}
+#' 
+#' then the columns in Catch must be named "Year", "WINTER_TWL", and "SUMMER_TWL".
+#' 
+#' You can use as many levels of stratification in your data and catch as you want,
+#' as long as you encode those levels in \code{stratification} and in the column names
+#' in your data.  \strong{Year} is automatically included as a level of stratification.
+#' 
+#' @section Expansion caveats:
+#' There is one manual step in the workflow.
+#' After running the expansion functions, data columns Expansion_Factor_1 and 
+#' Expansion_Factor_2 are available to use in manually setting the Final_Expansion_Factor. 
+#' \itemize{
+#' \item{Age data are expanded separately from lengths, after running \code{cleanAges}}.
+#' \item{WA fish are generally only expanded using Expansion_Factor_2.}
+#' \item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
+#' \item{For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.}
+#' }
+#' 
+#' @return 
+#' The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
+#' 
+#' 
 # Calculate the stratified sampled biomass, All_Trips_Sampled_Lbs by summing
-# Trip_Sampled_Lbs. Calculate the stratified catch by summing MT * 2204.
-#
-# The per-trip, per-stratum Expansion_Factor_2 is the catch / sampled catch.
+# Trip_Sampled_Lbs. Calculate the stratified catch by summing MT * 2204.  The
+# per-trip, per-stratum Expansion_Factor_2 is the catch / sampled catch.
 #
 #############################################################################
 
@@ -22,16 +77,13 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   } # End if
 
 
-  # Pdata must have a "usegear" column encoding gear.  Paste together with state:  CA.TWL, OR.NONTWL
-  # State and gear combination must match column names of Catch.
+  # Pdata must have a "stratification" column encoding gear.  
+  
+  if (length(Pdata$stratification) == 0) {
 
-  if (length(Pdata$usegear) == 0) {
-
-    stop("Input data must have gear type encoded in column 'usegear'\n\n")
+    stop("Input data must have stratification encoded in column 'stratification'\n\n")
 
   } # End if
-
-  Pdata$state.gear = paste(Pdata$state, Pdata$usegear, sep=".")
 
   ############################################################################
   # Check catch against Pdata.
@@ -41,7 +93,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
   Catchgears = sort(names(Catch)[2:length(names(Catch))])
 
-  Pgears = sort(unique(Pdata$state.gear))
+  Pgears = sort(unique(Pdata$stratification))
 
   if ( !identical(Pgears,Catchgears) ) {
 
@@ -58,9 +110,9 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
   tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
-  # Get the totals by year and state.gear
+  # Get the totals by year and stratification
 
-  strat = c("fishyr", "state.gear")
+  strat = c("fishyr", "stratification")
 
   SumSampled = aggregate(tows$Trip_Sampled_Lbs, tows[, strat], sum, na.rm=T)
 
@@ -90,13 +142,13 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
     for ( yr in Catch$Year ) {
 
-      tows$catch[tows$fishyr == yr & tows$state.gear == state.gear ] = Catch[Catch$Year == yr, sg]
+      tows$catch[tows$fishyr == yr & tows$stratification == stratification ] = Catch[Catch$Year == yr, sg]
 
       cat(".")
 
     } # End for Year
 
-    cat("Assigned catch for", state.gear, "\n")
+    cat("Assigned catch for", stratification, "\n")
 
   } # End for Catch
 
@@ -159,6 +211,6 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
   cat("\nRemember to set (or reset) Pdata$Final_Sample_Size\n\n")
 
-  return(Pdata)
+  invisible(Pdata)
 
 } # End function getExpansion_2

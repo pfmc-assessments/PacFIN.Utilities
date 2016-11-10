@@ -7,7 +7,9 @@
 paste.col(x)
 }
 \description{
-Used by \code{\link{find.matching.rows}}.
+\subsection{\code{\link{Workflow}}}{
+Used by \code{\link{find.matching.rows}}, not intended to be used otherwise.
+}
 }
 \details{
 Converts each row in the input dataframe to a string,

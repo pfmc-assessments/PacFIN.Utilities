@@ -26,20 +26,21 @@ levels of the input vector.
 \description{
 \code{Stratify} takes an input vector and list of values used to designate
 the values returned in the strats vector.
+}
+\details{
 \subsection{Workflow}{
 \code{Stratify} is intended to add levels for stratification before
 running \code{\link{getComps}}.
 }
-}
-\details{
+
 Any values not given in \code{splits} will be assigned to stratum 0.
 This function can be used to designate fleet or for stratification
 based on depth or INPFC area.
 }
 \examples{
-Pdata$use_depth = Stratify( Pdata$DEPTH_AVG, splits=c(0, 50, 100, 250, 500), numeric=T)
+Pdata$use_depth = Stratify( Pdata$DEPTH_AVG, splits=list(0, 50, 100, 250, 500), numeric=T)
 
-Pdata$my_fleets = Stratify(( Pdata$GEAR,
+Pdata$my_fleets = Stratify( Pdata$GEAR,
            splits=list("GFS", c("MDT","TB"), "TR", c("LGL","FTS")),
            Nnames=list(“G1”,”G2”,”G3”,”G4”) )
 }

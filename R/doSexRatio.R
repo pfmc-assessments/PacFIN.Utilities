@@ -4,12 +4,13 @@
 #' 
 #' @description
 #' doSexRatio determines gender for unsexed fish in Age or Length comps.
+#' 
 #' \subsection{Workflow}{
 #' Sex ratios are assigned after the data is stratified by \code{\link{getComps}}
 #' and before running \code{\link{writeComps}}.
 #' 
-#'   If writeComps is run without running \code{doSexRatio}, all unsexed
-#'   fish will be discarded.
+#'   \strong{If \code{\link{writeComps}} is run without running \code{doSexRatio}, all unsexed
+#'   fish will be discarded.}
 #' }
 #'
 #' @param CompData data that have already been aggregated by \code{getComps}.
@@ -36,7 +37,7 @@
 #' \item{\code{C1 = doSexRatio(Compdata, findRatio=T)}}
 #' }
 #' 
-#' If maxsizeU is set, then all fish below that size (or age) will be set to the value in
+#' If maxsizeU is set, then all fish below that size  will be set to the value in
 #' ratioU.  If GTsizeU is set, then all unsexed fish above that size will be female.
 #' 
 #' In this example, the ratio for fish less than 3 is 0.4, for fish greater than 12 is 1,
@@ -46,8 +47,9 @@
 #' \item{\code{C1 = doSexRatio(Compdata, Rvector=0.6, RatioU=0.4, maxsizeU=3, GTsizeU=12)}
 #' }}
 #' 
-#' Bins are the length or age bins (for AGE comps) corresponding to the vector
-#' of ratios (unused for a single ratio).  If Age-at-Length comps, the bins are Lengths.
+#' If bins are used, they are assumed to be the length or age bins (for AGE comps) corresponding
+#' to the vector of ratios (unused for a single ratio).  If Age-at-Length comps, the bins are
+#' Lengths.
 #'
 #' In this example, lengths (ages) below the lowest Bin will fall into the
 #' lowest bin; i.e., lengths from 0-15 will have ratio .5, and fish above 36 will have ratio 

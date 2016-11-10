@@ -40,6 +40,12 @@ Additional columns are added to \code{Pdata}:
 }
 }
 \description{
+\subsection{\code{\link{Workflow}}}{
+\code{EF1_Denominator} is not run by the user.  It is a sub-function of
+\code{\link{getExpansion_1}}
+}
+}
+\details{
 The denominator of the level-1 expansion factor is the weight of the sampled
 fish in a tow. The calcuation is done one in three ways, all of which
 are returned, though the column used in subsequent analyses is based on

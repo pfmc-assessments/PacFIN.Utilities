@@ -15,6 +15,10 @@ A modified \code{data.frame} where an additional column labeled
   in the process.
 }
 \description{
+\subsection{\code{\link{Workflow}}}{
+\code{getGearGroup} is run by \code{\link{cleanPacFIN}} and users shouldn't need
+to worry about it.
+}
 Data from the PacFIN
 [gear table](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
 is used to create a column in \code{Pdata} called \code{geargroup}, where

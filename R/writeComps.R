@@ -10,7 +10,7 @@
 #' then sexes should be assigned as males and females by \code{\link{doSexRatio}}
 #' before using \code{writeComps}.
 #' 
-#' Failure to use \code{doSexRatio} will result in all unsexed fish being discarded.
+#' \strong{Failure to use \code{\link{doSexRatio}} will result in all unsexed fish being discarded.}
 #' }
 #' 
 #' 

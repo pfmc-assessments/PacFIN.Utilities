@@ -2,7 +2,9 @@
 #
 #' Utility function.
 #' 
-#' Used by \code{\link{find.matching.rows}}.
+#' \subsection{\code{\link{Workflow}}}{
+#' Used by \code{\link{find.matching.rows}}, not intended to be used otherwise.
+#' }
 #'
 #' Converts each row in the input dataframe to a string, 
 #' "pasting" the columns together.

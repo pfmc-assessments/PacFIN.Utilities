@@ -19,12 +19,15 @@ A plot of either 3 x 2 or 2 x 2 depending on whether or not unique
   column is boxplots of either length or age and depth by year.
 }
 \description{
-Plot cleaned fishery age or length composition data.
+\subsection{\code{\link{Workflow}}}{
+Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
+}
 }
 \author{
 Andi Stephens, Kelli Faye Johnson
 }
 \seealso{
-\code{\link{cleanAges}}, \code{\link{cleanPacFIN}}
+\code{\link{cleanAges}}, \code{\link{cleanPacFIN}}, \code{\link{Stratify}},
+\code{\link{getGearGroup}}.
 }
 

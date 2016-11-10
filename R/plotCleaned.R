@@ -1,6 +1,10 @@
 ############################################################################
 #
 #' Plot cleaned fishery age or length composition data.
+#' 
+#' \subsection{\code{\link{Workflow}}}{
+#' Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
+#' }
 #'
 #' @param Pdata A matrix of age or length data returned from
 #'   \code{\link{cleanAges}} or \code{\link{cleanPacFIN}}.
@@ -10,7 +14,9 @@
 #'   gear groups exist. Left column are plots of sample size by type and right
 #'   column is boxplots of either length or age and depth by year.
 #' @author Andi Stephens, Kelli Faye Johnson
-#' @seealso \code{\link{cleanAges}}, \code{\link{cleanPacFIN}}
+#' 
+#' @seealso \code{\link{cleanAges}}, \code{\link{cleanPacFIN}}, \code{\link{Stratify}},
+#' \code{\link{getGearGroup}}.
 #' 
 #############################################################################
 

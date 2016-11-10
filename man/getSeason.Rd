@@ -41,6 +41,13 @@ An additional column \code{season} is added to \code{Pdata}.
   No columns are modified.
 }
 \description{
+\subsection{\code{\link{Workflow}}}{
+Most assessments won't require \code{getSeason}. It is run by \code{\link{cleanPacFIN}}
+and users shouldn't need to worry about it.  If a specialized season structure is required,
+\code{getSeason} should be run immediately after \code{\link{cleanPacFIN}}
+}
+}
+\details{
 Several seasonal schemes are available, including the Petrale seasons
 (1 = winter months, 2 else).
 Contact the function author for more schemes if needed.

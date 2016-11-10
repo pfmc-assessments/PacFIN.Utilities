@@ -8,10 +8,9 @@
 #' with the exception of SEX, which is modified so that unidentified fish are labeled
 #' “U”.
 #' 
-#' \subsection{Workflow}{
-#' Unless there are CALCOM samples to be integrated with PacFIN data via
-#' \code{\link{getCALCOM}}, \code{cleanPacFIN} is the first function to run
-#' in the PacFIN workflow.
+#' \subsection{\code{\link{Workflow}}}{
+#' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
+#' first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
 #' }
 #' 
 #'
@@ -46,6 +45,9 @@
 #' 
 #' The US INPFC areas are 
 #'    c("VUS","CL","VN","COL","NC","SC","EU","CALCOM","CP","EK","MT","PS ")
+#'    
+#' "CalCOM" is included because the combineCalCOM function
+#' sets it, since CalCOM doesn't seem to record INPFC areas.
 #' 
 #' If \code{only_USINPFC} is TRUE, then only samples from the US INPFC areas will be retained.
 #' 
@@ -105,13 +107,11 @@ cleanPacFIN = function( Pdata,
     Original_data = Pdata
   }
 
-  # Define legal areas
+  # Define legal areas.  "CalCOM" is included because the combineCalCOM function
+  # sets it -- CalCOM doesn't seem to record INPFC areas.
 
-  # This is a legacy comment from Owen's POP code.  Need to investigate.
-  # NOTE only a few with "" from 2005 and 2010. NEARLY 100,000 are from CHR
-  # and VCN (through 1978) - a large proportion of early data.
 
-  USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CALCOM","CP","EK","MT","PS ")
+  USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
 
   # Fix Lengths.  Use FISH_LENGTH if there is no FORK_LENGTH.
 

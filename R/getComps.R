@@ -2,6 +2,11 @@
 #
 #' Aggregate composition data by length, age, or age-at-length according to the
 #' given stratification.
+#' 
+#' \subsection{\code{\link{Workflow}}}{
+#' \code{getComps} is run subsequently to \code{\link{getExpansion_2}}.
+#' }
+#' 
 #'
 #' @details The aggregation is of the \code{Pdata$Final_Sample_Size} column value,
 #'   which should be set to the desired expansion, e.g.

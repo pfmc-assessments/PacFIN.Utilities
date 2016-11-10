@@ -1,5 +1,10 @@
 #' Calculate the numerator for the first level expansion factor.
 #'
+#' \subsection{\code{\link{Workflow}}}{
+#' \code{EF1_Numerator} is not run by the user.  It is a sub-function of 
+#' \code{\link{getExpansion_1}}
+#' }
+#' 
 #' @details \code{Trip_Sampled_Lbs} is calculated differently for each state:
 #' \itemize{
 #' \item {California}{ = \code{Pdata$Species_Percent_Sampled} *

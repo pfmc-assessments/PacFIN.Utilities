@@ -2,17 +2,24 @@
 #############################################################################
 #
 #' Function find.matching.rows
-#
-#
+#' 
+#' @description
+#'   Takes two tables with a shared primary key, and
+#'   returns the rows of the second table for which the
+#'   keys match those of the first.
+#'
+#' \subsection{\code{\link{Workflow}}}{
+#' \code{find.matching.rows} is not run by the user.  It is a sub-function of 
+#' \code{\link{getExpansion_1}}
+#' }
+#' 
+#' 
 #' @author John R. Wallace (John.Wallace@@noaa.gov), (revised) Andi Stephens, 2010.
-#
-#   Takes two tables with a shared primary key, and
-#   returns the rows of the second table for which the
-#   keys match those of the first.
-#
-#   NOTE:  The way this is used assumes that the second table is a
-#          superset of the first (i.e., that each value is matched).
-#
+#' 
+#' @details
+#'  NOTE:  The way this is written assumes that the second table is a
+#'         superset of the first (i.e., that each value is matched).
+#'
 #   Changes:
 #
 #        Changed name from original "match.f" to "find.matching.rows".
@@ -22,11 +29,10 @@
 #        The matching function no longer modifies it's inputs, just
 #        returns the values to be 'cbound' in the calling function.
 #
-#' @details
-#' Using the primary keys in columns named 'findex' and 'tindex', finds the
-#' matching values for 'file' in 'table' and returns 'table' column(s) 'tcol'.
+#  Using the primary keys in columns named 'findex' and 'tindex', finds the
+#  matching values for 'file' in 'table' and returns 'table' column(s) 'tcol'.
 #
-#' Note that no test is made to determine if there are unmatched rows.
+#  Note that no test is made to determine if there are unmatched rows.
 #
 #############################################################################
 
