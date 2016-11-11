@@ -1,0 +1,93 @@
+---
+title: "PacFIN Utilities"
+author: "Andi Stephens"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{PacFIN Utilities}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+
+The PacFIN.Utilites package provides functions for filtering, summarizing, expanding, and compiling composition data, and writing out the final products: length- age- and age-at-length compositions.
+
+### Workflow
+
+There are 15 functions in this package, and they are sensitive to the order in which they are run.  
+
+You can see a diagram of the workflow you can expect to follow in the help file:  
+
+```
+                   help(Workflow)
+```  
+  
+as well as further information about interdependencies.  
+
+### Saving
+
+Many of the functions described below write summary output to the console, and several create plots for visualizing data at various steps in processing. The information written to the console can be captured using the sink function to encapsulate your workflow:
+  
+```
+                   sink("myfilename.txt", split=TRUE)
+
+                   ... run some functions ...
+
+                   sink()
+```
+  
+### Functions
+
+| Role                    |  Function         |     Description
+| :-----------------------| :-----------------| :----------------
+| Visualization           |                   |       
+|                         | plotRawData       | Plots raw PacFIN data  
+|                         | plotCleaned       | Plots the product of cleanPacFIN similarly   
+| Filtering               |                   |       
+|                         | cleanPacFIN       | Filters raw PacFIN data  
+|                         | cleanAges         | Filters for age data
+| Customizing             |                   |       
+|                         | combineCalCom     | Combines PacFIN and CalCOM data
+|                         | setSeason         | Treating data from seasonal fisheries (e.g., petrale)
+|                         | Stratify          | Encoding the values in a column to a subset
+| Expansion               |                   |       
+|                         | getExpansion_1    | The sample-to-tow expansion
+|                         | getExpansion_2    | The tow-to-stratum expansion
+| Composition             |                   |                 
+|                         | getComps          | Create stratified compositions
+|                         | applySexRatio     | Distribute unsexed fish as males and females
+|                         | writeComps        | Write out the stratified, sexed compositions
+| Optional                |                   |       
+|                         | getState          | 'state' is initialized by cleanPacFIN
+|                         | getGearGroup      | 'geargroup' is initialized by cleanPacFIN
+|                         | capValues         | caps the maximum value in a vector
+|_______________________|________________________|________________________________________________
+
+### Notes on expansions
+
+There is one manual step in the workflow.  
+
+After running the expansion functions, data columns Expansion_Factor_1 and Expansion_Factor_2 are available to use in **manually** setting the Final_Expansion_Factor.  
+  
+  
+* WA fish are expanded using only Expansion_Factor_2.  
+  
+* Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2  
+
+* Age data are expanded separately from lengths, after running cleanAges.  
+  
+* For age-at-length comps, set Final_Expansion_Factor to 1. Each fish represents only itself.    
+  
+  
+Finally, the getExpansion_1 function has a "plot" argument to create plots documenting the expansions it creates. It also writes summary output to the console.
+
+#### Please report bugs or send suggestions to: Andi.Stephens@noaa.gov.  Thanks!    
+
+-----------
+-----------
+  
+  
+
+
+
