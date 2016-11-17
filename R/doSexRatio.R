@@ -40,11 +40,11 @@
 #' If maxsizeU is set, then all fish below that size  will be set to the value in
 #' ratioU.  If GTsizeU is set, then all unsexed fish above that size will be female.
 #' 
-#' In this example, the ratio for fish less than 3 is 0.4, for fish greater than 12 is 1,
+#' In this example, the ratio for fish less than 3 is 0.5, for fish greater than 12 is 1,
 #' and for the fish in between is 0.6.
 #' 
 #' \itemize{
-#' \item{\code{C1 = doSexRatio(Compdata, Rvector=0.6, RatioU=0.4, maxsizeU=3, GTsizeU=12)}
+#' \item{\code{C1 = doSexRatio(Compdata, Rvector=0.6, ratioU=0.5, maxsizeU=3, GTsizeU=12)}
 #' }}
 #' 
 #' If bins are used, they are assumed to be the length or age bins (for AGE comps) corresponding
@@ -63,8 +63,8 @@
 #' 
 #' Returns Comp data with unsexed fish now assigned sexes (the values for males and
 #' females in the comps have increased), however the original columns
-#' for unsexed fish remain unchanged.  The function that writes out the comps sets
-#' these to zero.
+#' for unsexed fish remain unchanged.  The function that writes out the comps 
+#' \code{\link{writeComps}} sets these to zero.
 #' 
 #' @author
 #' 
@@ -100,25 +100,16 @@ doSexRatio = function( CompData, findRatio=FALSE, Rvector=0.5, Bins=NULL,
   tmp[is.na(tmp)] = 0
   CompData[,CompList] = tmp
   
-  if ( GTsizeU != 0 ) {
+  if ( GTsizeU != 0 & maxsizeU != 0 ) {
     
     if ( length(Rvector) > 1 ) { stop("Rvector expected to be a single ratio if you use GTsizeU") }
     
-  }
-
-
-  if ( maxsizeU != 0 ) {
-
-    if ( length(Rvector) > 1 ) { stop("Rvector expected to be a single ratio if you use maxsizeU") }
-    
-  }
-
     # Create vectors from the appropriate values.
-
+    
     Rvector = c(ratioU, Rvector, 1)
     Bins = c(0, maxsizeU, GTsizeU)
-
- 
+    
+  }
 
   if ( findRatio ) {
 

@@ -1,3 +1,5 @@
+#########################################################################################
+#
 #' PacFIN.Utilities: Functions for working up PacFIN biological (BDS) data.
 #'
 #' The PacFIN.Utilites package provides functions for filtering, summarizing, expanding, and compiling 
@@ -10,7 +12,7 @@
 #' 
 #' \code{sink("myfilename.txt", split=TRUE)}
 #' 
-#' ... do your work ...
+#' ... do work ...
 #' 
 #' \code{sink()}
 #' 
@@ -41,7 +43,7 @@
 #' @section Optional functions:
 #' \tabular{lcl}{
 #' \code{\link{combineCalCOM}}\tab\tab For combinining PacFIN and CalCOM data\cr
-#' \code{\link{setSeason}}\tab\tab For treating data from seasonal fisheries, such as Petrale.\cr
+#' \code{\link{getSeason}}\tab\tab For treating data from seasonal fisheries, such as Petrale.\cr
 #' \code{\link{Stratify}}\tab\tab Reduces the values in a data column to an encoded or named subset.\cr
 #' }
 #' 
@@ -67,7 +69,7 @@
 #' \tabular{lcl}{
 #' \code{\link{getComps}}\tab\tab uses the Final_Sample_Size and the user-specified 
 #' stratification to create comps.\cr
-#' \code{\link{applySexRatio}}\tab\tab separates the unsexed fish into males and females\cr
+#' \code{\link{doSexRatio}}\tab\tab separates the unsexed fish into males and females\cr
 #' \code{\link{writeComps}}\tab\tab formats the composition data for SS3 and writes it to a file.\cr
 #' }
 #' 

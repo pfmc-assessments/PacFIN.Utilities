@@ -24,6 +24,8 @@
 #' @template Pdata
 #' @template Indiv_Wgts
 #' @template weightlengthparams
+#' @param verbose Report extra information.  Default:  TRUE
+#' @param plot Create plots.  Default:  FALSE
 #' @return Additional columns are added to \code{Pdata}:
 #' \itemize{
 #' \item Wt_Sampled_1

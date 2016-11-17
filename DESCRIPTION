@@ -4,10 +4,11 @@ Version: 0.0.0.9000
 Authors@R: person("Andi", "Stephens", , "andi.stephens@noaa.gov", role = c("aut", "cre"),
            person("Kelli Faye", "Johnson", , "kellifayejohnson@gmail.com", role = c("aut", "cre")))
 Description: Manipulates data from the PacFIN database for stock synthesis.
-Depends: R (>= 3.1.1)
+Depends:
+    R (>= 3.1.1)
 License: none
 LazyData: true
-Suggests: R.rsp,
+Suggests:
     knitr
-VignetteBuilder: R.rsp,
-    knitr
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1

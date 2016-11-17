@@ -2,6 +2,4 @@
 .RData
 inst/extdata/*
 Petrale_Transcript.txt
-
 .Rproj.user
-inst/doc
