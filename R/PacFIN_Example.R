@@ -28,7 +28,7 @@
 #' 
 #'  \code{Pdata$mygear = Pdata$geargroup}
 #' 
-#'  \code{Pdata$mygear[ ! Pdata$mygear \%in\% c("TWL","HKL")}] = "OTHER"}
+#'  \code{Pdata$mygear[ ! Pdata$mygear \%in\% c("TWL","HKL")] = "OTHER"}
 #' 
 #'  \code{Pdata$stratification = paste(Pdata$state,Pdata$mygear, sep=".")}
 #' 
@@ -70,7 +70,7 @@
 #' 
 #' @section Age-at-Length:
 #' 
-#'  \code{Adata$Final_Sample_Size = 1
+#'  \code{Adata$Final_Sample_Size = 1}
 #' 
 #'  \code{ALcomps = getComps(Adata, Comps="AAL")}
 #' 
@@ -83,6 +83,6 @@
 #'  \code{sink()}
 #' 
 #' @name PacFIN_Example
-#' @docType package
+#'
 #'
 NULL
