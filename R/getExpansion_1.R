@@ -66,8 +66,12 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
   Pdata$Expansion_Factor_1 = Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled
 
   Pdata$Expansion_Factor_1[Pdata$Expansion_Factor_1 < 1] = 1
-
-
+  
+  # WA data can't be expanded.
+  
+  Pdata$Expansion_Factor_1[Pdata$state == "WA"] = 1
+  cat("\n\nWA expansions set to 1. Fish tickets do not represent whole trips in WA.\n\n")
+  
 
   NA_EF1 = Pdata[is.na(Pdata$Expansion_Factor_1),]
   nNA = nrow(NA_EF1)
@@ -88,30 +92,40 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
 
   # KFJ(2015-06-16): Generate plots and save them to the disk if specified.
   if (plot != FALSE){
+    
     if (is.character(plot)) png(plot) else dev.new()
     if (nNA > 0) {
+      
       # Plot NA values by year and state.  Early years data or CALCOM data?
       par(mfrow = c(2, 1), mar = c(0, 3, 0, 0), oma = c(4, 1, 3, 0),
         mgp = c(2.0, 0.5, 0))
+      
       allyears <- seq(min(Pdata$fishyr), max(Pdata$fishyr), by = 1)
       vals <- matrix(0, nrow = length(unique(NA_EF1$state)), ncol = length(allyears))
       rownames(vals) <- unique(NA_EF1$state)
       colnames(vals) <- allyears
       bad <- as.matrix(table(NA_EF1$state, NA_EF1$fishyr))
       vals[, colnames(vals) %in% colnames(bad)] <- bad
+      
       barplot(vals,
         col = rainbow(length(unique(NA_EF1$state))),
         legend.text = TRUE, xlab = "", xaxt = "n",
         ylab = "Replace NA in Exp_1 with 1",
         args.legend = list(bty = "n"))
+      
     } else {
+      
       par(mgp = c(2, 0.5, 0), mar = c(1.5, 3, 1, 0), mfrow = c(1, 1))
+      
     } # End if
 
-    boxplot(Pdata$Expansion_Factor_1 ~ Pdata$fishyr, ylab ="Expansion_Factor_1",
-      xlab = "", frame.plot = FALSE)
+    boxplot(Pdata$Expansion_Factor_1 ~ Pdata$fishyr,
+            ylab ="Expansion_Factor_1",
+            xlab = "", frame.plot = FALSE)
+    
     mtext(side = 1, outer = TRUE, "Year", line = 2)
-    if (is.character(plot)) dev.off()
+    
+    if (is.character(plot))  { dev.off() }
   }
   return(Pdata)
 

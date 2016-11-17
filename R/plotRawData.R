@@ -18,7 +18,7 @@
 #' 
 ##############################################################################
 
-plotRawData = function( Rawdata, fname=NULL ) {
+plotRawData = function( rawData, fname=NULL ) {
 
   cat( "\nRunning diagnostics\n\n" )
 
@@ -26,7 +26,7 @@ plotRawData = function( Rawdata, fname=NULL ) {
 
     # Set up filenames for txt, pdf
 
-    species = sort(unique(Pdata$SPID))
+    species = sort(unique(rawData$SPID))
     pdffile = paste( "Diags.", species, ".pdf", sep="")
     txtfile = paste( "Diags.", species, ".txt", sep="")
 
@@ -45,7 +45,7 @@ plotRawData = function( Rawdata, fname=NULL ) {
 
   # Develop statistics of interest
 
-  len = Pdata[!is.na(Pdata$FISH_LENGTH),]
+  len = rawData[!is.na(rawData$FISH_LENGTH),]
   len$len = floor(len$FISH_LENGTH/10)
   len$depth_mid = (len$DEPTH_MIN+len$DEPTH_MAX)/2
   ltows = len[!duplicated(len$SAMPLE_NO),]
@@ -53,7 +53,7 @@ plotRawData = function( Rawdata, fname=NULL ) {
   meanLen.yr = tapply(len$len,list(len$SAMPLE_YEAR),mean)
   meanLen = tapply(len$len,list(len$SAMPLE_NO,len$SAMPLE_YEAR),mean)
 
-  age = Pdata[!is.na(Pdata$FISH_AGE_YEARS_FINAL),]
+  age = rawData[!is.na(rawData$FISH_AGE_YEARS_FINAL),]
   age$age = age$FISH_AGE_YEARS_FINAL
   atows = age[!duplicated(age$SAMPLE_NO),]
   meanAge = tapply(age$age,list(age$SAMPLE_NO,age$SAMPLE_YEAR),mean)
@@ -65,19 +65,19 @@ plotRawData = function( Rawdata, fname=NULL ) {
   #cat("\n\n")
 
   cat("Records per SAMPLE_YEAR\n\n")
-  print(table(Pdata$SAMPLE_YEAR,useNA="ifany"))
+  print(table(rawData$SAMPLE_YEAR,useNA="ifany"))
   cat("\n\n")
 
   cat("SOURCE_AGID vs. SAMPLE_AGENCY\n")
-  print(table(Pdata$SOURCE_AGID,Pdata$SAMPLE_AGENCY,useNA="ifany"))
+  print(table(rawData$SOURCE_AGID,rawData$SAMPLE_AGENCY,useNA="ifany"))
   cat("\n\n")
 
   cat("FISH_LENGTH_TYPE\n")
-  print(table(Pdata$FISH_LENGTH_TYPE,useNA="ifany"))
+  print(table(rawData$FISH_LENGTH_TYPE,useNA="ifany"))
   cat("\n\n")
 
   cat("FISH_LENGTH\n")
-  print(table(Pdata$FISH_LENGTH,useNA="ifany"))
+  print(table(rawData$FISH_LENGTH,useNA="ifany"))
   cat("\n\n")
 
   cat("GEAR vs GRID\n")

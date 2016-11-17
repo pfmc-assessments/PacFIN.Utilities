@@ -1,5 +1,5 @@
 ##########################################################################
-#
+#'
 #' Decrease all values greater than a maximum specified value.
 #'
 #' \code{capValues} takes a numeric vector and returns a vector in which all
@@ -7,9 +7,6 @@
 #' value. 
 #' 
 #' 
-# \if{html}{\figure{workflow.png}{\options: alt=\"Figure: workspace_id.png\"}}
-#'
-#\if{latex}{\figure{workflow.png}{\options: alt=\"Figure: workspace_id.png\"}}
 #'
 #' @details The maximum may be specified either as a
 #' quantile or as a number. 

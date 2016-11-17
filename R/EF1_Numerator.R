@@ -120,21 +120,29 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
 
   # Washinton
 
-  # Is RWT_LBS available?
+  # Is RWT_LBS available?  
+  #
+  # It doesn't matter.  WA fish can't be expanded
+  # because of fish from the same trip offloaded on different
+  # fish-tickets
 
-  if (length(tows$RWT_LBS) != 0) {
-
-    tows$Trip_Sampled_Lbs[tows$state=="WA"] = tows$RWT_LBS[tows$state=="WA"]
-
-  } else {
-    if (verbose) {
-      cat("\nWarning:  data does not contain column RWT_LBS required for WA data\n\n")
-    }
-
-    Pdata$RWT_LBS = NA
-    tows$RWT_LBS = NA
-
-  } # End if
+ # if (length(tows$RWT_LBS) != 0) {
+ #
+ #  tows$Trip_Sampled_Lbs[tows$state=="WA"] = tows$RWT_LBS[tows$state=="WA"]
+ #
+ #} else {
+ #    if (verbose) {
+ #     cat("\nWarning:  data does not contain column RWT_LBS required for WA data\n\n")
+ #  }
+ #
+    
+  Pdata$RWT_LBS = NA
+  tows$RWT_LBS = NA
+  
+ #
+ #} # End if
+  
+  # This code is harmless, and WA could someday be expanded?
 
   indices = which(tows$state=="WA" & is.na(tows$Trip_Sampled_Lbs))
   tows$Trip_Sampled_Lbs[indices] = tows$TOTAL_WGT[indices]

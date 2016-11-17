@@ -22,6 +22,7 @@
 #' @param keep_sample_type a set of sample types to retain.  Default = c("", "M")
 #' @param keep_sample_method a set of sample methods to retain.  Default = "R"
 #' @param keep_missing_lengths a logical value. FALSE by default.
+#' @param keep_CA default TRUE.  CA data often have no sample type or method, or INPFC area.
 #' @param CLEAN a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
 #' but report what would have been removed.
 #' 
@@ -48,6 +49,7 @@
 #'    
 #' "CalCOM" is included because the combineCalCOM function
 #' sets it, since CalCOM doesn't seem to record INPFC areas.
+#' 
 #' 
 #' If \code{only_USINPFC} is TRUE, then only samples from the US INPFC areas will be retained.
 #' 
@@ -96,6 +98,7 @@ cleanPacFIN = function( Pdata,
                         keep_sample_type = c("", "M"),
                         keep_sample_method = "R",
                         keep_missing_lengths = FALSE,
+                        keep_CA = TRUE,
                         CLEAN=TRUE) {
 
   cat( "\nCleaning data\n\n" )
@@ -106,6 +109,52 @@ cleanPacFIN = function( Pdata,
 
     Original_data = Pdata
   }
+  
+  
+  # Define fishyr, fleet, fishery and season  -- some assessments manipulate these.
+  
+  cat("These values have been initialized for use when comps are generated.\n")
+  cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
+  
+  # KFJ: only create columns if they do not exist or if they are not numeric
+  
+  for ( i in c("fleet","fishery","season") ) {
+    
+    if (!i %in% colnames(Pdata)) {
+      
+      tmpcol = ncol(Pdata) + 1
+      tmp = rep(1, nrow(Pdata))
+      
+      Pdata = cbind(Pdata, tmp)
+      names(Pdata)[tmpcol] = i
+      
+      cat("Pdata$",i," = 1\n")
+      
+    } # End if
+    
+  } # End for
+  
+  Pdata = getState(Pdata)
+  cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n")
+  
+  Pdata$fishyr = Pdata$SAMPLE_YEAR
+  cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
+  
+  Pdata = getGearGroup(Pdata)
+  cat("Pdata$geargroup is initialized to Pdata$SAMPLE_YEAR\n")
+  
+  if (keep_CA) {
+    
+    CAdata = Pdata[Pdata$state == "CA",]
+    Pdata = Pdata[!Pdata$state == "CA",]
+    
+    CAdata$SAMPLE_TYPE[is.na(CAdata$SAMPLE_TYPE)] = "M"
+    CAdata$SAMPLE_METHOD[is.na(CAdata$SAMPLE_TYPE)] = "R"
+    CAdata$INPFC_AREA[is.na(CAdata$INPFC_AREA)] = "CalCOM"
+  
+    Pdata = rbind(Pdata, CAdata)
+    
+  } # End keep_CA
 
   # Define legal areas.  "CalCOM" is included because the combineCalCOM function
   # sets it -- CalCOM doesn't seem to record INPFC areas.
@@ -186,39 +235,6 @@ cleanPacFIN = function( Pdata,
   cat("Records with no usable length     ", Rec_summary[6] - Rec_summary[7], "\n")
   cat("Records remaining:                ", nrow(Pdata), "\n\n")
 
-
-  # Define fishyr, fleet, fishery and season  -- some assessments manipulate these.
-
-  cat("These values have been initialized for use when comps are generated.\n")
-  cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
-
-  # KFJ: only create columns if they do not exist or if they are not numeric
-
-  for ( i in c("fleet","fishery","season") ) {
-
-    if (!i %in% colnames(Pdata)) {
-
-      tmpcol = ncol(Pdata) + 1
-      tmp = rep(1, nrow(Pdata))
-
-      Pdata = cbind(Pdata, tmp)
-      names(Pdata)[tmpcol] = i
-
-      cat("Pdata$",i," = 1\n")
-
-    } # End if
-
-  } # End for
-  
-  Pdata = getState(Pdata)
-  cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n")
-
-  Pdata$fishyr = Pdata$SAMPLE_YEAR
-  cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
-
-  Pdata = getGearGroup(Pdata)
-  cat("Pdata$geargroup is initialized to Pdata$SAMPLE_YEAR\n")
-  
   if (CLEAN) {
 
     return(Pdata)

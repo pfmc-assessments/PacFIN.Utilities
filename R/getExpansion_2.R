@@ -93,14 +93,14 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
   Catchgears = sort(names(Catch)[2:length(names(Catch))])
 
-  Pgears = sort(unique(Pdata$stratification))
+  Pstrat = sort(unique(Pdata$stratification))
 
-  if ( !identical(Pgears,Catchgears) ) {
+  if ( !identical(Pstrat,Catchgears) ) {
 
     cat("Error:  mismatch between dataset and catch.\n\n")
 
     cat("Catch: ", Catchgears, "\n\n")
-    cat("Data:  ", Pgears, "\n\n")
+    cat("Data:  ", Pstrat, "\n\n")
 
     stop()
 
@@ -114,11 +114,14 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
   strat = c("fishyr", "stratification")
 
-  SumSampled = aggregate(tows$Trip_Sampled_Lbs, tows[, strat], sum, na.rm=T)
+  SumSampled = aggregate(tows$Trip_Sampled_Lbs, 
+                         tows[,strat], sum, na.rm=T)
 
   names(SumSampled)[3] = "Sum_Sampled_Lbs"
 
-  tows$Sum_Sampled_Lbs = find.matching.rows(tows, SumSampled, strat, strat,  "Sum_Sampled_Lbs")[[1]]
+  tows$Sum_Sampled_Lbs = find.matching.rows(tows, SumSampled, 
+                                            strat, strat,  
+                                            "Sum_Sampled_Lbs")[[1]]
 
   # Convert Catch to lbs.
 
@@ -129,10 +132,8 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
   } # End if
 
-  # Matching is on Year == fishyr, Colname == state.gear.
+  # Matching is on Year == fishyr.
   # Pdata$catch col gets the matched Catch.
-
-  # Loop over state.gear then year, attaching the appropriate Catch
 
   tows$catch=NULL
 
@@ -142,13 +143,14 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
     for ( yr in Catch$Year ) {
 
-      tows$catch[tows$fishyr == yr & tows$stratification == stratification ] = Catch[Catch$Year == yr, sg]
+      tows$catch[tows$fishyr == yr & tows$stratification == state.gear ] = 
+        Catch[Catch$Year == yr, sg]
 
       cat(".")
 
     } # End for Year
 
-    cat("Assigned catch for", stratification, "\n")
+    cat("Assigned catch for ", state.gear, "\n")
 
   } # End for Catch
 
@@ -160,9 +162,9 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   # KFJ - only print if an issue
   # Andi -- thanks!
 
-  if (nrow(NoCatch) > 0) {
+  if (length(nrow(NoCatch)) > 0) {
 
-    cat("No Catch was found for these combinations:\n\n")
+    cat("\nNo Catch was found for these combinations:\n\n")
     print(NoCatch)
     cat("\n\n")
 
@@ -182,7 +184,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   Pdata$catch = find.matching.rows(Pdata, tows, strat, strat,  "catch")[[1]]
   Pdata$Expansion_Factor_2 = find.matching.rows(Pdata, tows, strat, strat,  "EF2")[[1]]
 
-  cat("Summary of Expansion_Factor_2\n\n")
+  cat("\nPSummary of Expansion_Factor_2\n\n")
   print(summary(Pdata$Expansion_Factor_2))
 
   NA_EF2 = Pdata[is.na(Pdata$Expansion_Factor_2),]
