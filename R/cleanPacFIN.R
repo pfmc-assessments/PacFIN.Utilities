@@ -141,7 +141,6 @@ cleanPacFIN = function( Pdata,
   cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
   
   Pdata = getGearGroup(Pdata)
-  cat("Pdata$geargroup is initialized to Pdata$SAMPLE_YEAR\n")
   
   if (keep_CA) {
     

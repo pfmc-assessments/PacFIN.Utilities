@@ -150,15 +150,19 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     LbinHi = c(lbins[-1] - 1, Inf)
 
     inComps$lbin = findInterval(inComps$lengthcm, lbins, all.inside=T)
+    
+    
+    # if (verbose) {
+    #  cat(paste("Bins:\n\n", LbinLo, "\n",
+    #           LbinHi, "\n\n",
+    #           "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
+    # }
+    
+    
 
-    if (verbose) {
-      cat(paste("Bins:\n\n", LbinLo, "\n",
-        LbinHi, "\n\n",
-        "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
-    }
   } # End if
 
-  # Fix age bins
+    # Fix age bins
 
   if ( !is.null(inComps$age) ) {
 
@@ -175,23 +179,31 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     } # End if
 
     # Re-code actual ages to be abins
+    
     if (dummybins) {
+      
       if (min(abins) > 0) {
+        
         abins = c(0, abins)
       }
+      
       abins <- c(abins, max(abins) + diff(tail(abins, 2)), Inf)
+      
     } else {
+      
       abins <- c(abins, Inf)
-    }
+      
+    } # End if-else
 
     # add extra, dummy bin because all.inside=T
 
     inComps$abin = findInterval(inComps$age, abins, all.inside=T)
 
-    if (verbose) {
-      cat(paste("Abins:\n\n", abins, "\n\n",
-        "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
-    }
+    # if (verbose) {
+    #  cat(paste("Abins:\n\n", abins, "\n\n",
+    #    "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
+    # }
+    
   } # End if
 
   AAL = FALSE

@@ -44,10 +44,12 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
   # Check for expansion factor
 
   if (length(Pdata$Final_Sample_Size) == 0) {
+    
     stop(paste("\ngetComps relies on the column labeled 'Final_Sample_Size'\n",
       "please make sure this column (the expansion factor) has a value.\n\n",
       "Example: Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1",
       "* Pdata$Expansion_Factor_2\n"))
+    
   } # End if
 
   # Set up stratification

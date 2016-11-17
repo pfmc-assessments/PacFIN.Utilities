@@ -184,7 +184,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   Pdata$catch = find.matching.rows(Pdata, tows, strat, strat,  "catch")[[1]]
   Pdata$Expansion_Factor_2 = find.matching.rows(Pdata, tows, strat, strat,  "EF2")[[1]]
 
-  cat("\nPSummary of Expansion_Factor_2\n\n")
+  cat("\nSummary of Expansion_Factor_2\n\n")
   print(summary(Pdata$Expansion_Factor_2))
 
   NA_EF2 = Pdata[is.na(Pdata$Expansion_Factor_2),]
