@@ -6,7 +6,7 @@
 #' \code{cleanPacFIN} filters out unsuitable samples from data, and converts
 #' fish lengths to cm. The original fields in the returned data are left untouched,
 #' with the exception of SEX, which is modified so that unidentified fish are labeled
-#' “U”.
+#' "U".
 #' 
 #' \subsection{\code{\link{Workflow}}}{
 #' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}

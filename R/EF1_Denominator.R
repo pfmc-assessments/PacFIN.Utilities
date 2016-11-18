@@ -43,7 +43,12 @@
 ###########################################################################
 
 EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
-  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = TRUE, plot = FALSE) {
+                            fa = 2e-06, fb = 3.5, 
+                            ma = 2e-06, mb = 3.5, 
+                            ua = 2e-06, ub = 3.5, 
+                            verbose = TRUE, 
+                            plot = FALSE) 
+{
 
 # For testing: fa=2e-06; fb=3.5; ma=2e-06; mb=3.5; ua=2e-06; ub=3.5
 

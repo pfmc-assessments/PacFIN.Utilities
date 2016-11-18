@@ -25,11 +25,12 @@
 #' @return A vector of numeric values where no value is greater than the
 #'   maximum specified by \code{maxVal}.
 #'   
-#' @examples
-#' x = seq(1,10)
-#' y <- capValues(x, 0.75)
-#' z <- capValues(x, 5)
-#' rbind(x, y, z)
+#' @section Example:
+#' 
+#' x = seq(1,10)  
+#' y <- capValues(x, 0.75)  
+#' z <- capValues(x, 5)  
+#' rbind(x, y, z)  
 #'
 #' @author Andi Stephens
 #' 

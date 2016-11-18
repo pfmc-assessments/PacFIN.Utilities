@@ -1,4 +1,4 @@
-#' Example PacFIN Run
+#' Sample PacFIN Run
 #' 
 #' Cut and paste each of the following commands in turn to
 #' see the workflow for processing PacFIN data.
@@ -83,6 +83,6 @@
 #'  \code{sink()}
 #' 
 #' @name PacFIN_Example
-#'
+#' @docType package
 #'
 NULL

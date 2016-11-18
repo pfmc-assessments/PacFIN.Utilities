@@ -38,13 +38,13 @@ Any values not given in \code{splits} will be assigned to stratum 0.
 This function can be used to designate fleet or for stratification
 based on depth or INPFC area.
 }
-\examples{
+\section{Examples}{
+
 Pdata$use_depth = Stratify( Pdata$DEPTH_AVG, splits=list(0, 50, 100, 250, 500), numeric=T)
 
 Pdata$my_fleets = Stratify( Pdata$GEAR,
            splits=list("GFS", c("MDT","TB"), "TR", c("LGL","FTS")),
            Nnames=list("G1","G2","G3","G4") )
-
 }
 \author{
 Andi Stephens

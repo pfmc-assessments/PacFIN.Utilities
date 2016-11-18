@@ -10,7 +10,7 @@
 #' running \code{\link{cleanPacFIN}}.
 #' }
 #'
-#' @param Rawdata an unfiltered PacFIN dataset
+#' @param rawData an unfiltered PacFIN dataset
 #' @param fname a filename
 #'
 #' @details

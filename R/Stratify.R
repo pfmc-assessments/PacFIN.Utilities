@@ -25,7 +25,7 @@
 #' This function can be used to designate fleet or for stratification
 #' based on depth or INPFC area.
 #' 
-#' @examples
+#' @section Examples:
 #' Pdata$use_depth = Stratify( Pdata$DEPTH_AVG, splits=list(0, 50, 100, 250, 500), numeric=T)
 #' 
 #' Pdata$my_fleets = Stratify( Pdata$GEAR,

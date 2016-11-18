@@ -7,9 +7,9 @@
 plotRawData(rawData, fname = NULL)
 }
 \arguments{
-\item{fname}{a filename}
+\item{rawData}{an unfiltered PacFIN dataset}
 
-\item{Rawdata}{an unfiltered PacFIN dataset}
+\item{fname}{a filename}
 }
 \description{
 \code{plotRawData} creates a set of diagnostic plots and summaries, writing 

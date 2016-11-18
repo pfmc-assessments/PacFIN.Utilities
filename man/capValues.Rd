@@ -32,12 +32,13 @@ value to return.
 The default value is \code{0.95}, which caps all
 values in the input at the 95 percent quantile.
 }
-\examples{
-x = seq(1,10)
-y <- capValues(x, 0.75)
-z <- capValues(x, 5)
-rbind(x, y, z)
+\section{Example}{
 
+
+x = seq(1,10)  
+y <- capValues(x, 0.75)  
+z <- capValues(x, 5)  
+rbind(x, y, z)
 }
 \author{
 Andi Stephens
