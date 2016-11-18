@@ -7,6 +7,7 @@
 #' \code{getComps} is run subsequently to \code{\link{getExpansion_2}}.
 #' }
 #' 
+#' @export
 #'
 #' @details The aggregation is of the \code{Pdata$Final_Sample_Size} column value,
 #'   which should be set to the desired expansion:

@@ -1,3 +1,5 @@
+#########################################################################
+#'
 #' Calculate the numerator for the first level expansion factor.
 #'
 #' \subsection{\code{\link{Workflow}}}{

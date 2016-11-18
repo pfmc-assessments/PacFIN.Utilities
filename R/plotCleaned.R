@@ -1,5 +1,5 @@
 ############################################################################
-#
+#'
 #' Plot cleaned fishery age or length composition data.
 #' 
 #' \subsection{\code{\link{Workflow}}}{
@@ -15,6 +15,8 @@
 #'   column is boxplots of either length or age and depth by year.
 #' @author Andi Stephens, Kelli Faye Johnson
 #' 
+#' @export
+#'
 #' @seealso \code{\link{cleanAges}}, \code{\link{cleanPacFIN}}, \code{\link{Stratify}},
 #' \code{\link{getGearGroup}}.
 #' 

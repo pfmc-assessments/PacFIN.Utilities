@@ -13,6 +13,7 @@
 #' first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
 #' }
 #' 
+#' @export
 #'
 #' @param Pdata a PacFIN dataset
 #' @param only_USINPFC a logical value. FALSE by default.

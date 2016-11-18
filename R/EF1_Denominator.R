@@ -53,7 +53,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 # For testing: fa=2e-06; fb=3.5; ma=2e-06; mb=3.5; ua=2e-06; ub=3.5
 
 
-  # Clean up.  Muddled results if this function has been previously run.
+# Clean up.  Muddled results if this function has been previously run.
 
   Pdata$Wt_Sampled_1   = NA
   Pdata$Wt_Sampled_2   = NA

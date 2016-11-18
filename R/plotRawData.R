@@ -1,5 +1,5 @@
 #############################################################################
-#
+#'
 #' Diagnostic plots and summaries for a raw PacFIN dataset pre-filtering.
 #' 
 #' \code{plotRawData} creates a set of diagnostic plots and summaries, writing 
@@ -12,6 +12,8 @@
 #'
 #' @param rawData an unfiltered PacFIN dataset
 #' @param fname a filename
+#'
+#' @export
 #'
 #' @details
 #' Will create a filename from the species ID if one is not provided.

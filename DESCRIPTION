@@ -7,7 +7,7 @@ Description: Manipulates data from the PacFIN database for stock synthesis.
 Depends:
     R (>= 3.1.1)
 License: none
-LazyData: false
+LazyData: true
 Suggests:
     knitr
 VignetteBuilder: knitr

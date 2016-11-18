@@ -1,3 +1,5 @@
+########################################################################
+#
 #' Add a column to \code{Pdata} for season.
 #' 
 #' \subsection{\code{\link{Workflow}}}{
@@ -9,6 +11,8 @@
 #' Several seasonal schemes are available, including the Petrale seasons
 #' (1 = winter months, 2 else).
 #' Contact the function author for more schemes if needed.
+#'
+#' @export
 #'
 #' @template Pdata
 #' @param season_type Specify a \code{numeric} value for season type.

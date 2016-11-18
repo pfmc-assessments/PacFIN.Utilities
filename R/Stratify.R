@@ -1,7 +1,6 @@
 ###################################################################
-#
+#'
 #' Create a vector of stratifications
-#' 
 #'
 #' \code{Stratify} takes an input vector and list of values used to designate
 #' the values returned in the strats vector.
@@ -19,6 +18,8 @@
 #' @param numeric A logical value, where if \code{TRUE} then
 #'   \code{findInterval} will be used and stratum 0 will be assigned to values
 #'   smaller than the first value in splits.
+#'
+#' @export
 #'
 #' @details 
 #' Any values not given in \code{splits} will be assigned to stratum 0.

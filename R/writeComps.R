@@ -1,5 +1,5 @@
 ##########################################################################
-#
+#'
 #' Write out composition data formatted for Stock Synthesis.
 #' 
 #' @description
@@ -13,7 +13,7 @@
 #' \strong{Failure to use \code{\link{doSexRatio}} will result in all unsexed fish being discarded.}
 #' }
 #' 
-#' 
+#' @export
 #'   
 #' @param inComps A dataframe generated as described in Workflow, above.
 #' 

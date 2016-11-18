@@ -1,5 +1,6 @@
 ###################################################################
 #
+#
 #' Combine CalCOM and PacFIN data
 #'
 #' \code{combineCalCOM} adds required PacFIN columns to CalCOM data, initializing them
@@ -15,6 +16,8 @@
 #' 
 #' @return Returns a combined dataset in PacFIN format.
 #' 
+#' @export
+#'
 #' @details
 #' 
 #' Date formats and genders are translated to PacFIN format, PSMFC_AREAs are derived

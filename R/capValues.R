@@ -7,6 +7,7 @@
 #' value. 
 #' 
 #' 
+#' @export
 #'
 #' @details The maximum may be specified either as a
 #' quantile or as a number. 

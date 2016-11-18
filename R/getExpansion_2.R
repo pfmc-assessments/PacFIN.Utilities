@@ -9,6 +9,8 @@
 #' \subsection{\code{\link{Workflow}}}{
 #' \code{getExpansion_2} depends upon variables created by \code{\link{getExpansion_1}}
 #' }
+#'
+#' @export
 #' 
 #' @author Andi Stephens
 #' 

@@ -13,6 +13,8 @@
 #'   fish will be discarded.}
 #' }
 #'
+#' @export
+#'
 #' @param CompData data that have already been aggregated by \code{getComps}.
 #' @param findRatio logical.  Default: FALSE.  If TRUE, use the observed per-stratum ratio
 #' of F:M to assign the unsexed fish.

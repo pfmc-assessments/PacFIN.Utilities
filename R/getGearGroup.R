@@ -13,6 +13,8 @@
 #'
 #' @template Pdata
 #' 
+#' @export
+#'
 #' @details
 #' 
 #'   GRIDS according to the table taken from

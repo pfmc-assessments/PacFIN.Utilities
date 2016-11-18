@@ -1,9 +1,13 @@
+#####################################################################
+#
 #' Complete a first level expansion for composition data where the unsampled
 #' fish in a tow are accounted for.
 #' 
 #' \subsection{\code{\link{Workflow}}}{
 #' \code{getExpansion_1} is run after \code{\link{cleanPacFIN}} and \code{\link{cleanAges}}.
 #' }
+#'
+#' @export
 #'
 #' @details \code{getExpansion_1} calls \code{\link{EF1_Numerator}} and
 #'   \code{\link{EF1_Denominator}} (i.e., the weight of sampled fish and

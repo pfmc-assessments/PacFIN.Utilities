@@ -10,6 +10,7 @@
 #' age data can be better accomplished without it.
 #' }
 #'
+#' @export
 #'
 #' @param Pdata A PacFIN dataset
 #' @param keep_age_methods  By default, methods "B","S" and "" are 
