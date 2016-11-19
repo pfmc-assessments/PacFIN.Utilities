@@ -15,8 +15,6 @@
 #' 
 #'  \code{sink(file = "~/Example.txt", split=T)}
 #' 
-#'  \code{library(PacFIN.Utilities)}
-#' 
 #'  \code{dim(XMPL.BDS)}
 #' 
 #'  \code{dim(Catch.XMPL)}
