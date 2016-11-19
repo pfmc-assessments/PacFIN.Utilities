@@ -42,12 +42,6 @@ to the screen or not. Good for testing and exploring your data but
 can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
 }
-\value{
-Appends data to the file given in \code{fname}.
- 
-  Conditionally returns a dataframe if the \code{out} argument
-  specifies the type of composition to return.
-}
 \description{
 Write out composition data to a file, binning the data as specified.
 
@@ -93,6 +87,10 @@ The structure of the input dataframe determines whether
 \item{Use \code{dummybins} to evaluate bin structure}
 \item{Examine the raw-weight output for anomalies}
 }}
+#' @return Appends data to the file given in \code{fname}.
+ 
+  Conditionally returns a dataframe if the \code{out} argument
+  specifies the type of composition to return.
 }
 \author{
 Andi Stephens

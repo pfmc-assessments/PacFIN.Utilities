@@ -6,13 +6,21 @@
 \usage{
 paste.col(x)
 }
+\arguments{
+\item{x}{dataframe}
+}
+\value{
+Pasted columns
+}
 \description{
 \subsection{\code{\link{Workflow}}}{
 Used by \code{\link{find.matching.rows}}, not intended to be used otherwise.
 }
 }
 \details{
+{
 Converts each row in the input dataframe to a string, 
 "pasting" the columns together.
+}
 }
 

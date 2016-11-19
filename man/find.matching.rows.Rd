@@ -7,6 +7,19 @@
 find.matching.rows(file, table, findex = 1, tindex = 1, tcol = 2,
   round. = T)
 }
+\arguments{
+\item{file}{Rows to be matched from \code{table}}
+
+\item{table}{Superset of \code{file}}
+
+\item{findex}{columns of \code{file} to use to match values in \code{tindex}}
+
+\item{tindex}{columns of \code{table} to use to match values in \code{findex}}
+
+\item{tcol}{Still mysterious.}
+
+\item{round.}{if values are numeric, round.  Default:  TRUE.}
+}
 \description{
 Takes two tables with a shared primary key, and
   returns the rows of the second table for which the

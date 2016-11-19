@@ -77,19 +77,17 @@
 #' \item{Use \code{dummybins} to evaluate bin structure}
 #' \item{Examine the raw-weight output for anomalies}
 #' }}
-#'
-#' @return Appends data to the file given in \code{fname}.
+#'#' @return Appends data to the file given in \code{fname}.
 #'  
 #'   Conditionally returns a dataframe if the \code{out} argument
 #'   specifies the type of composition to return.
 #'   
 #' @author Andi Stephens
 #' @seealso \code{\link{getComps}}, \code{\link{doSexRatio}}
-#' @importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "pdf","png", "rainbow")
-#' @importFrom("graphics", "abline", "axis", "barplot", "boxplot", "hist",
-#'           "legend", "mtext", "par", "plot")
-#' @importFrom("stats", "aggregate", "median", "quantile", "xtabs")
-#' @importFrom("utils", "flush.console", "head", "tail", "write.table")
+#' @import grDevices
+#' @import graphics
+#' @import stats
+#' @import utils
 #'
 ##############################################################################
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,

@@ -39,11 +39,10 @@
 #' }
 #' @author Andi Stephens
 #' @seealso \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
-#' @importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "pdf", "png", "rainbow")
-#' @importFrom("graphics", "abline", "axis", "barplot", "boxplot", "hist",
-#'           "legend", "mtext", "par", "plot")
-#' @importFrom("stats", "aggregate", "median", "quantile", "xtabs")
-#' @importFrom("utils", "flush.console", "head", "tail", "write.table")
+#' @import grDevices
+#' @import graphics
+#' @import stats
+#' @import utils
 #
 #
 ###########################################################################

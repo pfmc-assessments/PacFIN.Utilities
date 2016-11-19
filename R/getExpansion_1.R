@@ -33,11 +33,10 @@
 #' \item{For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.}
 #' }
 #' 
-#' @importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "pdf","png", "rainbow")
-#' @importFrom("graphics", "abline", "axis", "barplot", "boxplot", "hist",
-#'           "legend", "mtext", "par", "plot")
-#' @importFrom("stats", "aggregate", "median", "quantile", "xtabs")
-#' @importFrom("utils", "flush.console", "head", "tail", "write.table")
+#' @import grDevices
+#' @import graphics
+#' @import stats
+#' @import utils
 #'
 
 getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,

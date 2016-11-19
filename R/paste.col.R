@@ -5,9 +5,13 @@
 #' \subsection{\code{\link{Workflow}}}{
 #' Used by \code{\link{find.matching.rows}}, not intended to be used otherwise.
 #' }
-#'
+#' @param x dataframe
+#' @details {
 #' Converts each row in the input dataframe to a string, 
 #' "pasting" the columns together.
+#' }
+#' @return Pasted columns
+#' 
 #
 #############################################################################
 paste.col <- function(x) {

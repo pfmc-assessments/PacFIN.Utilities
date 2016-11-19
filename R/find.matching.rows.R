@@ -11,8 +11,12 @@
 #' \code{find.matching.rows} is not run by the user.  It is a sub-function of 
 #' \code{\link{getExpansion_1}}
 #' }
-#' 
-#' 
+#' @param file Rows to be matched from \code{table}
+#' @param table Superset of \code{file}
+#' @param findex columns of \code{file} to use to match values in \code{tindex}
+#' @param tindex columns of \code{table} to use to match values in \code{findex}
+#' @param tcol  Still mysterious.
+#' @param round. if values are numeric, round.  Default:  TRUE.
 #' @author John R. Wallace (John.Wallace@@noaa.gov), (revised) Andi Stephens, 2010.
 #' 
 #' @details
