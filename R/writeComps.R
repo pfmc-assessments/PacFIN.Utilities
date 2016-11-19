@@ -85,6 +85,11 @@
 #'   
 #' @author Andi Stephens
 #' @seealso \code{\link{getComps}}, \code{\link{doSexRatio}}
+#' @importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "pdf","png", "rainbow")
+#' @importFrom("graphics", "abline", "axis", "barplot", "boxplot", "hist",
+#'           "legend", "mtext", "par", "plot")
+#' @importFrom("stats", "aggregate", "median", "quantile", "xtabs")
+#' @importFrom("utils", "flush.console", "head", "tail", "write.table")
 #'
 ##############################################################################
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,

@@ -26,6 +26,11 @@
 #' @template Pdata
 #' @template verbose
 #' @template plot
+#' @importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "pdf","png", "rainbow")
+#' @importFrom("graphics", "abline", "axis", "barplot", "boxplot", "hist",
+#'           "legend", "mtext", "par", "plot")
+#' @importFrom("stats", "aggregate", "median", "quantile", "xtabs")
+#' @importFrom("utils", "flush.console", "head", "tail", "write.table")
 #' @author Andi Stephens
 
 EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {

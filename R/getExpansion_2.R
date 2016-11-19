@@ -58,6 +58,11 @@
 #' 
 #' @return 
 #' The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
+#' @importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "pdf","png", "rainbow")
+#' @importFrom("graphics", "abline", "axis", "barplot", "boxplot", "hist",
+#'           "legend", "mtext", "par", "plot")
+#' @importFrom("stats", "aggregate", "median", "quantile", "xtabs")
+#' @importFrom("utils", "flush.console", "head", "tail", "write.table")
 #' 
 #' 
 # Calculate the stratified sampled biomass, All_Trips_Sampled_Lbs by summing

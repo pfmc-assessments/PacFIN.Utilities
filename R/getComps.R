@@ -35,6 +35,11 @@
 #' @return A dataframe with composition data specific to the type specified
 #'   in \code{Comps} for males, females, and unsexed records.
 #' @author Andi Stephens, Kelli Faye Johnson
+#' @importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "pdf","png", "rainbow")
+#' @importFrom("graphics", "abline", "axis", "barplot", "boxplot", "hist",
+#'           "legend", "mtext", "par", "plot")
+#' @importFrom("stats", "aggregate", "median", "quantile", "xtabs")
+#' @importFrom("utils", "flush.console", "head", "tail", "write.table")
 #' 
 ############################################################################
 
