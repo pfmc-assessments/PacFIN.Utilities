@@ -24,11 +24,11 @@ The "sink" command will save a record of your session for review.
 
  \code{library(PacFIN.Utilities)}
 
- \code{dim(PacFIN.BDS.XMPL)}
+ \code{dim(XMPL.BDS)}
 
  \code{dim(PacFIN.Catch.XMPL)}
 
- \code{Pdata = cleanPacFIN(PacFIN.BDS.XMPL)}
+ \code{Pdata = cleanPacFIN(XMPL.BDS)}
 }
 
 \section{Stratification}{
@@ -38,13 +38,13 @@ The "sink" command will save a record of your session for review.
 
  \code{Pdata$mygear = Pdata$geargroup}
 
- \code{Pdata$mygear[ ! Pdata$mygear \%in\% c("TWL","HKL")] = "OTHER"}
+ \code{Pdata$mygear[ Pdata$mygear != c("HKL")] = "TWL"}
 
  \code{Pdata$stratification = paste(Pdata$state,Pdata$mygear, sep=".")}
 
  \code{table(Pdata$stratification)}
 
- \code{head(PacFIN.Catch.XMPL)}
+ \code{head(Catch.XMPL)}
 }
 
 \section{Expansions}{
@@ -52,7 +52,7 @@ The "sink" command will save a record of your session for review.
 
  \code{Pdata = getExpansion_1(Pdata)}
 
- \code{Pdata = getExpansion_2(Pdata, PacFIN.Catch.XMPL, Convert=T)}
+ \code{Pdata = getExpansion_2(Pdata, Catch.XMPL, Convert=T)}
 
  \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2)}
 }
@@ -74,7 +74,7 @@ The "sink" command will save a record of your session for review.
 
  \code{Adata = getExpantion_1(Adata)}
 
- \code{Adata = getExpansion_2(Adata, PacFIN.Catch.XMPL, Convert=T)}
+ \code{Adata = getExpansion_2(Adata, Catch.XMPL, Convert=T)}
 
  \code{Adata$Final_Sample_Size = Adata$Expansion_Factor_1 * Adata$Expansion_Factor_2)}
 

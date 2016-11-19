@@ -19,7 +19,7 @@
 #' 
 #'  \code{dim(XMPL.BDS)}
 #' 
-#'  \code{dim(PacFIN.Catch.XMPL)}
+#'  \code{dim(Catch.XMPL)}
 #' 
 #'  \code{Pdata = cleanPacFIN(XMPL.BDS)}
 #' 
@@ -43,7 +43,7 @@
 #' 
 #'  \code{Pdata = getExpansion_2(Pdata, Catch.XMPL, Convert=T)}
 #' 
-#'  \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2)}
+#'  \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
 #' 
 #' @section Length Comps:
 #' 
@@ -61,7 +61,7 @@
 #' 
 #'  \code{Adata = getExpansion_2(Adata, Catch.XMPL, Convert=T)}
 #' 
-#'  \code{Adata$Final_Sample_Size = Adata$Expansion_Factor_1 * Adata$Expansion_Factor_2)}
+#'  \code{Adata$Final_Sample_Size = Adata$Expansion_Factor_1 * Adata$Expansion_Factor_2}
 #' 
 #'  \code{Acomps = getComps(Adata, Comps="AGE")}
 #' 
