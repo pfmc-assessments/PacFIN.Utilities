@@ -22,8 +22,6 @@ The "sink" command will save a record of your session for review.
 
  \code{sink(file = "~/Example.txt", split=T)}
 
- \code{library(PacFIN.Utilities)}
-
  \code{dim(XMPL.BDS)}
 
  \code{dim(Catch.XMPL)}
