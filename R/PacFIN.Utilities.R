@@ -23,6 +23,12 @@
 #' are run.  You can see diagram of the workflow you can expect to follow
 #' \code{\link{Workflow}}, as well as additional notes.
 #' 
+#' @section Example Runthrough:
+#' There is a complete runthrough of example data (species:  XMPL) available so
+#' that you can experiment with the package.  Use \code{help(PacFIN_Example)}
+#' to see how to filter, stratify and expand the data, and create length- age- 
+#' and age-at-length-compositions.
+#' 
 #' 
 #' @section Filtering functions:
 #' \tabular{lcl}{

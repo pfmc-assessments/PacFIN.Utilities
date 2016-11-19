@@ -27,17 +27,11 @@
 #' \item{\code{load("filename.dmp")}}
 #' }
 #' 
-#' 
-#' @section Expansion caveats:
-#' There is one manual step in the workflow. 
-#' After running the expansion functions, data columns Expansion_Factor_1 and 
-#' Expansion_Factor_2 are available to use in manually setting the Final_Expansion_Factor. 
-#' \itemize{
-#' \item{Age data are expanded separately from lengths, after running \code{cleanAges}.}
-#' \item{WA fish are generally only expanded using Expansion_Factor_2.}
-#' \item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
-#' \item{For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.}
-#' }
+#' @section Example Runthrough:
+#' There is a complete runthrough of example data (species:  XMPL) available so
+#' that you can experiment with the package.  Use \code{help(PacFIN_Example)}
+#' to see how to filter, stratify and expand the data, and create length- age- 
+#' and age-at-length-compositions.
 #' 
 #' @section Workflow: {
 #' 
