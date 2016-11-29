@@ -88,9 +88,38 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
     cat("\nAggregating, stratification is by", paste(Cstrat, collapse=", "), "\n\n")
     flush.console()
   }
+
   # Used to get the number of SAMPLE_NOs per aggregation
 
   lenique = function(x) { return(length(unique(x))) }
+
+  # What happens below when there are not three sexes?  Need dummy entries.
+
+  Dummy = head(Pdata)
+  Dummy$FREQ = NA
+  Dummy$Final_Sample_Size = 0
+  #Dummy$SAMPLE_NO = NA
+
+  FakeF = F
+  FakeM = F
+  FakeU = F
+
+  for ( gender in c("F","M","U") ) {
+
+    if (sum(Pdata$SEX == gender) == 0) { 
+
+      Dummy$SEX = gender
+      Pdata = rbind(Pdata, Dummy)
+      cat("No fish of gender:", gender, "present.  Adding dummy records with FREQ = 0.\n")
+
+      # set flags
+      if (gender == "U") FakeU = T
+      if (gender == "M") FakeM = T
+      if (gender == "F") FakeF = T
+
+    } # End if
+
+  } # End for
 
   # Set up flags for tows (SAMPLE_NOs) with only one gender present.
   # Need to retain this for subsequently assigning gender to the unsexed
