@@ -1,7 +1,7 @@
 #####################################################################
 #
-#' Complete a first level expansion for composition data where the unsampled
-#' fish in a tow are accounted for.
+#' First level expansion for composition data to accout for unsampled
+#' fish in a tow.
 #' 
 #' \subsection{\code{\link{Workflow}}}{
 #' \code{getExpansion_1} is run after \code{\link{cleanPacFIN}} and \code{\link{cleanAges}}.

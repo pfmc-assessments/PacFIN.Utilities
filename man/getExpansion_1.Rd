@@ -2,11 +2,11 @@
 % Please edit documentation in R/getExpansion_1.R
 \name{getExpansion_1}
 \alias{getExpansion_1}
-\title{Complete a first level expansion for composition data where the unsampled
-fish in a tow are accounted for.}
+\title{First level expansion for composition data to accout for unsampled
+fish in a tow.}
 \usage{
-getExpansion_1(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, fa = 2e-06,
-  fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5,
+getExpansion_1(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = FALSE,
+  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5,
   verbose = TRUE, plot = FALSE)
 }
 \arguments{
@@ -16,6 +16,8 @@ getExpansion_1(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, fa = 2e-06,
 
 \item{Indiv_Wgts}{A logical value, controlling whether or not individual
 fish weights should be generated using the specified weight-length relationship.}
+
+\item{Exp_WA}{Default FALSE.  If TRUE, expand the WA samples.}
 
 \item{fa}{Female specific weight length coefficient.}
 
