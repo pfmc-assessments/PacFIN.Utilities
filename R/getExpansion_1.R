@@ -15,6 +15,7 @@
 #'   their ratio.
 #' @template Pdata
 #' @param maxExp The maximum expansion factor (either a number or a quantile).
+#' @param Exp_WA Default FALSE.  If TRUE, expand the WA samples.
 #' @template Indiv_Wgts
 #' @template weightlengthparams
 #' @template verbose
@@ -39,7 +40,7 @@
 #' @import utils
 #'
 
-getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
+getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = FALSE,
   fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = TRUE,
   plot = FALSE) {
 
@@ -75,11 +76,14 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE,
 
   Pdata$Expansion_Factor_1[Pdata$Expansion_Factor_1 < 1] = 1
   
-  # WA data can't be expanded.
+  # In most cases, WA data can't be expanded.
+
+  if (Exp_WA != TRUE) {
   
-  Pdata$Expansion_Factor_1[Pdata$state == "WA"] = 1
-  cat("\n\nWA expansions set to 1. Fish tickets do not represent whole trips in WA.\n\n")
-  
+    Pdata$Expansion_Factor_1[Pdata$state == "WA"] = 1
+    cat("\n\nWA expansions set to 1. Fish tickets do not represent whole trips in WA.\n\n")
+  } # End if
+    
 
   NA_EF1 = Pdata[is.na(Pdata$Expansion_Factor_1),]
   nNA = nrow(NA_EF1)
