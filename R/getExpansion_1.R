@@ -41,9 +41,11 @@
 #'
 
 getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = TRUE,
-  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = TRUE,
+  fa=NA, fb=NA, ma=NA, mb=NA, ua=NA, ub=NA, verbose = TRUE,
   plot = FALSE) {
 
+  if ( is.na(fa) & Indiv_Wgts) { stop("Must provide values for length-weight relationship.")}
+  
   # Get the Wt_Sampled
   if (is.character(plot)) {
     fn <- gsub(".png", "", plot)
