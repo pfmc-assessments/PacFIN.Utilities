@@ -5,8 +5,8 @@
 \title{First level expansion for composition data to accout for unsampled
 fish in a tow.}
 \usage{
-getExpansion_1(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = FALSE,
-  fa = 2e-06, fb = 3.5, ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5,
+getExpansion_1(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = TRUE,
+  fa = NA, fb = NA, ma = NA, mb = NA, ua = NA, ub = NA,
   verbose = TRUE, plot = FALSE)
 }
 \arguments{
