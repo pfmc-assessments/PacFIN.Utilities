@@ -138,7 +138,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
     if (ncol(Catch) > 2) {
     
-      Catch[,2:length(Catchgears)] = Catch[,2:length(Catchgears)] * 2204
+      Catch[2:ncol(Catch)] = Catch[ , 2:ncol(Catch)] * 2204
 
     } else {
       
