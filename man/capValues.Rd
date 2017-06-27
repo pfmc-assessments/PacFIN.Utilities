@@ -40,7 +40,7 @@ y <- capValues(x, 0.75)
 z <- capValues(x, 5)  
 rbind(x, y, z)
 }
+
 \author{
 Andi Stephens
 }
-

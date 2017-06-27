@@ -64,10 +64,10 @@ Expansion_Factor_2 are available to use in manually setting the Final_Expansion_
 \item{For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.}
 }
 }
-\author{
-Andi Stephens
-}
+
 \seealso{
 \code{\link{Stratify}}
 }
-
+\author{
+Andi Stephens
+}

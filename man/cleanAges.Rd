@@ -43,10 +43,9 @@ and are reset to those values.
 No ages less than one occur in the commercial dataset.  Zero ages are
 equivalent to NA.
 }
-\author{
-Andi Stephens
-}
 \seealso{
 \code{\link{cleanPacFIN}}, \code{\link{sink}}
 }
-
+\author{
+Andi Stephens
+}

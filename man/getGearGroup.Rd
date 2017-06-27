@@ -31,4 +31,3 @@ GRIDS according to the table taken from
 \author{
 Andi Stephens
 }
-

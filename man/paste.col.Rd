@@ -23,4 +23,3 @@ Converts each row in the input dataframe to a string,
 "pasting" the columns together.
 }
 }
-
