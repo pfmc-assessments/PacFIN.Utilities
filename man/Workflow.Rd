@@ -42,7 +42,7 @@ age-at-length comps.  Optional paths are represented by dashed lines.
 \if{latex}{\figure{Full-Workflow.png}{options: width=7cm}}
 }
 }
+
 \author{
 Andi Stephens, Kelli Johnson
 }
-

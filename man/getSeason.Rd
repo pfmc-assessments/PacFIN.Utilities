@@ -55,4 +55,3 @@ Contact the function author for more schemes if needed.
 \author{
 Andi Stephens
 }
-

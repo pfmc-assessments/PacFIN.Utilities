@@ -23,11 +23,10 @@ A plot of either 3 x 2 or 2 x 2 depending on whether or not unique
 Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
 }
 }
-\author{
-Andi Stephens, Kelli Faye Johnson
-}
 \seealso{
 \code{\link{cleanAges}}, \code{\link{cleanPacFIN}}, \code{\link{Stratify}},
 \code{\link{getGearGroup}}.
 }
-
+\author{
+Andi Stephens, Kelli Faye Johnson
+}

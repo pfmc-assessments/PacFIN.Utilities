@@ -63,10 +63,9 @@ if the length of a fish does not exist, then the median weight of all
 weighed fish in the sample is used.}
 }
 }
-\author{
-Andi Stephens
-}
 \seealso{
 \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
 }
-
+\author{
+Andi Stephens
+}

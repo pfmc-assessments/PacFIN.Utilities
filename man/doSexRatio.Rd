@@ -77,10 +77,9 @@ lowest bin; i.e., lengths from 0-15 will have ratio .5, and fish above 36 will h
 \item{\code{C1 = doSexRatio(Compdata, Rvector=c(.5, .6, .7), Bins=c(10, 15, 36))}
 }}
 }
-\author{
-Andi Stephens, Kelli Johnson
-}
 \seealso{
 \code{\link{getComps}}, \code{\link{writeComps}}
 }
-
+\author{
+Andi Stephens, Kelli Johnson
+}

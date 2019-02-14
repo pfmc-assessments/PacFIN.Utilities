@@ -5,7 +5,7 @@
 \title{Write out composition data formatted for Stock Synthesis.}
 \usage{
 writeComps(inComps, fname = "out.csv", abins = NULL, lbins = NULL,
-  maxAge = Inf, partition = 0, ageErr = 0, out = "FthenM",
+  maxAge = Inf, partition = 0, ageErr = 0, returns = "FthenM",
   dummybins = FALSE, verbose = TRUE)
 }
 \arguments{
@@ -29,7 +29,8 @@ fish are binned according to user specified bins irregardless of \code{maxAge}.}
 
 \item{ageErr}{Defaults to 1.}
 
-\item{out}{One of ("FthenM", "Fout", "Mout", or "Uout").}
+\item{returns}{One of ("FthenM", "Fout", "Mout", or "Uout").  Choose return value
+of the function.  Default: FthenM}
 
 \item{dummybins}{A logcial value specifying whether data outside of the
 lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
@@ -92,10 +93,9 @@ The structure of the input dataframe determines whether
   Conditionally returns a dataframe if the \code{out} argument
   specifies the type of composition to return.
 }
-\author{
-Andi Stephens
-}
 \seealso{
 \code{\link{getComps}}, \code{\link{doSexRatio}}
 }
-
+\author{
+Andi Stephens
+}

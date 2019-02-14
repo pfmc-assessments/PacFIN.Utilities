@@ -32,4 +32,3 @@ PacFIN.#' \subsection{\code{\link{Workflow}}}{
 \code{getState} is run by \code{\link{cleanPacFIN}}.
 }
 }
-

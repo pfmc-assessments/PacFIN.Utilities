@@ -46,7 +46,7 @@ Pdata$my_fleets = Stratify( Pdata$GEAR,
            splits=list("GFS", c("MDT","TB"), "TR", c("LGL","FTS")),
            Nnames=list("G1","G2","G3","G4") )
 }
+
 \author{
 Andi Stephens
 }
-

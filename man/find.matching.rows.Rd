@@ -37,4 +37,3 @@ NOTE:  The way this is written assumes that the second table is a
 \author{
 John R. Wallace (John.Wallace@noaa.gov), (revised) Andi Stephens, 2010.
 }
-

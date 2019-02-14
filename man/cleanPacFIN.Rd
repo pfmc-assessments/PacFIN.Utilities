@@ -98,11 +98,10 @@ The \code{sink} command can be used to save the filtering report to a
 file, in addition to printing it to the console.
 }
 }
-\author{
-Andi Stephens
-}
 \seealso{
 \code{\link{cleanAges}}, \code{\link{getState}}, \code{\link{getSeason}}, 
 \code{\link{sink}}
 }
-
+\author{
+Andi Stephens
+}
