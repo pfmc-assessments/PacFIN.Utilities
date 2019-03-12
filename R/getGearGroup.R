@@ -12,6 +12,7 @@
 #' \code{Pdata$GRID} is recoded to \code{geargroup} according to the gear table.
 #'
 #' @template Pdata
+#' @template spp
 #' 
 #' @export
 #'
@@ -27,12 +28,25 @@
 #' 
 ############################################################################
 
-getGearGroup = function (Pdata) {
+getGearGroup = function (Pdata, spp = NULL) {
 
 cat("\n\nGear groupings reflect those in the table at",
        "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt\n\n")
+  local <- GearTable
+  if (!is.null(spp)) {  
+  	if (tolower(spp) %in% c("sablefish")) {
+  	  msc <- Pdata[Pdata$GRID %in% c("DNT", "LJ", "JIG"), ]
+  	  message("The following samples were assigned to the gear group 'MSC':")
+  	  print(aggregate(TOTAL_WGT ~ SAMPLE_YEAR + SOURCE_AGID + GRID, data = msc, 
+  	  	sum, na.rm = TRUE))
+      # Danish/Scottish Seine trawl
+      local$GROUP[local$GRID == "DNT"] <- "MSC"
+      # Handline jigger
+      local$GROUP[local$GRID == "JIG"] <- "MSC"
+    }
+  }
 
-  Pdata$geargroup <- GearTable$GROUP[match(Pdata$GRID, GearTable$GRID)]
+  Pdata$geargroup <- local$GROUP[match(Pdata$GRID, local$GRID)]
   indices <- which(is.na(Pdata$geargroup))
   Pdata$geargroup[indices] <- Pdata$GRID[indices]
 
