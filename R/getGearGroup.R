@@ -30,7 +30,7 @@
 getGearGroup = function (Pdata) {
 
 cat("\n\nGear groupings reflect those in the table at",
-       "http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt\n\n")
+       "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt\n\n")
 
   Pdata$geargroup <- GearTable$GROUP[match(Pdata$GRID, GearTable$GRID)]
   indices <- which(is.na(Pdata$geargroup))
@@ -38,5 +38,5 @@ cat("\n\nGear groupings reflect those in the table at",
 
   return(Pdata)
 
-} # End function getGearGroups
+} # End function getGearGroup
 
