@@ -63,8 +63,12 @@ cleanAges = function( Pdata, keep_age_methods=c("B","S",""),
   # Fix Age Methods
 
   Pdata$agemethod = Pdata$AGE_METHOD
-  Pdata$agemethod[Pdata$agemethod == "1"] = "B"
-  Pdata$agemethod[Pdata$agemethod == "2"] = "S"
+  if (!1 %in% keep_age_methods) {
+    Pdata$agemethod[Pdata$agemethod == "1"] = "B"
+  }
+  if (!2 %in% keep_age_methods){
+    Pdata$agemethod[Pdata$agemethod == "2"] = "S"
+  }
   Pdata$agemethod[is.na(Pdata$agemethod)] = -1
 
   if (!CLEAN) {
