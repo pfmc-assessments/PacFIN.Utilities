@@ -38,6 +38,8 @@
 #'   state \tab initialized from SOURCE_AGID.  Change using \code{\link{getState}}\cr
 #'   lengthcm \tab floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH\cr
 #'   geargroup \tab the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
+#'   numlens \tab number of fish that were lengthed in the SAMPLE_NO
+#'   numages \tab number of fish that were aged in the SAMPLE_NO
 #' }
 #' 
 #' 
@@ -183,6 +185,15 @@ cleanPacFIN = function( Pdata,
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
   Pdata$age[is.na(Pdata$age)] <- -1
+
+  samplen <- aggregate(list(
+    "numlens" = Pdata$length,
+    "numages" = Pdata$age), 
+    by = list(
+    "SAMPLE_NO" = Pdata$SAMPLE_NO), 
+    function(x) sum(x != -1))
+  Pdata <- merge(Pdata, samplen, all = TRUE, by = "SAMPLE_NO")
+
   # Flag records without a SAMPLE_NO
 
   Pdata$sample = Pdata$SAMPLE_NO

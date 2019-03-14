@@ -156,13 +156,6 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     # is in kg, thus making the correct calculation
     # a * (Pdata$length / 10)^b * 2.20462
 
-    # Get the number of observed lengths and weights to use for each sample
-
-    tmp = as.data.frame(table(Pdata$SAMPLE_NO))
-    names(tmp) = c("SAMPLE_NO","numlens")
-
-    tows$numlens = tmp$numlens[match(tows$SAMPLE_NO, tmp$SAMPLE_NO)]
-
     # Note:  if all else fails, fill 0 weights with the median in that sample.
 
     tmp_wt = aggregate(Pdata$LW_Calc_Wt, list(Pdata$SAMPLE_NO), sum, na.rm=T)
@@ -175,7 +168,6 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     tows$Wt_Sampled_3 = tmp_wt$Wt_Sampled_3[match(tows$SAMPLE_NO, tmp_wt$SAMPLE_NO)]
 
     Pdata$Wt_Sampled_3 = tows$Wt_Sampled_3[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
-    Pdata$numlens = tows$numlens[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
 
   } else {
 
