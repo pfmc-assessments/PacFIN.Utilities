@@ -107,10 +107,7 @@ cleanPacFIN = function( Pdata,
   cat( "\nCleaning data\n\n" )
 
   if (!CLEAN) {
-
     cat("\nGenerating data report only.  No data will be removed.\n")
-
-    Original_data = Pdata
   }
   
   
@@ -137,7 +134,7 @@ cleanPacFIN = function( Pdata,
     
   } # End for
   
-  Pdata = getState(Pdata)
+  Pdata = getState(Pdata, CLEAN = CLEAN)
   cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n")
   
   Pdata$fishyr = Pdata$SAMPLE_YEAR
@@ -165,7 +162,6 @@ cleanPacFIN = function( Pdata,
   USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
 
   # Fix Lengths.  Use FISH_LENGTH if there is no FORK_LENGTH.
-
   Pdata$FORK_LENGTH[is.na(Pdata$FORK_LENGTH)] = -1
   Pdata$length = ifelse(Pdata$FISH_LENGTH > -1, Pdata$FISH_LENGTH, Pdata$FORK_LENGTH)
 
@@ -216,36 +212,35 @@ cleanPacFIN = function( Pdata,
 
   Rec_summary[8] = ifelse(only_USINPFC,
     sum(!Pdata$INPFC_AREA %in% USinpfc), 0)
+  if (only_USINPFC == TRUE & CLEAN) { Pdata = Pdata[Pdata$INPFC_AREA %in% USinpfc,] }
   
   Rec_summary[2] = ifelse(!is.null(keep_INPFC), 
     sum(!Pdata$INPFC_AREA %in% keep_INPFC), 0) 
   Rec_summary[9] = ifelse(!is.null(remove_INPFC), 
     sum(Pdata$INPFC_AREA %in% remove_INPFC), 0)
-  if (only_USINPFC == TRUE) { Pdata = Pdata[Pdata$INPFC_AREA %in% USinpfc,] }
 
-  if (! is.null(keep_INPFC) ) { Pdata = Pdata[Pdata$INPFC_AREA %in% keep_INPFC,] }
-  if (! is.null(remove_INPFC) ) { Pdata = Pdata[!Pdata$INPFC_AREA %in% remove_INPFC,] }
-
+  if (!is.null(keep_INPFC) & CLEAN) { Pdata = Pdata[Pdata$INPFC_AREA %in% keep_INPFC,] }
+  if (!is.null(remove_INPFC) & CLEAN) { Pdata = Pdata[!Pdata$INPFC_AREA %in% remove_INPFC,] }
 
   Rec_summary[3] = sum(Pdata$sample %in% badRecords)
-  Pdata = Pdata[!Pdata$sample %in% badRecords,]
 
+  if (CLEAN) Pdata = Pdata[!Pdata$sample %in% badRecords,]
 
   Rec_summary[4] = sum(!Pdata$SAMPLE_TYPE %in% keep_sample_type)
-  if (! is.null(keep_sample_type)) { Pdata = Pdata[Pdata$SAMPLE_TYPE %in% keep_sample_type,] }
 
+  if (!is.null(keep_sample_type) & CLEAN) { Pdata = Pdata[Pdata$SAMPLE_TYPE %in% keep_sample_type,] }
 
   Rec_summary[5] =  sum(!Pdata$SAMPLE_METHOD %in% keep_sample_method)
-  if (! is.null(keep_sample_method) ) { Pdata = Pdata[Pdata$SAMPLE_METHOD %in% keep_sample_method,] }
 
+  if (!is.null(keep_sample_method) & CLEAN) { Pdata = Pdata[Pdata$SAMPLE_METHOD %in% keep_sample_method,] }
 
   Rec_summary[6] = sum(Pdata$SAMPLE_NO == -1)
-  Pdata = Pdata[Pdata$SAMPLE_NO != -1,]
 
+  if (CLEAN) Pdata = Pdata[Pdata$SAMPLE_NO != -1,]
 
   Rec_summary[7] = sum(is.na(Pdata$length))
-  if (!keep_missing_lengths) { Pdata = Pdata[!is.na(Pdata$length),] }
 
+  if (!keep_missing_lengths & CLEAN) { Pdata = Pdata[!is.na(Pdata$length),] }
 
   # Report removals
 
@@ -261,16 +256,8 @@ cleanPacFIN = function( Pdata,
   cat("Records with no usable length     ", Rec_summary[7], "\n")
   cat("Records remaining:                ", nrow(Pdata), "\n\n")
 
-  if (CLEAN) {
-
-    return(Pdata)
-
-  } else {
-
+  if (!CLEAN) {
     cat("\n\nReturning original data because CLEAN=FALSE\n\n")
-
-    return(Original_data)
-
- } # End if-else
-
+  }
+  return(Pdata)
 } # End cleanPacFIN
