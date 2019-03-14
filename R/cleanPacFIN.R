@@ -210,47 +210,55 @@ cleanPacFIN = function( Pdata,
   } # End if
 
   # Remove records
-  Rec_summary = rep(0,7)
+  Rec_summary = rep(0,9)
 
   Rec_summary[1] = nrow(Pdata)
 
+  Rec_summary[8] = ifelse(only_USINPFC,
+    sum(!Pdata$INPFC_AREA %in% USinpfc), 0)
+  
+  Rec_summary[2] = ifelse(!is.null(keep_INPFC), 
+    sum(!Pdata$INPFC_AREA %in% keep_INPFC), 0) 
+  Rec_summary[9] = ifelse(!is.null(remove_INPFC), 
+    sum(Pdata$INPFC_AREA %in% remove_INPFC), 0)
   if (only_USINPFC == TRUE) { Pdata = Pdata[Pdata$INPFC_AREA %in% USinpfc,] }
 
   if (! is.null(keep_INPFC) ) { Pdata = Pdata[Pdata$INPFC_AREA %in% keep_INPFC,] }
   if (! is.null(remove_INPFC) ) { Pdata = Pdata[!Pdata$INPFC_AREA %in% remove_INPFC,] }
 
-  Rec_summary[2] = nrow(Pdata)
 
+  Rec_summary[3] = sum(Pdata$sample %in% badRecords)
   Pdata = Pdata[!Pdata$sample %in% badRecords,]
 
-  Rec_summary[3] = nrow(Pdata)
 
+  Rec_summary[4] = sum(!Pdata$SAMPLE_TYPE %in% keep_sample_type)
   if (! is.null(keep_sample_type)) { Pdata = Pdata[Pdata$SAMPLE_TYPE %in% keep_sample_type,] }
 
-  Rec_summary[4] = nrow(Pdata)
 
+  Rec_summary[5] =  sum(!Pdata$SAMPLE_METHOD %in% keep_sample_method)
   if (! is.null(keep_sample_method) ) { Pdata = Pdata[Pdata$SAMPLE_METHOD %in% keep_sample_method,] }
 
-  Rec_summary[5] = nrow(Pdata)
 
+  Rec_summary[6] = sum(Pdata$SAMPLE_NO == -1)
   Pdata = Pdata[Pdata$SAMPLE_NO != -1,]
 
-  Rec_summary[6] = nrow(Pdata)
 
+  Rec_summary[7] = sum(is.na(Pdata$length))
   if (!keep_missing_lengths) { Pdata = Pdata[!is.na(Pdata$length),] }
 
-  Rec_summary[7] = nrow(Pdata)
 
   # Report removals
 
   cat("\nRemoval Report\n\n")
   cat("Records in input:                 ", Rec_summary[1], "\n")
-  cat("Records not in INPFC_AREA:        ", Rec_summary[1] - Rec_summary[2], "\n")
-  cat("Records in badRecords list:       ", Rec_summary[2] - Rec_summary[3], "\n")
-  cat("Records with bad SAMPLE_TYPE      ", Rec_summary[3] - Rec_summary[4], "\n")
-  cat("Records with bad SAMPLE_METHOD    ", Rec_summary[4] - Rec_summary[5], "\n")
-  cat("Records with no SAMPLE_NO         ", Rec_summary[5] - Rec_summary[6], "\n")
-  cat("Records with no usable length     ", Rec_summary[6] - Rec_summary[7], "\n")
+  cat("Records not in USINPFC            ", Rec_summary[8], "\n")
+  cat("Records not in INPFC_AREA:        ", Rec_summary[2], "\n")
+  cat("Records in bad INPFC_AREA:        ", Rec_summary[9], "\n")
+  cat("Records in badRecords list:       ", Rec_summary[3], "\n")
+  cat("Records with bad SAMPLE_TYPE      ", Rec_summary[4], "\n")
+  cat("Records with bad SAMPLE_METHOD    ", Rec_summary[5], "\n")
+  cat("Records with no SAMPLE_NO         ", Rec_summary[6], "\n")
+  cat("Records with no usable length     ", Rec_summary[7], "\n")
   cat("Records remaining:                ", nrow(Pdata), "\n\n")
 
   if (CLEAN) {
