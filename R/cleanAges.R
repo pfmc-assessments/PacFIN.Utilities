@@ -49,17 +49,6 @@ cleanAges = function( Pdata, keep_age_methods=c("B","S",""),
 
   } # End if
 
-  # Fix Ages
-
-  Pdata$age = Pdata$FISH_AGE_YEARS_FINAL
-  Pdata$age[is.na(Pdata$age)] <- -1
-  Pdata$age = ifelse(Pdata$age > 0, Pdata$age, Pdata$age1)
-  Pdata$age[is.na(Pdata$age)] = -1
-  Pdata$age = ifelse(Pdata$age > 0, Pdata$age, Pdata$age2)
-  Pdata$age[is.na(Pdata$age)] = -1
-  Pdata$age = ifelse(Pdata$age > 0, Pdata$age, Pdata$age3)
-  Pdata$age[is.na(Pdata$age)] = -1
-
   # Fix Age Methods
 
   Pdata$agemethod = Pdata$AGE_METHOD

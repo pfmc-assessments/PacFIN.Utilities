@@ -176,6 +176,13 @@ cleanPacFIN = function( Pdata,
   Pdata$SEX[is.na(Pdata$SEX)] = "U"
   Pdata$SEX[Pdata$SEX == 0 ] = "U"
 
+  # Fix Ages (originally in cleanAges)
+  # MH is checking with JW to see if there is a AGE_METHOD per age reader
+  Pdata$age <- ifelse(!is.na(Pdata$FISH_AGE_YEARS_FINAL), 
+    Pdata$FISH_AGE_YEARS_FINAL, Pdata$age1)
+  Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
+  Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
+  Pdata$age[is.na(Pdata$age)] <- -1
   # Flag records without a SAMPLE_NO
 
   Pdata$sample = Pdata$SAMPLE_NO
