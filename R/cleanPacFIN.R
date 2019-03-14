@@ -150,7 +150,10 @@ cleanPacFIN = function( Pdata,
     CAdata$SAMPLE_TYPE[is.na(CAdata$SAMPLE_TYPE)] = "M"
     CAdata$SAMPLE_METHOD[is.na(CAdata$SAMPLE_TYPE)] = "R"
     CAdata$INPFC_AREA[is.na(CAdata$INPFC_AREA)] = "CalCOM"
-  
+    if (!is.null(keep_INPFC) & any(CAdata$INPFC_AREA == "CalCOM")) {
+      keep_INPFC <- c(keep_INPFC, "CalCOM")
+      message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.")
+    }
     Pdata = rbind(Pdata, CAdata)
     
   } # End keep_CA
