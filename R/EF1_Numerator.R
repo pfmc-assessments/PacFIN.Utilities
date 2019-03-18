@@ -163,7 +163,7 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
                                    list(tows$state, tows$fishyr),
                                    median, na.rm=T)
 
-  med_TOTAL_WGT        = aggregate(tows$RWT_LBS,
+  med_TOTAL_WGT        = aggregate(tows$TOTAL_WGT,
                                    list(tows$state, tows$fishyr),
                                    median, na.rm=T)
 
