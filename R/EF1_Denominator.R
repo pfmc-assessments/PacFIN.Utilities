@@ -156,18 +156,8 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     # is in kg, thus making the correct calculation
     # a * (Pdata$length / 10)^b * 2.20462
 
-    # Note:  if all else fails, fill 0 weights with the median in that sample.
-
-    tmp_wt = aggregate(Pdata$LW_Calc_Wt, list(Pdata$SAMPLE_NO), sum, na.rm=T)
-    med_wt = aggregate(Pdata$LW_Calc_Wt, list(Pdata$SAMPLE_NO), median, na.rm=T)
-    tmp_wt = cbind(tmp_wt, med_wt[,2])
-    names(tmp_wt) = c("SAMPLE_NO","Wt_Sampled_3","Median")
-
-    tmp_wt$Wt_Sampled_3[tmp_wt$Wt_Sampled_3 == 0] = tmp_wt$Median[tmp_wt$Wt_Sampled_3 == 0]
-
-    tows$Wt_Sampled_3 = tmp_wt$Wt_Sampled_3[match(tows$SAMPLE_NO, tmp_wt$SAMPLE_NO)]
-
-    Pdata$Wt_Sampled_3 = tows$Wt_Sampled_3[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
+    Pdata$Wt_Sampled_3 <- unsplit(lapply(split(Pdata$LW_Calc_Wt, Pdata$SAMPLE_NO),
+      FUN = sum, na.rm = TRUE), Pdata$SAMPLE_NO)
 
   } else {
 
