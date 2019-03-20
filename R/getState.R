@@ -63,7 +63,7 @@ getState <- function (Pdata, source = "SOURCE_AGID", CLEAN = TRUE,
 
   } # End if
 
-  Pdata$state[Pdata$SOURCE_AGID == "CALCOM"] = "CA"
+  Pdata$state[Pdata$SOURCE_AGID == "CalCOM"] = "CA"
 
   # Remove stateless data
 
