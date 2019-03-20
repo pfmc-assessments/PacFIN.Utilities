@@ -89,6 +89,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
+  #### Oregon - MALES_WGT and FEMALES_WGT is only available from Oregon.
   # Allow sum to be calculated when there are no males or no females
   # because weights are NA in those instances rather than a value of zero.
   tows$Wt_Sampled_1 <- 
@@ -97,6 +98,9 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   Pdata$Wt_Sampled_1 = tows$Wt_Sampled_1[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
 
+  #### California - multiple species can be sampled in one sample number
+  # SPECIES_WGT is specific to a cluster, so sum the species weight across clusters
+  # within a given sample
   Pdata$SAMP_CLUST = paste(Pdata$SAMPLE_NO, Pdata$CLUSTER_NO, sep="_")
   uniqueClusters = Pdata[!duplicated(Pdata$SAMP_CLUST),]
 
@@ -135,6 +139,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   #   temp[temp$FISH_NO == 1, c("SAMPLE_NO", "Wt_Sampled_b")],
   #   by = "SAMPLE_NO")
 
+  #### Washington b/c there is no other method to find the sample weight.
   # Only if there are individual weight factor and coefficients available
 
   if (Indiv_Wgts) {
