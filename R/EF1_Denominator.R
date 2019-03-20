@@ -89,7 +89,11 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
-  tows$Wt_Sampled_1 = tows$MALES_WGT + tows$FEMALES_WGT
+  # Allow sum to be calculated when there are no males or no females
+  # because weights are NA in those instances rather than a value of zero.
+  tows$Wt_Sampled_1 <- 
+    ifelse(!is.na(tows$MALES_NUM), tows$MALES_WGT, 0) + 
+    ifelse(!is.na(tows$FEMALES_NUM), tows$FEMALES_WGT, 0)
 
   Pdata$Wt_Sampled_1 = tows$Wt_Sampled_1[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
 
