@@ -106,6 +106,30 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   tows$Wt_Sampled_2 = tmp$wgt[match(tows$SAMPLE_NO,tmp$SAMPLE_NO)]
 
   Pdata$Wt_Sampled_2 = tmp$wgt[match(Pdata$SAMPLE_NO,tmp$SAMPLE_NO)]
+  
+  # Code to check Wt_Sampled_1 and Wt_Sampled_2
+  # Pdata$Wt_Sampled_a <- Pdata$MALES_WGT + Pdata$FEMALES_WGT
+  # lu <- function(x) length(unique(x))
+  # temp <- tapply(Pdata$Wt_Sampled_a, Pdata$SAMPLE_NO, lu)
+  # if (!all(temp == 1)) {
+  #   stop("Not all MALES_WGT + FEMALE_WGT are the same within a ",
+  #     "given sample.\nCheck the following SAMPLE_NOs:\n",
+  #     paste(names(temp)[temp != 1], collapse = ", "))
+  # }
+  # temp <- aggregate(
+  #   list("Wt_Sampled_b" = Pdata$SPECIES_WGT), 
+  #   by = list("FISH_NO" = Pdata$FISH_NO, "SAMPLE_NO" = Pdata$SAMPLE_NO), 
+  #   FUN = sum, na.rm = TRUE)
+  # temp$Wt_Sampled_b[temp$Wt_Sampled_b == 0] <- NA
+  # if (all(tapply(Pdata$SPECIES_WGT, 
+  #   list(Pdata$CLUSTER_NO, Pdata$SAMPLE_NO), lu) == 1, na.rm = TRUE)) {
+  #   stop("Not all SPECIES_WGT within a cluster are the same,\n",
+  #     "so you cannot trust Wt_Sampled_2.")
+  # }
+  # Pdata <- merge(
+  #   Pdata, 
+  #   temp[temp$FISH_NO == 1, c("SAMPLE_NO", "Wt_Sampled_b")],
+  #   by = "SAMPLE_NO")
 
   # Only if there are individual weight factor and coefficients available
 
@@ -132,13 +156,6 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     # is in kg, thus making the correct calculation
     # a * (Pdata$length / 10)^b * 2.20462
 
-    # Get the number of observed lengths and weights to use for each sample
-
-    tmp = as.data.frame(table(Pdata$SAMPLE_NO))
-    names(tmp) = c("SAMPLE_NO","numlens")
-
-    tows$numlens = tmp$numlens[match(tows$SAMPLE_NO, tmp$SAMPLE_NO)]
-
     # Note:  if all else fails, fill 0 weights with the median in that sample.
 
     tmp_wt = aggregate(Pdata$LW_Calc_Wt, list(Pdata$SAMPLE_NO), sum, na.rm=T)
@@ -151,7 +168,6 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     tows$Wt_Sampled_3 = tmp_wt$Wt_Sampled_3[match(tows$SAMPLE_NO, tmp_wt$SAMPLE_NO)]
 
     Pdata$Wt_Sampled_3 = tows$Wt_Sampled_3[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
-    Pdata$numlens = tows$numlens[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
 
   } else {
 

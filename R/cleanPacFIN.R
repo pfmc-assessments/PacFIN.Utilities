@@ -38,6 +38,8 @@
 #'   state \tab initialized from SOURCE_AGID.  Change using \code{\link{getState}}\cr
 #'   lengthcm \tab floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH\cr
 #'   geargroup \tab the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
+#'   numlens \tab number of fish that were lengthed in the SAMPLE_NO
+#'   numages \tab number of fish that were aged in the SAMPLE_NO
 #' }
 #' 
 #' 
@@ -105,10 +107,7 @@ cleanPacFIN = function( Pdata,
   cat( "\nCleaning data\n\n" )
 
   if (!CLEAN) {
-
     cat("\nGenerating data report only.  No data will be removed.\n")
-
-    Original_data = Pdata
   }
   
   
@@ -135,7 +134,7 @@ cleanPacFIN = function( Pdata,
     
   } # End for
   
-  Pdata = getState(Pdata)
+  Pdata = getState(Pdata, CLEAN = CLEAN)
   cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n")
   
   Pdata$fishyr = Pdata$SAMPLE_YEAR
@@ -151,7 +150,10 @@ cleanPacFIN = function( Pdata,
     CAdata$SAMPLE_TYPE[is.na(CAdata$SAMPLE_TYPE)] = "M"
     CAdata$SAMPLE_METHOD[is.na(CAdata$SAMPLE_TYPE)] = "R"
     CAdata$INPFC_AREA[is.na(CAdata$INPFC_AREA)] = "CalCOM"
-  
+    if (!is.null(keep_INPFC) & any(CAdata$INPFC_AREA == "CalCOM")) {
+      keep_INPFC <- c(keep_INPFC, "CalCOM")
+      message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.")
+    }
     Pdata = rbind(Pdata, CAdata)
     
   } # End keep_CA
@@ -163,7 +165,6 @@ cleanPacFIN = function( Pdata,
   USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
 
   # Fix Lengths.  Use FISH_LENGTH if there is no FORK_LENGTH.
-
   Pdata$FORK_LENGTH[is.na(Pdata$FORK_LENGTH)] = -1
   Pdata$length = ifelse(Pdata$FISH_LENGTH > -1, Pdata$FISH_LENGTH, Pdata$FORK_LENGTH)
 
@@ -175,6 +176,22 @@ cleanPacFIN = function( Pdata,
 
   Pdata$SEX[is.na(Pdata$SEX)] = "U"
   Pdata$SEX[Pdata$SEX == 0 ] = "U"
+
+  # Fix Ages (originally in cleanAges)
+  # MH is checking with JW to see if there is a AGE_METHOD per age reader
+  Pdata$age <- ifelse(!is.na(Pdata$FISH_AGE_YEARS_FINAL), 
+    Pdata$FISH_AGE_YEARS_FINAL, Pdata$age1)
+  Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
+  Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
+  Pdata$age[is.na(Pdata$age)] <- -1
+
+  samplen <- aggregate(list(
+    "numlens" = Pdata$length,
+    "numages" = Pdata$age), 
+    by = list(
+    "SAMPLE_NO" = Pdata$SAMPLE_NO), 
+    function(x) sum(x != -1))
+  Pdata <- merge(Pdata, samplen, all = TRUE, by = "SAMPLE_NO")
 
   # Flag records without a SAMPLE_NO
 
@@ -192,59 +209,58 @@ cleanPacFIN = function( Pdata,
   } # End if
 
   # Remove records
-  Rec_summary = rep(0,7)
+  Rec_summary = rep(0,9)
 
   Rec_summary[1] = nrow(Pdata)
 
-  if (only_USINPFC == TRUE) { Pdata = Pdata[Pdata$INPFC_AREA %in% USinpfc,] }
+  Rec_summary[8] = ifelse(only_USINPFC,
+    sum(!Pdata$INPFC_AREA %in% USinpfc), 0)
+  if (only_USINPFC == TRUE & CLEAN) { Pdata = Pdata[Pdata$INPFC_AREA %in% USinpfc,] }
+  
+  Rec_summary[2] = ifelse(!is.null(keep_INPFC), 
+    sum(!Pdata$INPFC_AREA %in% keep_INPFC), 0) 
+  Rec_summary[9] = ifelse(!is.null(remove_INPFC), 
+    sum(Pdata$INPFC_AREA %in% remove_INPFC), 0)
 
-  if (! is.null(keep_INPFC) ) { Pdata = Pdata[Pdata$INPFC_AREA %in% keep_INPFC,] }
-  if (! is.null(remove_INPFC) ) { Pdata = Pdata[!Pdata$INPFC_AREA %in% remove_INPFC,] }
+  if (!is.null(keep_INPFC) & CLEAN) { Pdata = Pdata[Pdata$INPFC_AREA %in% keep_INPFC,] }
+  if (!is.null(remove_INPFC) & CLEAN) { Pdata = Pdata[!Pdata$INPFC_AREA %in% remove_INPFC,] }
 
-  Rec_summary[2] = nrow(Pdata)
+  Rec_summary[3] = sum(Pdata$sample %in% badRecords)
 
-  Pdata = Pdata[!Pdata$sample %in% badRecords,]
+  if (CLEAN) Pdata = Pdata[!Pdata$sample %in% badRecords,]
 
-  Rec_summary[3] = nrow(Pdata)
+  Rec_summary[4] = sum(!Pdata$SAMPLE_TYPE %in% keep_sample_type)
 
-  if (! is.null(keep_sample_type)) { Pdata = Pdata[Pdata$SAMPLE_TYPE %in% keep_sample_type,] }
+  if (!is.null(keep_sample_type) & CLEAN) { Pdata = Pdata[Pdata$SAMPLE_TYPE %in% keep_sample_type,] }
 
-  Rec_summary[4] = nrow(Pdata)
+  Rec_summary[5] =  sum(!Pdata$SAMPLE_METHOD %in% keep_sample_method)
 
-  if (! is.null(keep_sample_method) ) { Pdata = Pdata[Pdata$SAMPLE_METHOD %in% keep_sample_method,] }
+  if (!is.null(keep_sample_method) & CLEAN) { Pdata = Pdata[Pdata$SAMPLE_METHOD %in% keep_sample_method,] }
 
-  Rec_summary[5] = nrow(Pdata)
+  Rec_summary[6] = sum(Pdata$SAMPLE_NO == -1)
 
-  Pdata = Pdata[Pdata$SAMPLE_NO != -1,]
+  if (CLEAN) Pdata = Pdata[Pdata$SAMPLE_NO != -1,]
 
-  Rec_summary[6] = nrow(Pdata)
+  Rec_summary[7] = sum(is.na(Pdata$length))
 
-  if (!keep_missing_lengths) { Pdata = Pdata[!is.na(Pdata$length),] }
-
-  Rec_summary[7] = nrow(Pdata)
+  if (!keep_missing_lengths & CLEAN) { Pdata = Pdata[!is.na(Pdata$length),] }
 
   # Report removals
 
   cat("\nRemoval Report\n\n")
   cat("Records in input:                 ", Rec_summary[1], "\n")
-  cat("Records not in INPFC_AREA:        ", Rec_summary[1] - Rec_summary[2], "\n")
-  cat("Records in badRecords list:       ", Rec_summary[2] - Rec_summary[3], "\n")
-  cat("Records with bad SAMPLE_TYPE      ", Rec_summary[3] - Rec_summary[4], "\n")
-  cat("Records with bad SAMPLE_METHOD    ", Rec_summary[4] - Rec_summary[5], "\n")
-  cat("Records with no SAMPLE_NO         ", Rec_summary[5] - Rec_summary[6], "\n")
-  cat("Records with no usable length     ", Rec_summary[6] - Rec_summary[7], "\n")
+  cat("Records not in USINPFC            ", Rec_summary[8], "\n")
+  cat("Records not in INPFC_AREA:        ", Rec_summary[2], "\n")
+  cat("Records in bad INPFC_AREA:        ", Rec_summary[9], "\n")
+  cat("Records in badRecords list:       ", Rec_summary[3], "\n")
+  cat("Records with bad SAMPLE_TYPE      ", Rec_summary[4], "\n")
+  cat("Records with bad SAMPLE_METHOD    ", Rec_summary[5], "\n")
+  cat("Records with no SAMPLE_NO         ", Rec_summary[6], "\n")
+  cat("Records with no usable length     ", Rec_summary[7], "\n")
   cat("Records remaining:                ", nrow(Pdata), "\n\n")
 
-  if (CLEAN) {
-
-    return(Pdata)
-
-  } else {
-
+  if (!CLEAN) {
     cat("\n\nReturning original data because CLEAN=FALSE\n\n")
-
-    return(Original_data)
-
- } # End if-else
-
+  }
+  return(Pdata)
 } # End cleanPacFIN
