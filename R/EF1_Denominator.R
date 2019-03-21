@@ -28,14 +28,22 @@
 #' @param plot Create plots.  Default:  FALSE
 #' @return Additional columns are added to \code{Pdata}:
 #' \itemize{
-#' \item Wt_Sampled_1
-#' \item Wt_Sampled_2
+#' \item Wt_Sampled_1: the sum of weights for male and female fish within the
+#' sample, this will ignore unsexed fish or hermaphrodites. 
+#' \item Wt_Sampled_2: the species-specific sample weight only provided by
+#'   California because the cluster weight could include multiple species.
 #' \item LW_Calc_Wt: individual weights predicted from the specified length-weight relationships.
-#' \item Wt_Sampled_3
+#' \item Wt_Sampled_3: The sum of empirical weights, for those fish within a 
+#' sample where this information is available, and weights calculated from the
+#' length-weight relationship. This uses the empirical data if available and 
+#' fills in with the expected weight.
 #' \item Wt_Sampled: the sample weight that will be used in subsequent analyses,
-#'   where this is preferentially Wt_Sampled_1, with NAs replaced with values from Wt_Sampled_2,
+#'   where this is preferentially the empirical weights; all NA values are 
+#'   subsequently filled in using Wt_Sampled_1, 
+#'   with NAs replaced with values from Wt_Sampled_2,
 #'   and NAs remaining replaced with values from Wt_Sampled_3.
-#' \item Wt_Method: a \code{numeric} value denoting which method was used for \code{Wt_Sampled}.
+#' \item Wt_Method: a \code{numeric} value starting with zero for empirical weights
+#'   and then denoting which method was used for \code{Wt_Sampled}.
 #' }
 #' @author Andi Stephens
 #' @seealso \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
@@ -88,7 +96,9 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   }
 
   # Everything is calculated in terms of unique samples.
-
+  # Calculate the sampled weight based on weights of individual fish
+  Pdata$Wt_Sampled <- ave(Pdata$FISH_WEIGHT,
+    Pdata$SAMPLE_NO, FUN = sum)
   Pdata$unsexed_num <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
     FUN = function(x) sum(x %in% c("U", "H")))
   # KFJ(2019-03-21): Could get this column from PacFIN directly.
@@ -97,9 +107,9 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   #### Oregon - MALES_WGT and FEMALES_WGT is only available from Oregon.
   # Allow sum to be calculated when there are no males or no females
   # because weights are NA in those instances rather than a value of zero.
-  tows$Wt_Sampled_1 <- 
-    ifelse(!is.na(tows$MALES_NUM), tows$MALES_WGT, 0) + 
-    ifelse(!is.na(tows$FEMALES_NUM), tows$FEMALES_WGT, 0)
+  tows$Wt_Sampled_1 <- ifelse(is.na(tows$MALES_WGT) & is.na(tows$FEMALES_WGT),
+    NA,
+    apply(tows[, c("MALES_WGT", "FEMALES_WGT")], 1, sum, na.rm = TRUE))
 
   Pdata$Wt_Sampled_1 = tows$Wt_Sampled_1[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
 
@@ -119,7 +129,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   tows$Wt_Sampled_2 = tmp$wgt[match(tows$SAMPLE_NO,tmp$SAMPLE_NO)]
 
   Pdata$Wt_Sampled_2 = tmp$wgt[match(Pdata$SAMPLE_NO,tmp$SAMPLE_NO)]
-  
+
   # Code to check Wt_Sampled_1 and Wt_Sampled_2
   # Pdata$Wt_Sampled_a <- Pdata$MALES_WGT + Pdata$FEMALES_WGT
   # lu <- function(x) length(unique(x))
@@ -169,9 +179,11 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     # uses parameters that assume length is in cm and weight
     # is in kg, thus making the correct calculation
     # a * (Pdata$length / 10)^b * 2.20462
-
-    Pdata$Wt_Sampled_3 <- unsplit(lapply(split(Pdata$LW_Calc_Wt, Pdata$SAMPLE_NO),
-      FUN = sum, na.rm = TRUE), Pdata$SAMPLE_NO)
+    
+    bestweight <- ifelse(is.na(Pdata$FISH_WEIGHT),
+      Pdata$LW_Calc_Wt, Pdata$FISH_WEIGHT)
+    Pdata$Wt_Sampled_3 <- ave(bestweight, Pdata$SAMPLE_NO,
+      FUN = function(x) sum(x, na.rm = TRUE))
 
   } else {
 
@@ -188,27 +200,18 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   #
   ############################################################################
 
-  tows$Wt_Sampled = tows$Wt_Sampled_1
-  tows$Wt_Method = 1
+  Pdata$Wt_Method <- 0
+  # Method 1 ignores unsexed fish b/c it is just the sum of males and females
+  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled) & Pdata$unsexed_num == 0] = 1
+  Pdata$Wt_Sampled[Pdata$Wt_Method == 1] = Pdata$Wt_Sampled_1[Pdata$Wt_Method == 1]
 
-  tows$Wt_Method[is.na(tows$Wt_Sampled)] = 2
-  tows$Wt_Sampled[is.na(tows$Wt_Sampled)] = tows$Wt_Sampled_2[is.na(tows$Wt_Sampled)]
+  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = 2
+  Pdata$Wt_Sampled[is.na(Pdata$Wt_Sampled)] = Pdata$Wt_Sampled_2[is.na(Pdata$Wt_Sampled)]
 
-  if (Indiv_Wgts) {
+  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = 3
+  Pdata$Wt_Sampled[is.na(Pdata$Wt_Sampled)] = Pdata$Wt_Sampled_3[is.na(Pdata$Wt_Sampled)]
 
-    tows$Wt_Method[is.na(tows$Wt_Sampled)] = 3
-    tows$Wt_Sampled[is.na(tows$Wt_Sampled)] = tows$Wt_Sampled_3[is.na(tows$Wt_Sampled)]
-
-  } # End if
-
-  tows$Wt_Method[is.na(tows$Wt_Sampled)] = NA
-
-  # Match per-tow data to whole dataset.
-
-  Pdata$Wt_Method = tows$Wt_Method[match(Pdata$SAMPLE_NO,tows$SAMPLE_NO)]
-  Pdata$Wt_Sampled = tows$Wt_Sampled[match(Pdata$SAMPLE_NO,tows$SAMPLE_NO)]
-
-
+  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = NA
 
   # Summary and boxplot
 
