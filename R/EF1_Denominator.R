@@ -70,7 +70,9 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   if ( Indiv_Wgts == TRUE & verbose) {
 
     cat("\nIndividual weights will be generated from the following values:\n\n")
-    cat("Females:", fa,fb, "Males:",  ma,mb, "Unknowns:",  ua,ub, "\n\n")
+    cat(" Females:", fa,fb, "\n",
+        "Males:",  ma,mb, "\n",
+        "Unknowns and hermaphrodites:",  ua,ub, "\n\n")
 
   } # End if
 
@@ -87,6 +89,9 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   # Everything is calculated in terms of unique samples.
 
+  Pdata$unsexed_num <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
+    FUN = function(x) sum(x %in% c("U", "H")))
+  # KFJ(2019-03-21): Could get this column from PacFIN directly.
   tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
   #### Oregon - MALES_WGT and FEMALES_WGT is only available from Oregon.
@@ -155,7 +160,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     Pdata$LW_Calc_Wt = NA
     Pdata$LW_Calc_Wt[Pdata$SEX=="F"] = fa*(Pdata$length[Pdata$SEX=="F"] / 10)^fb
     Pdata$LW_Calc_Wt[Pdata$SEX=="M"] = ma*(Pdata$length[Pdata$SEX=="M"] / 10)^mb
-    Pdata$LW_Calc_Wt[Pdata$SEX=="U"] = ua*(Pdata$length[Pdata$SEX=="U"] / 10)^ub
+    Pdata$LW_Calc_Wt[Pdata$SEX %in% c("U", "H")] = ua*(Pdata$length[Pdata$SEX %in% c("U", "H")] / 10)^ub
 
     # Convert to pounds
 
