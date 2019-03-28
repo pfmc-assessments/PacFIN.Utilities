@@ -36,15 +36,17 @@ cat("\n\nGear groupings reflect those in the table at",
   if (!is.null(spp)) {  
   	if (tolower(spp) %in% c("sablefish")) {
   	  msc <- Pdata[Pdata$GRID %in% c("DNT", "LJ", "JIG", "MDT", "MPT"), ]
-  	  message("The following samples were assigned to the gear group 'MSC':")
-  	  print(aggregate(TOTAL_WGT ~ SAMPLE_YEAR + SOURCE_AGID + GRID, data = msc, 
-  	  	sum, na.rm = TRUE))
-      # Danish/Scottish Seine trawl
-      local$GROUP[local$GRID == "DNT"] <- "MSC"
-      # Midwater trawl
-      local$GROUP[local$GRID %in% c("MDT", "MPT")] <- "MSC"
-      # Handline jigger
-      local$GROUP[local$GRID == "JIG"] <- "MSC"
+      if (nrow(msc) > 0) {
+        message("The following samples were assigned to the gear group 'MSC':")
+        print(aggregate(TOTAL_WGT ~ SAMPLE_YEAR + SOURCE_AGID + GRID, 
+          data = msc, sum, na.rm = TRUE))
+        # Danish/Scottish Seine trawl
+        local$GROUP[local$GRID == "DNT"] <- "MSC"
+        # Midwater trawl
+        local$GROUP[local$GRID %in% c("MDT", "MPT")] <- "MSC"
+        # Handline jigger
+        local$GROUP[local$GRID == "JIG"] <- "MSC"
+      }
     }
   }
 
