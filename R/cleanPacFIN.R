@@ -165,6 +165,8 @@ cleanPacFIN = function( Pdata,
   USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
 
   # Fix Lengths.  Use FISH_LENGTH if there is no FORK_LENGTH.
+  Pdata$FORK_LENGTH[Pdata$FORK_LENGTH == 0] <- NA
+  Pdata$FISH_LENGTH[Pdata$FISH_LENGTH == 0] <- NA
   Pdata$FORK_LENGTH[is.na(Pdata$FORK_LENGTH)] = -1
   Pdata$length = ifelse(Pdata$FISH_LENGTH > -1, Pdata$FISH_LENGTH, Pdata$FORK_LENGTH)
 
