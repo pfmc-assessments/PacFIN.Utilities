@@ -26,6 +26,7 @@
 #' @param keep_CA default TRUE.  CA data often have no sample type or method, or INPFC area.
 #' @param CLEAN a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
 #' but report what would have been removed.
+#' @template spp
 #' 
 #' @return The input data filtered for desired areas and record types
 #' specified, with added columns
@@ -102,7 +103,8 @@ cleanPacFIN = function( Pdata,
                         keep_sample_method = "R",
                         keep_missing_lengths = FALSE,
                         keep_CA = TRUE,
-                        CLEAN=TRUE) {
+                        CLEAN = TRUE, 
+                        spp = NULL) {
 
   cat( "\nCleaning data\n\n" )
 
@@ -140,7 +142,7 @@ cleanPacFIN = function( Pdata,
   Pdata$fishyr = Pdata$SAMPLE_YEAR
   cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
   
-  Pdata = getGearGroup(Pdata)
+  Pdata = getGearGroup(Pdata, spp = spp)
   
   if (keep_CA) {
     
