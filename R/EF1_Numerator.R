@@ -39,11 +39,6 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   Pdata$Trip_Sampled_Lbs = NA
 
   tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
-  
-  # Fix EXP_WT:  Zero works arithmetically, NA does not.
-  
-  Pdata$EXP_WT[is.na(Pdata$EXP_WT)] = 0
-  
 
   ############################################################################
   #
@@ -87,53 +82,32 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   ############################################################################
 
   # Default
-
-  tows$Trip_Sampled_Lbs = tows$TOTAL_WGT
-
-  # California
-
   tows$Trip_Sampled_Lbs[tows$state=="CA"] = tows$Use_Percent[tows$state=="CA"]
+  tows$Trip_Sampled_Lbs[tows$state=="OR"] = tows$EXP_WT[tows$state=="OR"]
+  tows$Trip_Sampled_Lbs[tows$state=="WA"] = tows$RWT_LBS[tows$state=="WA"]
+  if (any(!unique(tows$state) %in% c("CA", "OR", "WA"))) warning("The state(s) '",
+    paste(unique(tows$state)[!unique(tows$state) %in% c("CA", "OR", "WA")], 
+      collapse = ", "), "' do not have methods for Trip_Sampled_Lbs")
+  tows$Trip_Sampled_Lbs[tows$Trip_Sampled_Lbs == 0] = NA
+
+  # California uses Percent of TOTAL_WGT.
+  # Find percent of TOTAL_WGT that should be of your species based 
+  # on the percent of all sampled fish that are your species. 
 
   # Oregon uses EXP_WT by preference.
+  # EXP_WT will be the species-specific landing weight for the sample and will
+  # account for dressed landings.
   # OR data is always missing total weights between 1965-1970
   # so use Species_Percent_Sampled, as for CA.
-
-  indices = which(tows$state == "OR" & tows$EXP_WT > 0)
-  tows$Trip_Sampled_Lbs[indices] = tows$EXP_WT[indices]
-
-  tows$Trip_Sampled_Lbs[tows$Trip_Sampled_Lbs == 0] = NA
 
   indices = which(tows$state=="OR" & is.na(tows$Trip_Sampled_Lbs))
   tows$Trip_Sampled_Lbs[indices] = tows$Use_Percent[indices]
 
-  # Washinton
-
-  # Is RWT_LBS available?  
-  #
-  # It doesn't matter.  WA fish can't be expanded
-  # because of fish from the same trip offloaded on different
-  # fish-tickets
-
- # if (length(tows$RWT_LBS) != 0) {
- #
- #  tows$Trip_Sampled_Lbs[tows$state=="WA"] = tows$RWT_LBS[tows$state=="WA"]
- #
- #} else {
- #    if (verbose) {
- #     cat("\nWarning:  data does not contain column RWT_LBS required for WA data\n\n")
- #  }
- #
-    
-  Pdata$RWT_LBS = NA
-  tows$RWT_LBS = NA
-  
- #
- #} # End if
-  
-  # This code is harmless, and WA could someday be expanded?
-
-  indices = which(tows$state=="WA" & is.na(tows$Trip_Sampled_Lbs))
-  tows$Trip_Sampled_Lbs[indices] = tows$TOTAL_WGT[indices]
+  # Washington uses RWT_LBS as default.
+  tows$Trip_Sampled_Lbs <- ifelse(
+    tows$state == "WA" & 
+    is.na(tows$Trip_Sampled_Lbs),
+    tows$TOTAL_WGT, tows$Trip_Sampled_Lbs)
 
   # Get row-by-row alignment with tows for each median.
   # Fill CA and OR annual median Trip_Sampled_Lbs.
