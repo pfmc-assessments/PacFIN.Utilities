@@ -91,7 +91,8 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   ############################################################################
 
   # For CA and OR:
-
+  if (!"Wt_Sampled" %in% colnames(Pdata)) stop("The column Wt_Sampled",
+    " must be in your dataframe, run EF1_Denominator.")
   tows$Species_Percent_Sampled = tows$Wt_Sampled/tows$Use_acs
   tows$Use_Percent <- tows$TOTAL_WGT * 
     ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
