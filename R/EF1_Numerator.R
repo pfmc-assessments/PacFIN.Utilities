@@ -95,7 +95,8 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   # For CA and OR:
 
   tows$Species_Percent_Sampled = tows$Wt_Sampled/tows$Use_acs
-  tows$Use_Percent = tows$Species_Percent_Sampled * tows$TOTAL_WGT
+  tows$Use_Percent <- tows$TOTAL_WGT * 
+    ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
 
   ############################################################################
   #
