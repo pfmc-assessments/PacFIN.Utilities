@@ -135,48 +135,24 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   indices = which(tows$state=="WA" & is.na(tows$Trip_Sampled_Lbs))
   tows$Trip_Sampled_Lbs[indices] = tows$TOTAL_WGT[indices]
 
-  # Calculate state and fishyr specific medians.
-
-  med_Trip_Sampled_Lbs = aggregate(tows$Trip_Sampled_Lbs,
-                                   list(tows$state, tows$fishyr),
-                                   median, na.rm=T)
-
-  med_RWT_LBS          = aggregate(tows$RWT_LBS,
-                                   list(tows$state, tows$fishyr),
-                                   median, na.rm=T)
-
-  med_TOTAL_WGT        = aggregate(tows$TOTAL_WGT,
-                                   list(tows$state, tows$fishyr),
-                                   median, na.rm=T)
-
-  names(med_Trip_Sampled_Lbs) = c("state", "fishyr", "Median")
-  names(med_RWT_LBS)          = c("state", "fishyr", "Median")
-  names(med_TOTAL_WGT)        = c("state", "fishyr", "Median")
-
   # Get row-by-row alignment with tows for each median.
-
-  Trip_Sampled_medians = find.matching.rows(tows, med_Trip_Sampled_Lbs,
-                         c("state","fishyr"), c("state", "fishyr"), "Median")[[1]]
-
-  RWT_LBS_medians      = find.matching.rows(tows, med_RWT_LBS,
-                         c("state","fishyr"), c("state", "fishyr"), "Median")[[1]]
-
-  TOTAL_WGT_medians    = find.matching.rows(tows, med_TOTAL_WGT,
-                         c("state","fishyr"), c("state", "fishyr"), "Median")[[1]]
-
   # Fill CA and OR annual median Trip_Sampled_Lbs.
-  # Find the NA row indices and fill from aligned rows.
-
-  indices = which(is.na(tows$Trip_Sampled_Lbs) & tows$state != "WA")
-  tows$Trip_Sampled_Lbs[indices] = Trip_Sampled_medians[indices]
-
+  tows$Trip_Sampled_Lbs <- ifelse(
+    is.na(tows$Trip_Sampled_Lbs) & tows$state %in% c("OR", "CA"),
+    getMed(tows$Trip_Sampled_Lbs, 
+      tows$state, tows$SAMPLE_YEAR, tows$geargroup, tows$GRADE)$median, 
+    tows$Trip_Sampled_Lbs)
   # Same for WA, but the preferred value is first RWT_LBS, then TOTAL_WGT.
-
-  indices = which(is.na(tows$Trip_Sampled_Lbs) & tows$state=="WA")
-  tows$Trip_Sampled_Lbs[indices] = RWT_LBS_medians[indices]
-
-  indices = which(is.na(tows$Trip_Sampled_Lbs) & tows$state=="WA")
-  tows$Trip_Sampled_Lbs[indices] = TOTAL_WGT_medians[indices]
+  tows$Trip_Sampled_Lbs <- ifelse(
+    is.na(tows$Trip_Sampled_Lbs) & tows$state=="WA",
+    getMed(tows$RWT_LBS, 
+      tows$state, tows$SAMPLE_YEAR, tows$geargroup, tows$GRADE)$median, 
+    tows$Trip_Sampled_Lbs)
+  tows$Trip_Sampled_Lbs <- ifelse(
+    is.na(tows$Trip_Sampled_Lbs) & tows$state=="WA",
+    getMed(tows$TOTAL_WGT, 
+      tows$state, tows$SAMPLE_YEAR, tows$geargroup, tows$GRADE)$median, 
+    tows$Trip_Sampled_Lbs)
 
   # Match Trip_Sampled_Lbs to the larger dataset.
 
