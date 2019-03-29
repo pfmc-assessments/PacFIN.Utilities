@@ -100,7 +100,6 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   Pdata$Wt_Sampled <- ave(Pdata$FISH_WEIGHT,
     Pdata$SAMPLE_NO, FUN = sum)
   Pdata$unsexed_num <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
-    FUN = function(x) sum(x %in% c("U", "H")))
   # KFJ(2019-03-21): Could get this column from PacFIN directly.
   tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
@@ -112,6 +111,11 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     apply(tows[, c("MALES_WGT", "FEMALES_WGT")], 1, sum, na.rm = TRUE))
 
   Pdata$Wt_Sampled_1 = tows$Wt_Sampled_1[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
+  sumNA <- function(x) {
+    out <- sum(x, na.rm = TRUE)
+    ifelse(out == 0, NA, out)
+  }
+    FUN = function(x) sumNA(x %in% c("U", "H")))
 
   #### California - multiple species can be sampled in one sample number
   # SPECIES_WGT is specific to a cluster, so sum the species weight across clusters
@@ -152,7 +156,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     bestweight <- ifelse(is.na(Pdata$FISH_WEIGHT),
       Pdata$LW_Calc_Wt, Pdata$FISH_WEIGHT)
     Pdata$Wt_Sampled_3 <- ave(bestweight, Pdata$SAMPLE_NO,
-      FUN = function(x) sum(x, na.rm = TRUE))
+      FUN = sumNA)
 
   } else {
 
