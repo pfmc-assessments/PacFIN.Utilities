@@ -25,7 +25,8 @@
 #' @param keep_missing_lengths a logical value. FALSE by default.
 #' @param keep_CA default TRUE.  CA data often have no sample type or method, or INPFC area.
 #' @param CLEAN a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
-#' but report what would have been removed.
+#' but report what would have been removed. Additional columns of information
+#' are added to the original data even if \code{CLEAN = FALSE}.
 #' @template spp
 #' 
 #' @return The input data filtered for desired areas and record types
