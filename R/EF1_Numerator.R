@@ -73,6 +73,15 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   tows$Species_Percent_Sampled = tows$Wt_Sampled/tows$Use_acs
   tows$Use_Percent <- tows$TOTAL_WGT * 
     ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
+  # KFJ(2019-03-29): Determine if when percent should be multiplied by
+  # round weight rather than total weight, where total weight is supposed
+  # to be the weight of all species landed from which the sample came from
+  # for California data. 
+  # I looked at a few fish tickets and it appears as though Round Weight for 
+  # California is the species-specific sampled weight and I am not sure 
+  # where the total weight is actually coming from because it is not 
+  # total weight of all landings on a fish ticket. Sometimes
+  # the total weight is more than the round weight, which should never happen.
 
   ############################################################################
   #
@@ -102,12 +111,22 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
 
   indices = which(tows$state=="OR" & is.na(tows$Trip_Sampled_Lbs))
   tows$Trip_Sampled_Lbs[indices] = tows$Use_Percent[indices]
+  # KFJ(2019-03-29): Using the percent of the total weight is more in
+  # error than just using the total weight for Oregon because fish
+  # might have a condition other than round when sampled.
+  # Oregon samples are more species-specific, so the amount of
+  # contamination of other species in the sample might be less of 
+  # an error than just using the total weight. 
+  # KFJ(2019-03-29): todo - check with Ali to see ideas for how to 
+  # proceed if EXP_WT is not available. 
 
   # Washington uses RWT_LBS as default.
   tows$Trip_Sampled_Lbs <- ifelse(
     tows$state == "WA" & 
     is.na(tows$Trip_Sampled_Lbs),
     tows$TOTAL_WGT, tows$Trip_Sampled_Lbs)
+  # KFJ(2019-03-29): Is it better to use TOTAL_WGT rather than a median of 
+  # roundweight? Can't check grade b/c WA doesn't provide GRADE.
 
   # Get row-by-row alignment with tows for each median.
   # Fill CA and OR annual median Trip_Sampled_Lbs.
