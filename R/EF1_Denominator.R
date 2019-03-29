@@ -173,7 +173,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   } else {
 
     # Need for summary and boxplot
-
+    Pdata$LW_Calc_Wt = NA
     Pdata$Wt_Sampled_3 = NA
 
   } # End if-else Indiv_Wgts
