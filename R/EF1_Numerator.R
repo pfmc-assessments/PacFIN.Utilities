@@ -163,14 +163,16 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
       oma = c(4, 5, 3, 0.5))
     for (st in unique(Pdata$state)) {
       plotdata <- subset(Pdata, state == st)
+      if (all(is.na(plotdata$Trip_Sampled_Lbs))) next
       boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
         ylab = "", xlab = "", xaxt = "n",
         at = unique(plotdata$fishyr), xlim = range(Pdata$fishyr))
       legend("topleft", legend = st, bty = "n")
     }
     axis(1)
-    mtext(side = 1, "Expansion factor 1 numerator", outer = TRUE, line = 2)
-    mtext(side = 2, "sample weight per trip (lbs)", outer = TRUE, line = 2)
+    mtext(side = 1, "Year", outer = TRUE, line = 2)
+    mtext(side = 3, "Expansion factor 1 numerator", outer = TRUE, line = 1)
+    mtext(side = 2, "Sample weight per trip (lbs)", outer = TRUE, line = 2)
 
     if (is.character(plot)) dev.off()
   }
