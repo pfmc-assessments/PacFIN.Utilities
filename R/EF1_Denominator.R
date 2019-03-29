@@ -99,23 +99,35 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   # Calculate the sampled weight based on weights of individual fish
   Pdata$Wt_Sampled <- ave(Pdata$FISH_WEIGHT,
     Pdata$SAMPLE_NO, FUN = sum)
-  Pdata$unsexed_num <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
-  # KFJ(2019-03-21): Could get this column from PacFIN directly.
-  tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
   #### Oregon - MALES_WGT and FEMALES_WGT is only available from Oregon.
   # Allow sum to be calculated when there are no males or no females
   # because weights are NA in those instances rather than a value of zero.
-  tows$Wt_Sampled_1 <- ifelse(is.na(tows$MALES_WGT) & is.na(tows$FEMALES_WGT),
-    NA,
-    apply(tows[, c("MALES_WGT", "FEMALES_WGT")], 1, sum, na.rm = TRUE))
-
-  Pdata$Wt_Sampled_1 = tows$Wt_Sampled_1[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
+  # todo: Get JW to include UNK_NUM and UNK_WGT
   sumNA <- function(x) {
     out <- sum(x, na.rm = TRUE)
     ifelse(out == 0, NA, out)
   }
+  if (!"UNK_NUM" %in% colnames(Pdata)) {
+    Pdata$UNK_NUM <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
     FUN = function(x) sumNA(x %in% c("U", "H")))
+  }
+  if (!"UNK_WGT" %in% colnames(Pdata)) Pdata$UNK_WGT <- NA
+  Pdata$Wt_Sampled_1 <- ifelse(
+    apply(Pdata[, c("UNK_NUM", "MALES_NUM", "FEMALES_NUM")],
+      1, function(x) all(is.na(x))),
+    NA, # If any males 
+    apply(Pdata[, c("UNK_WGT", "MALES_WGT", "FEMALES_WGT")], 
+      1, sumNA))
+  if (all(is.na(Pdata$UNK_WGT))) {
+    # Sample weight should include unsexed fish, but this information
+    # might not be available. If the weight of the unsexed fish isn't
+    # available then sampled_1 will only be for samples that don't
+    # have any unsexed fish, else it will have to depend on LW relationship
+    # and empirical weights Rather than ignoring unsexed fish.
+    Pdata$Wt_Sampled_1 <- ifelse(!is.na(Pdata$UNK_NUM), 
+      NA, Pdata$Wt_Sampled_1)
+  }
 
   #### California - multiple species can be sampled in one sample number
   # SPECIES_WGT is specific to a cluster, so sum the species weight across clusters
@@ -175,7 +187,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
 
   Pdata$Wt_Method <- 0
   # Method 1 ignores unsexed fish b/c it is just the sum of males and females
-  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled) & Pdata$unsexed_num == 0] = 1
+  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = 1
   Pdata$Wt_Sampled[Pdata$Wt_Method == 1] = Pdata$Wt_Sampled_1[Pdata$Wt_Method == 1]
 
   Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = 2
