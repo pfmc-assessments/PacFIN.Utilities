@@ -116,43 +116,12 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   #### California - multiple species can be sampled in one sample number
   # SPECIES_WGT is specific to a cluster, so sum the species weight across clusters
   # within a given sample
-  Pdata$SAMP_CLUST = paste(Pdata$SAMPLE_NO, Pdata$CLUSTER_NO, sep="_")
-  uniqueClusters = Pdata[!duplicated(Pdata$SAMP_CLUST),]
-
-  tmp = aggregate(uniqueClusters$SPECIES_WGT, list(uniqueClusters$SAMPLE_NO), sum, na.rm=T)
-  names(tmp) = c("SAMPLE_NO", "wgt")
-
-  # Might have 0 values that should actually be NA.  Aggregate doesn't generate NAs.
-
-  tmp$wgt[tmp$wgt == 0] = NA
-
-  tows$Wt_Sampled_2 = tmp$wgt[match(tows$SAMPLE_NO,tmp$SAMPLE_NO)]
-
-  Pdata$Wt_Sampled_2 = tmp$wgt[match(Pdata$SAMPLE_NO,tmp$SAMPLE_NO)]
-
-  # Code to check Wt_Sampled_1 and Wt_Sampled_2
-  # Pdata$Wt_Sampled_a <- Pdata$MALES_WGT + Pdata$FEMALES_WGT
-  # lu <- function(x) length(unique(x))
-  # temp <- tapply(Pdata$Wt_Sampled_a, Pdata$SAMPLE_NO, lu)
-  # if (!all(temp == 1)) {
-  #   stop("Not all MALES_WGT + FEMALE_WGT are the same within a ",
-  #     "given sample.\nCheck the following SAMPLE_NOs:\n",
-  #     paste(names(temp)[temp != 1], collapse = ", "))
-  # }
-  # temp <- aggregate(
-  #   list("Wt_Sampled_b" = Pdata$SPECIES_WGT), 
-  #   by = list("FISH_NO" = Pdata$FISH_NO, "SAMPLE_NO" = Pdata$SAMPLE_NO), 
-  #   FUN = sum, na.rm = TRUE)
-  # temp$Wt_Sampled_b[temp$Wt_Sampled_b == 0] <- NA
-  # if (all(tapply(Pdata$SPECIES_WGT, 
-  #   list(Pdata$CLUSTER_NO, Pdata$SAMPLE_NO), lu) == 1, na.rm = TRUE)) {
-  #   stop("Not all SPECIES_WGT within a cluster are the same,\n",
-  #     "so you cannot trust Wt_Sampled_2.")
-  # }
-  # Pdata <- merge(
-  #   Pdata, 
-  #   temp[temp$FISH_NO == 1, c("SAMPLE_NO", "Wt_Sampled_b")],
-  #   by = "SAMPLE_NO")
+  Pdata$Wt_Sampled_2 <- unsplit(
+    # For every sample_no get the species_wgt for a given cluster
+    lapply(split(Pdata, list(Pdata$SAMPLE_NO)), 
+      function(x) sum(x[!duplicated(x$CLUSTER_NO), "SPECIES_WGT"])), 
+    # Assign each answer to entries with that sample_no in Pdata
+    Pdata$SAMPLE_NO)
 
   #### Washington b/c there is no other method to find the sample weight.
   # Only if there are individual weight factor and coefficients available
