@@ -54,35 +54,17 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
 
   tows$Use_acs[tows$Use_acs == 0] = NA
 
-  # Use median from the state and year where total landed weights are missing
-
-  # KFJ(2015-06-17): Should use state x year x gear then most recent year
-  # if not available.
-  median_use_acs = aggregate(tows$Use_acs, list(tows$state, tows$fishyr), median, na.rm=T)
-  names(median_use_acs) = c("state","fishyr","Median")
-
-  # Might be all NA for one state, get the overall median
-
-  overall_median = aggregate(tows$Use_acs, list(tows$fishyr), median, na.rm=T)
-  names(overall_median) = c("fishyr","Median")
-
-  # Get row-by-row alignment with tows for each median.
-  # Note that find.matching.rows returns a list; [[1]] is the values.
-
-  Use_acs_medians = find.matching.rows(tows, median_use_acs,
-                    c("state","fishyr"), c("state", "fishyr"), "Median")[[1]]
-
-  Annual_medians = find.matching.rows(tows, overall_median,
-                                      c("fishyr"), c("fishyr"), "Median")[[1]]
-
-  # First fill NA with state/fishyr median, then fishyr median.
-
-  tows$Use_acs[is.na(tows$Use_acs)] = Use_acs_medians[is.na(tows$Use_acs)]
-  tows$Use_acs[is.na(tows$Use_acs)] = Annual_medians[is.na(tows$Use_acs)]
-
-  # Save to full dataset.
-
+  # Use median from year, state, gear, grade if total landed weight is missing
+  # medians are calculated with all groups first then eliminating from the 
+  # right, where the last ditch effort is the median by year across all
+  # grades, gears, and states
+  tows$median <- getMed(tows$Use_acs, 
+    tows$SAMPLE_YEAR, tows$state, tows$geargroup, tows$GRADE)$median
+  tows$Use_acs[is.na(tows$Use_acs)] <- tows$median[is.na(tows$Use_acs)]
   Pdata$Use_acs = tows$Use_acs[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
+  # KFJ(2019-03-29): todo - print information to the screen 
+  # to let users know how many data points are being interpolated
+  # rather than calculated from raw information
 
   ############################################################################
   #
