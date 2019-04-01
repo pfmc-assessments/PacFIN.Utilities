@@ -184,6 +184,12 @@ cleanPacFIN = function( Pdata,
 
   # Fix Ages (originally in cleanAges)
   # MH is checking with JW to see if there is a AGE_METHOD per age reader
+  if (!"FISH_AGE_YEARS_FINAL" %in% colnames(Pdata)) {
+    Pdata$FISH_AGE_YEARS_FINAL <- NA
+  }
+  if (!"age1" %in% colnames(Pdata)) Pdata$age1 <- NA
+  if (!"age2" %in% colnames(Pdata)) Pdata$age2 <- NA
+  if (!"age3" %in% colnames(Pdata)) Pdata$age3 <- NA
   Pdata$age <- ifelse(!is.na(Pdata$FISH_AGE_YEARS_FINAL), 
     Pdata$FISH_AGE_YEARS_FINAL, Pdata$age1)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
