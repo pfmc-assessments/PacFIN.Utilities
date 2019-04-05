@@ -66,22 +66,21 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   # Calculate Species_Percent_Sampled.  (Actually, fraction sampled).
   #
   ############################################################################
-
-  # For CA and OR:
   if (!"Wt_Sampled" %in% colnames(Pdata)) stop("The column Wt_Sampled",
     " must be in your dataframe, run EF1_Denominator.")
   tows$Species_Percent_Sampled = tows$Wt_Sampled/tows$Use_acs
   tows$Use_Percent <- tows$TOTAL_WGT * 
     ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
   # KFJ(2019-03-29): Determine if when percent should be multiplied by
-  # round weight rather than total weight, where total weight is supposed
-  # to be the weight of all species landed from which the sample came from
-  # for California data. 
+  # round weight rather than total weight.
   # I looked at a few fish tickets and it appears as though Round Weight for 
-  # California is the species-specific sampled weight and I am not sure 
-  # where the total weight is actually coming from because it is not 
-  # total weight of all landings on a fish ticket. Sometimes
-  # the total weight is more than the round weight, which should never happen.
+  # California is the species-specific sampled weight.
+  # For CA TOTAL_WGT is the sum of the landed weight for species that were
+  # sampled. That is, if you landed boccacio, sablefish, and yellowtail in 
+  # a tow but only sampled boccacio and sablefish, then TOTAL_WGT would 
+  # be the landed weight of sablefish and bocaccio. For this example, 
+  # RWT_WT would be the sablefish landed weight if sablefish was the species
+  # that you cared about.
 
   ############################################################################
   #
@@ -100,13 +99,13 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   tows$Trip_Sampled_Lbs[tows$Trip_Sampled_Lbs == 0] = NA
 
   # California uses Percent of TOTAL_WGT.
-  # Find percent of TOTAL_WGT that should be of your species based 
+  # Find percent of TOTAL_WGT attributable to the spp of interest based 
   # on the percent of all sampled fish that are your species. 
 
   # Oregon uses EXP_WT by preference.
   # EXP_WT will be the species-specific landing weight for the sample and will
   # account for dressed landings.
-  # OR data is always missing total weights between 1965-1970
+  # OR data is sometimes missing EXP_WT earlier than 1973
   # so use Species_Percent_Sampled, as for CA.
 
   indices = which(tows$state=="OR" & is.na(tows$Trip_Sampled_Lbs))
@@ -117,8 +116,9 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
   # Oregon samples are more species-specific, so the amount of
   # contamination of other species in the sample might be less of 
   # an error than just using the total weight. 
-  # KFJ(2019-03-29): todo - check with Ali to see ideas for how to 
-  # proceed if EXP_WT is not available. 
+  # TOTAL_WGT can be the amount of the clusters rather than the landing weight
+  # for OR. This is not the best way forward, but keeping it for now.
+  # todo - check with Ali for how to proceed when EXP_WT is not available. 
 
   # Washington uses RWT_LBS as default.
   tows$Trip_Sampled_Lbs <- ifelse(
@@ -126,7 +126,11 @@ EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
     is.na(tows$Trip_Sampled_Lbs),
     tows$TOTAL_WGT, tows$Trip_Sampled_Lbs)
   # KFJ(2019-03-29): Is it better to use TOTAL_WGT rather than a median of 
-  # roundweight? Can't check grade b/c WA doesn't provide GRADE.
+  # roundweight? Need to ask Theresa best practice here.
+  # Many fish that were sampled using alternate or fork length are 
+  # included here.
+  # Before the median of trip_sampled_lbs for those that were found 
+  # was used before median round weight 
 
   # Get row-by-row alignment with tows for each median.
   # Fill CA and OR annual median Trip_Sampled_Lbs.
