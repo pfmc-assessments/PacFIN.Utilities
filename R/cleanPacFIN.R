@@ -22,6 +22,10 @@
 #' @param badRecords a set of sample identifiers. NULL by default.
 #' @param keep_sample_type a set of sample types to retain.  Default = c("", "M")
 #' @param keep_sample_method a set of sample methods to retain.  Default = "R"
+#' @param keep_length_type a set of length types to retain. 
+#' There is no default value. Typically, users will want to retain
+#' \code{c("", "F", "A")} at a minimum, but should also think about adding NA,
+#' i.e., \code{c("", "F", "A", NA)}.
 #' @param keep_missing_lengths a logical value. FALSE by default.
 #' @param keep_CA default TRUE.  CA data often have no sample type or method, or INPFC area.
 #' @param CLEAN a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
@@ -102,6 +106,7 @@ cleanPacFIN = function( Pdata,
                         badRecords = NULL,
                         keep_sample_type = c("", "M"),
                         keep_sample_method = "R",
+                        keep_length_type,
                         keep_missing_lengths = FALSE,
                         keep_CA = TRUE,
                         CLEAN = TRUE, 
@@ -168,10 +173,36 @@ cleanPacFIN = function( Pdata,
   USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
 
   # Fix Lengths.  Use FISH_LENGTH if there is no FORK_LENGTH.
-  Pdata$FORK_LENGTH[Pdata$FORK_LENGTH == 0] <- NA
-  Pdata$FISH_LENGTH[Pdata$FISH_LENGTH == 0] <- NA
-  Pdata$FORK_LENGTH[is.na(Pdata$FORK_LENGTH)] = -1
-  Pdata$length = ifelse(Pdata$FISH_LENGTH > -1, Pdata$FISH_LENGTH, Pdata$FORK_LENGTH)
+  Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% c("", "A", "F", NA), 
+    Pdata$FORK_LENGTH, NA)
+  Pdata$length <- ifelse(
+    "D" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "D" &
+    Pdata$FORK_LENGTH != Pdata$FISH_LENGTH,
+    Pdata$FORK_LENGTH, Pdata$length)
+  Pdata$length <- ifelse(
+    "S" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "S", 
+    Pdata$FISH_LENGTH,
+    Pdata$length)
+  Pdata$length <- ifelse(
+    "T" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "T", 
+    Pdata$FISH_LENGTH,
+    Pdata$length)
+  Pdata$length <- ifelse(
+    "U" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "U", 
+    ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
+    Pdata$length)
+  Pdata$length <- ifelse(
+    NA %in% keep_length_type & is.na(Pdata$FISH_LENGTH_TYPE), 
+    ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
+    Pdata$length)
+  Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% keep_length_type, 
+    Pdata$length, NA)
+  Pdata$length[Pdata$length == 0] <- NA
+  if (any(!Pdata$FISH_LENGTH_TYPE %in% c("", "A", "D", "F", "S", "T", "U", NA))) {
+    stop("cleanPacFIN only knows how to accommodate the following FISH_LENGTH_TYPEs:",
+      "\n\"\", A, D, F, S, T, U, and NA.",
+      "\nPlease contact the package maintainer to add additional types.")
+  }
 
   # Convert mm to cm
 
