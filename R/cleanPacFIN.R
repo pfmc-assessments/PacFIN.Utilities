@@ -195,6 +195,10 @@ cleanPacFIN = function( Pdata,
     ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
     Pdata$length)
   Pdata$length <- ifelse(
+    "" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "",
+    Pdata$FISH_LENGTH,
+    Pdata$length)
+  Pdata$length <- ifelse(
     NA %in% keep_length_type & is.na(Pdata$FISH_LENGTH_TYPE), 
     ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
     Pdata$length)
