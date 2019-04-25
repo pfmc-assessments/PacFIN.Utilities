@@ -4,10 +4,15 @@
 \alias{getGearGroup}
 \title{Create column for gears according to PacFIN gears}
 \usage{
-getGearGroup(Pdata)
+getGearGroup(Pdata, spp = NULL)
 }
 \arguments{
 \item{Pdata}{A PacFIN \code{data.frame}}
+
+\item{spp}{A character string giving the species name to 
+ensure that the methods are species specific. Leave \code{NULL}
+if generic methods work for your species. 
+Currently, sablefish is the only species with species-specific code.}
 }
 \value{
 A modified \code{data.frame} where an additional column labeled

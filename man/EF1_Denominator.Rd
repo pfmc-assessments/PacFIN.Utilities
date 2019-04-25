@@ -33,14 +33,22 @@ fish weights should be generated using the specified weight-length relationship.
 \value{
 Additional columns are added to \code{Pdata}:
 \itemize{
-\item Wt_Sampled_1
-\item Wt_Sampled_2
+\item Wt_Sampled_1: the sum of weights for male and female fish within the
+sample, this will ignore unsexed fish or hermaphrodites. 
+\item Wt_Sampled_2: the species-specific sample weight only provided by
+  California because the cluster weight could include multiple species.
 \item LW_Calc_Wt: individual weights predicted from the specified length-weight relationships.
-\item Wt_Sampled_3
+\item Wt_Sampled_3: The sum of empirical weights, for those fish within a 
+sample where this information is available, and weights calculated from the
+length-weight relationship. This uses the empirical data if available and 
+fills in with the expected weight.
 \item Wt_Sampled: the sample weight that will be used in subsequent analyses,
-  where this is preferentially Wt_Sampled_1, with NAs replaced with values from Wt_Sampled_2,
+  where this is preferentially the empirical weights; all NA values are 
+  subsequently filled in using Wt_Sampled_1, 
+  with NAs replaced with values from Wt_Sampled_2,
   and NAs remaining replaced with values from Wt_Sampled_3.
-\item Wt_Method: a \code{numeric} value denoting which method was used for \code{Wt_Sampled}.
+\item Wt_Method: a \code{numeric} value starting with zero for empirical weights
+  and then denoting which method was used for \code{Wt_Sampled}.
 }
 }
 \description{

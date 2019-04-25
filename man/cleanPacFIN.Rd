@@ -5,9 +5,10 @@
 \title{Filter PacFIN samples.}
 \usage{
 cleanPacFIN(Pdata, only_USINPFC = FALSE, keep_INPFC = NULL,
-  remove_INPFC = NULL, badRecords = NULL, keep_sample_type = c("", "M"),
-  keep_sample_method = "R", keep_missing_lengths = FALSE, keep_CA = TRUE,
-  CLEAN = TRUE)
+  remove_INPFC = NULL, badRecords = NULL, keep_sample_type = c("",
+  "M"), keep_sample_method = "R", keep_length_type,
+  keep_missing_lengths = FALSE, keep_CA = TRUE, CLEAN = TRUE,
+  spp = NULL)
 }
 \arguments{
 \item{Pdata}{a PacFIN dataset}
@@ -24,12 +25,23 @@ cleanPacFIN(Pdata, only_USINPFC = FALSE, keep_INPFC = NULL,
 
 \item{keep_sample_method}{a set of sample methods to retain.  Default = "R"}
 
+\item{keep_length_type}{a set of length types to retain. 
+There is no default value. Typically, users will want to retain
+\code{c("", "F", "A")} at a minimum, but should also think about adding NA,
+i.e., \code{c("", "F", "A", NA)}.}
+
 \item{keep_missing_lengths}{a logical value. FALSE by default.}
 
 \item{keep_CA}{default TRUE.  CA data often have no sample type or method, or INPFC area.}
 
 \item{CLEAN}{a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
-but report what would have been removed.}
+but report what would have been removed. Additional columns of information
+are added to the original data even if \code{CLEAN = FALSE}.}
+
+\item{spp}{A character string giving the species name to 
+ensure that the methods are species specific. Leave \code{NULL}
+if generic methods work for your species. 
+Currently, sablefish is the only species with species-specific code.}
 }
 \value{
 The input data filtered for desired areas and record types
