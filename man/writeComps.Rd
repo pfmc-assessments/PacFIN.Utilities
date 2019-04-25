@@ -6,7 +6,7 @@
 \usage{
 writeComps(inComps, fname = "out.csv", abins = NULL, lbins = NULL,
   maxAge = Inf, partition = 0, ageErr = 0, returns = "FthenM",
-  dummybins = FALSE, verbose = TRUE)
+  dummybins = FALSE, sum1 = FALSE, digits = 4, verbose = TRUE)
 }
 \arguments{
 \item{inComps}{A dataframe generated as described in Workflow, above.}
@@ -37,6 +37,12 @@ lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
 or be placed in the specified bins. Default is \code{TRUE}.  Dummy
 bins are useful for determining whether the current bin structure
 properly captures the data.}
+
+\item{sum1}{A logical value specifying whether to rescale the compositions
+to sum to 1 (they will also be rounded to 4 decimal places)}
+
+\item{digits}{Integer indicating the number of decimal places to round
+value to (value is passed to \code{round()}). NULL will skip rounding.}
 
 \item{verbose}{A logical value specifying if output should be written
 to the screen or not. Good for testing and exploring your data but

@@ -41,6 +41,13 @@
 #'   or be placed in the specified bins. Default is \code{TRUE}.  Dummy
 #'   bins are useful for determining whether the current bin structure
 #'   properly captures the data.
+#'
+#' @param sum1 A logical value specifying whether to rescale the compositions
+#'   to sum to 1 (they will also be rounded to 4 decimal places)
+#'
+#' @param digits Integer indicating the number of decimal places to round
+#'   value to (value is passed to \code{round()}). NULL will skip rounding.
+#' 
 #' @template verbose
 #'   
 #' @details
@@ -93,7 +100,8 @@
 ##############################################################################
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       maxAge=Inf, partition=0, ageErr=0, returns = "FthenM",
-                      dummybins = FALSE, verbose = TRUE) {
+                      dummybins = FALSE, sum1 = FALSE, digits = 4,
+                      verbose = TRUE) {
 
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
@@ -257,7 +265,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     # it gets re-ordered later.
 
     NCOLS = 2 + length(lbins)
-    OutNames = c(paste("L",lbins, sep=""), "Ntows","Nsamps")
+    OutNames = c(paste0("L",lbins), "Ntows","Nsamps")
 
   } # End if-else
 
@@ -351,6 +359,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
     } # End if
 
+    # assign to a name like 'mComps' or 'fComps'
     assign(paste(g, "Comps", sep=""), output)
 
   } # End for g
@@ -424,6 +433,51 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   Mout$gender=2
   FthenM$gender = 3
 
+  # column names that contain the comp values
+  value.names <- paste0("L",lbins[lbins!="Inf"])
+
+  # function to rescale comps to sum to 1
+  # IGT(2019-04-25): I tried using an apply function but kept messing up,
+  # so fell back on a simple loop over the rows
+  rescale.comps <- function(out){
+    for(irow in 1:nrow(out)){
+      out[irow, names(out) %in% value.names] <-
+        out[irow, names(out) %in% value.names] /
+          sum(out[irow, names(out) %in% value.names])
+    }
+    return(out)
+  }
+  # function to round comps
+  round.comps <- function(out, digits){
+    out[,names(out) %in% value.names] <-
+      round(out[,names(out) %in% value.names], digits = digits)
+    return(out)
+  }
+
+  
+  # optionally rescale to sum to 1
+  # this needs to happen after combining FthenM rather than to
+  # the sex-specific parts
+  if(sum1){
+    if(verbose){
+      message("rescaling comps to sum to 1")
+      Uout   <- rescale.comps(Uout)
+      Fout   <- rescale.comps(Fout)
+      Mout   <- rescale.comps(Mout)
+      FthenM <- rescale.comps(FthenM)
+    }
+  }
+  # optionally round off to chosen value
+  if(!is.null(digits)){
+    if(verbose){
+      message("rounding values to ", digits, " digits")
+    }
+    Uout   <- round.comps(Uout, digits = digits)
+    Fout   <- round.comps(Fout, digits = digits)
+    Mout   <- round.comps(Mout, digits = digits)
+    FthenM <- round.comps(FthenM, digits = digits)
+  }
+  
   # Print the whole shebang out to a file.
 
   # Turn off meaningless warnings.
