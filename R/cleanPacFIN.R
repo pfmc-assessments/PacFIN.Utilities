@@ -147,21 +147,16 @@ cleanPacFIN = function( Pdata,
   cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
   
   Pdata = getGearGroup(Pdata, spp = spp)
-  
+
   if (keep_CA) {
+    Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
+    Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_METHOD), "SAMPLE_METHOD"] <- "R"
+    Pdata[Pdata$state == "CA" & is.na(Pdata$INPFC_AREA), "INPFC_AREA"] <- "CalCOM"
     
-    CAdata = Pdata[Pdata$state == "CA",]
-    Pdata = Pdata[!Pdata$state == "CA",]
-    
-    CAdata$SAMPLE_TYPE[is.na(CAdata$SAMPLE_TYPE)] = "M"
-    CAdata$SAMPLE_METHOD[is.na(CAdata$SAMPLE_TYPE)] = "R"
-    CAdata$INPFC_AREA[is.na(CAdata$INPFC_AREA)] = "CalCOM"
-    if (!is.null(keep_INPFC) & any(CAdata$INPFC_AREA == "CalCOM")) {
+    if (!is.null(keep_INPFC) & any(Pdata$INPFC_AREA == "CalCOM")) {
       keep_INPFC <- c(keep_INPFC, "CalCOM")
       message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.")
     }
-    Pdata = rbind(Pdata, CAdata)
-    
   } # End keep_CA
 
   # Define legal areas.  "CalCOM" is included because the combineCalCOM function
