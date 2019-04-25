@@ -104,7 +104,7 @@
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       maxAge=Inf, partition=0, ageErr=0, returns = "FthenM",
                       dummybins = FALSE, sum1 = FALSE, digits = 4,
-                      overwrite = FALSE, verbose = TRUE) {
+                      overwrite = TRUE, verbose = TRUE) {
 
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
@@ -449,7 +449,8 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   FthenM$gender = 3
 
   # column names that contain the comp values
-  value.names <- paste0("L",lbins[lbins!="Inf"])
+  value.names <- c(paste0("L",lbins[lbins!="Inf"]),
+                   paste0("A",abins[abins!="Inf"]))
 
   # function to rescale comps to sum to 1
   # IGT(2019-04-25): I tried using an apply function but kept messing up,
