@@ -518,6 +518,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   
   IDstring = paste("\n\n", "Females then males")
   cat(file=fname, IDstring, "\n")
+  cat(file=fname, IDstring, "\n", append=T)
   
   write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
   
