@@ -22,7 +22,6 @@ as \code{png()} is used to save the plotting device.}
 }
 \value{
 A \code{Pdata} with additional columns, where
-  \code{Species_Percent_Sampled} is the percentage of this species in the samples;
   \code{Use_acs} is \code{all_cluster_sum} with NAs replaced by year-specific,
   state-specific medians;
   \code{Trip_Sampled_Lbs} is the sample weight in pounds;
@@ -36,10 +35,10 @@ A \code{Pdata} with additional columns, where
 \details{
 \code{Trip_Sampled_Lbs} is calculated differently for each state:
 \itemize{
-\item {California}{ = \code{Pdata$Species_Percent_Sampled} *
-  \code{Pdata$TOTAL_WGT};}
+\item {California}{ = \code{Species_Percent_Sampled} *
+  \code{TOTAL_WGT};}
 \item {Oregon}{ = \code{Pdata$EXP_WT}.  Where missing,
-  use \code{Pdata$Species_Percent_Sampled}, as for CA;}
+  use \code{Species_Percent_Sampled} * \code{TOTAL_WGT}, as for CA;}
 \item {Washington}{ = \code{Pdata$RWT_LBS}, \code{Pdata$TOTAL_WGT},
   median(RWT_LBS), or median(\code{Pdata$TOTAL_WGT});}
 \item {if all else fails}{ = use per-year, state-specific medians.}

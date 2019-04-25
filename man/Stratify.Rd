@@ -4,7 +4,8 @@
 \alias{Stratify}
 \title{Create a vector of stratifications}
 \usage{
-Stratify(inVector = NULL, splits = NULL, Nnames = NULL, numeric = F)
+Stratify(inVector = NULL, splits = NULL, Nnames = NULL,
+  numeric = F)
 }
 \arguments{
 \item{inVector}{Input vector of values.  May be numeric or character.}

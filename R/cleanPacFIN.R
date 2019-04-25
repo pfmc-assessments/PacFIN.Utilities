@@ -176,7 +176,12 @@ cleanPacFIN = function( Pdata,
   Pdata$length <- ifelse(
     "D" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "D" &
     Pdata$FORK_LENGTH != Pdata$FISH_LENGTH,
-    Pdata$FORK_LENGTH, Pdata$length)
+      Pdata$FORK_LENGTH, Pdata$length)
+  Pdata$length <- ifelse(
+    # type "R" is associated with inter-spiracle width for skates (used by WDFW)
+    "R" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "R", 
+    Pdata$FISH_LENGTH,
+    Pdata$length)
   Pdata$length <- ifelse(
     "S" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "S", 
     Pdata$FISH_LENGTH,
@@ -196,9 +201,10 @@ cleanPacFIN = function( Pdata,
   Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% keep_length_type, 
     Pdata$length, NA)
   Pdata$length[Pdata$length == 0] <- NA
-  if (any(!Pdata$FISH_LENGTH_TYPE %in% c("", "A", "D", "F", "S", "T", "U", NA))) {
-    stop("cleanPacFIN only knows how to accommodate the following FISH_LENGTH_TYPEs:",
-      "\n\"\", A, D, F, S, T, U, and NA.",
+  goodtypes <- c("", "A", "D", "F", "R", "S", "T", "U", NA)
+  if (any(!Pdata$FISH_LENGTH_TYPE %in% goodtypes)) {
+    stop("cleanPacFIN only knows how to accommodate the following FISH_LENGTH_TYPEs:\n",
+      paste(sprintf("'%s'", goodtypes), collapse = ", "), ".",
       "\nPlease contact the package maintainer to add additional types.")
   }
 
