@@ -47,6 +47,9 @@
 #'
 #' @param digits Integer indicating the number of decimal places to round
 #'   value to (value is passed to \code{round()}). NULL will skip rounding.
+#'
+#' @param overwrite A logical value specifying whether to overwrite an existing
+#'   file if the file associated with the input \code{fname} already exists.
 #' 
 #' @template verbose
 #'   
@@ -101,12 +104,24 @@
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       maxAge=Inf, partition=0, ageErr=0, returns = "FthenM",
                       dummybins = FALSE, sum1 = FALSE, digits = 4,
-                      verbose = TRUE) {
+                      overwrite = FALSE, verbose = TRUE) {
 
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
     cat(paste("\nNote that if you didn't run doSexRatio,",
       "all unsexed fish disappear at this point.\n\n"))
+    flush.console()
+  }
+  # check for existence of the file before writing anything
+  if(file.exists(fname)){
+    if(overwrite){
+      warning("The file ", fname,
+              "\n  exists, and overwrite = TRUE, ",
+              "so deleting the file before writing new tables.")
+      file.remove(fname)
+    }else{
+      stop("The file ", fname, "\n  exists and overwrite = FALSE.")
+    }
     flush.console()
   }
 
@@ -480,11 +495,10 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   
   # Print the whole shebang out to a file.
 
-  # Turn off meaningless warnings.
+  ## # Turn off warnings about "appending column names to file"
   oldwarn = options("warn")
   options("warn" = -1)
 
-  
   if (verbose) {
     cat("Writing F only, dimensions:", dim(Fout), "\n")
   }
@@ -517,13 +531,11 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   }
   
   IDstring = paste("\n\n", "Females then males")
-  cat(file=fname, IDstring, "\n")
   cat(file=fname, IDstring, "\n", append=T)
   
   write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
   
   # Reset warnings
-  
   options("warn" = oldwarn[[1]])
   
   invisible(eval(parse(text = returns)))

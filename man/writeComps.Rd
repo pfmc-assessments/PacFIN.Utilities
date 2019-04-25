@@ -6,7 +6,8 @@
 \usage{
 writeComps(inComps, fname = "out.csv", abins = NULL, lbins = NULL,
   maxAge = Inf, partition = 0, ageErr = 0, returns = "FthenM",
-  dummybins = FALSE, sum1 = FALSE, digits = 4, verbose = TRUE)
+  dummybins = FALSE, sum1 = FALSE, digits = 4, overwrite = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{inComps}{A dataframe generated as described in Workflow, above.}
@@ -43,6 +44,9 @@ to sum to 1 (they will also be rounded to 4 decimal places)}
 
 \item{digits}{Integer indicating the number of decimal places to round
 value to (value is passed to \code{round()}). NULL will skip rounding.}
+
+\item{overwrite}{A logical value specifying whether to overwrite an existing
+file if the file associated with the input \code{fname} already exists.}
 
 \item{verbose}{A logical value specifying if output should be written
 to the screen or not. Good for testing and exploring your data but
