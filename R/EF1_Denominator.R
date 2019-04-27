@@ -152,24 +152,22 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     #
     ############################################################################
 
-    Pdata$LW_Calc_Wt = NA
-    Pdata$LW_Calc_Wt[Pdata$SEX=="F"] = fa*(Pdata$length[Pdata$SEX=="F"] / 10)^fb
-    Pdata$LW_Calc_Wt[Pdata$SEX=="M"] = ma*(Pdata$length[Pdata$SEX=="M"] / 10)^mb
-    Pdata$LW_Calc_Wt[Pdata$SEX %in% c("U", "H")] = ua*(Pdata$length[Pdata$SEX %in% c("U", "H")] / 10)^ub
+    wlfish <- getWLpars(Pdata, verbose = verbose)
+    Pdata$LW_Calc_Wt <- wltoweight(Pdata$length, Pdata$SEX, 
+      pars = data.frame(
+        "A" = c("females" = fa, "males" = ma, "all" = ua),
+        "B" = c("females" = fb, "males" = mb, "all" = ub)))
+    # todo: create a switch to turn on use of fishery weight length relationship
+    # pars could also equal wlfish if no parameters and Indiv_Wfts is TRUE
 
-    # Convert to pounds
-
-    Pdata$LW_Calc_Wt = Pdata$LW_Calc_Wt * 2.20462
-    #KFJ(2015-06-20): I think this calculation is wrong and SS
-    # uses parameters that assume length is in cm and weight
-    # is in kg, thus making the correct calculation
-    # a * (Pdata$length / 10)^b * 2.20462
-    
     bestweight <- ifelse(is.na(Pdata$FISH_WEIGHT),
       Pdata$LW_Calc_Wt, Pdata$FISH_WEIGHT)
     Pdata$Wt_Sampled_3 <- ave(bestweight, Pdata$SAMPLE_NO,
       FUN = sumNA)
-
+    
+    if (any(is.na(Pdata$Wt_Sampled_3[Pdata$state == "WA"]))) warning("Some fish",
+      " from WA don't have an empirical or estimated weight,\n",
+      "and thus, they are not included in the first expansion.")
   } else {
 
     # Need for summary and boxplot
