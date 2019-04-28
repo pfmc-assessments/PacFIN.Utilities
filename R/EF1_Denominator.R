@@ -63,6 +63,10 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
                             plot = FALSE) 
 {
 
+  sumNA <- function(x) {
+    out <- sum(x, na.rm = TRUE)
+    ifelse(out == 0, NA, out)
+  }
 # For testing: fa=2e-06; fb=3.5; ma=2e-06; mb=3.5; ua=2e-06; ub=3.5
 
 
@@ -104,10 +108,6 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
   # Allow sum to be calculated when there are no males or no females
   # because weights are NA in those instances rather than a value of zero.
   # todo: Get JW to include UNK_NUM and UNK_WGT
-  sumNA <- function(x) {
-    out <- sum(x, na.rm = TRUE)
-    ifelse(out == 0, NA, out)
-  }
   if (!"UNK_NUM" %in% colnames(Pdata)) {
     Pdata$UNK_NUM <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
     FUN = function(x) sumNA(x %in% c("U", "H")))
