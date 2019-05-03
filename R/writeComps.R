@@ -434,9 +434,9 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   if (verbose) {
     cat("Writing F only, dimensions:", dim(Fout), "\n")
   }
-  
+
   IDstring = paste("\n\n", "Females only")
-  cat(file=fname, IDstring, "\n", append=T)
+  cat(file=fname, IDstring, "\n", append=FALSE)
   
   write.table(file=fname, Fout, sep=",", col.names=T, row.names=F, append=T)
   
@@ -463,7 +463,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   }
   
   IDstring = paste("\n\n", "Females then males")
-  cat(file=fname, IDstring, "\n")
+  cat(file=fname, IDstring, "\n", append = TRUE)
   
   write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
   
