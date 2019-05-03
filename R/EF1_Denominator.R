@@ -153,7 +153,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     ############################################################################
 
     wlfish <- getWLpars(Pdata, verbose = verbose)
-    Pdata$LW_Calc_Wt <- wltoweight(Pdata$length, Pdata$SEX, 
+    Pdata$LW_Calc_Wt <- getweight(Pdata$length, Pdata$SEX, 
       pars = data.frame(
         "A" = c("females" = fa, "males" = ma, "all" = ua),
         "B" = c("females" = fb, "males" = mb, "all" = ub)))
