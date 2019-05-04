@@ -91,7 +91,6 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 
   # Used to get the number of SAMPLE_NOs per aggregation
 
-  lenique = function(x) { return(length(unique(x))) }
 
   # What happens below when there are not three sexes?  Need dummy entries.
 
@@ -220,3 +219,9 @@ getunsexedsamps <- function(identifier, sex, good = "U") {
   return(ifelse(keep == good, identifier, NA))
 }
 
+#' Number of Unique Entries
+#' A helper function that returns the number of unique
+#' entries in a vector. Usefull for apply functions.
+#' @author Kelli Faye Johnson
+#' @return An integer value specifying the number of unique entries.
+lenique <- function(x) { return(length(unique(x))) }
