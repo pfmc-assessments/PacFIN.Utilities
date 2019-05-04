@@ -124,16 +124,7 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
   # Set up flags for tows (SAMPLE_NOs) with only one gender present.
   # Need to retain this for subsequently assigning gender to the unsexed
   # and properly calculating sample sizes.
-
-  sexedSamps = unique(Pdata$SAMPLE_NO[Pdata$SEX %in% c("F","M")])
-
-  Usamps = unique(Pdata$SAMPLE_NO[Pdata$SEX == "U"])
-  Uonly = Usamps[!Usamps %in% sexedSamps]
-
-  Pdata$Uonly = NA
-  Pdata$Uonly[Pdata$SAMPLE_NO %in% Uonly] = Pdata$SAMPLE_NO[Pdata$SAMPLE_NO %in% Uonly]
-
-  # End setting up flag.
+  Pdata$Uonly <- getunsexedsamps(Pdata$SAMPLE_NO, Pdata$SEX)
 
   # Aggregate all samples
 
@@ -208,3 +199,24 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
   invisible(ageComps)
 
 } # End function getComps
+#' Return Sample IDs That Did Not Sex Samples
+#'
+#' Identifiers that have female and male samples will be returned 
+#' as NA and only identifiers that had unsexed fish will be provided.
+#' @param identifier Unique IDs for the samples
+#' @param sex A vector of the same length as \code{identifier} providing
+#' the sex of the sampled fish.
+#' @param good A character value supplying the \code{sex} value you
+#' want to keep.
+#'
+#' @author Kelli Faye Johnson
+#' @return A vector of identifiers that only had the sex given in
+#' the \code{good} argument. The returned vector will be of the same
+#' length as the supplied vectors.
+#'
+getunsexedsamps <- function(identifier, sex, good = "U") {
+  ff <- function(x) paste(unique(x), collapse = "")
+  keep <- ave(sex, identifier, FUN = ff)
+  return(ifelse(keep == good, identifier, NA))
+}
+
