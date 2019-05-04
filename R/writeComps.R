@@ -369,9 +369,10 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   blanks = mComps[1:NCOLS]
   blanks[,] = 0
 
-  # KFJ(2015-06-16): Reorder using colnames rather than overwriting
-  uStrat <- cbind(uStrat[, c("fishyr", "fleet"), drop = FALSE],
-    uStrat[, -c(1:2), drop = FALSE])
+  if (!"fishyr" %in% colnames(uStrat)) stop("fishyr should be a column")
+  if (!"fleet" %in% colnames(uStrat)) stop("fleet should be a column")
+  uStrat <- data.frame(uStrat[, c("fishyr", "fleet"), drop = FALSE],
+    uStrat[, !colnames(uStrat) %in% c("fishyr", "fleet"), drop = FALSE])
 
   # Fill the rest of the values
 
