@@ -254,16 +254,16 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     # Good lengths Bad ages
     if (!is.na(Pdata$length[ii]) & Pdata$age[ii] == -1) {
       SPECIES_WGT_A[change] <- SPECIES_WGT_A[change] - bestweight[ii]
-      UNK_WGT_A[change] <- UNK_WGT_A[change] - bestweight[ii]
-      MALES_WGT_A[change] <- MALES_WGT_A[change] - bestweight[ii]
-      FEMALES_WGT_A[change] <- FEMALES_WGT_A[change] - bestweight[ii]
+      if (Pdata$SEX[ii] == "U") UNK_WGT_A[change] <- UNK_WGT_A[change] - bestweight[ii]
+      if (Pdata$SEX[ii] == "M") MALES_WGT_A[change] <- MALES_WGT_A[change] - bestweight[ii]
+      if (Pdata$SEX[ii] == "F") FEMALES_WGT_A[change] <- FEMALES_WGT_A[change] - bestweight[ii]
     }
     # Bad lengths Good ages
     if (is.na(Pdata$length[ii]) & Pdata$age[ii] != -1) {
       SPECIES_WGT_L[change] <- SPECIES_WGT_L[change] - bestweight[ii]
-      UNK_WGT_L[change] <- UNK_WGT_L[change] - bestweight[ii]
-      MALES_WGT_L[change] <- MALES_WGT_L[change] - bestweight[ii]
-      FEMALES_WGT_L[change] <- FEMALES_WGT_L[change] - bestweight[ii]
+      if (Pdata$SEX[ii] == "U") UNK_WGT_L[change] <- UNK_WGT_L[change] - bestweight[ii]
+      if (Pdata$SEX[ii] == "M") MALES_WGT_L[change] <- MALES_WGT_L[change] - bestweight[ii]
+      if (Pdata$SEX[ii] == "F") FEMALES_WGT_L[change] <- FEMALES_WGT_L[change] - bestweight[ii]
     }
   }
 
