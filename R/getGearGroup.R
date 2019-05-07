@@ -33,6 +33,7 @@ getGearGroup = function (Pdata, spp = NULL) {
 cat("\n\nGear groupings reflect those in the table at",
        "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt\n\n")
   local <- GearTable
+  if (is.factor(Pdata[, "GRID"])) Pdata[, "GRID"] <- as.character(Pdata[, "GRID"])
   if (!is.null(spp)) {  
   	if (tolower(spp) %in% c("sablefish")) {
   	  msc <- Pdata[Pdata$GRID %in% c("DNT", "LJ", "JIG", "MDT", "MPT"), ]
