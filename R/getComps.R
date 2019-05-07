@@ -91,7 +91,6 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 
   # Used to get the number of SAMPLE_NOs per aggregation
 
-  lenique = function(x) { return(length(unique(x))) }
 
   # What happens below when there are not three sexes?  Need dummy entries.
 
@@ -121,90 +120,118 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 
   } # End for
 
-  # Set up flags for tows (SAMPLE_NOs) with only one gender present.
-  # Need to retain this for subsequently assigning gender to the unsexed
-  # and properly calculating sample sizes.
-
-  sexedSamps = unique(Pdata$SAMPLE_NO[Pdata$SEX %in% c("F","M")])
-
-  Usamps = unique(Pdata$SAMPLE_NO[Pdata$SEX == "U"])
-  Uonly = Usamps[!Usamps %in% sexedSamps]
-
-  Pdata$Uonly = NA
-  Pdata$Uonly[Pdata$SAMPLE_NO %in% Uonly] = Pdata$SAMPLE_NO[Pdata$SAMPLE_NO %in% Uonly]
-
-  # End setting up flag.
-
-  # Aggregate all samples
-
-  AllTows = aggregate(Pdata$SAMPLE_NO, Pdata[,TowStrat], lenique)
-
-  tmp = Pdata[Pdata$SEX == "M",]
-  maleAgeComps = aggregate(tmp$Final_Sample_Size, tmp[,Cstrat], sum, na.rm=T)
-  maleSamples = aggregate(tmp$FREQ, tmp[,Cstrat], sum, na.rm=T)
-  maleTows = aggregate(tmp$SAMPLE_NO, tmp[,TowStrat], lenique)
-
-  tmp = Pdata[Pdata$SEX == "F",]
-  femaleAgeComps = aggregate(tmp$Final_Sample_Size, tmp[,Cstrat], sum, na.rm=T)
-  femaleSamples = aggregate(tmp$FREQ, tmp[,Cstrat], sum, na.rm=T)
-  femaleTows = aggregate(tmp$SAMPLE_NO, tmp[,TowStrat], lenique)
-
-  tmp = Pdata[Pdata$SEX == "U",]
-  unSexedAgeComps = aggregate(tmp$Final_Sample_Size, tmp[,Cstrat], sum, na.rm=T)
-  unSamples = aggregate(tmp$FREQ, tmp[,Cstrat], sum, na.rm=T)
-  unTows = aggregate(tmp$SAMPLE_NO, tmp[,TowStrat], lenique)
-
-  # Used to partition tows in doSexRatio
-  uONLYTows = aggregate(tmp$Uonly, tmp[,TowStrat], lenique)
-
-  names(maleAgeComps) = c(Cstrat, "male")
-  names(femaleAgeComps) = c(Cstrat, "female")
-  names(unSexedAgeComps) = c(Cstrat, "unsexed")
-
-  names(maleSamples) = c(Cstrat, "msamps")
-  names(femaleSamples) = c(Cstrat, "fsamps")
-  names(unSamples) = c(Cstrat, "usamps")
-
-  names(maleTows) = c(TowStrat, "mtows")
-  names(femaleTows) = c(TowStrat, "ftows")
-  names(unTows) = c(TowStrat, "utows")
-  names(uONLYTows) = c(TowStrat, "ONLY_U_TOWS")
-  names(AllTows) = c(TowStrat, "alltows")
-
-  # Add tows and samples to the Comps
-
-  maleAgeComps = merge(maleAgeComps, maleSamples, by=Cstrat, all=T)
-  maleAgeComps = merge(maleAgeComps, maleTows, by=TowStrat, all=T)
-
-  femaleAgeComps = merge(femaleAgeComps, femaleSamples, by=Cstrat, all=T)
-  femaleAgeComps = merge(femaleAgeComps, femaleTows, by=TowStrat, all=T)
-
-  unSexedAgeComps = merge(unSexedAgeComps, unSamples, by=Cstrat, all=T)
-  unSexedAgeComps = merge(unSexedAgeComps, unTows, by=TowStrat, all=T)
-  unSexedAgeComps = merge(unSexedAgeComps, uONLYTows, by=TowStrat, all=T)
-
-  ageComps = merge(maleAgeComps, femaleAgeComps, by=Cstrat, all=T)
-  ageComps = merge(ageComps, unSexedAgeComps, by=Cstrat, all=T)
-  ageComps = merge(ageComps, AllTows, by=TowStrat, all=T)
-
-  # Needed for arithmetic.
-
-  ageComps[is.na(ageComps)] = 0
-
-  # KFJ(2015-06-16): Do the above in few lines
-  # ageComps <- merge(by = c(TowStrat, "SEX"), all = TRUE,
-  #   aggregate(Pdata[, c("Final_Sample_Size", "FREQ")], Pdata[, c(Cstrat, "SEX")],
-  #     sum, na.rm = TRUE),
-  #   aggregate(Pdata[, c("SAMPLE_NO", "Uonly")], Pdata[, c(TowStrat, "SEX")],
-  #     lenique))
-  # ageComps <- reshape(ageComps, timevar = "SEX", idvar = Cstrat, direction = "wide")
-  # ageComps <- merge(ageComps, aggregate(Pdata$SAMPLE_NO, Pdata[, TowStrat], lenique),
-  #   by = TowStrat, all.x = TRUE)
-  # ageComps <- ageComps[, -grep("Uonly.F|Uonly.M", colnames(ageComps))]
-  # colnames(ageComps) <- c(Cstrat, "female", "fsamps", "ftows",
-  #   "male", "msamps", "mtows", "unsexed", "usamps", "utows", "ONLY_U_TOWS", "alltows")
-  # ageComps[is.na(ageComps)] <- 0
-
+  ageComps <- getcomps_long(data = Pdata,
+    towstrat = TowStrat, type = tail(usualSuspects, 1))
   invisible(ageComps)
 
 } # End function getComps
+
+#' Create a Long Database to Prepare Compositions
+#' @param data A data frame with columns defined by the following
+#' arguments: towstrat, type, towid, and weightid
+#' @param towstrat A vector of character values providing the column
+#' names for which you want compositions for.
+#' @param type A character value specifying which category to
+#' summarize by, i.e., \code{"length"} or \code{"age"}.
+#' @param towid A vector of character values providing the column
+#' names that generate a unique id for each sample.
+#' @param weightid A character value giving the column name that
+#' holds the value to be summed for each type and strata.
+#'
+#' @author Kelli Faye Johnson
+#' @return A data frame in long form with a weight for each
+#' category included in the lengths or ages of interest by
+#' stratification. Stratifications are normally year and fishery
+#' and sex will always be included. If no sex is provided then it
+#' is assumed all are unsexed and will be returned as such.
+#'
+getcomps_long <- function(data, towstrat, type,
+  towid = "SAMPLE_NO", weightid = "Final_Sample_Size") {
+
+  if (!all(towstrat %in% colnames(data))) stop("Not all towstrat are available.")
+  if (!type %in% colnames(data)) stop("'type' must be a column in data",
+    " i.e., 'lengthcm' or 'age'")
+
+  # Create a unique id for each sample
+  data[, "uniqueid"] <- apply(data[, towid, drop = FALSE],
+    1, paste, collapse = "_")
+  towid <- "uniqueid"
+  # Find which column contains the sex data or create unsexed
+  sexn <- grep("sex", colnames(data), ignore.case = TRUE, value = TRUE)
+  if (length(sexn) == 0) {
+    sexn <- "SEX"
+    data[, sexn] <- "U"
+    warning("SEX was missing from the data and set to 'U' for unsexed fish")
+  }
+  # FREQ... stores the number of fish that sum to the weightid
+  freqn <- grep("freq", colnames(data), ignore.case = TRUE, value = TRUE)
+  if (length(freqn) == 0) stop("FREQ is missing from the data.")
+
+  tstratwsex <- c(towstrat, sexn)
+  Cstrat <- c(towstrat, type)
+  cstratwsex <- c(Cstrat, sexn)
+
+  # Find which samples only have unsexed fish
+  data[, "Uonly"] <- getunsexedsamps(data[, towid], data[, sexn])
+  comp <- merge(by = tstratwsex, all = TRUE,
+    aggregate(
+      data[, c(weightid, freqn)],
+      by = data[, cstratwsex, drop = FALSE],
+      sum, na.rm = TRUE),
+    aggregate(
+      list("tows" = data[, towid], "ONLY_U_TOWS" = data[, c("Uonly")]),
+      by = data[, tstratwsex, drop = FALSE],
+      lenique))
+  comp <- merge(
+    reshape(comp, timevar = "SEX", idvar = Cstrat, direction = "wide"),
+    aggregate(
+      list("alltows" = data[, towid]),
+      by = data[, towstrat, drop = FALSE],
+      lenique),
+    by = towstrat, all.x = TRUE)
+  comp <- comp[, -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))]
+  colnames(comp) <- gsub("(.+)\\.([A-Z])", "\\L\\2\\1", colnames(comp),
+    perl = TRUE)
+  colnames(comp) <- gsub("freq|freq.+", "samps", colnames(comp),
+    ignore.case = TRUE)
+  colnames(comp) <- gsub("uonl.+", "ONLY_U_TOWS", colnames(comp),
+    ignore.case = TRUE)
+  colnames(comp) <- gsub(paste0("([a-z])", weightid), "\\1", colnames(comp),
+    ignore.case = TRUE)
+  colnames(comp) <- gsub("^f$", "female", colnames(comp))
+  colnames(comp) <- gsub("^m$", "male", colnames(comp))
+  colnames(comp) <- gsub("^u$", "unsexed", colnames(comp))
+  # todo: remove legacy code of needing fishyr
+  colnames(comp) <- gsub("^YEAR$", "fishyr", colnames(comp),
+    ignore.case = TRUE)
+  comp[is.na(comp)] <- 0
+  return(comp)
+}
+
+#' Return Sample IDs That Did Not Sex Samples
+#'
+#' Identifiers that have female and male samples will be returned 
+#' as NA and only identifiers that had unsexed fish will be provided.
+#' @param identifier Unique IDs for the samples
+#' @param sex A vector of the same length as \code{identifier} providing
+#' the sex of the sampled fish.
+#' @param good A character value supplying the \code{sex} value you
+#' want to keep.
+#'
+#' @author Kelli Faye Johnson
+#' @return A vector of identifiers that only had the sex given in
+#' the \code{good} argument. The returned vector will be of the same
+#' length as the supplied vectors.
+#'
+getunsexedsamps <- function(identifier, sex, good = "U") {
+  ff <- function(x) paste(unique(x), collapse = "")
+  keep <- ave(sex, identifier, FUN = ff)
+  return(ifelse(keep == good, identifier, NA))
+}
+
+#' Number of Unique Entries
+#' A helper function that returns the number of unique
+#' entries in a vector. Usefull for apply functions.
+#' @author Kelli Faye Johnson
+#' @return An integer value specifying the number of unique entries.
+lenique <- function(x) { return(length(unique(x))) }

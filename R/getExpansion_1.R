@@ -75,14 +75,20 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = TRUE
   # Expansion_Factor_1
 
   Pdata$Expansion_Factor_1 = Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled
+  Pdata$Expansion_Factor_1_L = Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled_L
+  Pdata$Expansion_Factor_1_A = Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled_A
 
   Pdata$Expansion_Factor_1[Pdata$Expansion_Factor_1 < 1] = 1
+  Pdata$Expansion_Factor_1_L[Pdata$Expansion_Factor_1_L < 1] = 1
+  Pdata$Expansion_Factor_1_A[Pdata$Expansion_Factor_1_A < 1] = 1
   
   # In most cases, WA data can't be expanded.
 
   if (Exp_WA != TRUE) {
   
     Pdata$Expansion_Factor_1[Pdata$state == "WA"] = 1
+    Pdata$Expansion_Factor_1_L[Pdata$state == "WA"] = 1
+    Pdata$Expansion_Factor_1_A[Pdata$state == "WA"] = 1
     cat("\n\nWA expansions set to 1. Fish tickets do not represent whole trips in WA.\n\n")
   } # End if
     
@@ -96,8 +102,12 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = TRUE
 
   # Now replace NAs with 1.
   Pdata$Expansion_Factor_1[is.na(Pdata$Expansion_Factor_1)] = 1
+  Pdata$Expansion_Factor_1_L[is.na(Pdata$Expansion_Factor_1_L)] = 1
+  Pdata$Expansion_Factor_1_A[is.na(Pdata$Expansion_Factor_1_A)] = 1
 
   Pdata$Expansion_Factor_1 = capValues(Pdata$Expansion_Factor_1, maxExp)
+  Pdata$Expansion_Factor_1_L = capValues(Pdata$Expansion_Factor_1_L, maxExp)
+  Pdata$Expansion_Factor_1_A = capValues(Pdata$Expansion_Factor_1_A, maxExp)
 
   if (verbose) {
     cat("\nCapping Expansion_Factor_1 at ", maxExp, "\n\n")
