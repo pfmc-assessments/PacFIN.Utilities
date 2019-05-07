@@ -5,10 +5,11 @@
 \title{Filter PacFIN samples.}
 \usage{
 cleanPacFIN(Pdata, only_USINPFC = FALSE, keep_INPFC = NULL,
-  remove_INPFC = NULL, badRecords = NULL, keep_sample_type = c("",
-  "M"), keep_sample_method = "R", keep_length_type,
-  keep_missing_lengths = FALSE, keep_CA = TRUE, CLEAN = TRUE,
-  spp = NULL)
+  remove_INPFC = NULL, badRecords = NULL,
+  keep_gears = unique(Pdata$GRID)[order(unique(Pdata$GRID))],
+  keep_sample_type = c("", "M"), keep_sample_method = "R",
+  keep_length_type, keep_missing_lengths = FALSE, keep_CA = TRUE,
+  CLEAN = TRUE, spp = NULL)
 }
 \arguments{
 \item{Pdata}{a PacFIN dataset}
@@ -20,6 +21,9 @@ cleanPacFIN(Pdata, only_USINPFC = FALSE, keep_INPFC = NULL,
 \item{remove_INPFC}{a set of INPFC areas.  NULL by default.}
 
 \item{badRecords}{a set of sample identifiers. NULL by default.}
+
+\item{keep_gears}{A vector of character values specifying which gear types you want
+to label as unique fleets. Order the vector the same way you want the fleets numbered.}
 
 \item{keep_sample_type}{a set of sample types to retain.  Default = c("", "M")}
 

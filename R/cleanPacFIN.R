@@ -20,6 +20,8 @@
 #' @param keep_INPFC a set of INPFC areas. NULL by default.
 #' @param remove_INPFC a set of INPFC areas.  NULL by default.
 #' @param badRecords a set of sample identifiers. NULL by default.
+#' @param keep_gears A vector of character values specifying which gear types you want
+#' to label as unique fleets. Order the vector the same way you want the fleets numbered.
 #' @param keep_sample_type a set of sample types to retain.  Default = c("", "M")
 #' @param keep_sample_method a set of sample methods to retain.  Default = "R"
 #' @param keep_length_type a set of length types to retain. 
@@ -102,6 +104,7 @@ cleanPacFIN = function( Pdata,
                         keep_INPFC = NULL,
                         remove_INPFC = NULL,
                         badRecords = NULL,
+                        keep_gears = unique(Pdata$GRID)[order(unique(Pdata$GRID))],
                         keep_sample_type = c("", "M"),
                         keep_sample_method = "R",
                         keep_length_type,
@@ -124,7 +127,7 @@ cleanPacFIN = function( Pdata,
   
   # KFJ: only create columns if they do not exist or if they are not numeric
   
-  for ( i in c("fleet","fishery","season") ) {
+  for ( i in c("fishery","season") ) {
     
     if (!i %in% colnames(Pdata)) {
       
@@ -147,6 +150,7 @@ cleanPacFIN = function( Pdata,
   cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
   
   Pdata = getGearGroup(Pdata, spp = spp)
+  if (!"fleet" %in% colnames(Pdata)) Pdata[, "fleet"] <- match(Pdata$geargroup, keep.gears)
 
   if (keep_CA) {
     Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
