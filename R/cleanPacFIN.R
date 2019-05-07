@@ -206,6 +206,8 @@ cleanPacFIN = function( Pdata,
       paste(sprintf("'%s'", goodtypes), collapse = ", "), ".",
       "\nPlease contact the package maintainer to add additional types.")
   }
+  Pdata[is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR", "length"] <- NA
+  Pdata[is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA", "length"] <- NA
 
   # Convert mm to cm
 
@@ -229,6 +231,8 @@ cleanPacFIN = function( Pdata,
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
   Pdata$age[is.na(Pdata$age)] <- -1
+  Pdata[is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR", "age"] <- -1
+  Pdata[is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA", "age"] <- -1
 
   # Flag records without a SAMPLE_NO
 
@@ -244,6 +248,10 @@ cleanPacFIN = function( Pdata,
     Pdata$sample[Pdata$sample %in% flags] <- "-1"
 
   } # End if
+
+  pfd$MALES_WGT[is.na(pfd$MALES_NUM) & pfd$MALES_WGT == 0] <- NA
+  pfd$FEMALES_WGT[is.na(pfd$FEMALES_NUM) & pfd$FEMALES_WGT == 0] <- NA
+  pfd$UNK_WGT[is.na(pfd$UNK_NUM) & pfd$UNK_WT == 0] <- NA
 
   # Remove records
   Rec_summary = rep(0,9)
