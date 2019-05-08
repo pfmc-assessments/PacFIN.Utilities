@@ -41,6 +41,16 @@
 #'   or be placed in the specified bins. Default is \code{TRUE}.  Dummy
 #'   bins are useful for determining whether the current bin structure
 #'   properly captures the data.
+#'
+#' @param sum1 A logical value specifying whether to rescale the compositions
+#'   to sum to 1 (they will also be rounded to 4 decimal places)
+#'
+#' @param digits Integer indicating the number of decimal places to round
+#'   value to (value is passed to \code{round()}). NULL will skip rounding.
+#'
+#' @param overwrite A logical value specifying whether to overwrite an existing
+#'   file if the file associated with the input \code{fname} already exists.
+#' 
 #' @template verbose
 #'   
 #' @details
@@ -93,12 +103,25 @@
 ##############################################################################
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       maxAge=Inf, partition=0, ageErr=0, returns = "FthenM",
-                      dummybins = FALSE, verbose = TRUE) {
+                      dummybins = FALSE, sum1 = FALSE, digits = 4,
+                      overwrite = TRUE, verbose = TRUE) {
 
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
     cat(paste("\nNote that if you didn't run doSexRatio,",
       "all unsexed fish disappear at this point.\n\n"))
+    flush.console()
+  }
+  # check for existence of the file before writing anything
+  if(file.exists(fname)){
+    if(overwrite){
+      warning("The file ", fname,
+              "\n  exists, and overwrite = TRUE, ",
+              "so deleting the file before writing new tables.")
+      file.remove(fname)
+    }else{
+      stop("The file ", fname, "\n  exists and overwrite = FALSE.")
+    }
     flush.console()
   }
 
@@ -257,7 +280,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     # it gets re-ordered later.
 
     NCOLS = 2 + length(lbins)
-    OutNames = c(paste("L",lbins, sep=""), "Ntows","Nsamps")
+    OutNames = c(paste0("L",lbins), "Ntows","Nsamps")
 
   } # End if-else
 
@@ -351,6 +374,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
     } # End if
 
+    # assign to a name like 'mComps' or 'fComps'
     assign(paste(g, "Comps", sep=""), output)
 
   } # End for g
@@ -425,13 +449,56 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   Mout$gender=2
   FthenM$gender = 3
 
+  # function to rescale comps to sum to 1
+  # IGT(2019-04-25): I tried using an apply function but kept messing up,
+  # so fell back on a simple loop over the rows
+  rescale.comps <- function(out){
+    value.names <- grep("^[alfmALFM][0-9]+", colnames(out), value = TRUE)
+    for(irow in 1:nrow(out)){
+      out[irow, names(out) %in% value.names] <-
+        out[irow, names(out) %in% value.names] /
+          sum(out[irow, names(out) %in% value.names])
+    }
+    return(out)
+  }
+  # function to round comps
+  round.comps <- function(out, digits){
+    value.names <- grep("^[alfmALFM][0-9]+", colnames(out), value = TRUE)
+    out[,names(out) %in% value.names] <-
+      round(out[,names(out) %in% value.names], digits = digits)
+    return(out)
+  }
+
+  
+  # optionally rescale to sum to 1
+  # this needs to happen after combining FthenM rather than to
+  # the sex-specific parts
+  if(sum1){
+    if(verbose){
+      message("rescaling comps to sum to 1")
+      Uout   <- rescale.comps(Uout)
+      Fout   <- rescale.comps(Fout)
+      Mout   <- rescale.comps(Mout)
+      FthenM <- rescale.comps(FthenM)
+    }
+  }
+  # optionally round off to chosen value
+  if(!is.null(digits)){
+    if(verbose){
+      message("rounding values to ", digits, " digits")
+    }
+    Uout   <- round.comps(Uout, digits = digits)
+    Fout   <- round.comps(Fout, digits = digits)
+    Mout   <- round.comps(Mout, digits = digits)
+    FthenM <- round.comps(FthenM, digits = digits)
+  }
+  
   # Print the whole shebang out to a file.
 
-  # Turn off meaningless warnings.
+  ## # Turn off warnings about "appending column names to file"
   oldwarn = options("warn")
   options("warn" = -1)
 
-  
   if (verbose) {
     cat("Writing F only, dimensions:", dim(Fout), "\n")
   }
@@ -469,7 +536,6 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
   
   # Reset warnings
-  
   options("warn" = oldwarn[[1]])
   
   invisible(eval(parse(text = returns)))
