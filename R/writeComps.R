@@ -448,14 +448,11 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   Mout$gender=2
   FthenM$gender = 3
 
-  # column names that contain the comp values
-  value.names <- c(paste0("L",lbins[lbins!="Inf"]),
-                   paste0("A",abins[abins!="Inf"]))
-
   # function to rescale comps to sum to 1
   # IGT(2019-04-25): I tried using an apply function but kept messing up,
   # so fell back on a simple loop over the rows
   rescale.comps <- function(out){
+    value.names <- grep("^[alfmALFM][0-9]+", colnames(out), value = TRUE)
     for(irow in 1:nrow(out)){
       out[irow, names(out) %in% value.names] <-
         out[irow, names(out) %in% value.names] /
@@ -465,6 +462,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   }
   # function to round comps
   round.comps <- function(out, digits){
+    value.names <- grep("^[alfmALFM][0-9]+", colnames(out), value = TRUE)
     out[,names(out) %in% value.names] <-
       round(out[,names(out) %in% value.names], digits = digits)
     return(out)
