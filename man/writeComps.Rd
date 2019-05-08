@@ -6,7 +6,7 @@
 \usage{
 writeComps(inComps, fname = "out.csv", abins = NULL, lbins = NULL,
   maxAge = Inf, partition = 0, ageErr = 0, returns = "FthenM",
-  dummybins = FALSE, sum1 = FALSE, digits = 4, overwrite = FALSE,
+  dummybins = FALSE, sum1 = FALSE, digits = 4, overwrite = TRUE,
   verbose = TRUE)
 }
 \arguments{
