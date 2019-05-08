@@ -23,6 +23,8 @@
 #'
 #' @template Pdata
 #' @template Indiv_Wgts
+#' @param calcWL A logical value specifying whether or not to calculate the
+#' weight-length parameters from the supplied data.
 #' @template weightlengthparams
 #' @param verbose Report extra information.  Default:  TRUE
 #' @param plot Create plots.  Default:  FALSE
@@ -55,7 +57,7 @@
 #
 ###########################################################################
 
-EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
+EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
                             fa = 2e-06, fb = 3.5, 
                             ma = 2e-06, mb = 3.5, 
                             ua = 2e-06, ub = 3.5, 
@@ -153,7 +155,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE,
     #
     ############################################################################
 
-    wlfish <- getWLpars(Pdata, verbose = verbose)
+    # if (calcWL) wlfish <- getWLpars(Pdata, verbose = verbose)
     Pdata$LW_Calc_Wt <- getweight(Pdata$length, Pdata$SEX, 
       pars = data.frame(
         "A" = c("females" = fa, "males" = ma, "all" = ua),

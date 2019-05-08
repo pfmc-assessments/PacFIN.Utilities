@@ -57,8 +57,9 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = TRUE
     } else plot.denom <- FALSE
   }
 
-  Pdata = EF1_Denominator(Pdata, Indiv_Wgts,
-    fa, fb, ma, mb, ua, ub, verbose = verbose, plot = plot.denom)
+  Pdata = EF1_Denominator(Pdata, Indiv_Wgts = TRUE, calcWL = FALSE,
+    fa = fa, fb = fb, ma = ma, mb = mb, ua = ua, ub = ub, 
+    verbose = verbose, plot = plot.denom)
 
   # Get Trip_Sampled_Lbs
   if (is.character(plot)) {

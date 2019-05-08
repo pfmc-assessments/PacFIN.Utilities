@@ -4,15 +4,18 @@
 \alias{EF1_Denominator}
 \title{Calculate the denominator for the level-1 expansion factor.}
 \usage{
-EF1_Denominator(Pdata, Indiv_Wgts = TRUE, fa = 2e-06, fb = 3.5,
-  ma = 2e-06, mb = 3.5, ua = 2e-06, ub = 3.5, verbose = TRUE,
-  plot = FALSE)
+EF1_Denominator(Pdata, Indiv_Wgts = TRUE, calcWL = FALSE,
+  fa = 0.000002, fb = 3.5, ma = 0.000002, mb = 3.5,
+  ua = 0.000002, ub = 3.5, verbose = TRUE, plot = FALSE)
 }
 \arguments{
 \item{Pdata}{A PacFIN \code{data.frame}}
 
 \item{Indiv_Wgts}{A logical value, controlling whether or not individual
 fish weights should be generated using the specified weight-length relationship.}
+
+\item{calcWL}{A logical value specifying whether or not to calculate the
+weight-length parameters from the supplied data.}
 
 \item{fa}{Female specific weight length coefficient.}
 
