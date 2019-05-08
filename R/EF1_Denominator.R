@@ -132,14 +132,19 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
     numsex <- aggregate(factor(SEX) ~ SAMPLE_NO, data = Pdata, table)
     test <- data.frame(Pdata, numsex[match(Pdata$SAMPLE_NO, numsex$SAMPLE_NO), "factor(SEX)"])
     test_OR <- test[test$state == "OR", ]
-    if (any(test_OR$F != ifelse(is.na(test_OR$FEMALE_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
-      " don't have the proper number of females assigned to FEMALE_NUM.")
-    if (any(test_OR$M != ifelse(is.na(test_OR$MALE_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
-      " don't have the proper number of males assigned to MALE_NUM.")
-    if (any(test_OR$U != ifelse(is.na(test_OR$UNK_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
-      " don't have the proper number of unsexed fish assigned to UNK_NUM.")
-    if (table(is.na(Pdata$SPECIES_WGT), Pdata$state)["TRUE", "CA"] != 0) stop("Some CA data", 
-      " don't have a 'SPECIES_WGT' for a given cluster.")
+      if (dim(test_OR)[1] != 0) {
+      if (any(test_OR$F != ifelse(is.na(test_OR$FEMALE_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
+        " don't have the proper number of females assigned to FEMALE_NUM.")
+      if (any(test_OR$M != ifelse(is.na(test_OR$MALE_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
+        " don't have the proper number of males assigned to MALE_NUM.")
+      if (any(test_OR$U != ifelse(is.na(test_OR$UNK_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
+        " don't have the proper number of unsexed fish assigned to UNK_NUM.")
+    }
+    # Check CA
+    if (dim(test[test$state == "CA", ])[1] > 0) {
+      if (dim(Pdata[is.na(Pdata$SPECIES_WGT) & Pdata$state == "CA", ])[1] != 0) stop("Some CA data", 
+        " don't have a 'SPECIES_WGT' for a given cluster.")
+    }
   }
 
   #### Washington b/c there is no other method to find the sample weight.
