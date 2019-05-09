@@ -62,30 +62,19 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
   usualSuspects <- defaults
 
   # Avoid duplication
-
   strat = strat[!strat %in% usualSuspects]
-
-  if (Comps == "LENGTH" | Comps == "LEN") {
-
-    TowStrat = usualSuspects
-    usualSuspects = c(usualSuspects, "lengthcm")
-
-  } else if (Comps == "AGE") {
-
-    TowStrat = usualSuspects
-    usualSuspects = c(usualSuspects, "age")
-
-  } else {
-
-    TowStrat = c(usualSuspects, "age")
-    usualSuspects = c(usualSuspects, "lengthcm", "age")
-
-  } # End if-else-else
-
-  Cstrat = c(strat, usualSuspects)
+  Comps <- toupper(substr(Comps, 1, 3))
+  TowStrat <- c(strat, switch(Comps, 
+    LEN = usualSuspects,
+    AGE = usualSuspects,
+    c(usualSuspects, "age")))
+  usualSuspects <- switch(Comps,
+    LEN = c(usualSuspects, "lengthcm"),
+    AGE = c(usualSuspects, "age"),
+    c(usualSuspects, "lengthcm", "age"))
 
   if (verbose) {
-    cat("\nAggregating, stratification is by", paste(Cstrat, collapse=", "), "\n\n")
+    cat("\nAggregating, stratification is by", paste(c(strat, usualSuspects), collapse=", "), "\n\n")
     flush.console()
   }
 
