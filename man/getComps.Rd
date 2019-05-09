@@ -6,7 +6,7 @@
 given stratification.}
 \usage{
 getComps(Pdata, strat = NULL, Comps = "AAL", defaults = c("fleet",
-  "fishyr", "season"), verbose = TRUE)
+  "fishyr", "season"), verbose = TRUE, ...)
 }
 \arguments{
 \item{Pdata}{A PacFIN \code{data.frame}}
@@ -26,6 +26,10 @@ which will typically be left at their default value of
 to the screen or not. Good for testing and exploring your data but
 can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
+
+\item{...}{Pass additional arguments to \code{getcomps_long}, such as
+\code{dropmissing = FALSE} where the default behaviour is 
+\code{dropmissing = TRUE}}
 }
 \value{
 A dataframe with composition data specific to the type specified

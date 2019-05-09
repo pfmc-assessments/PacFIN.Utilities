@@ -32,6 +32,9 @@
 #'   which will typically be left at their default value of
 #'   \code{c('fleet', 'fishyr', 'season')}.
 #' @template verbose
+#' @param ... Pass additional arguments to \code{getcomps_long}, such as
+#' \code{dropmissing = FALSE} where the default behaviour is 
+#' \code{dropmissing = TRUE}
 #' @return A dataframe with composition data specific to the type specified
 #'   in \code{Comps} for males, females, and unsexed records.
 #' @author Andi Stephens, Kelli Faye Johnson
@@ -44,7 +47,7 @@
 
 
 getComps = function( Pdata, strat = NULL, Comps = "AAL",
-  defaults = c("fleet", "fishyr", "season"), verbose = TRUE) {
+  defaults = c("fleet", "fishyr", "season"), verbose = TRUE, ...) {
 
   # Check for expansion factor
 
@@ -78,39 +81,8 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
     flush.console()
   }
 
-  # Used to get the number of SAMPLE_NOs per aggregation
-
-
-  # What happens below when there are not three sexes?  Need dummy entries.
-
-  Dummy = head(Pdata)
-  Dummy$FREQ = NA
-  Dummy$Final_Sample_Size = 0
-  #Dummy$SAMPLE_NO = NA
-
-  FakeF = F
-  FakeM = F
-  FakeU = F
-
-  for ( gender in c("F","M","U") ) {
-
-    if (sum(Pdata$SEX == gender) == 0) { 
-
-      Dummy$SEX = gender
-      Pdata = rbind(Pdata, Dummy)
-      cat("No fish of gender:", gender, "present.  Adding dummy records with FREQ = 0.\n")
-
-      # set flags
-      if (gender == "U") FakeU = T
-      if (gender == "M") FakeM = T
-      if (gender == "F") FakeF = T
-
-    } # End if
-
-  } # End for
-
   ageComps <- getcomps_long(data = Pdata,
-    towstrat = TowStrat, type = tail(usualSuspects, 1))
+    towstrat = TowStrat, type = tail(usualSuspects, 1), ...)
   invisible(ageComps)
 
 } # End function getComps
@@ -126,7 +98,10 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 #' names that generate a unique id for each sample.
 #' @param weightid A character value giving the column name that
 #' holds the value to be summed for each type and strata.
-#'
+#' @param dropmissing A logical value supplied to the
+#' \code{drop} argument in \code{aggregate}
+#' that specifies whether or not to keep all levels in the data
+#' even if there are no values to report for summaries. 
 #' @author Kelli Faye Johnson
 #' @return A data frame in long form with a weight for each
 #' category included in the lengths or ages of interest by
@@ -135,7 +110,8 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 #' is assumed all are unsexed and will be returned as such.
 #'
 getcomps_long <- function(data, towstrat, type,
-  towid = "SAMPLE_NO", weightid = "Final_Sample_Size") {
+  towid = "SAMPLE_NO", weightid = "Final_Sample_Size",
+  dropmissing = TRUE) {
 
   if (!all(towstrat %in% colnames(data))) stop("Not all towstrat are available.")
   if (!type %in% colnames(data)) stop("'type' must be a column in data",
@@ -152,6 +128,10 @@ getcomps_long <- function(data, towstrat, type,
     data[, sexn] <- "U"
     warning("SEX was missing from the data and set to 'U' for unsexed fish")
   }
+  if (is.character(data[, sexn])) {
+    data[, sexn] <- factor(data[, sexn], levels = c("F", "M", "U"))
+  }
+
   # FREQ... stores the number of fish that sum to the weightid
   freqn <- grep("freq", colnames(data), ignore.case = TRUE, value = TRUE)
   if (length(freqn) == 0) stop("FREQ is missing from the data.")
@@ -162,21 +142,22 @@ getcomps_long <- function(data, towstrat, type,
 
   # Find which samples only have unsexed fish
   data[, "Uonly"] <- getunsexedsamps(data[, towid], data[, sexn])
+
   comp <- merge(by = tstratwsex, all = TRUE,
     aggregate(
       data[, c(weightid, freqn)],
       by = data[, cstratwsex, drop = FALSE],
-      sum, na.rm = TRUE),
+      sum, na.rm = TRUE, drop = dropmissing),
     aggregate(
       list("tows" = data[, towid], "ONLY_U_TOWS" = data[, c("Uonly")]),
       by = data[, tstratwsex, drop = FALSE],
-      lenique))
+      lenique, drop = dropmissing))
   comp <- merge(
     reshape(comp, timevar = "SEX", idvar = Cstrat, direction = "wide"),
     aggregate(
       list("alltows" = data[, towid]),
       by = data[, towstrat, drop = FALSE],
-      lenique),
+      lenique, drop = dropmissing),
     by = towstrat, all.x = TRUE)
   comp <- comp[, -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))]
   colnames(comp) <- gsub("(.+)\\.([A-Z])", "\\L\\2\\1", colnames(comp),
@@ -213,6 +194,7 @@ getcomps_long <- function(data, towstrat, type,
 #' length as the supplied vectors.
 #'
 getunsexedsamps <- function(identifier, sex, good = "U") {
+  if (class(sex) == "factor") sex <- as.character(sex)
   ff <- function(x) paste(unique(x), collapse = "")
   keep <- ave(sex, identifier, FUN = ff)
   return(ifelse(keep == good, identifier, NA))
