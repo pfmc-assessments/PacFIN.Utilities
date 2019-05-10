@@ -16,11 +16,14 @@
 formatCatch <- function(catch, strat, valuename = "catch") {
   yearn <- grep("^Year|^Yr", colnames(catch), ignore.case = TRUE, value = TRUE)
   colnames(catch) <- gsub(valuename, "catch", colnames(catch))
-  
   out <- catch[, c(yearn, strat, "catch")]
-  out$merged <- apply(out[, strat], 1, paste, collapse = ".")
-   out <- reshape(out, direction = "wide", 
-      timevar = "merged", idvar = yearn)
+  out$merged <- apply(out[, strat, drop = FALSE], 1, paste, collapse = ".")
+  if (any(duplicated(paste(out[, "merged"], out[, yearn])))) {
+    out <- aggregate(out[, "catch", drop = FALSE], 
+      out[, c(yearn, "merged"), drop = FALSE], FUN = sum, na.rm = TRUE)
+  }
+  out <- reshape(out, direction = "wide", 
+    timevar = "merged", idvar = yearn)
   out <- out[, grep(paste0("catch|", yearn), colnames(out))]
   out[is.na(out)] <- 0
   colnames(out) <- gsub("catch\\.", "", colnames(out))
