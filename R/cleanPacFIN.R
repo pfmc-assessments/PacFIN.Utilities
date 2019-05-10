@@ -219,6 +219,15 @@ cleanPacFIN = function( Pdata,
       paste(sprintf("'%s'", goodtypes), collapse = ", "), ".",
       "\nPlease contact the package maintainer to add additional types.")
   }
+  # Remove bad OR samples
+  if (verbose) {
+    message(
+      "Changing length and age to NA and -1 for ", 
+      sum(pfd$SAMPLE_NO %in% paste0("OR", badORnums)),
+      " special samples from OR."
+      )
+  }
+  Pdata$length[pfd$SAMPLE_NO %in% paste0("OR", badORnums)] <- NA
   Pdata[is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR", "length"] <- NA
   Pdata[is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA", "length"] <- NA
 
@@ -243,6 +252,8 @@ cleanPacFIN = function( Pdata,
     Pdata$FISH_AGE_YEARS_FINAL, Pdata$age1)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
+  # Remove bad OR samples
+  Pdata$age[pfd$SAMPLE_NO %in% paste0("OR", badORnums)] <- NA
   Pdata$age[is.na(Pdata$age)] <- -1
   Pdata[is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR", "age"] <- -1
   Pdata[is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA", "age"] <- -1
