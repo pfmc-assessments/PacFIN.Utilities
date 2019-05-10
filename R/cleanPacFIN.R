@@ -150,7 +150,7 @@ cleanPacFIN = function( Pdata,
   cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
   
   Pdata = getGearGroup(Pdata, spp = spp)
-  if (!"fleet" %in% colnames(Pdata)) Pdata[, "fleet"] <- match(Pdata$geargroup, keep.gears)
+  if (!"fleet" %in% colnames(Pdata)) Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
 
   if (keep_CA) {
     Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
@@ -255,7 +255,7 @@ cleanPacFIN = function( Pdata,
 
   pfd$MALES_WGT[is.na(pfd$MALES_NUM) & pfd$MALES_WGT == 0] <- NA
   pfd$FEMALES_WGT[is.na(pfd$FEMALES_NUM) & pfd$FEMALES_WGT == 0] <- NA
-  pfd$UNK_WGT[is.na(pfd$UNK_NUM) & pfd$UNK_WT == 0] <- NA
+  pfd$UNK_WT[is.na(pfd$UNK_NUM) & pfd$UNK_WT == 0] <- NA
 
   # Remove records
   Rec_summary = rep(0,9)
