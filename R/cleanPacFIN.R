@@ -170,8 +170,17 @@ cleanPacFIN = function( Pdata,
   USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
 
   # Fix Lengths.  Use FISH_LENGTH if there is no FORK_LENGTH.
+  width2length <- convertlength_skate(Pdata, returntype = "estimated")
+  
   Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% c("", "A", "F", NA), 
     Pdata$FORK_LENGTH, NA)
+  if (all(Pdata$SPID %in% c("LSKT", "BSKT"))) {
+    Pdata$length <- ifelse(
+      # type "A" is associated with disc width for skates
+      "A" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "A", 
+      width2length,
+      Pdata$length)
+  }
   Pdata$length <- ifelse(
     "D" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "D" &
     Pdata$FORK_LENGTH != Pdata$FISH_LENGTH,
@@ -179,7 +188,7 @@ cleanPacFIN = function( Pdata,
   Pdata$length <- ifelse(
     # type "R" is associated with inter-spiracle width for skates (used by WDFW)
     "R" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "R", 
-    Pdata$FISH_LENGTH,
+    width2length,
     Pdata$length)
   Pdata$length <- ifelse(
     "S" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "S", 
