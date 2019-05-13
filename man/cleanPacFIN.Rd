@@ -9,7 +9,7 @@ cleanPacFIN(Pdata, only_USINPFC = FALSE, keep_INPFC = NULL,
   keep_gears = unique(Pdata$GRID)[order(unique(Pdata$GRID))],
   keep_sample_type = c("", "M"), keep_sample_method = "R",
   keep_length_type, keep_missing_lengths = FALSE, keep_CA = TRUE,
-  CLEAN = TRUE, spp = NULL)
+  CLEAN = TRUE, spp = NULL, verbose = TRUE)
 }
 \arguments{
 \item{Pdata}{a PacFIN dataset}
@@ -46,6 +46,11 @@ are added to the original data even if \code{CLEAN = FALSE}.}
 ensure that the methods are species specific. Leave \code{NULL}
 if generic methods work for your species. 
 Currently, sablefish is the only species with species-specific code.}
+
+\item{verbose}{A logical value specifying if output should be written
+to the screen or not. Good for testing and exploring your data but
+can be turned off when output indicates errors. The default value
+is \code{TRUE}.}
 }
 \value{
 The input data filtered for desired areas and record types

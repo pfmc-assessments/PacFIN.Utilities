@@ -33,8 +33,8 @@
 #' @param CLEAN a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
 #' but report what would have been removed. Additional columns of information
 #' are added to the original data even if \code{CLEAN = FALSE}.
-#' @param verbose Turn on or off messages printed to the screen. Default = TRUE.
 #' @template spp
+#' @template verbose
 #' 
 #' @return The input data filtered for desired areas and record types
 #' specified, with added columns
@@ -141,7 +141,7 @@ cleanPacFIN = function( Pdata,
       Pdata = cbind(Pdata, tmp)
       names(Pdata)[tmpcol] = i
       
-      cat("Pdata$",i," = 1\n")
+      if (verbose) {cat("Pdata$",i," = 1\n")}
       
     } # End if
     
