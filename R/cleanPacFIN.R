@@ -33,6 +33,7 @@
 #' @param CLEAN a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
 #' but report what would have been removed. Additional columns of information
 #' are added to the original data even if \code{CLEAN = FALSE}.
+#' @param verbose Turn on or off messages printed to the screen. Default = TRUE.
 #' @template spp
 #' 
 #' @return The input data filtered for desired areas and record types
@@ -111,20 +112,23 @@ cleanPacFIN = function( Pdata,
                         keep_missing_lengths = FALSE,
                         keep_CA = TRUE,
                         CLEAN = TRUE, 
-                        spp = NULL) {
+                        spp = NULL,
+                        verbose = TRUE) {
 
-  cat( "\nCleaning data\n\n" )
+  if (verbose) {
+    cat( "\nCleaning data\n\n" )
 
-  if (!CLEAN) {
-    cat("\nGenerating data report only.  No data will be removed.\n")
+    if (!CLEAN) {
+      cat("\nGenerating data report only.  No data will be removed.\n")
+    }
   }
   
   
   # Define fishyr, fleet, fishery and season  -- some assessments manipulate these.
-  
-  cat("These values have been initialized for use when comps are generated.\n")
-  cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
-  
+  if (verbose) {
+    cat("These values have been initialized for use when comps are generated.\n")
+    cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
+  }
   # KFJ: only create columns if they do not exist or if they are not numeric
   
   for ( i in c("fishery","season") ) {
@@ -144,10 +148,10 @@ cleanPacFIN = function( Pdata,
   } # End for
   
   Pdata = getState(Pdata, CLEAN = CLEAN)
-  cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n")
+  if (verbose) { cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n") }
   
   Pdata$fishyr = Pdata$SAMPLE_YEAR
-  cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
+  if (verbose) { cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n") }
   
   Pdata = getGearGroup(Pdata, spp = spp)
   if (!"fleet" %in% colnames(Pdata)) Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
@@ -159,7 +163,7 @@ cleanPacFIN = function( Pdata,
     
     if (!is.null(keep_INPFC) & any(Pdata$INPFC_AREA == "CalCOM")) {
       keep_INPFC <- c(keep_INPFC, "CalCOM")
-      message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.")
+      if (verbose) { message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.") }
     }
   } # End keep_CA
 
@@ -315,21 +319,22 @@ cleanPacFIN = function( Pdata,
   if (!keep_missing_lengths & CLEAN) { Pdata = Pdata[!is.na(Pdata$length),] }
 
   # Report removals
+  if (verbose) {
+    cat("\nRemoval Report\n\n")
+    cat("Records in input:                 ", Rec_summary[1], "\n")
+    cat("Records not in USINPFC            ", Rec_summary[8], "\n")
+    cat("Records not in INPFC_AREA:        ", Rec_summary[2], "\n")
+    cat("Records in bad INPFC_AREA:        ", Rec_summary[9], "\n")
+    cat("Records in badRecords list:       ", Rec_summary[3], "\n")
+    cat("Records with bad SAMPLE_TYPE      ", Rec_summary[4], "\n")
+    cat("Records with bad SAMPLE_METHOD    ", Rec_summary[5], "\n")
+    cat("Records with no SAMPLE_NO         ", Rec_summary[6], "\n")
+    cat("Records with no usable length     ", Rec_summary[7], "\n")
+    cat("Records remaining:                ", nrow(Pdata), "\n\n")
 
-  cat("\nRemoval Report\n\n")
-  cat("Records in input:                 ", Rec_summary[1], "\n")
-  cat("Records not in USINPFC            ", Rec_summary[8], "\n")
-  cat("Records not in INPFC_AREA:        ", Rec_summary[2], "\n")
-  cat("Records in bad INPFC_AREA:        ", Rec_summary[9], "\n")
-  cat("Records in badRecords list:       ", Rec_summary[3], "\n")
-  cat("Records with bad SAMPLE_TYPE      ", Rec_summary[4], "\n")
-  cat("Records with bad SAMPLE_METHOD    ", Rec_summary[5], "\n")
-  cat("Records with no SAMPLE_NO         ", Rec_summary[6], "\n")
-  cat("Records with no usable length     ", Rec_summary[7], "\n")
-  cat("Records remaining:                ", nrow(Pdata), "\n\n")
-
-  if (!CLEAN) {
-    cat("\n\nReturning original data because CLEAN=FALSE\n\n")
+    if (!CLEAN) {
+      cat("\n\nReturning original data because CLEAN=FALSE\n\n")
+    }
   }
   return(Pdata)
 } # End cleanPacFIN
