@@ -34,6 +34,7 @@
 #' but report what would have been removed. Additional columns of information
 #' are added to the original data even if \code{CLEAN = FALSE}.
 #' @template spp
+#' @template verbose
 #' 
 #' @return The input data filtered for desired areas and record types
 #' specified, with added columns
@@ -111,20 +112,23 @@ cleanPacFIN = function( Pdata,
                         keep_missing_lengths = FALSE,
                         keep_CA = TRUE,
                         CLEAN = TRUE, 
-                        spp = NULL) {
+                        spp = NULL,
+                        verbose = TRUE) {
 
-  cat( "\nCleaning data\n\n" )
+  if (verbose) {
+    cat( "\nCleaning data\n\n" )
 
-  if (!CLEAN) {
-    cat("\nGenerating data report only.  No data will be removed.\n")
+    if (!CLEAN) {
+      cat("\nGenerating data report only.  No data will be removed.\n")
+    }
   }
   
   
   # Define fishyr, fleet, fishery and season  -- some assessments manipulate these.
-  
-  cat("These values have been initialized for use when comps are generated.\n")
-  cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
-  
+  if (verbose) {
+    cat("These values have been initialized for use when comps are generated.\n")
+    cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
+  }
   # KFJ: only create columns if they do not exist or if they are not numeric
   
   for ( i in c("fishery","season") ) {
@@ -137,17 +141,17 @@ cleanPacFIN = function( Pdata,
       Pdata = cbind(Pdata, tmp)
       names(Pdata)[tmpcol] = i
       
-      cat("Pdata$",i," = 1\n")
+      if (verbose) {cat("Pdata$",i," = 1\n")}
       
     } # End if
     
   } # End for
   
   Pdata = getState(Pdata, CLEAN = CLEAN)
-  cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n")
+  if (verbose) { cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n") }
   
   Pdata$fishyr = Pdata$SAMPLE_YEAR
-  cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n")
+  if (verbose) { cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n") }
   
   Pdata = getGearGroup(Pdata, spp = spp)
   if (!"fleet" %in% colnames(Pdata)) Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
@@ -159,7 +163,7 @@ cleanPacFIN = function( Pdata,
     
     if (!is.null(keep_INPFC) & any(Pdata$INPFC_AREA == "CalCOM")) {
       keep_INPFC <- c(keep_INPFC, "CalCOM")
-      message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.")
+      if (verbose) { message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.") }
     }
   } # End keep_CA
 
@@ -223,11 +227,11 @@ cleanPacFIN = function( Pdata,
   if (verbose) {
     message(
       "Changing length and age to NA and -1 for ", 
-      sum(pfd$SAMPLE_NO %in% paste0("OR", badORnums)),
+      sum(Pdata$SAMPLE_NO %in% paste0("OR", badORnums)),
       " special samples from OR."
       )
   }
-  Pdata$length[pfd$SAMPLE_NO %in% paste0("OR", badORnums)] <- NA
+  Pdata$length[Pdata$SAMPLE_NO %in% paste0("OR", badORnums)] <- NA
   Pdata[is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR", "length"] <- NA
   Pdata[is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA", "length"] <- NA
 
@@ -253,7 +257,7 @@ cleanPacFIN = function( Pdata,
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
   # Remove bad OR samples
-  Pdata$age[pfd$SAMPLE_NO %in% paste0("OR", badORnums)] <- NA
+  Pdata$age[Pdata$SAMPLE_NO %in% paste0("OR", badORnums)] <- NA
   Pdata$age[is.na(Pdata$age)] <- -1
   Pdata[is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR", "age"] <- -1
   Pdata[is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA", "age"] <- -1
@@ -273,9 +277,9 @@ cleanPacFIN = function( Pdata,
 
   } # End if
 
-  pfd$MALES_WGT[is.na(pfd$MALES_NUM) & pfd$MALES_WGT == 0] <- NA
-  pfd$FEMALES_WGT[is.na(pfd$FEMALES_NUM) & pfd$FEMALES_WGT == 0] <- NA
-  pfd$UNK_WT[is.na(pfd$UNK_NUM) & pfd$UNK_WT == 0] <- NA
+  Pdata$MALES_WGT[is.na(Pdata$MALES_NUM) & Pdata$MALES_WGT == 0] <- NA
+  Pdata$FEMALES_WGT[is.na(Pdata$FEMALES_NUM) & Pdata$FEMALES_WGT == 0] <- NA
+  Pdata$UNK_WT[is.na(Pdata$UNK_NUM) & Pdata$UNK_WT == 0] <- NA
 
   # Remove records
   Rec_summary = rep(0,9)
@@ -315,21 +319,22 @@ cleanPacFIN = function( Pdata,
   if (!keep_missing_lengths & CLEAN) { Pdata = Pdata[!is.na(Pdata$length),] }
 
   # Report removals
+  if (verbose) {
+    cat("\nRemoval Report\n\n")
+    cat("Records in input:                 ", Rec_summary[1], "\n")
+    cat("Records not in USINPFC            ", Rec_summary[8], "\n")
+    cat("Records not in INPFC_AREA:        ", Rec_summary[2], "\n")
+    cat("Records in bad INPFC_AREA:        ", Rec_summary[9], "\n")
+    cat("Records in badRecords list:       ", Rec_summary[3], "\n")
+    cat("Records with bad SAMPLE_TYPE      ", Rec_summary[4], "\n")
+    cat("Records with bad SAMPLE_METHOD    ", Rec_summary[5], "\n")
+    cat("Records with no SAMPLE_NO         ", Rec_summary[6], "\n")
+    cat("Records with no usable length     ", Rec_summary[7], "\n")
+    cat("Records remaining:                ", nrow(Pdata), "\n\n")
 
-  cat("\nRemoval Report\n\n")
-  cat("Records in input:                 ", Rec_summary[1], "\n")
-  cat("Records not in USINPFC            ", Rec_summary[8], "\n")
-  cat("Records not in INPFC_AREA:        ", Rec_summary[2], "\n")
-  cat("Records in bad INPFC_AREA:        ", Rec_summary[9], "\n")
-  cat("Records in badRecords list:       ", Rec_summary[3], "\n")
-  cat("Records with bad SAMPLE_TYPE      ", Rec_summary[4], "\n")
-  cat("Records with bad SAMPLE_METHOD    ", Rec_summary[5], "\n")
-  cat("Records with no SAMPLE_NO         ", Rec_summary[6], "\n")
-  cat("Records with no usable length     ", Rec_summary[7], "\n")
-  cat("Records remaining:                ", nrow(Pdata), "\n\n")
-
-  if (!CLEAN) {
-    cat("\n\nReturning original data because CLEAN=FALSE\n\n")
+    if (!CLEAN) {
+      cat("\n\nReturning original data because CLEAN=FALSE\n\n")
+    }
   }
   return(Pdata)
 } # End cleanPacFIN
