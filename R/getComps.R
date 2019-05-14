@@ -203,6 +203,7 @@ getunsexedsamps <- function(identifier, sex, good = "U") {
 #' Number of Unique Entries
 #' A helper function that returns the number of unique
 #' entries in a vector. Usefull for apply functions.
+#' @param x A vector of character or numeric values.
 #' @author Kelli Faye Johnson
 #' @return An integer value specifying the number of unique entries.
 lenique <- function(x) { return(length(unique(x))) }
