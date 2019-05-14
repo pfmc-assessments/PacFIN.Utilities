@@ -70,6 +70,7 @@ combineCalCOM = function ( Pdata, CalCOM ) {
   Cal.dat$SEX          = CalCOM$SEX
   Cal.dat$DEPTH_AVG    = as.numeric(CalCOM$DEPTH)
   Cal.dat$TOTAL_WGT    = as.numeric(CalCOM$TOTAL_WGT)
+  Cal.dat$SPECIES_WGT  = as.numeric(CalCOM$SumOfWEIGHT)
   Cal.dat$PORT         = CalCOM$PORT_COMPLEX
   Cal.dat$SAMPLE_YEAR  = as.numeric(CalCOM$SAMPLE_YEAR)
   Cal.dat$SAMPLE_MONTH = as.numeric(CalCOM$SAMPLE_MONTH)
