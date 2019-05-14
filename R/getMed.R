@@ -5,8 +5,10 @@
 #' original data set using merge or indexing functions. 
 #' 
 #' @param x A vector of values you want split by categories listed
-#' in \code{...}. Typically a column name of the data passed to the
-#' function using \code{with}. See example. 
+#' in \code{...}. Number of values in \code{x} must be the same
+#' length as each vector supplied in \code{...}.
+#' @param ... Categories that you want to use to split the data.
+#' Any number can be supplied. 
 #' 
 #' @return A vector of medians with one entry for each original
 #' entry because the results are duplicated for each entry that
@@ -18,7 +20,8 @@
 #'   "cat1" = rep(c("yes", "no"), each = 10),
 #'   "cat2" = rep(1:5, each = 4),
 #'   "val" = rnorm(20))
-#' with(data, getmed(val, cat1, cat2))
+#' PacFIN.Utilities:::getMed(x = data[, "val"], 
+#'   data[, "cat1"], data[, "cat2"])
 #' 
 getMed <- function(x, ...) {
   all <- list(...)
