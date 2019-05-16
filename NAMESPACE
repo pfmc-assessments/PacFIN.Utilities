@@ -2,6 +2,7 @@
 
 export(Stratify)
 export(capValues)
+export(checkLenAge)
 export(cleanAges)
 export(cleanPacFIN)
 export(combineCalCOM)
