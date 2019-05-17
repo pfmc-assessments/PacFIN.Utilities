@@ -9,6 +9,8 @@ Depends:
 License: NMFS
 LazyData: true
 Suggests:
-    knitr
+    knitr,
+    ggplot2,
+    stats
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
