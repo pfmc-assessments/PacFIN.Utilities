@@ -83,6 +83,7 @@ combineCalCOM = function ( Pdata, CalCOM ) {
   Cal.dat$age3         = as.numeric(CalCOM$AGE)
   Cal.dat$FISH_AGE_YEARS_FINAL = as.numeric(CalCOM$AGE)
   Cal.dat$FREQ         = 1
+  Cal.dat$FISH_LENGTH_TYPE = ""
 
   # No sample type or method, no INPFC_AREA, so give them values that are
   # retained by cleanPacFIN.
