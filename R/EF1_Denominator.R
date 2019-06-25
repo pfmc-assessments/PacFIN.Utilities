@@ -114,6 +114,8 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
   if (!"UNK_WT" %in% colnames(Pdata)) stop("Must get a newer ",
     "version of the bds data to work with this version of PacFIN.Utilities.")
   if (!"UNK_WGT" %in% colnames(Pdata)) Pdata$UNK_WGT <- Pdata$UNK_WT
+  if (!"FEMALE_NUM" %in% colnames(Pdata)) Pdata$FEMALE_NUM <- Pdata$FEMALES_NUM
+  if (!"MALE_NUM" %in% colnames(Pdata))   Pdata$MALE_NUM <- Pdata$MALES_NUM
 
   # Everything is calculated in terms of unique samples.
   # Calculate the sampled weight based on weights of individual fish
@@ -133,13 +135,13 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
     test <- data.frame(Pdata, numsex[match(Pdata$SAMPLE_NO, numsex$SAMPLE_NO), "factor(SEX)"])
     test_OR <- test[test$state == "OR", ]
       if (dim(test_OR)[1] != 0) {
-      if (any(test_OR$F != ifelse(is.na(test_OR$FEMALE_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
-        " don't have the proper number of females assigned to FEMALE_NUM.")
-      if (any(test_OR$M != ifelse(is.na(test_OR$MALE_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
-        " don't have the proper number of males assigned to MALE_NUM.")
-      if (any(test_OR$U != ifelse(is.na(test_OR$UNK_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
-        " don't have the proper number of unsexed fish assigned to UNK_NUM.")
-    }
+        if (any(test_OR$F != ifelse(is.na(test_OR$FEMALE_NUM), 0, test_OR$FEMALE_NUM))) stop("Some OR data",
+          " don't have the proper number of females assigned to FEMALE_NUM.")
+        if (any(test_OR$M != ifelse(is.na(test_OR$MALE_NUM), 0, test_OR$MALE_NUM))) stop("Some OR data",
+          " don't have the proper number of males assigned to MALE_NUM.")
+        if (any(test_OR$U != ifelse(is.na(test_OR$UNK_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
+          " don't have the proper number of unsexed fish assigned to UNK_NUM.")
+      }
     # Check CA
     if (dim(test[test$state == "CA", ])[1] > 0) {
       if (dim(Pdata[is.na(Pdata$SPECIES_WGT) & Pdata$state == "CA", ])[1] != 0) stop("Some CA data", 
