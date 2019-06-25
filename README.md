@@ -41,12 +41,35 @@ On March 19, 2019, Oregon made a correction to PacFIN that properly designated a
 Oregon and California have gone to great lengths to provide correct species-specific weights of samples. This information is stored in `Pdata[, "EXP_WT"]` and `Pdata[, "SPECIES_WGT"]`, respectively. All Oregon and California samples that are missing this information are removed from the data set expanded to create compositions. 
 
 ## Expansion
-
-
+Expansions are performed to account for fish that were not sampled or when sampling is unequal across stratums. Expansions are calculated twice, first for fish with lengths and second for fish with ages because less fish are typically aged than lengthed and weights used for the expansions should only include fish that provide information. For example, if 10 fish were lengthed but only five fish were aged the expansion for the ages should only be based on the weight of the aged fish. 
 
 ### Stage-1 expansion
+The stage-1 expansion is performed to account for fish that are not sampled in a given tow or trip. Sampled fish are thought to be representative of all fish within a tow. Thus, if only a few fish are sampled from a very large tow, these few samples will be expanded to represent a larger portion of the population than a sample consisting of the same or fewer number of fish that were sampled from a tow that wasn't as heavy. The expansion factor is the ratio of the weight of fish that were landed in the tow or trip to the weight of fish within that tow or trip that were sampled. 
 
+#### Tow or trip weight
+Unfortunately, the species-specific weight for a given tow or trip is not always recorded and states report the measurement in the following ways:
 
+##### Washington
+  * Round weight is the preferred measurement to account for the weight of fish that were dressed prior to weighing.
+  * Total weight is used if round weight is not available.
+  * Year- and gear-specific median tow or trip round weights are assigned to all samples that don't have a tow or trip weight. 
+  * Year- and gear-specific median tow or trip total weights are assigned to all samples that don't have a tow or trip weight.
+
+##### Oregon
+  * `EXP_WT` is provided by Oregon as a measure of the weight the sample should be expanded to and defaults to the landing weight.
+  * Years prior to 1973 are often missing `EXP_WT`, and for these instances, the weight is calculated in the same manner as the default method for California. 
+  * Year- and gear-specific median tow or trip total weights are assigned to all samples that don't have a tow or trip weight.
+
+##### California
+  * The tow or trip weight, which includes the weight of all fish within a tow or trip that represent species that were sampled and can include species other than the species of concern, is multiplied by the ratio of the weight of the species of concern in the sample to the weight of the sample to get the fraction of the sample that contained the species of concern. It is assumed that the tow will be of this same ratio.
+  * Year- and gear-specific median tow or trip total weights are assigned to all samples that don't have a tow or trip weight.
+
+#### Sampled fish weight
+Weights of the sample are found using the following three methods:
+
+  1. Oregon provides the total weight of males, females, and unsexed fish within a given sample; these are summed to calculate the weight of all fish within the sample. 
+  2. The species-specific weight for the species of concern within that sample is provided by California as `SPECIES_WGT`.
+  3. The weight of all fish within the sample are summed. Fish weights are preferably empirically measured weights and secondarily calculated using a weight-length relationship. For fish in a sample without a length, the median length of all fish within the sample is used. 
 
 ### Stage-2 expansion
-
+The stage-2 expansion typically operates at the state x gear x year level. Regardless, whatever level the stratum are defined at, the expansion is the ratio of the landings to the weight of fish that were sampled from those landings. 
