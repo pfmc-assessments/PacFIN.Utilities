@@ -9,6 +9,7 @@
 #' @param comps specify whether to calculate the length or age samples
 #' @param remove_yrs remove years of data for inclusion in the table.
 #' 
+#' @author Chantel Wetzel
 
 createSampleTable <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", remove_yrs = NULL) {
 
@@ -20,7 +21,7 @@ createSampleTable <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", 
 		if(length(strat) == 2) { 
 			Pdata$strat = paste(Pdata[,strat[1]], Pdata[,strat[2]], sep = ".") }
 		if(length(strat) == 3) { 
-			Pdata$strat = paste(Pdata[,strat[1]], Pdata[,strat[2]], Pdata[,strat[2]], sep = ".") }
+			Pdata$strat = paste(Pdata[,strat[1]], Pdata[,strat[2]], Pdata[,strat[3]], sep = ".") }
 	}
 
 	if (comps == "LEN"){
