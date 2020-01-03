@@ -29,7 +29,7 @@ createSampleTable <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", 
 	}
 	
 	if (comps == "AGE"){
-		temp = Pdata[!is.na(Pdata$age),]
+		temp = Pdata[Pdata$age != -1,]
 	}
 
 	if (!comps %in% c("LEN", "AGE")){
@@ -38,7 +38,7 @@ createSampleTable <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", 
 	}
 
 	if(!is.null(remove_yrs)){
-		temp = temp[!Pdata$SAMPLE_YEAR %in% remove_yrs, ]
+		temp = temp[!temp$SAMPLE_YEAR %in% remove_yrs, ]
 	}
 
 	Ntow  = table(temp$SAMPLE_YEAR, temp$strat, !duplicated(as.character(temp$SAMPLE_NO)))[,,"TRUE"]
