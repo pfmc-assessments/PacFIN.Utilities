@@ -1,6 +1,7 @@
 age_representativeness_plot <- function(bio.WCGBTS,
                                         xlim = c(0, 120),
                                         ylim = c(0, 0.049),
+                                        max_break = 120,
                                         file = NULL){
 
   if(!is.null(file)){
@@ -44,13 +45,13 @@ age_representativeness_plot <- function(bio.WCGBTS,
     ages.y <- bio.WCGBTS$Length_cm[bio.WCGBTS$Year == y &
                                         !is.na(bio.WCGBTS$Age)]
     hist(lengths.y,
-         breaks = seq(0, 120, 5),
+         breaks = seq(0, max_break, 5),
          freq = FALSE,
          col = colvec[1],
          add = TRUE)
     if (length(ages.y > 0)) {
       hist(ages.y,
-           breaks = seq(0, 120, 5),
+           breaks = seq(0, max_break, 5),
            freq = FALSE,
            col = colvec[2],
            add = TRUE)
