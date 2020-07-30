@@ -1,3 +1,36 @@
+#' Compare length historgram of aged samples to all lengthed samples
+#' 
+#' @param bio.WCGBTS The dataframe from the West Coast Groundfish Bottom Trawl
+#'  Survey. In the future, make this more general so that more datasets can be.
+#'  used. Must include columns Year, Length_cm, and Age, but additional columns
+#'  can be present.
+#' @param xlim The x limits for the histogram
+#' @param ylim The y limits for the histogram
+#' @param max_break The maximum length
+#' @param file The relative or absolute path and name of the file to write to,
+#'  as a .png file.
+#' @export
+#' @author Ian Taylor
+#' @examples {
+#'   load(file.path("data", "XMPL.BDS.rda")) # may need to modify this file
+#'   bds <- XMPL.BDS # rename for simplicity
+#'   # rename cols so that the plot can be used
+#'   bds$Year <- bds[["SAMPLE_YEAR"]]
+#'   bds$Length_cm <- (bds[["FISH_LENGTH"]])*0.1 # I think these units are likely mm, but need to check.
+#'   bds$Age <- bds[["FISH_AGE_YEARS_FINAL"]] # (or use age 1?)
+#'   bds <- bds[!(is.na(bds$Age) &&  is.na(bds$Length_cm)), ] # if both age and length are na, don't retain.
+#'   max_break <- max(bds$Length_cm, na.rm = T)
+#'   state_codes <- c("W", "O", "C")
+#'   names(state_codes) <- c("WA", "OR", "CA") # just for clarity
+#'   for (i in state_codes) {
+#'     age_representativeness_plot(bds[bds$SOURCE_AGID == i,],
+#'                                 file = paste0( "agelength_bds_", i ,".png"),
+#'                                 max_break = max_break,
+#'                                 ylim = c(0, 0.1), # trial and error for now to figure out
+#'                                 xlim = c(0, max_break))
+#'   }
+#' 
+#' }
 age_representativeness_plot <- function(bio.WCGBTS,
                                         xlim = c(0, 120),
                                         ylim = c(0, 0.049),
