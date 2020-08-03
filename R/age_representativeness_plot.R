@@ -77,13 +77,13 @@ age_representativeness_plot <- function(bio.WCGBTS,
     lengths.y <- bio.WCGBTS$Length_cm[bio.WCGBTS$Year == y]
     ages.y <- bio.WCGBTS$Length_cm[bio.WCGBTS$Year == y &
                                         !is.na(bio.WCGBTS$Age)]
-    hist(lengths.y,
+    lhist <- hist(lengths.y,
          breaks = seq(0, max_break, 5),
          freq = FALSE,
          col = colvec[1],
          add = TRUE)
     if (length(ages.y > 0)) {
-      hist(ages.y,
+      ahist <- hist(ages.y,
            breaks = seq(0, max_break, 5),
            freq = FALSE,
            col = colvec[2],
@@ -91,9 +91,11 @@ age_representativeness_plot <- function(bio.WCGBTS,
     }
     p.value <- NA
     p.color <- 'grey50'
+    bhat <- NA
     if (length(lengths.y) > 0 & length(ages.y) > 0) {
       p.value <- ks.test(x = lengths.y, y = ages.y)$p.value
       p.color <- ifelse(p.value > 0.05, 'green3', 'red')
+      bhat <- sum(sqrt(lhist$counts/sum(lhist$counts)*ahist$counts/sum(ahist$counts)))
     }
     legend('topleft', legend = NA, bty = 'n', title = y, cex = 1.5)
     legend('right', legend = NA, bty = 'n',
@@ -107,9 +109,12 @@ age_representativeness_plot <- function(bio.WCGBTS,
            cex = 1.0)
     legend('bottomright', legend = NA, bty = 'n',
            title = paste0("K-S p-value = ",
-                          format(p.value, digits = 2)
-                          ),
+                          format(p.value, digits = 2)),
            cex = 1.0, title.col = p.color)
+    legend('bottomright',legend = NA, bty = 'n',
+           title = paste0("Bhat. coef. = ",
+                          format(bhat, digits = 3),"\n"),
+           cex = 1.0, title.col = "black")
   }
 
   if (!is.null(file)) {
