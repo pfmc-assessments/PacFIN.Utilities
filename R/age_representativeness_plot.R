@@ -34,7 +34,7 @@
 age_representativeness_plot <- function(bio.WCGBTS,
                                         xlim = c(0, 120),
                                         ylim = c(0, 0.049),
-                                        max_break = 120,
+                                        max_break = 155,
                                         file = NULL){
 
   if(!is.null(file)){
@@ -111,9 +111,9 @@ age_representativeness_plot <- function(bio.WCGBTS,
            title = paste0("K-S p-value = ",
                           format(p.value, digits = 2)),
            cex = 1.0, title.col = p.color)
-    legend('bottomright',legend = NA, bty = 'n',
-           title = paste0("Bhat. coef. = ",
-                          format(bhat, digits = 3),"\n"),
+    legend('bottomright',legend = NA, bty = 'n', inset=c(0,-0.25),
+           title = paste0("\n","\n","Bhat. coef. = ",
+                          format(bhat, digits = 3)),
            cex = 1.0, title.col = "black")
   }
 
