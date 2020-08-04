@@ -32,34 +32,48 @@
 #' 
 #' }
 age_representativeness_plot <- function(bio.WCGBTS,
-                                        xlim = c(0, 120),
+                                        xlim = c(0, 155),
                                         ylim = c(0, 0.049),
                                         max_break = 155,
                                         file = NULL){
+  
 
-  if(!is.null(file)){
-    png(filename = file, width = 7, height = 7, units = 'in', res = 300)
-  }
-  # make multi-panel plot comparing length samples to the subset with ages
-  par(mfcol = c(9, 2),
-      mar = c(0.2,0.2,0.2,0.2),
-      oma = c(4,4,1,1))
+  #set matrix of plots subpanels (row x columns). Used later in par()
+  plot_panels = c(10,2)
+  
   # vector of years with age samples
   years <- sort(unique(bio.WCGBTS$Year))
   colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5))
 
-  # empty plot for legend
-  plot(0, type = 'n', axes = FALSE)
-  legend('left',
-         bty = 'n',
-         fill = colvec,
-         cex = 1.5,
-         legend = c("All length samples",
-                    "Samples with age estimates"))
-
-  mtext("Length (cm)", side = 1, line = 2.5, outer = TRUE)
-
+  pc <- 1 #plot counter
+  
   for (y in years) {
+    
+    mod <- (y-years[1]) %%  (prod(plot_panels)-1) #modulus to determine if plot if filled
+    
+    if(!is.null(file) && mod==0){
+      if(pc != 1) dev.off()
+      file_name <- strsplit(file,"[.]")[[1]][1]
+      file_ext <- strsplit(file,"[.]")[[1]][2]
+      png(filename = paste0(file_name,"_",pc,".",file_ext), width = 7, height = 7, units = 'in', res = 300)
+      pc <- pc + 1
+      
+      # make multi-panel plot comparing length samples to the subset with ages
+      par(mfcol = plot_panels,
+          mar = c(0.2,0.2,0.2,0.2),
+          oma = c(4,4,1,1))
+      
+      # empty plot for legend
+      plot(0, type = 'n', axes = FALSE)
+      legend('left',
+             bty = 'n',
+             fill = colvec,
+             cex = 1.5,
+             legend = c("All length samples",
+                        "Samples with age estimates"))
+      mtext("Length (cm)", side = 1, line = 2.5, outer = TRUE)
+    }
+    
     # make empty plot (note: xlim and ylim were set by trial and error)
     plot(0, type = 'n',
          xlim = xlim,
