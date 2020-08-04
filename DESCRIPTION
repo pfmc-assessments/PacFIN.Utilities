@@ -1,16 +1,23 @@
 Package: PacFIN.Utilities
 Title: Generate fishery composition data from PacFIN data for the NWFSC
-Version: 0.0.0.9000
+Version: 0.0.1.0001
 Authors@R: person("Andi", "Stephens", , "andi.stephens@noaa.gov", role = c("aut", "cre"),
            person("Kelli Faye", "Johnson", , "kellifayejohnson@gmail.com", role = c("aut", "cre")))
 Description: Manipulates data from the PacFIN database for stock synthesis.
 Depends:
-    R (>= 3.1.1)
+    R (>= 3.5)
 License: NMFS
 LazyData: true
+Imports:
+    ggplot2,
+    graphics,
+    grDevices,
+    stats,
+    utils
 Suggests:
     knitr,
-    ggplot2,
-    stats
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
+Encoding: UTF-8
