@@ -4,8 +4,14 @@
 \alias{getcomps_long}
 \title{Create a Long Database to Prepare Compositions}
 \usage{
-getcomps_long(data, towstrat, type, towid = "SAMPLE_NO",
-  weightid = "Final_Sample_Size", dropmissing = TRUE)
+getcomps_long(
+  data,
+  towstrat,
+  type,
+  towid = "SAMPLE_NO",
+  weightid = "Final_Sample_Size",
+  dropmissing = TRUE
+)
 }
 \arguments{
 \item{data}{A data frame with columns defined by the following
@@ -24,7 +30,7 @@ names that generate a unique id for each sample.}
 holds the value to be summed for each type and strata.}
 
 \item{dropmissing}{A logical value supplied to the
-\code{drop} argument in \code{aggregate}
+\code{drop} argument in \code{stats::aggregate}
 that specifies whether or not to keep all levels in the data
 even if there are no values to report for summaries.}
 }
