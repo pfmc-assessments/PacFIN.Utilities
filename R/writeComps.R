@@ -30,7 +30,7 @@
 #'   later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
 #'   fish are binned according to user specified bins irregardless of \code{maxAge}.
 #'   
-#' @param partition  Defaults to 1.
+#' @param partition  Used by SS for length or ages where 0 = retained + discards, 1= discarded, 3 = retained.
 #' @param ageErr     Defaults to 1.
 #' 
 #' @param returns  One of ("FthenM", "Fout", "Mout", or "Uout").  Choose return value
@@ -102,7 +102,7 @@
 #'
 ##############################################################################
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
-                      maxAge=Inf, partition=0, ageErr=0, returns = "FthenM",
+                      maxAge=Inf, partition = 2, ageErr=0, returns = "FthenM",
                       dummybins = FALSE, sum1 = FALSE, digits = 4,
                       overwrite = TRUE, verbose = TRUE) {
 
@@ -125,9 +125,14 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     flush.console()
   }
 
-  # Unsexed fish should have been assigned gender with doSexRatio.  Re-using
-  # those columns to represent males + females
+  # Adding columns in case a sex is not represented in inComps
+  if(length(  inComps$male) == 0) {
+    inComps$male = inComps$msamps = inComps$mtows = 0 }
+  if(length(inComps$female) == 0) {
+    inComps$female = inComps$fsamps = inComps$ftows = 0}
 
+  # Unsexed fish should have been assigned sex with doSexRatio.  
+  # Re-using those columns to represent males + females
   inComps$unsexed = inComps$male + inComps$female
   inComps$usamps = inComps$msamps + inComps$fsamps
   inComps$utows = inComps$alltows
@@ -304,7 +309,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     cat("\n\n")
     flush.console()
   }
-  # For each gender in turn
+  # For each sex in turn
 
   for ( g in c("m","f","u")) {
 
@@ -400,7 +405,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
   # Fill the rest of the values
 
-  uStrat$gender = NA
+  uStrat$sex = NA
   uStrat$partition = partition
   uStrat$ageErr = ageErr
 
@@ -440,14 +445,13 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   names(FthenM)[index + 1] = "Nsamps"
 
   # Remove empty rows
-
   Fout = Fout[Fout$Nsamps > 0,]
   Mout = Mout[Mout$Nsamps > 0,]
 
-  Uout$gender=0
-  Fout$gender=1
-  Mout$gender=2
-  FthenM$gender = 3
+  if(dim(Uout)[1] != 0) { Uout$sex = 0}
+  if(dim(Fout)[1] != 0) { Fout$sex = 1}
+  if(dim(Mout)[1] != 0) { Mout$sex = 2}
+  if(dim(FthenM)[1] != 0) {FthenM$sex = 3 }
 
   # function to rescale comps to sum to 1
   # IGT(2019-04-25): I tried using an apply function but kept messing up,
@@ -476,10 +480,10 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   if(sum1){
     if(verbose){
       message("rescaling comps to sum to 1")
-      Uout   <- rescale.comps(Uout)
-      Fout   <- rescale.comps(Fout)
-      Mout   <- rescale.comps(Mout)
-      FthenM <- rescale.comps(FthenM)
+      if( dim(Uout)[1] != 0)   { Uout   <- rescale.comps(Uout) }
+      if( dim(Fout)[1] != 0)   { Fout   <- rescale.comps(Fout) }
+      if( dim(Mout)[1] != 0)   { Mout   <- rescale.comps(Mout) }
+      if( dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) }
     }
   }
   # optionally round off to chosen value
@@ -487,10 +491,10 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     if(verbose){
       message("rounding values to ", digits, " digits")
     }
-    Uout   <- round.comps(Uout, digits = digits)
-    Fout   <- round.comps(Fout, digits = digits)
-    Mout   <- round.comps(Mout, digits = digits)
-    FthenM <- round.comps(FthenM, digits = digits)
+    if( dim(Uout)[1] != 0)   { Uout   <- round.comps(Uout, digits = digits) }
+    if( dim(Fout)[1] != 0)   { Fout   <- round.comps(Fout, digits = digits) }
+    if( dim(Mout)[1] != 0)   { Mout   <- round.comps(Mout, digits = digits) }
+    if( dim(FthenM)[1] != 0) { FthenM <- round.comps(FthenM, digits = digits) }
   }
   
   # Print the whole shebang out to a file.
