@@ -4,10 +4,21 @@
 \alias{writeComps}
 \title{Write out composition data formatted for Stock Synthesis.}
 \usage{
-writeComps(inComps, fname = "out.csv", abins = NULL, lbins = NULL,
-  maxAge = Inf, partition = 0, ageErr = 0, returns = "FthenM",
-  dummybins = FALSE, sum1 = FALSE, digits = 4, overwrite = TRUE,
-  verbose = TRUE)
+writeComps(
+  inComps,
+  fname = "out.csv",
+  abins = NULL,
+  lbins = NULL,
+  maxAge = Inf,
+  partition = 2,
+  ageErr = 0,
+  returns = "FthenM",
+  dummybins = FALSE,
+  sum1 = FALSE,
+  digits = 4,
+  overwrite = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{inComps}{A dataframe generated as described in Workflow, above.}
@@ -26,7 +37,7 @@ then those fish will be included in a plus group which you can investigate
 later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
 fish are binned according to user specified bins irregardless of \code{maxAge}.}
 
-\item{partition}{Defaults to 1.}
+\item{partition}{Used by SS for length or ages where 0 = retained + discards, 1= discarded, 3 = retained.}
 
 \item{ageErr}{Defaults to 1.}
 
