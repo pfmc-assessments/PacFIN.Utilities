@@ -1,12 +1,15 @@
 #' Compare length historgram of aged samples to all lengthed samples
 #' 
-#' @param bio.WCGBTS The dataframe from the West Coast Groundfish Bottom Trawl
-#'  Survey. In the future, make this more general so that more datasets can be.
-#'  used. Must include columns Year, Length_cm, and Age, but additional columns
-#'  can be present.
+#' @param bio The dataframe containing the lengths and ages. Currently the
+#' function works with data from the West Coast Groundfish Bottom Trawl
+#' Survey extracted by the nwfscSurvey package as well as PacFIN data.
+#' Must include either the columns Year, Length_cm, and Age, or,
+#' for PacFIN data, SAMPLE_YEAR, FISH_LENGTH, and FISH_AGE_YEARS_FINAL.
+#' Additional columns can be present.
 #' @param xlim The x limits for the histogram
 #' @param ylim The y limits for the histogram
-#' @param max_break The maximum length
+#' @param max_break The maximum length in cm (If PacFIN data is provided,
+#' FISH_LENGTH is automatically converted from mm to cm). 
 #' @param file The relative or absolute path and name of the file to write to,
 #'  as a .png file.
 #' @param plot_panels A vector of two integers that determine the matrix
@@ -20,7 +23,7 @@
 #' Several plots, potentially, are printed to the screen or saved to the disk
 #'
 #' @export
-#' @author Ian Taylor
+#' @author Ian Taylor, Kathryn Doering, Brian Langseth, Kelli Johnson
 #' @examples
 #'   data(XMPL.BDS, package = "PacFIN.Utilities")
 #'   state_codes <- c("W", "O", "C")
@@ -49,8 +52,12 @@ age_representativeness_plot <- function(bio.WCGBTS,
     stop("Your data does not have any length or age data.")
   }
   if (any(bio.WCGBTS[, "Length_cm"] >= max_break, na.rm = TRUE)) {
-    stop("max_break needs to be larger than your longest length.\n",
-      "Either subset your data or increase max_break.")
+    nrows_old <- nrow(bio.WCGBTS)
+    bio.WCGBTS <- bio.WCGBTS[bio.WCGBTS[, "Length_cm"] < max_break, ]
+    warning(nrows_old - nrow(bio.WCGBTS),
+            " out of ",
+            nrows_old,
+            " length values are larger than max_break and will be excluded.")
   }
   years <- sort(unique(bio.WCGBTS$Year))
 
@@ -180,6 +187,7 @@ changecol_pacfin <- function(data, verbose = FALSE) {
   # Length column
   if (!"Length_cm" %in% colnames(data)) {
     if ("FISH_LENGTH" %in% colnames(data)) {
+      # convert PacFIN FISH_LENGTH from mm to cm
       data[, "Length_cm"] <- data[, "FISH_LENGTH"] * 0.1
     }
     if (!"Length_cm" %in% colnames(data)) {
