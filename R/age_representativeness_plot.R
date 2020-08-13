@@ -105,7 +105,8 @@ age_representativeness_plot <- function(bio.WCGBTS,
     p.color <- 'grey50'
     bhat <- NA
     if (length(lengths.y) > 0 & length(ages.y) > 0) {
-      p.value <- ks.test(x = lengths.y, y = ages.y)$p.value
+      p.value <- suppressWarnings(classes = "warning",
+        ks.test(x = lengths.y, y = ages.y)$p.value)
       p.color <- ifelse(p.value > 0.05, 'green3', 'red')
       bhat <- sum(sqrt(lhist$counts/sum(lhist$counts)*ahist$counts/sum(ahist$counts)))
     }
