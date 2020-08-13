@@ -5,7 +5,7 @@
 \title{Compare length historgram of aged samples to all lengthed samples}
 \usage{
 age_representativeness_plot(
-  bio.WCGBTS,
+  bio,
   xlim = c(0, max_break),
   ylim = c(0, 0.049),
   max_break = 155,
@@ -15,6 +15,13 @@ age_representativeness_plot(
 )
 }
 \arguments{
+\item{bio}{The dataframe containing the lengths and ages. Currently the
+function works with data from the West Coast Groundfish Bottom Trawl
+Survey extracted by the nwfscSurvey package as well as PacFIN data.
+Must include either the columns Year, Length_cm, and Age, or,
+for PacFIN data, SAMPLE_YEAR, FISH_LENGTH, and FISH_AGE_YEARS_FINAL.
+Additional columns can be present.}
+
 \item{xlim}{The x limits for the histogram}
 
 \item{ylim}{The y limits for the histogram}
@@ -32,13 +39,6 @@ if \code{!is.null(file)}.}
 \item{wait2plot}{A logical specifying if you want R to ask you to confirm
 page changes between plots. The default is \code{FALSE} and it will also
 be \code{FALSE} if plots are saved to the disk.}
-
-\item{bio}{The dataframe containing the lengths and ages. Currently the
-function works with data from the West Coast Groundfish Bottom Trawl
-Survey extracted by the nwfscSurvey package as well as PacFIN data.
-Must include either the columns Year, Length_cm, and Age, or,
-for PacFIN data, SAMPLE_YEAR, FISH_LENGTH, and FISH_AGE_YEARS_FINAL.
-Additional columns can be present.}
 }
 \value{
 Several plots, potentially, are printed to the screen or saved to the disk
@@ -47,13 +47,14 @@ Several plots, potentially, are printed to the screen or saved to the disk
 Compare length historgram of aged samples to all lengthed samples
 }
 \examples{
-  data(XMPL.BDS, package = "PacFIN.Utilities")
-  state_codes <- c("W", "O", "C")
-  names(state_codes) <- c("WA", "OR", "CA") # just for clarity
-  for (i in state_codes) {
-    age_representativeness_plot(XMPL.BDS[XMPL.BDS$SOURCE_AGID == i,],
-                                file = paste0( "agelength_bds_", i ,".png"),
-                                ylim = c(0, 0.1)) # trial and error for now to figure out
+data(XMPL.BDS, package = "PacFIN.Utilities")
+state_codes <- c("W", "O", "C")
+names(state_codes) <- c("WA", "OR", "CA") # just for clarity
+for (i in state_codes) {
+  age_representativeness_plot(XMPL.BDS[XMPL.BDS$SOURCE_AGID == i, ],
+    file = paste0("agelength_bds_", i, ".png"),
+    ylim = c(0, 0.1)
+  ) # trial and error for now to figure out
 }
 }
 \author{
