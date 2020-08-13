@@ -21,7 +21,7 @@
 #'                                 ylim = c(0, 0.1)) # trial and error for now to figure out
 #' }
 age_representativeness_plot <- function(bio.WCGBTS,
-                                        xlim = c(0, 155),
+                                        xlim = c(0, max_break),
                                         ylim = c(0, 0.049),
                                         max_break = 155,
                                         file = NULL){
