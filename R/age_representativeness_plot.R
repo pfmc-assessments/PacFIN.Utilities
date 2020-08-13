@@ -11,25 +11,14 @@
 #'  as a .png file.
 #' @export
 #' @author Ian Taylor
-#' @examples {
-#'   load(file.path("data", "XMPL.BDS.rda")) # may need to modify this file
-#'   bds <- XMPL.BDS # rename for simplicity
-#'   # rename cols so that the plot can be used
-#'   bds$Year <- bds[["SAMPLE_YEAR"]]
-#'   bds$Length_cm <- (bds[["FISH_LENGTH"]])*0.1 # I think these units are likely mm, but need to check.
-#'   bds$Age <- bds[["FISH_AGE_YEARS_FINAL"]] # (or use age 1?)
-#'   bds <- bds[!(is.na(bds$Age) &&  is.na(bds$Length_cm)), ] # if both age and length are na, don't retain.
-#'   max_break <- max(bds$Length_cm, na.rm = T)
+#' @examples
+#'   data(XMPL.BDS, package = "PacFIN.Utilities")
 #'   state_codes <- c("W", "O", "C")
 #'   names(state_codes) <- c("WA", "OR", "CA") # just for clarity
 #'   for (i in state_codes) {
-#'     age_representativeness_plot(bds[bds$SOURCE_AGID == i,],
+#'     age_representativeness_plot(XMPL.BDS[XMPL.BDS$SOURCE_AGID == i,],
 #'                                 file = paste0( "agelength_bds_", i ,".png"),
-#'                                 max_break = max_break,
-#'                                 ylim = c(0, 0.1), # trial and error for now to figure out
-#'                                 xlim = c(0, max_break))
-#'   }
-#' 
+#'                                 ylim = c(0, 0.1)) # trial and error for now to figure out
 #' }
 age_representativeness_plot <- function(bio.WCGBTS,
                                         xlim = c(0, 155),
@@ -42,6 +31,7 @@ age_representativeness_plot <- function(bio.WCGBTS,
   plot_panels = c(10,2)
   
   # vector of years with age samples
+  bio.WCGBTS <- changecol_pacfin(bio.WCGBTS)
   years <- sort(unique(bio.WCGBTS$Year))
   colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5))
 
@@ -133,5 +123,57 @@ age_representativeness_plot <- function(bio.WCGBTS,
 
   if (!is.null(file)) {
     dev.off()
+
+
+#' Change Column Names of PacFIN Data To Match Survey
+#'
+#' Change the column names of data extracted from PacFIN to match those
+#' extracted from the survey-data warehouse.
+#'
+#' @param data A data frame with names matching those from PacFIN.
+#' @param verbose A logical value specifying if you want messages printed to
+#' the screen or not. The default is \code{FALSE}, which does not print them.
+#' @return A data frame with names similar to those exported by the survey-data
+#' warehouse. No column are actually removed, columns are only added.
+#' @export
+
+changecol_pacfin <- function(data, verbose = FALSE) {
+  if (!"SAMPLE_YEAR" %in% colnames(data)) {
+    if (verbose) {
+      message("Returning original data because SAMPLE_YEAR wasn't a column.")
+    }
+    return(data)
   }
+  # Year column
+  if (!"Year" %in% colnames(data)) {
+    if ("SAMPLE_YEAR" %in% colnames(data)) {
+      data[, "Year"] <- data[, "SAMPLE_YEAR"]
+    }
+    # Code other options for year column here
+    if (!"Year" %in% colnames(data)) {
+      stop("A year column was not found in your data\n",
+        "Year or SAMPLE_YEAR work.")
+    }
+  }
+  # Length column
+  if (!"Length_cm" %in% colnames(data)) {
+    if ("FISH_LENGTH" %in% colnames(data)) {
+      data[, "Length_cm"] <- data[, "FISH_LENGTH"] * 0.1
+    }
+    if (!"Length_cm" %in% colnames(data)) {
+      stop("A fish-length column was not found in your data\n",
+        "Length_cm or FISH_LENGTH work.")
+    }
+  }
+  # Age column
+  if (!"Age" %in% colnames(data)) {
+    if ("FISH_AGE_YEARS_FINAL" %in% colnames(data)) {
+      data[, "Age"] <- data[, "FISH_AGE_YEARS_FINAL"]
+    }
+    if (!"Age" %in% colnames(data)) {
+      stop("A fish-age column was not found in your data\n",
+        "Age or FISH_AGE_YEARS_FINAL work.")
+    }
+  }
+  return(data)
 }
