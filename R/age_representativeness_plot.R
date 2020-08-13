@@ -32,6 +32,14 @@ age_representativeness_plot <- function(bio.WCGBTS,
   
   # vector of years with age samples
   bio.WCGBTS <- changecol_pacfin(bio.WCGBTS)
+  bio.WCGBTS <- bio.WCGBTS[!(is.na(bio.WCGBTS$Age) &&  is.na(bio.WCGBTS$Length_cm)), ]
+  if (nrow(bio.WCGBTS) == 0) {
+    stop("Your data does not have any length or age data.")
+  }
+  if (any(bio.WCGBTS[, "Length_cm"] >= max_break, na.rm = TRUE)) {
+    stop("max_break needs to be larger than your longest length.\n",
+      "Either subset your data or increase max_break.")
+  }
   years <- sort(unique(bio.WCGBTS$Year))
   colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5))
 
