@@ -9,6 +9,16 @@
 #' @param max_break The maximum length
 #' @param file The relative or absolute path and name of the file to write to,
 #'  as a .png file.
+#' @param plot_panels A vector of two integers that determine the matrix
+#' dimensions of the plots panels (row x columns), i.e., used in \code{par()}
+#' if \code{!is.null(file)}.
+#' @param wait2plot A logical specifying if you want R to ask you to confirm
+#' page changes between plots. The default is \code{FALSE} and it will also
+#' be \code{FALSE} if plots are saved to the disk.
+#'
+#' @return
+#' Several plots, potentially, are printed to the screen or saved to the disk
+#'
 #' @export
 #' @author Ian Taylor
 #' @examples
@@ -24,13 +34,15 @@ age_representativeness_plot <- function(bio.WCGBTS,
                                         xlim = c(0, max_break),
                                         ylim = c(0, 0.049),
                                         max_break = 155,
-                                        file = NULL){
-  
+                                        file = NULL,
+                                        plot_panels = c(10, 2),
+                                        wait2plot = FALSE){
 
-  #set matrix of plots subpanels (row x columns). Used later in par()
-  plot_panels = c(10,2)
-  
-  # vector of years with age samples
+  if (!is.null(file)) {
+    on.exit(dev.off(), add = TRUE)
+  }
+  if (!is.null(file)) wait2plot <- FALSE
+
   bio.WCGBTS <- changecol_pacfin(bio.WCGBTS)
   bio.WCGBTS <- bio.WCGBTS[!(is.na(bio.WCGBTS$Age) &&  is.na(bio.WCGBTS$Length_cm)), ]
   if (nrow(bio.WCGBTS) == 0) {
@@ -41,15 +53,14 @@ age_representativeness_plot <- function(bio.WCGBTS,
       "Either subset your data or increase max_break.")
   }
   years <- sort(unique(bio.WCGBTS$Year))
+
   colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5))
 
   pc <- 1 #plot counter
-  
   for (y in years) {
     
-    mod <- (y-years[1]) %%  (prod(plot_panels)-1) #modulus to determine if plot if filled
-    
-    if(!is.null(file) && mod==0){
+    mod <- (y-years[1]) %%  (prod(plot_panels)) #modulus to determine if plot if filled
+    if (!is.null(file) && mod == 0) {
       if(pc != 1) dev.off()
       file_name <- strsplit(file,"[.]")[[1]][1]
       file_ext <- strsplit(file,"[.]")[[1]][2]
@@ -60,24 +71,15 @@ age_representativeness_plot <- function(bio.WCGBTS,
       par(mfcol = plot_panels,
           mar = c(0.2,0.2,0.2,0.2),
           oma = c(4,4,1,1))
-      
-      # empty plot for legend
-      plot(0, type = 'n', axes = FALSE)
-      legend('left',
-             bty = 'n',
-             fill = colvec,
-             cex = 1.5,
-             legend = c("All length samples",
-                        "Samples with age estimates"))
-      mtext("Length (cm)", side = 1, line = 2.5, outer = TRUE)
     }
+    if (is.null(file)) par(oma = c(1,1,1,1), ask = wait2plot)
     
     # make empty plot (note: xlim and ylim were set by trial and error)
     plot(0, type = 'n',
          xlim = xlim,
-         xaxs = 'i',
+         xaxs = 'i', xlab = "",
          ylim = ylim,
-         yaxs = 'i',
+         yaxs = 'i', ylab = "",
          axes = FALSE)
     grid()
     if (par()$mfg[2] == 1) {
@@ -111,27 +113,38 @@ age_representativeness_plot <- function(bio.WCGBTS,
       bhat <- sum(sqrt(lhist$counts/sum(lhist$counts)*ahist$counts/sum(ahist$counts)))
     }
     legend('topleft', legend = NA, bty = 'n', title = y, cex = 1.5)
-    legend('right', legend = NA, bty = 'n',
-           title = paste0("N lens = ",
-                          length(lengths.y),
-                          "\nN ages = ",
-                          length(ages.y),
-                          " (",
+    myinset <- ifelse(is.null(file), 0, -0.25)
+    myinset2 <- ifelse(is.null(file), -0.02, -0.35)
+    legend('bottomright', legend = "\n\n", bty = 'n', inset = c(0, myinset),
+           title = paste0(length(lengths.y), " lengths\n",
+                          length(ages.y), " ages (",
                           round(100*length(ages.y)/length(lengths.y)),
                           "%)"),
            cex = 1.0)
-    legend('bottomright', legend = NA, bty = 'n',
+    legend('bottomright', legend = "\n", bty = 'n', inset = c(0, myinset),
            title = paste0("K-S p-value = ",
-                          format(p.value, digits = 2)),
+                          sprintf("%.3f", p.value)),
            cex = 1.0, title.col = p.color)
-    legend('bottomright',legend = NA, bty = 'n', inset=c(0,-0.25),
-           title = paste0("\n","\n","Bhat. coef. = ",
-                          format(bhat, digits = 3)),
+    legend('bottomright',legend = NA, bty = 'n', inset = c(0, myinset2),
+           title = as.expression(bquote(atop(phantom(),hat(b)==.(sprintf("%.3f",bhat))))),
            cex = 1.0, title.col = "black")
+    if ((par()$mfg[1] == plot_panels[1] & par()$mfg[2] == plot_panels[2]) |
+        is.null(file) | y == max(years)) {
+      # empty plot for legend
+      par.old <- par(no.readonly = TRUE)
+      par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+      plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+      legend('bottomright', xpd = TRUE, inset = c(0, -0.01), horiz = FALSE,
+             bty = 'n',
+             fill = colvec,
+             cex = 1.0,
+             legend = c("All lengths", "Lengths with ages"))
+      mtext("Length (cm)", side = 1, line = -1.0, outer = FALSE)
+      par(par.old)
+    }
   }
 
-  if (!is.null(file)) {
-    dev.off()
+}
 
 
 #' Change Column Names of PacFIN Data To Match Survey
