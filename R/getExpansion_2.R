@@ -18,7 +18,8 @@
 #' 
 #' @param Pdata A cleaned PacFIN dataframe with column "stratification" appended.
 #' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
-#' @param Convert Logical.  Should catch be converted to pounds from MT?  Default FALSE.
+#' @param Units "MT" or "LB" The units of the Catch data frame that is being passed to this function for expansion.
+#' @param Convert NULL.  Depricate. Should catch be converted to pounds from MT?  Default FALSE.
 #' @param maxExp  maximum expansion factor to return.  Either a quantile (< 1) or a number.
 #' Default is 0.95.  Set \code{maxExp=Inf} to see largest values.
 #' 
@@ -71,7 +72,16 @@
 #
 #############################################################################
 
-getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
+getExpansion_2 = function( Pdata, Catch, Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95 ) {
+
+
+  # Check Unit input 
+  unit_check <- match.arg(Units[1], c('MT', 'LB'))
+
+  # Check and stop if Convert input is used since it is not deprecated
+  if(!is.null(Convert)) {
+    stop("Convert is deprecated. Please specify the Catch matrix units via the Unit input (either MT or LB).\n\n")
+  }
 
   # Start clean
 
@@ -132,9 +142,9 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
   # Convert Catch to lbs.
 
-  if (Convert) {
+  if (Units == "MT") {
 
-    cat("Converting Catch to pounds (multiplying by 2204). \n\n")
+    cat("Converting Catch from metric tons to pounds (multiplying by 2204). \n\n")
 
     if (ncol(Catch) > 2) {
     
@@ -146,12 +156,14 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   
     } # End if-else
 
-  } # End if Convert
+  } else { # End if Convert
+    cat("Catch is assumed to be in pounds. \n\n")  
+  }
 
   # Matching is on Year == fishyr.
   # Pdata$catch col gets the matched Catch.
 
-  tows$catch=NULL
+  tows$catch = tows$state.gear = NULL
 
   for ( sg in 2:ncol(Catch) ) {
 
@@ -159,6 +171,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
 
     for ( yr in Catch$Year ) {
 
+      tows$state.gear = state.gear
       tows$catch[tows$fishyr == yr & tows$stratification == state.gear ] = 
         Catch[Catch$Year == yr, sg]
 
@@ -178,7 +191,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   # KFJ - only print if an issue
   # Andi -- thanks!
 
-  if (length(nrow(NoCatch)) > 0) {
+  if (length(NoCatch) > 0) {
 
     cat("\nNo Catch was found for these combinations:\n\n")
     print(NoCatch)
@@ -193,6 +206,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   tows$EF2[tows$EF2 < 1] = 1
   tows$EF2[!is.finite(tows$EF2)] <- 1
   # Match EF2 to the larger dataset.
+
 
   # Scale up from tows to Pdata
 
@@ -228,6 +242,7 @@ getExpansion_2 = function( Pdata, Catch, Convert=FALSE, maxExp=0.95 ) {
   boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr, main="Expansion_Factor_2")
 
   cat("\nRemember to set (or reset) Pdata$Final_Sample_Size\n\n")
+
 
   invisible(Pdata)
 
