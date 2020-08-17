@@ -155,7 +155,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
       lbins = sort(unique(inComps$lengthcm))
 
-    } # End if
+    } # End if for lbins
 
     # Re-code actual lengths to be lbins
     # Note that the last bin is a dummy bin,
@@ -208,7 +208,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
       abins = abins[abins < maxAge]
 
-    } # End if
+    } # End if for abins
 
     # Re-code actual ages to be abins
     
@@ -225,7 +225,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
       
       abins <- c(abins, Inf)
       
-    } # End if-else
+    } # End if-else dummybins
 
     # add extra, dummy bin because all.inside=T
 
@@ -236,7 +236,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     #    "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
     # }
     
-  } # End if
+  } # End if inComps$ages
 
   AAL = FALSE
 
@@ -422,14 +422,45 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
 
   Nsamps = rowSums(cbind(fComps$Nsamps, mComps$Nsamps), na.rm=T)
 
-  # Corrected Ntows for FthenM case.
+  Ninput = round(ifelse( 
+                 round(Nsamps / uComps$Ntows, 0) < 44, 
+                 uComps$Ntows + 0.138 * Nsamps, 7.06 * uComps$Ntows), 0 )
 
-  FthenM = cbind(uStrat, uComps$Ntows, Nsamps, fComps[,1:NCOLS], mComps[,1:NCOLS])
+  if(!AAL){
+    FthenM = cbind(uStrat, uComps$Ntows, Nsamps, Ninput, fComps[,1:NCOLS], mComps[,1:NCOLS])
+  } else {
+    FthenM = cbind(uStrat, uComps$Ntows, Nsamps, fComps[,1:NCOLS], mComps[,1:NCOLS])
+  }
 
-  Mout = cbind(uStrat, mComps$Ntows, mComps$Nsamps, blanks, mComps[1:NCOLS])
-  Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, fComps[1:NCOLS], blanks)
-  Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, uComps[1:NCOLS], blanks)
 
+  Ninput = round(ifelse( 
+                 round(mComps$Nsamps / mComps$Ntows, 0) < 44, 
+                 mComps$Ntows + 0.138 * mComps$Nsamps, 7.06 * mComps$Ntows), 0 )
+  if(!AAL){
+    Mout = cbind(uStrat, mComps$Ntows, mComps$Nsamps, Ninput, blanks, mComps[1:NCOLS])
+  } else {
+    Mout = cbind(uStrat, mComps$Ntows, mComps$Nsamps, blanks, mComps[1:NCOLS])
+  }
+
+  Ninput = round(ifelse( 
+                 round(fComps$Nsamps / fComps$Ntows, 0) < 44, 
+                 fComps$Ntows + 0.138 * fComps$Nsamps, 7.06 * fComps$Ntows), 0 )
+
+  if(!AAL){
+    Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, Ninput, fComps[1:NCOLS], blanks)
+  } else {
+    Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, fComps[1:NCOLS], blanks)
+  } 
+
+  Ninput = round(ifelse( 
+                 round(uComps$Nsamps / uComps$Ntows, 0) < 44, 
+                 uComps$Ntows + 0.138 * uComps$Nsamps, 7.06 * uComps$Ntows), 0 )
+
+  if(!AAL){
+    Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, Ninput, uComps[1:NCOLS], blanks)
+  } else {
+    Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, uComps[1:NCOLS], blanks)
+  } 
   # Make it pretty
 
   index = which(names(Fout) == "fComps$Ntows")
@@ -443,6 +474,14 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   names(Fout)[index + 1] = "Nsamps"
   names(Uout)[index + 1] = "Nsamps"
   names(FthenM)[index + 1] = "Nsamps"
+
+  if(!AAL){
+    names(Mout)[index + 2] = "InputN"
+    names(Fout)[index + 2] = "InputN"
+    names(Uout)[index + 2] = "InputN"
+    names(FthenM)[index + 2] = "InputN"    
+  }
+
 
   # Remove empty rows
   Fout = Fout[Fout$Nsamps > 0,]
