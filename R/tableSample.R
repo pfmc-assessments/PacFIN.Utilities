@@ -19,7 +19,9 @@
 #' @author Chantel Wetzel
 #' @export
 
-tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID",
+tableSample <- function(Pdata,
+  fname = paste0("fishery_", comps, "_samples.csv"),
+  strat = "SOURCE_AGID",
   comps = c("LEN", "AGE"), remove_yrs = NULL) {
 
   Pdata$strat <- apply(Pdata[, strat, drop = FALSE], 1, paste0, collapse = ".")
@@ -47,12 +49,6 @@ tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID",
 	}
 	colnames(samples) = names	
 
-	if (is.null(fname)){
-		filename = paste0(getwd(),"/fishery_", comps, "_samples.csv")
-	} else {
-		filename = fname
-	}
-
-	write.csv(samples, file = filename, row.names=FALSE)
+  write.csv(samples, file = fname, row.names=FALSE)
   return(invisible(samples))
 }
