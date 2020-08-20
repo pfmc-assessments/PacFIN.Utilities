@@ -19,22 +19,17 @@
 #' @author Chantel Wetzel
 #' @export
 
-tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID", comps = "LEN", remove_yrs = NULL) {
 tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID",
   comps = c("LEN", "AGE"), remove_yrs = NULL) {
 
   Pdata$strat <- apply(Pdata[, strat, drop = FALSE], 1, paste0, collapse = ".")
+  comps <- match.arg(comps, several.ok = FALSE)
 	if (comps == "LEN"){
 		temp = Pdata[!is.na(Pdata$FISH_LENGTH),]
 	}
 	
 	if (comps == "AGE"){
 		temp = Pdata[Pdata$age != -1,]
-	}
-
-	if (!comps %in% c("LEN", "AGE")){
-		message ("Input to comps should be equal to LEN or AGE. ")
-		break()
 	}
 
 	if(!is.null(remove_yrs)){
