@@ -17,9 +17,17 @@ getExpansion_2(
 
 \item{Catch}{A dataframe of catch data, in pounds or in metric tonnes.}
 
-\item{Units}{"MT" or "LB" The units of the Catch data frame that is being passed to this function for expansion.}
+\item{Units}{The units of the Catch data frame, see
+\code{formals(getExpansion_2)$Units} for options.}
 
-\item{Convert}{NULL.  Depricate. Should catch be converted to pounds from MT?  Default FALSE.}
+\item{Convert}{A deprecated argument that is now set to \code{NULL}.
+Previously, it was a logical that defined if the Catch should be converted from
+metric tonnes to pounds, where \code{TRUE} is now the same as setting
+\code{Units = "MT"} and \code{FALSE}, which was the default, would be
+\code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
+i.e., \code{Convert = TRUE} or \code{Units = "MT"},
+such that it can be used within Stock Synthesis.
+# todo: remove this input argument}
 
 \item{maxExp}{maximum expansion factor to return.  Either a quantile (< 1) or a number.
 Default is 0.95.  Set \code{maxExp=Inf} to see largest values.}

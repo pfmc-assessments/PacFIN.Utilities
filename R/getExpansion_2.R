@@ -18,8 +18,16 @@
 #' 
 #' @param Pdata A cleaned PacFIN dataframe with column "stratification" appended.
 #' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
-#' @param Units "MT" or "LB" The units of the Catch data frame that is being passed to this function for expansion.
-#' @param Convert NULL.  Depricate. Should catch be converted to pounds from MT?  Default FALSE.
+#' @param Units The units of the Catch data frame, see
+#' \code{formals(getExpansion_2)$Units} for options.
+#' @param Convert A deprecated argument that is now set to \code{NULL}.
+#' Previously, it was a logical that defined if the Catch should be converted from
+#' metric tonnes to pounds, where \code{TRUE} is now the same as setting
+#' \code{Units = "MT"} and \code{FALSE}, which was the default, would be
+#' \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
+#' i.e., \code{Convert = TRUE} or \code{Units = "MT"},
+#' such that it can be used within Stock Synthesis.
+#' # todo: remove this input argument
 #' @param maxExp  maximum expansion factor to return.  Either a quantile (< 1) or a number.
 #' Default is 0.95.  Set \code{maxExp=Inf} to see largest values.
 #' 
@@ -76,7 +84,7 @@ getExpansion_2 = function( Pdata, Catch, Units = c("MT", "LB"), Convert = NULL, 
 
 
   # Check Unit input 
-  unit_check <- match.arg(Units[1], c('MT', 'LB'))
+  unit_check <- match.arg(Units, several.ok = FALSE)
 
   # Check and stop if Convert input is used since it is not deprecated
   if(!is.null(Convert)) {
