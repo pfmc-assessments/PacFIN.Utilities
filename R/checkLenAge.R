@@ -97,8 +97,11 @@ checkLenAge = function(Pdata, Par =  list( 0.13, 55, 15, 0.10, 0.10), keepAll = 
     }
 
     if (!keepAll){
-        remove = which(Pdata[,'length'] > Pdata[,'Lhat_high'] | Pdata[,'lengthcm'] < Pdata[,'Lhat_low'])
-        Pdata$length[remove] = Pdata$age[remove] = NA
+        remove = which(Pdata[,'lengthcm'] > Pdata[,'Lhat_high'] | Pdata[,'lengthcm'] < Pdata[,'Lhat_low'])
+        Pdata$lengthcm[remove] = Pdata$age[remove] = NA
+        if ("length" %in% colnames(Pdata)) {
+          Pdata[remove, "length"] <- NA
+        }
     }
     return(Pdata)
 }
