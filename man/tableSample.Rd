@@ -7,7 +7,7 @@
 tableSample(
   Pdata,
   fname = NULL,
-  strat = NULL,
+  strat = "SOURCE_AGID",
   comps = "LEN",
   remove_yrs = NULL
 )

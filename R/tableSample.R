@@ -19,18 +19,14 @@
 #' @author Chantel Wetzel
 #' @export
 
-tableSample <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", remove_yrs = NULL) {
+tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID", comps = "LEN", remove_yrs = NULL) {
 
-	if(is.null(strat)) {
-		Pdata$strat = Pdata$SOURCE_AGID
-	} else{
 		if(length(strat) == 1) { 
 			Pdata$strat = Pdata[,strat] }
 		if(length(strat) == 2) { 
 			Pdata$strat = paste(Pdata[,strat[1]], Pdata[,strat[2]], sep = ".") }
 		if(length(strat) == 3) { 
 			Pdata$strat = paste(Pdata[,strat[1]], Pdata[,strat[2]], Pdata[,strat[3]], sep = ".") }
-	}
 
 	if (comps == "LEN"){
 		temp = Pdata[!is.na(Pdata$FISH_LENGTH),]
