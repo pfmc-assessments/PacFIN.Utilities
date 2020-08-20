@@ -28,7 +28,11 @@
 #'   later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
 #'   fish are binned according to user specified bins irregardless of \code{maxAge}.
 #'   
-#' @param partition  Used by SS for length or ages where 0 = retained + discards, 1= discarded, 3 = retained.
+#' @param partition  Used by Stock Synthesis for length- or age-composition data
+#' where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
+#' The default is to assume that these fish are retained only.
+#' The default was changed in 2020 from a value of 0,
+#' and code should be updated accordingly if you really want 0.
 #' @param ageErr     Defaults to 1.
 #' 
 #' @param returns  One of ("FthenM", "Fout", "Mout", or "Uout").  Choose return value
