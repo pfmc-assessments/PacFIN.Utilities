@@ -1,13 +1,20 @@
-#' Create table of samples by fleet and year to 
-#' be included in US West Coast groundfish assessments
+#' Table of Sample Size By Fleet and Year
+#'
+#' Create a table of samples by fleet and year to
+#' be included in an assessment document.
+#'
+#' @template Pdata
+#' @template fname
+#' @template strat
+#' @param comps Specify whether to calculate the length or age samples.
+#' The default is to calculate the number of length samples.
+#' @param remove_yrs A vector of years to remove from the data before
+#' summarizing sample sizes. The default of \code{NULL} leads to no
+#' sub setting of the data.
 #' 
-#' todo: document
-#' 
-#' @param Pdata data frame
-#' @param fname user specified file name (.csv) for the tables
-#' @param strat calculate the sample sizes using the input columns ( c("fleet","usegear"))
-#' @param comps specify whether to calculate the length or age samples
-#' @param remove_yrs remove years of data for inclusion in the table.
+#' @return
+#' A table is written to a csv file as specified in \code{fname} and the data frame
+#' is also returned as an object invisibly.
 #' 
 #' @author Chantel Wetzel
 #' @export
@@ -60,4 +67,5 @@ tableSample <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", remove
 	}
 
 	write.csv(samples, file = filename, row.names=FALSE)
+  return(invisible(samples))
 }

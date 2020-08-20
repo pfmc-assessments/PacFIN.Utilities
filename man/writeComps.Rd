@@ -23,9 +23,14 @@ writeComps(
 \arguments{
 \item{inComps}{A dataframe generated as described in Workflow, above.}
 
-\item{fname}{A filename, used to save the output as a \code{.csv} file.
-Users can specify a full path if they do not want the file written in the
-current working directory.}
+\item{fname}{A filename with the appropriate extension,
+used to save the function output to the disk. 
+For example, \code{LenComps.csv} or
+\code{file.path(getwd(), "SampleSize.csv")}.
+Full, relative, or simple paths are allowed because the argument is used as
+is, i.e., not redirected to a directory different than \code{getwd()}.
+Note that various functions within PacFIN.Utilities have different default
+values for this input argument.}
 
 \item{abins}{Bins to use for ages.  Default is the data bins.}
 

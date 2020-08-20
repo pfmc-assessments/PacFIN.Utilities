@@ -2,8 +2,7 @@
 % Please edit documentation in R/tableSample.R
 \name{tableSample}
 \alias{tableSample}
-\title{Create table of samples by fleet and year to 
-be included in US West Coast groundfish assessments}
+\title{Table of Sample Size By Fleet and Year}
 \usage{
 tableSample(
   Pdata,
@@ -14,18 +13,38 @@ tableSample(
 )
 }
 \arguments{
-\item{Pdata}{data frame}
+\item{Pdata}{A PacFIN \code{data.frame}}
 
-\item{fname}{user specified file name (.csv) for the tables}
+\item{fname}{A filename with the appropriate extension,
+used to save the function output to the disk. 
+For example, \code{LenComps.csv} or
+\code{file.path(getwd(), "SampleSize.csv")}.
+Full, relative, or simple paths are allowed because the argument is used as
+is, i.e., not redirected to a directory different than \code{getwd()}.
+Note that various functions within PacFIN.Utilities have different default
+values for this input argument.}
 
-\item{strat}{calculate the sample sizes using the input columns ( c("fleet","usegear"))}
+\item{strat}{A vector of column names to stratify the output over.
+For example, if you wish to summarize by ageing method, then the argument
+would look like \code{strat = "agemethod"}.
+Or if you want to look at fleets and gear, then use
+\code{strat = c("fleet","usegear")}.
+# todo: deprecate defaults}
 
-\item{comps}{specify whether to calculate the length or age samples}
+\item{comps}{Specify whether to calculate the length or age samples.
+The default is to calculate the number of length samples.}
 
-\item{remove_yrs}{remove years of data for inclusion in the table.}
+\item{remove_yrs}{A vector of years to remove from the data before
+summarizing sample sizes. The default of \code{NULL} leads to no
+sub setting of the data.}
+}
+\value{
+A table is written to a csv file as specified in \code{fname} and the data frame
+is also returned as an object invisibly.
 }
 \description{
-todo: document
+Create a table of samples by fleet and year to
+be included in an assessment document.
 }
 \author{
 Chantel Wetzel

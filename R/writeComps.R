@@ -17,9 +17,7 @@
 #'   
 #' @param inComps A dataframe generated as described in Workflow, above.
 #' 
-#' @param fname A filename, used to save the output as a \code{.csv} file.
-#'   Users can specify a full path if they do not want the file written in the
-#'   current working directory.
+#' @template fname
 #'   
 #' @param abins  Bins to use for ages.  Default is the data bins.
 #' @param lbins  Bins to use for lengths.  Default is the data bins.
