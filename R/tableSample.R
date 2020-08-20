@@ -20,14 +20,10 @@
 #' @export
 
 tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID", comps = "LEN", remove_yrs = NULL) {
+tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID",
+  comps = c("LEN", "AGE"), remove_yrs = NULL) {
 
-		if(length(strat) == 1) { 
-			Pdata$strat = Pdata[,strat] }
-		if(length(strat) == 2) { 
-			Pdata$strat = paste(Pdata[,strat[1]], Pdata[,strat[2]], sep = ".") }
-		if(length(strat) == 3) { 
-			Pdata$strat = paste(Pdata[,strat[1]], Pdata[,strat[2]], Pdata[,strat[3]], sep = ".") }
-
+  Pdata$strat <- apply(Pdata[, strat, drop = FALSE], 1, paste0, collapse = ".")
 	if (comps == "LEN"){
 		temp = Pdata[!is.na(Pdata$FISH_LENGTH),]
 	}
