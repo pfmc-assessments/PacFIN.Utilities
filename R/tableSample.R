@@ -37,7 +37,7 @@ tableSample <- function(Pdata, fname = NULL, strat = "SOURCE_AGID",
 	}
 
 	Ntow  = table(temp$SAMPLE_YEAR, temp$strat, !duplicated(as.character(temp$SAMPLE_NO)))[,,"TRUE"]
-	Nfish = table(temp$SAMPLE_YEAR, temp$strat, !duplicated(as.character(temp$SAMPLE_NO)))[,,"FALSE"] 
+  Nfish = table(temp$SAMPLE_YEAR, temp$strat)
 
 	samples = rownames(Ntow); names = "Year"
 	for (a in colnames(Ntow)){
