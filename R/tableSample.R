@@ -10,8 +10,9 @@
 #' @param remove_yrs remove years of data for inclusion in the table.
 #' 
 #' @author Chantel Wetzel
+#' @export
 
-createSampleTable <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", remove_yrs = NULL) {
+tableSample <- function(Pdata, fname = NULL, strat = NULL, comps = "LEN", remove_yrs = NULL) {
 
 	if(is.null(strat)) {
 		Pdata$strat = Pdata$SOURCE_AGID
