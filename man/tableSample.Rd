@@ -6,9 +6,9 @@
 \usage{
 tableSample(
   Pdata,
-  fname = NULL,
+  fname = paste0("fishery_", comps, "_samples.csv"),
   strat = "SOURCE_AGID",
-  comps = "LEN",
+  comps = c("LEN", "AGE"),
   remove_yrs = NULL
 )
 }
@@ -45,6 +45,18 @@ is also returned as an object invisibly.
 \description{
 Create a table of samples by fleet and year to
 be included in an assessment document.
+}
+\examples{
+data("XMPL.BDS", package = "PacFIN.Utilities")
+test <- tableSample(XMPL.BDS)
+all(test[, "Year"] \%in\% 2000:2015)
+\dontshow{
+  testthat::expect_identical(colnames(test),
+    c("Year", "C.tows", "C.fish", "O.tows", "O.fish", "W.tows", "W.fish"))
+  testthat::expect_equal(
+    sum(as.numeric(test[, grepl("\\\\.fish", colnames(test))])),
+    NROW(XMPL.BDS[!is.na(XMPL.BDS$FISH_LENGTH), ]))
+}
 }
 \author{
 Chantel Wetzel

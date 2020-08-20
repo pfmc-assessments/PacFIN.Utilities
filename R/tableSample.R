@@ -15,7 +15,17 @@
 #' @return
 #' A table is written to a csv file as specified in \code{fname} and the data frame
 #' is also returned as an object invisibly.
-#' 
+#' @examples
+#' data("XMPL.BDS", package = "PacFIN.Utilities")
+#' test <- tableSample(XMPL.BDS)
+#' all(test[, "Year"] %in% 2000:2015)
+#' \dontshow{
+#'   testthat::expect_identical(colnames(test),
+#'     c("Year", "C.tows", "C.fish", "O.tows", "O.fish", "W.tows", "W.fish"))
+#'   testthat::expect_equal(
+#'     sum(as.numeric(test[, grepl("\\.fish", colnames(test))])),
+#'     NROW(XMPL.BDS[!is.na(XMPL.BDS$FISH_LENGTH), ]))
+#' }
 #' @author Chantel Wetzel
 #' @export
 
