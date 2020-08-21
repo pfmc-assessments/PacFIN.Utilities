@@ -23,9 +23,7 @@
 #'   depending on the \code{Comps} argument.
 #'   
 #' @template Pdata
-#' @param strat A character value or vector of character values, of which are
-#'   prepended to \code{defaults}. For instance if you wish to add ageing method
-#'   as a stratification use \code{strat = 'agemethod'}.
+#' @template strat
 #' @param Comps The type of composition data to create. Options are length
 #'   (\code{'LEN'}, age (\code{'AGE'}), or conditional age-at-length (\code{'AAL'}).
 #' @param defaults The default stratification columns

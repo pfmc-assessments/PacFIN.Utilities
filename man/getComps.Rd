@@ -17,9 +17,12 @@ getComps(
 \arguments{
 \item{Pdata}{A PacFIN \code{data.frame}}
 
-\item{strat}{A character value or vector of character values, of which are
-prepended to \code{defaults}. For instance if you wish to add ageing method
-as a stratification use \code{strat = 'agemethod'}.}
+\item{strat}{A vector of column names to stratify the output over.
+For example, if you wish to summarize by ageing method, then the argument
+would look like \code{strat = "agemethod"}.
+Or if you want to look at fleets and gear, then use
+\code{strat = c("fleet","usegear")}.
+# todo: deprecate defaults}
 
 \item{Comps}{The type of composition data to create. Options are length
 (\code{'LEN'}, age (\code{'AGE'}), or conditional age-at-length (\code{'AAL'}).}

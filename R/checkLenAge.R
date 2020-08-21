@@ -70,7 +70,7 @@ checkLenAge = function(Pdata, Par =  list( 0.13, 55, 15, 0.10, 0.10), keepAll = 
     get_sex = c("F", "M", "U") %in% unique(Pdata$SEX)
     sex_vec = c("F", "M", "U")[get_sex]
     for (s in 1:length(sex_vec)){
-        use_data = !is.na(Pdata$length) & Pdata$age != -1 & Pdata$SEX == sex_vec[s]
+        use_data = !is.na(Pdata$lengthcm) & Pdata$age != -1 & Pdata$SEX == sex_vec[s]
 
         if (length(Par[[1]]) > 1){ 
             pars_in = log(c(Par[[1]][s], Par[[2]][s]*10, Par[[3]][s]*10, Par[[4]][s], Par[[5]][s]))
@@ -83,7 +83,7 @@ checkLenAge = function(Pdata, Par =  list( 0.13, 55, 15, 0.10, 0.10), keepAll = 
                         par=pars_in, 
                         hessian=FALSE, 
                         Ages=Pdata[use_data,'age'], 
-                        Lengths=Pdata[use_data,'length'])
+                        Lengths=Pdata[use_data,'lengthcm'])
             ests = Opt$par
         } else {
             ests = pars_in 
@@ -91,14 +91,17 @@ checkLenAge = function(Pdata, Par =  list( 0.13, 55, 15, 0.10, 0.10), keepAll = 
 
         Pred = VbFn(Par=ests, 
                     ReturnType="Pred",  
-                    Ages=Pdata[use_data,'age'], Lengths=Pdata[use_data,'length']) 
+                    Ages=Pdata[use_data,'age'], Lengths=Pdata[use_data,'lengthcm']) 
 
         Pdata[use_data, c("Lhat_low","Lhat_pred", "Lhat_high")] = round(Pred,0)
     }
 
     if (!keepAll){
-        remove = which(Pdata[,'length'] > Pdata[,'Lhat_high'] | Pdata[,'length'] < Pdata[,'Lhat_low'])
-        Pdata$length[remove] = Pdata$age[remove] = NA
+        remove = which(Pdata[,'lengthcm'] > Pdata[,'Lhat_high'] | Pdata[,'lengthcm'] < Pdata[,'Lhat_low'])
+        Pdata$lengthcm[remove] = Pdata$age[remove] = NA
+        if ("length" %in% colnames(Pdata)) {
+          Pdata[remove, "length"] <- NA
+        }
     }
     return(Pdata)
 }
