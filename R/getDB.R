@@ -33,14 +33,6 @@ getDB <- function(sql, datasourcename = "PacFIN",
   out <- tryCatch(RODBC::sqlQuery(database, sql, as.is = asis),
     error = function(e) e)
 
-  #### Fix a column name b/c full stops aren't allowed in sql call
-  #badcode
-  # This might be allowed using tablename.[column.name] but KFJ
-  # couldn't figure out how to do it in sql and gave up.
-  if (is.data.frame(out)) {
-    colnames(out) <- gsub("CATCH_LBS", "CATCH\\.LBS", colnames(out))
-  }
-
   return(out)
 
 }

@@ -45,7 +45,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
     spp <- getDB(sql.species(),
       username = username, password = password)
     pacfin_species_code <- spp[
-      grepl(paste0(collapse = "|", gsub("NOM. ", "", 
+      grepl(paste0(collapse = "|", gsub("NOM. ", "",
         spp[
           match(pacfin_species_code, spp[["PACFIN_SPECIES_CODE"]]),
           "PACFIN_SPECIES_COMMON_NAME"])),
@@ -54,6 +54,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
   }
   data <- getDB(sql.catch(pacfin_species_code),
     username = username, password = password)
+  data <- cleanColumns(data)
 
   #### Create summaries
   data.fleet <- stats::aggregate(
