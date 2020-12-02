@@ -1,18 +1,9 @@
-######################################################################
-#
-#' Filter PacFIN samples.
+#' Filter PacFIN Data
 #'
-#' @description
-#' \code{cleanPacFIN} filters out unsuitable samples from data, and converts
-#' fish lengths to cm. The original fields in the returned data are left untouched,
-#' with the exception of SEX, which is modified so that unidentified fish are labeled
-#' "U".
-#' 
-#' \subsection{\code{\link{Workflow}}}{
-#' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
-#' first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
-#' }
-#' 
+#' Filter unsuitable biological samples from PacFIN data and convert
+#' some units into standard units. Altered data are placed in new columns,
+#' except for SEX, which is modified so that unidentified fish are \code{"U"}.
+#'
 #' @export
 #'
 #' @template Pdata
@@ -24,7 +15,7 @@
 #' to label as unique fleets. Order the vector the same way you want the fleets numbered.
 #' @param keep_sample_type a set of sample types to retain.  Default = c("", "M")
 #' @param keep_sample_method a set of sample methods to retain.  Default = "R"
-#' @param keep_length_type a set of length types to retain. 
+#' @param keep_length_type a set of length types to retain.
 #' There is no default value. Typically, users will want to retain
 #' \code{c("", "F", "A")} at a minimum, but should also think about adding NA,
 #' i.e., \code{c("", "F", "A", NA)}.
@@ -40,11 +31,11 @@
 #' are added to the original data even if \code{CLEAN = FALSE}.
 #' @template spp
 #' @template verbose
-#' 
+#'
 #' @return The input data filtered for desired areas and record types
 #' specified, with added columns
-#' 
-#' \tabular{ll}{ 
+#'
+#' \tabular{ll}{
 #'   fishyr \tab initialized from SAMPLE_YEAR\cr
 #'   fleet \tab initialized to 1\cr
 #'   fishery \tab initialized to 1\cr
@@ -53,39 +44,38 @@
 #'   lengthcm \tab floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH\cr
 #'   geargroup \tab the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
 #' }
-#' 
-#' 
+#'
 #' @details
-#' 
+#' \subsection{\code{\link{Workflow}}}{
+#' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
+#' first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
+#' }
+#'
 #' \subsection{\strong{INPFC Area specification}}{
-#' 
 #' The US INPFC areas are 
 #'    c("VUS","CL","VN","COL","NC","SC","EU","CALCOM","CP","EK","MT","PS ")
-#'    
+#'
 #' "CalCOM" is included because the combineCalCOM function
 #' sets it, since CalCOM doesn't seem to record INPFC areas.
-#' 
-#' 
+#'
 #' If \code{only_USINPFC} is TRUE, then only samples from the US INPFC areas will be retained.
-#' 
+#'
 #' If a set of INPFC areas are specified in \code{keep_INPFC}, then only samples from 
 #' those areas will be retained.
-#' 
+#'
 #' If \code{remove_INPFC} specifies a set of INPFC areas, samples from those areas
 #' will be discarded.
 #' }
-#' 
+#'
 #' \subsection{\strong{Sample types and methods}}{
-#' 
 #' SAMPLE_TYPEs may be (M=Market, R=Research, S=Special request, C=Commercial on-board).
 #' Only samples of type M are generally used.
-#' 
+#'
 #' SAMPLE_METHODs may be (R=Random, S=Stratified, N=Systematic, P=Purposive, X=Special).
 #' Only samples collected in random sampling are generally used.
 #' }
-#' 
+#'
 #' \subsection{\strong{Furthermore}}{
-#' 
 #' The values created as new columns are for use by other functions in this package.
 #' In particular, \code{fishyr} and \code{season} are useful if there are multiple 
 #' seasons (e.g., winter and summer, as in the petrale sole assessment), and the 
@@ -97,28 +87,27 @@
 #' The \code{sink} command can be used to save the filtering report to a 
 #' file, in addition to printing it to the console.
 #' }
-#' 
+#'
 #' @seealso \code{\link{getState}}, \code{\link{getSeason}}
 #'
 #' @author Andi Stephens
-#
-##############################################################################
 
-cleanPacFIN = function( Pdata,
-                        only_USINPFC = FALSE,
-                        keep_INPFC = NULL,
-                        remove_INPFC = NULL,
-                        badRecords = NULL,
-                        keep_gears = unique(Pdata$GRID)[order(unique(Pdata$GRID))],
-                        keep_sample_type = c("", "M"),
-                        keep_sample_method = "R",
-                        keep_length_type,
-                        keep_age_method = NULL,
-                        keep_missing_lengths = FALSE,
-                        keep_CA = TRUE,
-                        CLEAN = TRUE, 
-                        spp = NULL,
-                        verbose = TRUE) {
+cleanPacFIN <- function(
+  Pdata,
+  only_USINPFC = FALSE,
+  keep_INPFC = NULL,
+  remove_INPFC = NULL,
+  badRecords = NULL,
+  keep_gears = unique(Pdata$GRID)[order(unique(Pdata$GRID))],
+  keep_sample_type = c("", "M"),
+  keep_sample_method = "R",
+  keep_length_type,
+  keep_age_method = NULL,
+  keep_missing_lengths = FALSE,
+  keep_CA = TRUE,
+  CLEAN = TRUE,
+  spp = NULL,
+  verbose = TRUE) {
 
   if (verbose) {
     cat( "\nCleaning data\n\n" )

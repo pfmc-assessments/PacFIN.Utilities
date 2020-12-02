@@ -2,7 +2,7 @@
 % Please edit documentation in R/cleanPacFIN.R
 \name{cleanPacFIN}
 \alias{cleanPacFIN}
-\title{Filter PacFIN samples.}
+\title{Filter PacFIN Data}
 \usage{
 cleanPacFIN(
   Pdata,
@@ -44,7 +44,7 @@ to label as unique fleets. Order the vector the same way you want the fleets num
 
 \item{keep_sample_method}{a set of sample methods to retain.  Default = "R"}
 
-\item{keep_length_type}{a set of length types to retain. 
+\item{keep_length_type}{a set of length types to retain.
 There is no default value. Typically, users will want to retain
 \code{c("", "F", "A")} at a minimum, but should also think about adding NA,
 i.e., \code{c("", "F", "A", NA)}.}
@@ -77,7 +77,7 @@ is \code{TRUE}.}
 The input data filtered for desired areas and record types
 specified, with added columns
 
-\tabular{ll}{ 
+\tabular{ll}{
   fishyr \tab initialized from SAMPLE_YEAR\cr
   fleet \tab initialized to 1\cr
   fishery \tab initialized to 1\cr
@@ -88,25 +88,22 @@ specified, with added columns
 }
 }
 \description{
-\code{cleanPacFIN} filters out unsuitable samples from data, and converts
-fish lengths to cm. The original fields in the returned data are left untouched,
-with the exception of SEX, which is modified so that unidentified fish are labeled
-"U".
-
+Filter unsuitable biological samples from PacFIN data and convert
+some units into standard units. Altered data are placed in new columns,
+except for SEX, which is modified so that unidentified fish are \code{"U"}.
+}
+\details{
 \subsection{\code{\link{Workflow}}}{
 If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
 first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
 }
-}
-\details{
-\subsection{\strong{INPFC Area specification}}{
 
+\subsection{\strong{INPFC Area specification}}{
 The US INPFC areas are 
    c("VUS","CL","VN","COL","NC","SC","EU","CALCOM","CP","EK","MT","PS ")
-   
+
 "CalCOM" is included because the combineCalCOM function
 sets it, since CalCOM doesn't seem to record INPFC areas.
-
 
 If \code{only_USINPFC} is TRUE, then only samples from the US INPFC areas will be retained.
 
@@ -118,7 +115,6 @@ will be discarded.
 }
 
 \subsection{\strong{Sample types and methods}}{
-
 SAMPLE_TYPEs may be (M=Market, R=Research, S=Special request, C=Commercial on-board).
 Only samples of type M are generally used.
 
@@ -127,7 +123,6 @@ Only samples collected in random sampling are generally used.
 }
 
 \subsection{\strong{Furthermore}}{
-
 The values created as new columns are for use by other functions in this package.
 In particular, \code{fishyr} and \code{season} are useful if there are multiple 
 seasons (e.g., winter and summer, as in the petrale sole assessment), and the 
