@@ -115,12 +115,7 @@ cleanPacFIN <- function(
     if (!CLEAN) {
       cat("\nGenerating data report only.  No data will be removed.\n")
     }
-  }
-  
-  
-  # Define fishyr, fleet, fishery and season  -- some assessments manipulate these.
-  if (verbose) {
-    cat("These values have been initialized for use when comps are generated.\n")
+    cat("Values have been initialized for use when comps are generated.\n")
     cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
   }
   # KFJ: only create columns if they do not exist or if they are not numeric
@@ -136,13 +131,13 @@ cleanPacFIN <- function(
 
   } # End for
 
-  Pdata = getState(Pdata, CLEAN = CLEAN)
+  Pdata <- getState(Pdata, CLEAN = CLEAN)
   if (verbose) { cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n") }
   
-  Pdata$fishyr = Pdata$SAMPLE_YEAR
+  Pdata$fishyr <- Pdata$SAMPLE_YEAR
   if (verbose) { cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n") }
   
-  Pdata = getGearGroup(Pdata, spp = spp)
+  Pdata <- getGearGroup(Pdata, spp = spp)
   if (!"fleet" %in% colnames(Pdata)) Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
 
   if (keep_CA) {
@@ -152,7 +147,9 @@ cleanPacFIN <- function(
     
     if (!is.null(keep_INPFC) & any(Pdata$INPFC_AREA == "CalCOM")) {
       keep_INPFC <- c(keep_INPFC, "CalCOM")
-      if (verbose) { message("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.") }
+      if (verbose) {
+        cat("CalCOM was added to 'keep_INPFC' because 'keep_CA' is TRUE.")
+      }
     }
   } # End keep_CA
 
@@ -160,7 +157,7 @@ cleanPacFIN <- function(
   # sets it -- CalCOM doesn't seem to record INPFC areas.
 
 
-  USinpfc = c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
+  USinpfc <- c("VUS","CL","VN","COL","NC","SC","EU","CalCOM","CP","EK","MT","PS ")
 
   # Fix Lengths.  Use FISH_LENGTH if there is no FORK_LENGTH.
   width2length <- convertlength_skate(Pdata, returntype = "estimated")
@@ -241,7 +238,7 @@ cleanPacFIN <- function(
   if (!"age1" %in% colnames(Pdata)) Pdata$age1 <- NA
   if (!"age2" %in% colnames(Pdata)) Pdata$age2 <- NA
   if (!"age3" %in% colnames(Pdata)) Pdata$age3 <- NA
-  Pdata$age <- ifelse(!is.na(Pdata$FISH_AGE_YEARS_FINAL), 
+  Pdata$age <- ifelse(!is.na(Pdata$FISH_AGE_YEARS_FINAL),
     Pdata$FISH_AGE_YEARS_FINAL, Pdata$age1)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
@@ -260,10 +257,7 @@ cleanPacFIN <- function(
 
   # Flag records without a SAMPLE_NO
 
-  Pdata$sample = Pdata$SAMPLE_NO
-
-  # KFJ: use more values than just NA, also only do if TRUE
-  # Andi:  thanks!
+  Pdata$sample <- Pdata$SAMPLE_NO
 
   flags <- c("NA", "Nan", "")
 
@@ -278,41 +272,55 @@ cleanPacFIN <- function(
   Pdata$UNK_WT[is.na(Pdata$UNK_NUM) & Pdata$UNK_WT == 0] <- NA
 
   # Remove records
-  Rec_summary = rep(0,9)
+  Rec_summary <- rep(0, 9)
 
-  Rec_summary[1] = nrow(Pdata)
+  Rec_summary[1] <- nrow(Pdata)
 
-  Rec_summary[8] = ifelse(only_USINPFC,
+  Rec_summary[8] <- ifelse(only_USINPFC,
     sum(!Pdata$INPFC_AREA %in% USinpfc), 0)
-  if (only_USINPFC == TRUE & CLEAN) { Pdata = Pdata[Pdata$INPFC_AREA %in% USinpfc,] }
+  if (only_USINPFC == TRUE & CLEAN) {
+    Pdata = Pdata[Pdata$INPFC_AREA %in% USinpfc, ]
+  }
   
-  Rec_summary[2] = ifelse(!is.null(keep_INPFC), 
-    sum(!Pdata$INPFC_AREA %in% keep_INPFC), 0) 
-  Rec_summary[9] = ifelse(!is.null(remove_INPFC), 
+  Rec_summary[2] <- ifelse(!is.null(keep_INPFC),
+    sum(!Pdata$INPFC_AREA %in% keep_INPFC), 0)
+  Rec_summary[9] <- ifelse(!is.null(remove_INPFC),
     sum(Pdata$INPFC_AREA %in% remove_INPFC), 0)
 
-  if (!is.null(keep_INPFC) & CLEAN) { Pdata = Pdata[Pdata$INPFC_AREA %in% keep_INPFC,] }
-  if (!is.null(remove_INPFC) & CLEAN) { Pdata = Pdata[!Pdata$INPFC_AREA %in% remove_INPFC,] }
+  if (!is.null(keep_INPFC) & CLEAN) {
+    Pdata <- Pdata[Pdata$INPFC_AREA %in% keep_INPFC, ]
+  }
+  if (!is.null(remove_INPFC) & CLEAN) {
+    Pdata <- Pdata[!Pdata$INPFC_AREA %in% remove_INPFC, ]
+  }
 
-  Rec_summary[3] = sum(Pdata$sample %in% badRecords)
+  Rec_summary[3] <- sum(Pdata$sample %in% badRecords)
 
-  if (CLEAN) Pdata = Pdata[!Pdata$sample %in% badRecords,]
+  if (CLEAN) {
+    Pdata <- Pdata[!Pdata$sample %in% badRecords, ]
+  }
 
-  Rec_summary[4] = sum(!Pdata$SAMPLE_TYPE %in% keep_sample_type)
+  Rec_summary[4] <- sum(!Pdata$SAMPLE_TYPE %in% keep_sample_type)
 
-  if (!is.null(keep_sample_type) & CLEAN) { Pdata = Pdata[Pdata$SAMPLE_TYPE %in% keep_sample_type,] }
+  if (!is.null(keep_sample_type) & CLEAN) {
+    Pdata <- Pdata[Pdata$SAMPLE_TYPE %in% keep_sample_type, ]
+  }
 
-  Rec_summary[5] =  sum(!Pdata$SAMPLE_METHOD %in% keep_sample_method)
+  Rec_summary[5] <- sum(!Pdata$SAMPLE_METHOD %in% keep_sample_method)
 
-  if (!is.null(keep_sample_method) & CLEAN) { Pdata = Pdata[Pdata$SAMPLE_METHOD %in% keep_sample_method,] }
+  if (!is.null(keep_sample_method) & CLEAN) {
+    Pdata <- Pdata[Pdata$SAMPLE_METHOD %in% keep_sample_method, ]
+  }
 
-  Rec_summary[6] = sum(Pdata$SAMPLE_NO == -1)
+  Rec_summary[6] <- sum(Pdata$SAMPLE_NO == -1)
 
-  if (CLEAN) Pdata = Pdata[Pdata$SAMPLE_NO != -1,]
+  if (CLEAN) Pdata <- Pdata[Pdata$SAMPLE_NO != -1, ]
 
-  Rec_summary[7] = sum(is.na(Pdata$length))
+  Rec_summary[7] <- sum(is.na(Pdata$length))
 
-  if (!keep_missing_lengths & CLEAN) { Pdata = Pdata[!is.na(Pdata$length),] }
+  if (!keep_missing_lengths & CLEAN) {
+    Pdata <- Pdata[!is.na(Pdata$length), ]
+  }
 
   # Report removals
   if (verbose) {
@@ -332,5 +340,6 @@ cleanPacFIN <- function(
       cat("\n\nReturning original data because CLEAN=FALSE\n\n")
     }
   }
+
   return(Pdata)
 } # End cleanPacFIN
