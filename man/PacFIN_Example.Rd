@@ -16,11 +16,6 @@ the various functions.
 \section{Getting Started}{
 
 
-The "sink" command will save a record of your session for review.
-
-
- \code{sink(file = "~/Example.txt", split = T)}
-
  \code{Pdata = cleanPacFIN(XMPL.BDS)}
 
  \code{head(Catch.XMPL)}
@@ -88,9 +83,24 @@ The "sink" command will save a record of your session for review.
  \code{writeComps(ALcomps, fname = "~/AAL.Comps.csv")}
 }
 
-\section{Close the file recording your session}{
-
-
- \code{sink()}
+\examples{
+data(XMPL.BDS)
+data(Catch.XMPL)
+catch <- Catch.XMPL
+unique(gsub("[A-Z]+\\\\.", "", colnames(catch)[-1]))
+# Don't clean it so you have ages and lengths
+Pdata <- cleanPacFIN(XMPL.BDS,
+  keep_gears = c("HKL", "TWL"),
+  keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
+  CLEAN = FALSE)
+NROW(XMPL.BDS) - NROW(Pdata)
+table(Pdata[, c("geargroup", "age")])
+data <- getExpansion_1(Pdata)
+data[, "stratification"] <- paste(data[, "state"], data[, "geargroup"], sep = ".")
+data <- data[!is.na(data[, "lengthcm"]) & data[, "SAMPLE_YEAR"] \%in\% catch[, "Year"], ]
+data <- data[data[, "stratification"] \%in\% colnames(catch), ]
+test <- getExpansion_2(data, catch)
+test$Final_Sample_Size <- capValues(test$Expansion_Factor_1_L * test$Expansion_Factor_2)
+comps <- getComps(test[!is.na(test$lengthcm), ], Comps = "LEN")
+comps <- doSexRatio(comps)
 }
-
