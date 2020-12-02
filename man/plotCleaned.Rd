@@ -8,7 +8,7 @@ plotCleaned(Pdata, length = TRUE)
 }
 \arguments{
 \item{Pdata}{A matrix of age or length data returned from
-\code{\link{cleanAges}} or \code{\link{cleanPacFIN}}.}
+\code{\link{cleanPacFIN}}.}
 
 \item{length}{A logical value defining whether or not \code{Pdata} is length-
 or age-composition data.}
@@ -24,7 +24,7 @@ Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
 }
 }
 \seealso{
-\code{\link{cleanAges}}, \code{\link{cleanPacFIN}}, \code{\link{Stratify}},
+\code{\link{cleanPacFIN}}, \code{\link{Stratify}},
 \code{\link{getGearGroup}}.
 }
 \author{

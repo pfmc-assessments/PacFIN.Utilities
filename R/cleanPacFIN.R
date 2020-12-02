@@ -28,6 +28,11 @@
 #' There is no default value. Typically, users will want to retain
 #' \code{c("", "F", "A")} at a minimum, but should also think about adding NA,
 #' i.e., \code{c("", "F", "A", NA)}.
+#' @param keep_age_method A vector of ageing methods to retain in the data. All fish
+#' aged with methods other than those listed will no longer be considered aged.
+#' A value of \code{NULL}, the default, will keep all ageing methods. However,
+#' a vector of \code{c("B", "S", "", NA, 1, 2)} will keep all unaged fish and those
+#' that were aged with break and burn and surface reads.
 #' @param keep_missing_lengths a logical value. FALSE by default.
 #' @param keep_CA default TRUE.  CA data often have no sample type or method, or INPFC area.
 #' @param CLEAN a logical value.  Default is TRUE.  If FALSE, return the original data unchanged,
@@ -93,8 +98,7 @@
 #' file, in addition to printing it to the console.
 #' }
 #' 
-#' @seealso \code{\link{cleanAges}}, \code{\link{getState}}, \code{\link{getSeason}}, 
-#' \code{\link{sink}}
+#' @seealso \code{\link{getState}}, \code{\link{getSeason}}
 #'
 #' @author Andi Stephens
 #
@@ -109,6 +113,7 @@ cleanPacFIN = function( Pdata,
                         keep_sample_type = c("", "M"),
                         keep_sample_method = "R",
                         keep_length_type,
+                        keep_age_method = NULL,
                         keep_missing_lengths = FALSE,
                         keep_CA = TRUE,
                         CLEAN = TRUE, 
@@ -256,6 +261,13 @@ cleanPacFIN = function( Pdata,
     Pdata$FISH_AGE_YEARS_FINAL, Pdata$age1)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age2)
   Pdata$age <- ifelse(!is.na(Pdata$age), Pdata$age, Pdata$age3)
+  if (is.null(keep_age_method)) {
+    keep_age_method <- unique(Pdata[, "AGE_METHOD"])
+  } else {
+    if ("B" %in% keep_age_method) keep_age_method <- c(kkeep_age_method, 1)
+    if ("S" %in% keep_age_method) keep_age_method <- c(kkeep_age_method, 2)
+  }
+  Pdata[!Pdata[, "AGE_METHOD"] %in% keep_age_method, "age"] <- -1
   # Remove bad OR samples
   Pdata$age[Pdata$SAMPLE_NO %in% paste0("OR", badORnums)] <- NA
   Pdata$age[is.na(Pdata$age)] <- -1

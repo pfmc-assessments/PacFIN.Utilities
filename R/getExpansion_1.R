@@ -4,7 +4,7 @@
 #' fish in a tow.
 #' 
 #' \subsection{\code{\link{Workflow}}}{
-#' \code{getExpansion_1} is run after \code{\link{cleanPacFIN}} and \code{\link{cleanAges}}.
+#' \code{getExpansion_1} is run after \code{\link{cleanPacFIN}}.
 #' }
 #'
 #' @export
@@ -28,7 +28,7 @@
 #' After running the expansion functions, data columns Expansion_Factor_1 and 
 #' Expansion_Factor_2 are available to use in manually setting the Final_Expansion_Factor. 
 #' \itemize{
-#' \item{Age data are expanded separately from lengths, after running \code{cleanAges}.}
+#' \item{Age data are expanded separately from lengths.}
 #' \item{WA fish are generally only expanded using Expansion_Factor_2.}
 #' \item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
 #' \item{For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.}

@@ -67,9 +67,7 @@ The "sink" command will save a record of your session for review.
 \section{Ages}{
 
 
- \code{Adata = cleanAges(Pdata)}
-
- \code{Adata = getExpantion_1(Adata)}
+ \code{Adata = getExpantion_1(Pdata)}
 
  \code{Adata = getExpansion_2(Adata, Catch.XMPL, Convert=T)}
 

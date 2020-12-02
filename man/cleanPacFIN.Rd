@@ -14,6 +14,7 @@ cleanPacFIN(
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
   keep_length_type,
+  keep_age_method = NULL,
   keep_missing_lengths = FALSE,
   keep_CA = TRUE,
   CLEAN = TRUE,
@@ -47,6 +48,12 @@ to label as unique fleets. Order the vector the same way you want the fleets num
 There is no default value. Typically, users will want to retain
 \code{c("", "F", "A")} at a minimum, but should also think about adding NA,
 i.e., \code{c("", "F", "A", NA)}.}
+
+\item{keep_age_method}{A vector of ageing methods to retain in the data. All fish
+aged with methods other than those listed will no longer be considered aged.
+A value of \code{NULL}, the default, will keep all ageing methods. However,
+a vector of \code{c("B", "S", "", NA, 1, 2)} will keep all unaged fish and those
+that were aged with break and burn and surface reads.}
 
 \item{keep_missing_lengths}{a logical value. FALSE by default.}
 
@@ -134,8 +141,7 @@ file, in addition to printing it to the console.
 }
 }
 \seealso{
-\code{\link{cleanAges}}, \code{\link{getState}}, \code{\link{getSeason}}, 
-\code{\link{sink}}
+\code{\link{getState}}, \code{\link{getSeason}}
 }
 \author{
 Andi Stephens
