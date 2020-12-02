@@ -125,22 +125,17 @@ cleanPacFIN <- function(
   }
   # KFJ: only create columns if they do not exist or if they are not numeric
   
-  for ( i in c("fishery","season") ) {
-    
+  for (i in c("fishery", "season")) {
+
     if (!i %in% colnames(Pdata)) {
-      
-      tmpcol = ncol(Pdata) + 1
-      tmp = rep(1, nrow(Pdata))
-      
-      Pdata = cbind(Pdata, tmp)
-      names(Pdata)[tmpcol] = i
-      
-      if (verbose) {cat("Pdata$",i," = 1\n")}
-      
+      Pdata[, i] <- 1
+      if (verbose) {
+        cat("Pdata$", i, " = 1\n")
+      }
     } # End if
-    
+
   } # End for
-  
+
   Pdata = getState(Pdata, CLEAN = CLEAN)
   if (verbose) { cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n") }
   
