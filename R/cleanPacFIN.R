@@ -13,6 +13,10 @@
 #' @param badRecords a set of sample identifiers. NULL by default.
 #' @param keep_gears A vector of character values specifying which gear types you want
 #' to label as unique fleets. Order the vector the same way you want the fleets numbered.
+#' If the argument is missing, which is the default, then all found gear groups
+#' are maintained and order alphabetically. For more details see documentation for
+#' \code{?\link{getGearGroup}} that lists a web link for where you can find the
+#' available gear groupings and how they link to \code{"GRID"} within your data.
 #' @param keep_sample_type a set of sample types to retain.  Default = c("", "M")
 #' @param keep_sample_method a set of sample methods to retain.  Default = "R"
 #' @param keep_length_type a set of length types to retain.
@@ -106,7 +110,7 @@ cleanPacFIN <- function(
   keep_INPFC = NULL,
   remove_INPFC = NULL,
   badRecords = NULL,
-  keep_gears = unique(Pdata$GRID)[order(unique(Pdata$GRID))],
+  keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
   keep_length_type,
@@ -126,7 +130,6 @@ cleanPacFIN <- function(
     cat("Values have been initialized for use when comps are generated.\n")
     cat("Use Stratify and getSeason to reset them to appropriate values.\n\n")
   }
-  # KFJ: only create columns if they do not exist or if they are not numeric
   
   for (i in c("fishery", "season")) {
 
@@ -139,14 +142,18 @@ cleanPacFIN <- function(
 
   } # End for
 
+
   Pdata <- getState(Pdata, CLEAN = CLEAN)
   if (verbose) { cat("Pdata$state is initialized to Pdata$SOURCE_AGID\n") }
   
   Pdata$fishyr <- Pdata$SAMPLE_YEAR
   if (verbose) { cat("Pdata$fishyr is initialized to Pdata$SAMPLE_YEAR\n") }
   
-  Pdata <- getGearGroup(Pdata, spp = spp)
-  if (!"fleet" %in% colnames(Pdata)) Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
+  Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
+  if (missing(keep_gears)) {
+    keep_gears <- unique(Pdata$geargroup)[order(unique(Pdata$geargroup))]
+  }
+  Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
 
   if (keep_CA) {
     Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
@@ -262,6 +269,10 @@ cleanPacFIN <- function(
   Pdata$age[is.na(Pdata$age)] <- -1
   Pdata[is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR", "age"] <- -1
   Pdata[is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA", "age"] <- -1
+
+  # Remove lengths and ages for gears we don't want
+  Pdata[!Pdata[, "geargroup"] %in% keep_gears, "length"] <- NA
+  Pdata[!Pdata[, "geargroup"] %in% keep_gears, "age"] <- -1
 
   # Flag records without a SAMPLE_NO
 

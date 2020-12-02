@@ -10,7 +10,7 @@ cleanPacFIN(
   keep_INPFC = NULL,
   remove_INPFC = NULL,
   badRecords = NULL,
-  keep_gears = unique(Pdata$GRID)[order(unique(Pdata$GRID))],
+  keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
   keep_length_type,
@@ -38,7 +38,11 @@ which originated in 2014. Data are pulled using sql calls, see
 \item{badRecords}{a set of sample identifiers. NULL by default.}
 
 \item{keep_gears}{A vector of character values specifying which gear types you want
-to label as unique fleets. Order the vector the same way you want the fleets numbered.}
+to label as unique fleets. Order the vector the same way you want the fleets numbered.
+If the argument is missing, which is the default, then all found gear groups
+are maintained and order alphabetically. For more details see documentation for
+\code{?\link{getGearGroup}} that lists a web link for where you can find the
+available gear groupings and how they link to \code{"GRID"} within your data.}
 
 \item{keep_sample_type}{a set of sample types to retain.  Default = c("", "M")}
 
