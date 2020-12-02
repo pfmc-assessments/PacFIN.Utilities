@@ -91,6 +91,14 @@
 #' @seealso \code{\link{getState}}, \code{\link{getSeason}}
 #'
 #' @author Andi Stephens
+#' @examples
+#' data(XMPL.BDS)
+#' Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]))
+#' NROW(XMPL.BDS) - NROW(Pdata)
+#' # This time don't clean it
+#' Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
+#'   CLEAN = FALSE)
+#' NROW(XMPL.BDS) - NROW(Pdata)
 
 cleanPacFIN <- function(
   Pdata,
