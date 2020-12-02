@@ -44,7 +44,16 @@ getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = TRUE
   fa=NA, fb=NA, ma=NA, mb=NA, ua=NA, ub=NA, verbose = FALSE,
   plot = FALSE) {
 
-  if ( is.na(fa) & Indiv_Wgts) { stop("Must provide values for length-weight relationship.")}
+  # Calculate length-weight relationship
+  if (all(mapply(is.na, c(fa, ma, ua)))) {
+    pars <- getWLpars(data = Pdata, verbose = FALSE)
+    fa <- ifelse(is.na(fa), pars["females", "A"], fa)
+    fb <- ifelse(is.na(fb), pars["females", "B"], fb)
+    ma <- ifelse(is.na(ma), pars["males", "A"], ma)
+    mb <- ifelse(is.na(mb), pars["males", "B"], mb)
+    ua <- ifelse(is.na(ua), pars["all", "A"], ua)
+    ub <- ifelse(is.na(ub), pars["all", "B"], ub)
+  }
   
   # Get the Wt_Sampled
   if (is.character(plot)) {
