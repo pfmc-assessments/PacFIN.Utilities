@@ -51,7 +51,7 @@ An additional column \code{season} is added to \code{Pdata}.
   No columns are modified.
 }
 \description{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 Most assessments won't require \code{getSeason}. It is run by \code{\link{cleanPacFIN}}
 and users shouldn't need to worry about it.  If a specialized season structure is required,
 \code{getSeason} should be run immediately after \code{\link{cleanPacFIN}}

@@ -46,7 +46,7 @@
 #' }
 #'
 #' @details
-#' \subsection{\code{\link{Workflow}}}{
+#' \subsection{Workflow}{
 #' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
 #' first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
 #' }

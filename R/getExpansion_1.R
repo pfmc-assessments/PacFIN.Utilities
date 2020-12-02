@@ -3,7 +3,7 @@
 #' First level expansion for composition data to accout for unsampled
 #' fish in a tow.
 #' 
-#' \subsection{\code{\link{Workflow}}}{
+#' \subsection{Workflow}{
 #' \code{getExpansion_1} is run after \code{\link{cleanPacFIN}}.
 #' }
 #'

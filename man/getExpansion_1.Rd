@@ -62,7 +62,7 @@ A \code{data.frame} where all of the original columns in
   \code{Pdata} remain unaltered but additional columns are added.
 }
 \description{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 \code{getExpansion_1} is run after \code{\link{cleanPacFIN}}.
 }
 }

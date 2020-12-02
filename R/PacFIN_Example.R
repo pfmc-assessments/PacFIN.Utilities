@@ -1,11 +1,10 @@
-########################################################################
 #' Sample PacFIN Run
 #' 
 #' Cut and paste each of the following commands in turn to
 #' see the workflow for processing PacFIN data.
 #' 
 #' The data files for species "XMPL" are supplied with this
-#' package, and can be used to explore the options of 
+#' package, and can be used to explore the options of
 #' the various functions.
 #' 
 #' @section Getting Started:
@@ -13,13 +12,11 @@
 #' The "sink" command will save a record of your session for review.
 #' 
 #' 
-#'  \code{sink(file = "~/Example.txt", split=T)}
-#' 
-#'  \code{dim(XMPL.BDS)}
-#' 
-#'  \code{dim(Catch.XMPL)}
+#'  \code{sink(file = "~/Example.txt", split = T)}
 #' 
 #'  \code{Pdata = cleanPacFIN(XMPL.BDS)}
+#' 
+#'  \code{head(Catch.XMPL)}
 #' 
 #' @section Stratification:
 #' 
@@ -32,8 +29,6 @@
 #'  \code{Pdata$stratification = paste(Pdata$state,Pdata$mygear, sep=".")}
 #' 
 #'  \code{table(Pdata$stratification)}
-#' 
-#'  \code{head(Catch.XMPL)}
 #' 
 #' @section Expansions:
 #' 

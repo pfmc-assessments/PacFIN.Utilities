@@ -1,8 +1,6 @@
-###########################################################################
-#
 #' Create column for gears according to PacFIN gears
 #'
-#' \subsection{\code{\link{Workflow}}}{
+#' \subsection{Workflow}{
 #' \code{getGearGroup} is run by \code{\link{cleanPacFIN}} and users shouldn't need
 #' to worry about it.
 #' }

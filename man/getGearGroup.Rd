@@ -24,7 +24,7 @@ A modified \code{data.frame} where an additional column labeled
   in the process.
 }
 \description{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 \code{getGearGroup} is run by \code{\link{cleanPacFIN}} and users shouldn't need
 to worry about it.
 }

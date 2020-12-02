@@ -41,7 +41,7 @@ divided by the sampled catch, and appends it to the input data as
 \code{Expansion_Factor_2}.
 }
 \details{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 \code{getExpansion_2} depends upon variables created by \code{\link{getExpansion_1}}
 }
 

@@ -93,7 +93,7 @@ some units into standard units. Altered data are placed in new columns,
 except for SEX, which is modified so that unidentified fish are \code{"U"}.
 }
 \details{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
 first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
 }

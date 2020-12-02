@@ -2,7 +2,7 @@
 #'
 #' Plot cleaned fishery age or length composition data.
 #' 
-#' \subsection{\code{\link{Workflow}}}{
+#' \subsection{Workflow}{
 #' Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
 #' }
 #'

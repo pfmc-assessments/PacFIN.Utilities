@@ -37,7 +37,8 @@ is \code{TRUE}.}
 }
 \description{
 \code{Pdata}, where \code{Pdata} is a \code{data.frame} from
-PacFIN.#' \subsection{\code{\link{Workflow}}}{
+PacFIN.
+\subsection{Workflow}{
 \code{getState} is run by \code{\link{cleanPacFIN}}.
 }
 }

@@ -19,7 +19,7 @@ A plot of either 3 x 2 or 2 x 2 depending on whether or not unique
   column is boxplots of either length or age and depth by year.
 }
 \description{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
 }
 }

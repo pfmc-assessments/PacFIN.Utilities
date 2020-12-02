@@ -72,7 +72,7 @@ fills in with the expected weight.
 }
 }
 \description{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 \code{EF1_Denominator} is not run by the user.  It is a sub-function of 
 \code{\link{getExpansion_1}}
 }

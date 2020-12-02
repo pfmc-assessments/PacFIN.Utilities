@@ -25,8 +25,7 @@ The second call closes the file.
 \section{Workflow}{
 
 There are 15 functions in this package, and they are sensitive to the order in which they
-are run.  You can see diagram of the workflow you can expect to follow
-\code{\link{Workflow}}, as well as additional notes.
+are run.
 }
 
 \section{Example Runthrough}{

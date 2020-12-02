@@ -49,7 +49,7 @@ A dataframe with composition data specific to the type specified
   in \code{Comps} for males, females, and unsexed records.
 }
 \description{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 \code{getComps} is run subsequently to \code{\link{getExpansion_2}}.
 }
 }

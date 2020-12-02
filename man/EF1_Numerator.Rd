@@ -31,7 +31,7 @@ A \code{Pdata} with additional columns, where
   \code{Trip_Sampled_Lbs} is the sample weight in pounds;
 }
 \description{
-\subsection{\code{\link{Workflow}}}{
+\subsection{Workflow}{
 \code{EF1_Numerator} is not run by the user.  It is a sub-function of 
 \code{\link{getExpansion_1}}
 }

@@ -2,7 +2,7 @@
 #
 #' Calculate the denominator for the level-1 expansion factor.
 #' 
-#' \subsection{\code{\link{Workflow}}}{
+#' \subsection{Workflow}{
 #' \code{EF1_Denominator} is not run by the user.  It is a sub-function of 
 #' \code{\link{getExpansion_1}}
 #' }
