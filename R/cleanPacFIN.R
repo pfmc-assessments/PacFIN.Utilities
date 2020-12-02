@@ -107,7 +107,7 @@ cleanPacFIN <- function(
   keep_CA = TRUE,
   CLEAN = TRUE,
   spp = NULL,
-  verbose = TRUE) {
+  verbose = FALSE) {
 
   if (verbose) {
     cat( "\nCleaning data\n\n" )

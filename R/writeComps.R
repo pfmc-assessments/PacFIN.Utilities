@@ -106,7 +106,7 @@
 writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       maxAge=Inf, partition = 2, ageErr=0, returns = "FthenM",
                       dummybins = FALSE, sum1 = FALSE, digits = 4,
-                      overwrite = TRUE, verbose = TRUE) {
+                      overwrite = TRUE, verbose = FALSE) {
 
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))

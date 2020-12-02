@@ -10,7 +10,7 @@ getSeason(
   yearUp = NULL,
   yearDown = NULL,
   plotResults = F,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{

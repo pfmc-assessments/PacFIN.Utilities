@@ -31,7 +31,7 @@
 #' @import utils
 #' @author Andi Stephens
 
-EF1_Numerator = function(Pdata, verbose = TRUE, plot = FALSE) {
+EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
 
   # Start clean
 

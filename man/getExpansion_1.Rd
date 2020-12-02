@@ -16,7 +16,7 @@ getExpansion_1(
   mb = NA,
   ua = NA,
   ub = NA,
-  verbose = TRUE,
+  verbose = FALSE,
   plot = FALSE
 )
 }

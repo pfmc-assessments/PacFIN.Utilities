@@ -21,7 +21,7 @@
 #' @template verbose
 
 getState <- function (Pdata, source = "SOURCE_AGID", CLEAN = TRUE,
-  keepPW = FALSE, verbose = TRUE) {
+  keepPW = FALSE, verbose = FALSE) {
 
   if (verbose) {
     cat("\nGetting state information from", source, "\n\n")

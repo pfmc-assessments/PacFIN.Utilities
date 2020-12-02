@@ -10,7 +10,7 @@ getComps(
   strat = NULL,
   Comps = "AAL",
   defaults = c("fleet", "fishyr", "season"),
-  verbose = TRUE,
+  verbose = FALSE,
   ...
 )
 }

@@ -9,7 +9,7 @@ getState(
   source = "SOURCE_AGID",
   CLEAN = TRUE,
   keepPW = FALSE,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{

@@ -38,7 +38,7 @@
 #' @author Andi Stephens
 
 getSeason = function ( Pdata, season_type=-1, yearUp=NULL, yearDown=NULL, plotResults=F,
-  verbose = TRUE) {
+  verbose = FALSE) {
 
   if (verbose){
     cat( "\nDefault season = 1\n\n")

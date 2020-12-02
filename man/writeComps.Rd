@@ -17,7 +17,7 @@ writeComps(
   sum1 = FALSE,
   digits = 4,
   overwrite = TRUE,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{

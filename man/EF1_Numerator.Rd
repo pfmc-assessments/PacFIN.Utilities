@@ -4,7 +4,7 @@
 \alias{EF1_Numerator}
 \title{Calculate the numerator for the first level expansion factor.}
 \usage{
-EF1_Numerator(Pdata, verbose = TRUE, plot = FALSE)
+EF1_Numerator(Pdata, verbose = FALSE, plot = FALSE)
 }
 \arguments{
 \item{Pdata}{A data frame of biological samples

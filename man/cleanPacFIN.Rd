@@ -19,7 +19,7 @@ cleanPacFIN(
   keep_CA = TRUE,
   CLEAN = TRUE,
   spp = NULL,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{

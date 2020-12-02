@@ -14,7 +14,7 @@ EF1_Denominator(
   mb = 3.5,
   ua = 2e-06,
   ub = 3.5,
-  verbose = TRUE,
+  verbose = FALSE,
   plot = FALSE
 )
 }
@@ -43,7 +43,10 @@ weight-length parameters from the supplied data.}
 
 \item{ub}{Unsexed weight length exponent.}
 
-\item{verbose}{Report extra information.  Default:  TRUE}
+\item{verbose}{A logical value specifying if output should be written
+to the screen or not. Good for testing and exploring your data but
+can be turned off when output indicates errors. The default value
+is \code{TRUE}.}
 
 \item{plot}{Create plots.  Default:  FALSE}
 }

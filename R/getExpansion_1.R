@@ -41,7 +41,7 @@
 #'
 
 getExpansion_1 = function(Pdata, maxExp = 0.95, Indiv_Wgts = TRUE, Exp_WA = TRUE,
-  fa=NA, fb=NA, ma=NA, mb=NA, ua=NA, ub=NA, verbose = TRUE,
+  fa=NA, fb=NA, ma=NA, mb=NA, ua=NA, ub=NA, verbose = FALSE,
   plot = FALSE) {
 
   if ( is.na(fa) & Indiv_Wgts) { stop("Must provide values for length-weight relationship.")}
