@@ -21,7 +21,11 @@ getExpansion_1(
 )
 }
 \arguments{
-\item{Pdata}{A PacFIN \code{data.frame}}
+\item{Pdata}{A data frame of biological samples
+originating from the
+Pacific Fishieries Information Network (PacFIN) data warehouse,
+which originated in 2014. Data are pulled using sql calls, see
+\code{\link{PullBDS.PacFIN}()}.}
 
 \item{maxExp}{The maximum expansion factor (either a number or a quantile).}
 

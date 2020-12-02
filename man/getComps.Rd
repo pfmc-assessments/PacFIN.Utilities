@@ -15,7 +15,11 @@ getComps(
 )
 }
 \arguments{
-\item{Pdata}{A PacFIN \code{data.frame}}
+\item{Pdata}{A data frame of biological samples
+originating from the
+Pacific Fishieries Information Network (PacFIN) data warehouse,
+which originated in 2014. Data are pulled using sql calls, see
+\code{\link{PullBDS.PacFIN}()}.}
 
 \item{strat}{A vector of column names to stratify the output over.
 For example, if you wish to summarize by ageing method, then the argument

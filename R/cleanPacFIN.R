@@ -15,7 +15,7 @@
 #' 
 #' @export
 #'
-#' @param Pdata a PacFIN dataset
+#' @template Pdata
 #' @param only_USINPFC a logical value. FALSE by default.
 #' @param keep_INPFC a set of INPFC areas. NULL by default.
 #' @param remove_INPFC a set of INPFC areas.  NULL by default.

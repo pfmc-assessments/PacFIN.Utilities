@@ -22,7 +22,11 @@ cleanPacFIN(
 )
 }
 \arguments{
-\item{Pdata}{a PacFIN dataset}
+\item{Pdata}{A data frame of biological samples
+originating from the
+Pacific Fishieries Information Network (PacFIN) data warehouse,
+which originated in 2014. Data are pulled using sql calls, see
+\code{\link{PullBDS.PacFIN}()}.}
 
 \item{only_USINPFC}{a logical value. FALSE by default.}
 
