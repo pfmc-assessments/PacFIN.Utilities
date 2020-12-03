@@ -8,7 +8,7 @@ given stratification.}
 getComps(
   Pdata,
   strat = NULL,
-  Comps = "AAL",
+  Comps = c("AAL", "LEN", "AGE"),
   defaults = c("fleet", "fishyr", "season"),
   verbose = FALSE,
   ...
@@ -28,8 +28,13 @@ Or if you want to look at fleets and gear, then use
 \code{strat = c("fleet","usegear")}.
 # todo: deprecate defaults}
 
-\item{Comps}{The type of composition data to create. Options are length
-(\code{'LEN'}, age (\code{'AGE'}), or conditional age-at-length (\code{'AAL'}).}
+\item{Comps}{The type of composition data to create. Options are
+length (\code{"LEN"},
+age (\code{"AGE"}),
+or conditional age-at-length (\code{"AAL"}).
+For some functions, a value of \code{NA} will allow for non-specific
+code to be run, i.e., not based on the composition type.
+Note that the entry needs to be in all upper-case letters.}
 
 \item{defaults}{The default stratification columns
 which will typically be left at their default value of

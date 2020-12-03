@@ -24,8 +24,7 @@
 #'   
 #' @template Pdata
 #' @template strat
-#' @param Comps The type of composition data to create. Options are length
-#'   (\code{'LEN'}, age (\code{'AGE'}), or conditional age-at-length (\code{'AAL'}).
+#' @template Comps
 #' @param defaults The default stratification columns
 #'   which will typically be left at their default value of
 #'   \code{c('fleet', 'fishyr', 'season')}.
@@ -44,7 +43,8 @@
 ############################################################################
 
 
-getComps = function( Pdata, strat = NULL, Comps = "AAL",
+getComps = function( Pdata, strat = NULL,
+  Comps = c("AAL", "LEN", "AGE"),
   defaults = c("fleet", "fishyr", "season"), verbose = FALSE, ...) {
 
   # Check for expansion factor
@@ -64,8 +64,8 @@ getComps = function( Pdata, strat = NULL, Comps = "AAL",
 
   # Avoid duplication
   strat = strat[!strat %in% usualSuspects]
-  Comps <- toupper(substr(Comps, 1, 3))
-  TowStrat <- c(strat, switch(Comps, 
+  Comps <- checkparam.Comps(Comps)
+  TowStrat <- c(strat, switch(Comps,
     LEN = usualSuspects,
     AGE = usualSuspects,
     c(usualSuspects, "age")))
