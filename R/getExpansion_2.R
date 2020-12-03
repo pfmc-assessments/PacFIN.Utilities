@@ -1,21 +1,19 @@
-#############################################################################
-#
 #' Expand PacFIN samples to Catch.
-#' 
+#'
 #' The second-stage expansion calculates the per-year, per-trip, per-stratum total catch
 #' divided by the sampled catch, and appends it to the input data as
 #' \code{Expansion_Factor_2}.
-#' 
+#'
 #' \subsection{Workflow}{
 #' \code{getExpansion_2} depends upon variables created by \code{\link{getExpansion_1}}
 #' }
 #'
 #' @export
-#' 
+#'
 #' @author Andi Stephens
-#' 
+#'
 #' @seealso \code{\link{Stratify}}
-#' 
+#'
 #' @param Pdata A cleaned PacFIN dataframe with column "stratification" appended.
 #' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
 #' @param Units The units of the Catch data frame, see
@@ -28,8 +26,7 @@
 #' i.e., \code{Convert = TRUE} or \code{Units = "MT"},
 #' such that it can be used within Stock Synthesis.
 #' # todo: remove this input argument
-#' @param maxExp  maximum expansion factor to return.  Either a quantile (< 1) or a number.
-#' Default is 0.95.  Set \code{maxExp=Inf} to see largest values.
+#' @template maxExp
 #' 
 #' @details
 #' The input PacFIN dataset must contain a column called \code{stratification},
@@ -53,19 +50,10 @@
 #' You can use as many levels of stratification in your data and catch as you want,
 #' as long as you encode those levels in \code{stratification} and in the column names
 #' in your data.  \strong{Year} is automatically included as a level of stratification.
-#' 
-#' @section Expansion caveats:
-#' There is one manual step in the workflow.
-#' After running the expansion functions, data columns Expansion_Factor_1 and 
-#' Expansion_Factor_2 are available to use in manually setting the Final_Expansion_Factor. 
-#' \itemize{
-#' \item{Age data are expanded separately from lengths}.
-#' \item{WA fish are generally only expanded using Expansion_Factor_2.}
-#' \item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
-#' \item{For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.}
-#' }
-#' 
-#' @return 
+#'
+#' @template secExpansion
+#'
+#' @return
 #' The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
 #' @import grDevices
 #' @import graphics
@@ -80,7 +68,8 @@
 #
 #############################################################################
 
-getExpansion_2 = function( Pdata, Catch, Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95 ) {
+getExpansion_2 <- function(Pdata, Catch,
+  Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95) {
 
 
   # Check Unit input 
@@ -162,9 +151,7 @@ getExpansion_2 = function( Pdata, Catch, Units = c("MT", "LB"), Convert = NULL, 
                                             "Sum_Sampled_Lbs")[[1]]
 
   # Convert Catch to lbs.
-
   if (Units == "MT") {
-
     cat("Converting Catch from metric tons to pounds (multiplying by 2204). \n\n")
 
     if (ncol(Catch) > 2) {

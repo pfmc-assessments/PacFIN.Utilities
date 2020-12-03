@@ -2,8 +2,7 @@
 % Please edit documentation in R/getExpansion_1.R
 \name{getExpansion_1}
 \alias{getExpansion_1}
-\title{First level expansion for composition data to accout for unsampled
-fish in a tow.}
+\title{First-Stage Expansion for Composition Data}
 \usage{
 getExpansion_1(
   Pdata,
@@ -27,7 +26,10 @@ Pacific Fishieries Information Network (PacFIN) data warehouse,
 which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
-\item{maxExp}{The maximum expansion factor (either a number or a quantile).}
+\item{maxExp}{The maximum expansion factor
+(either a number or a quantile) for building expansions.
+Typically, the default is 0.95.
+Set \code{maxExp = Inf} to see largest values.}
 
 \item{Indiv_Wgts}{A logical value, controlling whether or not individual
 fish weights should be generated using the specified weight-length relationship.}
@@ -59,29 +61,39 @@ as \code{png()} is used to save the plotting device.}
 }
 \value{
 A \code{data.frame} where all of the original columns in
-  \code{Pdata} remain unaltered but additional columns are added.
+\code{Pdata} remain unaltered but additional columns are added.
+In particular columns starting with
+Expansion_Factor_1 are available for setting the Final_Expansion_Factor.
 }
 \description{
-\subsection{Workflow}{
-\code{getExpansion_1} is run after \code{\link{cleanPacFIN}}.
-}
+First-stage expansions account for unsampled fish in the smallest
+measured unit. Where, in PacFIN data, the smallest unit is that
+which is available to the port or dockside sampler, so more than
+likely a trip rather than a tow as would be with survey data.
 }
 \details{
-\code{getExpansion_1} calls \code{\link{EF1_Numerator}} and
-  \code{\link{EF1_Denominator}} (i.e., the weight of sampled fish and
-  the weight of all fish of the respective species in the tow) and returns
-  their ratio.
+The workflow is to run \code{getExpansion_1} after \code{\link{cleanPacFIN}},
+which assures that all of the necessary columns are available and that the
+data are in the correct units.
+\code{getExpansion_1} calls
+\code{\link{EF1_Numerator}} and \code{\link{EF1_Denominator}}
+(i.e., the weight of sampled fish and
+the weight of all fish of the respective species in the tow)
+and returns their ratio.
 }
-\section{Expansion caveats}{
+\section{Expansion}{
 
-There is one manual step in the workflow. 
-After running the expansion functions, data columns Expansion_Factor_1 and 
-Expansion_Factor_2 are available to use in manually setting the Final_Expansion_Factor. 
 \itemize{
 \item{Age data are expanded separately from lengths.}
 \item{WA fish are generally only expanded using Expansion_Factor_2.}
 \item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
-\item{For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.}
+\item{For age-at-length comps, set Final_Expansion_Factor to 1 because
+  each fish represents only itself.}
 }
 }
 
+\seealso{
+Called within this function are
+\code{\link{EF1_Numerator}} \code{\link{EF1_Denominator}}.
+Called after this function should be \code{\link{Expansion_Factor_2}}.
+}
