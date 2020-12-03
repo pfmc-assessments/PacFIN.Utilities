@@ -1,112 +1,190 @@
-###################################################################
-#
-#
-#' Calculate the von Bertanlaffy growth funciton and compare length
-#' age value to those estimated with the option to throw out records
-#' that are outside a specified sd band.
+#' Calculate von Bertalanffy Growth Parameters
+#' 
+#' Calaculate the von Bertalanffy growth parameters and compare them to
+#' parameters estimated when outliers are removed from the data set.
+#' Outliers are determined using standard deviations
+#' (i.e., \code{sdFactor} input parameter).
 #'
-#' 
-#' \subsection{Workflow}{
-#' Intended to be run after \code{\link{cleanPacFIN}}.
-#' }
-#' 
-#' @param Pdata Input dataset.
-#' @param Par Initial or externally estimated parameter values for the vonB
-#' growth function where the order are ("k", "Linf", "Lmin", "CV young", "CV old").
-#' Can define a list with multiple values by sex where the expected order is 
-#' c(k.vec, Linf.vec, Lmin.vec, CVyoung.vec, CVold.vec) where each vector is c(female, male, unsex)
-#' parameter value.
-#' @parm len_col Name of the length column to use for comparisons (default = "lengthcm"). 
-#' @parm age_col Name of the age column to use for comparisons (default = "age"). 
-#' @parm sex_col Name of the sex column to use for comparisons (default = "SEX"). 
-#' @parm mult A multiplier to convert lengths (default value 10). 
-#' @param keepAll Option to NA inconsistent lengths
+#' @template Pdata
+#' @param Par A list of five initial or externally estimated parameter values for the
+#' von Bertalanffy growth function. List entries should be named as follows:
+#' "K", "Linf", "L0", "CV0", "CV1".
+#' If they aren't named, then it is imperative that they are in the previous order.
+#' Each list element, i.e., vector, can have multiple values specific to each sex type
+#' present in your data. These vector elements must be named and the length of all
+#' vectors must be the same. A typical example for a list element would be
+#' \code{K = c(F = 0.10, M = 0.20, U = 0.15)} for female, male, and unsexed fish.
+#' If each vector within the list is only made up of a single element, it doesn't need
+#' to be named and each sex type present in the data will use the same value.
+#' @param len_col Name of the length column to use for comparisons (default = "lengthcm").
+#' @param age_col Name of the age column to use for comparisons (default = "age").
+#' @param sex_col Name of the sex column to use for comparisons (default = "SEX").
+#' If the value is \code{NULL}, then all aged fish are included in a single analysis rather
+#' than separating data by available sex information.
+#' @param mult A multiplier to convert lengths (default value 1). This multiplier is used
+#' to scale the input parameters if the length column is a different unit other than cm.
+#' In reality one really shouldn't need to use this because you can make a column of
+#' lengths in the correct units and supply that column name to \code{len_col}.
+#' @param keepAll Option to change inconsistent lengths to a value of \code{NA},
+#' which is only done if \code{keepAll = FALSE}. The default is to not change any values.
 #' @param sdFactor Option to control the threshold of the estimated low and high bound
-#' that is compared to when throwing out data. Default value is 4 stan. devs. away from the 
-#' predictions.
-#' @param Optim Control whether to internally solve for the parameter estimates or use the input
-#' parameters.
+#' that is compared to when throwing out data. Default value is 4 standard deviations
+#' away from the mean prediction.
+#' @param Optim A logical value specifying whether or not to internally solve
+#' for the parameter estimates or use \code{Par} as input parameter to the growth function
+#' for predictions.
+#' @param precision An integer providing the precision for the predicted lengths or the number
+#' of digits the results will have after passing them through
+#' \code{\link{round}(x, digits = precision)}.
+#' @template verbose
 #'
 #' @return Returns a combined dataset in PacFIN format.
 #' 
 #' @export
-#'
-#' @details
-#' 
-#' 
-#'
 #' @author Chantel Wetzel, Vlada Gertseva, James Thorson
-#
+#' @examples
+#' pdata <- data(XMPL.BDS)
+#' pdata[, "FISH_LENGTH_TYPE"] <- ifelse(pdata[, "FISH_LENGTH_TYPE"] == "FALSE", "F", "T")
+#' pdata[, "UNK_WT"] <- NA
+#' pdata <- cleanPacFIN(pdata, keep_length_type = "F")
+#' test <-  checkLenAge(pdata)
+#' head(test)
 ###################################################################
-checkLenAge = function(Pdata, Par =  list( 0.13, 55, 15, 0.10, 0.10), len_col = "lengthcm", age_col = "age", sex_col = "SEX",
-    mult = 10, keepAll = TRUE, sdFactor = 4, Optim = TRUE)
-{
-    Pdata$Lhat_pred = NA
-    Pdata$Lhat_low = NA
-    Pdata$Lhat_high = NA
+checkLenAge <- function(Pdata,
+  Par = list(K = 0.13, Linf = 55, L0 = 15, CV0 = 0.10, CV1 = 0.10),
+  len_col = "lengthcm", age_col = "age", sex_col = "SEX",
+  mult = 1, keepAll = TRUE, sdFactor = 4, Optim = TRUE,
+  precision = 0, verbose = FALSE, dir = NULL) {
 
-    if(is.null(Pdata[, len_col])) {
-        cat( "Need to run the cleanPacFIN first.")
+  #### Initialize the three new columns
+  Pdata$Lhat_pred <- NA
+  Pdata$Lhat_low <- NA
+  Pdata$Lhat_high <- NA
+
+  #### Check sex-specific information
+  if (is.null(sex_col)) {
+    sex_col <- "ignore"
+    Pdata[, sex_col] <- "A"
+  }
+  sex_vec <- unique(Pdata[, sex_col])
+
+  ####  Check inputs
+  if (!is.null(names(Par))) {
+    new <- Par[c("K", "Linf", "L0", "CV0", "CV1")]
+    stopifnot("Par not found" = length(new) == length(Par))
+    Par <- new
+    rm(new)
+  }
+  if (length(Par[[1]]) > 1) {
+    if (var(unlist(lapply(Par, length))) != 0) {
+      stop("Must be one named entry in each vector element of the list Par\n",
+        "for each unique sex type in the data, e.g.,\n",
+        paste(sex_vec, collapse = ", "))
+    }
+    if (!all(sex_vec %in% names(Par[[1]]))) {
+      stop("The data contains the following values for sexes,\n",
+        paste(sex_vec, collapse = ", "), "\n",
+        " which must match names of the parameter vectors in the list Par, e.g.,\n",
+        paste(unique(unlist(lapply(Par, names))), collapse = ", ")
+      )
+    }
+    # Ensure order of parameters within each vector are ordered by sex
+    Par <- lapply(Par, "[", sex_vec)
+  }
+  stopifnot("length column not found" = len_col %in% colnames(Pdata))
+  stopifnot("age column not found" = age_col %in% colnames(Pdata))
+
+  #### For each sex
+  for (s in seq_along(sex_vec)) {
+    use_data <- !is.na(Pdata[, len_col]) &
+                !is.na(Pdata[, age_col]) &
+                Pdata[, age_col] != -1 &
+                Pdata[, sex_col] %in% sex_vec[s]
+
+    if (length(Par[[1]]) > 1) {
+        pars_in <- c(
+          Par[[1]][sex_vec[s]],
+          Par[[2]][sex_vec[s]] * mult,
+          Par[[3]][sex_vec[s]] * mult,
+          Par[[4]][sex_vec[s]],
+          Par[[5]][sex_vec[s]])
+    } else {
+        pars_in <- c(Par[[1]][1], Par[[2]][1]*mult, Par[[3]][1]*mult, Par[[4]][1], Par[[5]][1])
     }
 
-
-    VbFn = function(Par, Ages, Lengths, ReturnType = "NLL")
-    {
-        K    = exp(Par[1])
-        Linf = exp(Par[2])
-        L0   = exp(Par[3])
-        CV0  = exp(Par[4])
-        CV1  = exp(Par[5])
-        
-        Lhat = Linf - (Linf-L0) * exp(-Ages*K)
-        CV = CV0 + (CV1 - CV0) * (Lhat-L0)/Linf
-        SD = CV * Lhat 
-        Lhat_low = Linf - (Linf-L0) * exp(-Ages*K) - sdFactor*SD
-        Lhat_high = Linf - (Linf-L0) * exp(-Ages*K) + sdFactor*SD
-        NLL = -1 * sum(dnorm(Lengths, mean=Lhat, sd=SD, log=TRUE), na.rm=TRUE)
-
-        if(ReturnType == "NLL" ) { Return = NLL }
-        if(ReturnType == "Pred") { Return = cbind( 'Lhat_low'=Lhat_low, 'Lhat_pred'=Lhat, 'Lhat_high'=Lhat_high ) }
-        return(Return)
+    if (Optim) {
+      ests <- optim(fn = nwfscSurvey::GetVB.fn,
+                  par = log(pars_in),
+                  hessian = FALSE,
+                  Ages = Pdata[use_data, age_col],
+                  Lengths = Pdata[use_data, len_col])$par
+    } else {
+        ests <- pars_in
     }
+    estsall[s, -1] <- exp(ests)
+    Pred <- nwfscSurvey::GetVB.fn(
+      Par = ests,
+      ReturnType = "Pred",
+      sdFactor = sdFactor,
+      Ages = Pdata[use_data, age_col],
+      Lengths = Pdata[use_data, len_col])
 
-    # Calculate female length-at-age
-    get_sex = c("F", "M", "U") %in% unique(Pdata[, sex_col])
-    sex_vec = c("F", "M", "U")[get_sex]
-    for (s in 1:length(sex_vec)){
-        use_data = !is.na(Pdata[, len_col]) & !is.na(Pdata[, age_col]) & Pdata[, age_col] != -1 & Pdata[, sex_col] == sex_vec[s]
+    Pdata[use_data, c("Lhat_low","Lhat_pred", "Lhat_high")] <- round(Pred, precision)
+  }
 
-        if (length(Par[[1]]) > 1){ 
-            pars_in = log(c(Par[[1]][s], Par[[2]][s]*mult, Par[[3]][s]*mult, Par[[4]][s], Par[[5]][s]))
-        } else {
-            pars_in = log(c(Par[[1]][1], Par[[2]][1]*mult, Par[[3]][1]*mult, Par[[4]][1], Par[[5]][1]))
-        }
+  if (!keepAll) {
+    remove <- which(
+      Pdata[, len_col] > Pdata[, "Lhat_high"] |
+      Pdata[, len_col] < Pdata[, "Lhat_low"])
+    all <- Pdata
+    Pdata[remove, len_col] <- NA
+  }
 
-        if (Optim == TRUE){
-            Opt = optim(fn = VbFn, 
-                        par = pars_in, 
-                        hessian = FALSE, 
-                        Ages = Pdata[use_data, age_col], 
-                        Lengths = Pdata[use_data, len_col])
-            ests = Opt$par
-        } else {
-            ests = pars_in 
-        }
+  #### Summary information that is saved to the disk
+  if (!is.null(dir)) {
+    dir <- normalizePath(dir)
+    dir.create(dir, showWarnings = FALSE)
 
-        Pred = VbFn(Par = ests, 
-                    ReturnType = "Pred",  
-                    Ages = Pdata[use_data, age_col], 
-                    Lengths = Pdata[use_data, len_col]) 
+    # Estimate pars again b/c some data may be removed if !keepAll
+    tempdata <- Pdata[
+      !is.na(Pdata[, len_col]) &
+      !is.na(Pdata[, age_col]) &
+      Pdata[, age_col] != -1, ]
+    estsall <- data.frame(Sex = sex_vec,
+      do.call("rbind", tapply(seq(NROW(tempdata)), tempdata[, sex_col],
+      function(x) exp(optim(fn = nwfscSurvey::GetVB.fn,
+                  par = log(pars_in),
+                  hessian = FALSE,
+                  Ages = tempdata[x, age_col],
+                  Lengths = tempdata[x, len_col])$par)
+    )))
+    colnames(estsall)[-1] <- names(Par)
+    estsall <- estsall[, c("Sex", "L0", "Linf", "K", "CV0", "CV1")]
+    colnames(estsall) <- c("Sex", "$L_0$", "$L_{Inf}$", "$K$", "$CV_{young}$", "$CV_{old}$")
+    x <- knitr::kable(estsall, format = "latex",
+      label = "PacFIN_vonBpars", escape = FALSE, booktabs = TRUE,
+      caption = paste0(
+        "Estimates of von Bertalanffy growth parameters in terms of ",
+        "length at age-0 ($L_0$), rather than age at which growth is zero, and fit to ",
+        "fishery-dependent data provided by \\gls{pacfin}. Estimates ",
+        ifelse(all(estsall[, "Sex"] == "A"), "", "are sex-specific (row) and "),
+        "include $L_0$, length at maximum age ($L_{Inf}$), growth rate ($K$), and ",
+        "coefficients of variation at young ($CV_{young}$) and old ages ($CV_{old}$).",
+        ifelse(keepAll, " Data used to fit the model included outliers.", ""))
+    )
+    writeLines(x, file.path(dir, "PacFIN_vonBpars.tex"))
+    utils::write.table(estsall, file = file.path(dir, "PacFIN_vonBpars.csv"),
+      sep = ",", row.names = FALSE)
+   tempdata <- tempdata[, c(len_col, age_col, sex_col)]
+   colnames(tempdata) <- c("Length_cm", "Age", "Sex")
+   pars <- unlist(estsall[1, c(3, 4, 2, 5, 6), drop = TRUE])
+   names(pars) <- NULL
+   latage <- PlotVarLengthAtAge.fn(dat = tempdata, parStart = pars,
+     dir = dir, main = "PacFIN", ageBin = 1,
+     bySex = !all(estsall[, "Sex"] == "A"),
+     estVB = TRUE, legX = "bottomleft", dopng = TRUE)
+  }
 
-        Pdata[use_data, c("Lhat_low","Lhat_pred", "Lhat_high")] = round(Pred,0)
-    }
-
-    if (!keepAll){
-        remove = which(Pdata[, len_col] > Pdata[,'Lhat_high'] | Pdata[, len_col] < Pdata[,'Lhat_low'])
-        Pdata[remove, len_col] = Pdata[remove, age_col] = NA
-        if ("length" %in% colnames(Pdata)) {
-          Pdata[remove, "length"] <- NA
-        }
-    }
-    return(Pdata)
+  Pdata <- Pdata[, !grepl("ignore", colnames(Pdata))]
+  return(Pdata)
 }

@@ -2,16 +2,21 @@
 % Please edit documentation in R/checkLenAge.R
 \name{checkLenAge}
 \alias{checkLenAge}
-\title{Calculate the von Bertanlaffy growth funciton and compare length
-age value to those estimated with the option to throw out records
-that are outside a specified sd band.}
+\title{Calculate von Bertalanffy Growth Parameters}
 \usage{
 checkLenAge(
   Pdata,
-  Par = list(0.13, 55, 15, 0.1, 0.1),
+  Par = list(K = 0.13, Linf = 55, L0 = 15, CV0 = 0.1, CV1 = 0.1),
+  len_col = "lengthcm",
+  age_col = "age",
+  sex_col = "SEX",
+  mult = 1,
   keepAll = TRUE,
   sdFactor = 4,
-  Optim = TRUE
+  Optim = TRUE,
+  precision = 0,
+  verbose = FALSE,
+  dir = NULL
 )
 }
 \arguments{
@@ -21,32 +26,66 @@ Pacific Fishieries Information Network (PacFIN) data warehouse,
 which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
-\item{Par}{initial or externally estimated parameter values for the vonB
-growth function where the order are ("k", "Linf", "Lmin", "CV young", "CV old").
-Can define a list with multiple values by sex where the expected order is 
-c(k.vec, Linf.vec, Lmin.vec, CVyoung.vec, CVold.vec) where each vector is c(female, male, unsex)
-parameter value.
-The lengths are input in cms for ease of use and are converted internally to mm.}
+\item{Par}{A list of five initial or externally estimated parameter values for the
+von Bertalanffy growth function. List entries should be named as follows:
+"K", "Linf", "L0", "CV0", "CV1".
+If they aren't named, then it is imperative that they are in the previous order.
+Each list element, i.e., vector, can have multiple values specific to each sex type
+present in your data. These vector elements must be named and the length of all
+vectors must be the same. A typical example for a list element would be
+\code{K = c(F = 0.10, M = 0.20, U = 0.15)} for female, male, and unsexed fish.
+If each vector within the list is only made up of a single element, it doesn't need
+to be named and each sex type present in the data will use the same value.}
 
-\item{keepAll}{Option to NA inconsistent lengths}
+\item{len_col}{Name of the length column to use for comparisons (default = "lengthcm").}
+
+\item{age_col}{Name of the age column to use for comparisons (default = "age").}
+
+\item{sex_col}{Name of the sex column to use for comparisons (default = "SEX").
+If the value is \code{NULL}, then all aged fish are included in a single analysis rather
+than separating data by available sex information.}
+
+\item{mult}{A multiplier to convert lengths (default value 1). This multiplier is used
+to scale the input parameters if the length column is a different unit other than cm.
+In reality one really shouldn't need to use this because you can make a column of
+lengths in the correct units and supply that column name to \code{len_col}.}
+
+\item{keepAll}{Option to change inconsistent lengths to a value of \code{NA},
+which is only done if \code{keepAll = FALSE}. The default is to not change any values.}
 
 \item{sdFactor}{Option to control the threshold of the estimated low and high bound
-that is compared to when throwing out data. Default value is 4 stan. devs. away from the 
-predictions.}
+that is compared to when throwing out data. Default value is 4 standard deviations
+away from the mean prediction.}
 
-\item{Optim}{Control whether to internally solve for the parameter estimates or use the input
-parameters.}
+\item{Optim}{A logical value specifying whether or not to internally solve
+for the parameter estimates or use \code{Par} as input parameter to the growth function
+for predictions.}
+
+\item{precision}{An integer providing the precision for the predicted lengths or the number
+of digits the results will have after passing them through
+\code{\link{round}(x, digits = precision)}.}
+
+\item{verbose}{A logical value specifying if output should be written
+to the screen or not. Good for testing and exploring your data but
+can be turned off when output indicates errors. The default value
+is \code{TRUE}.}
 }
 \value{
 Returns a combined dataset in PacFIN format.
 }
 \description{
-\subsection{Workflow}{
-Intended to be run after \code{\link{cleanPacFIN}}.
+Calaculate the von Bertalanffy growth parameters and compare them to
+parameters estimated when outliers are removed from the data set.
+Outliers are determined using standard deviations
+(i.e., \code{sdFactor} input parameter).
 }
-}
-\details{
-
+\examples{
+pdata <- data(XMPL.BDS)
+pdata[, "FISH_LENGTH_TYPE"] <- ifelse(pdata[, "FISH_LENGTH_TYPE"] == "FALSE", "F", "T")
+pdata[, "UNK_WT"] <- NA
+pdata <- cleanPacFIN(pdata, keep_length_type = "F")
+test <-  checkLenAge(pdata)
+head(test)
 }
 \author{
 Chantel Wetzel, Vlada Gertseva, James Thorson
