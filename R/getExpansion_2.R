@@ -127,7 +127,20 @@ getExpansion_2 = function( Pdata, Catch, Units = c("MT", "LB"), Convert = NULL, 
     cat("Catch: ", Catchgears, "\n\n")
     cat("Data:  ", Pstrat, "\n\n")
 
-    stop()
+    if (sum(Pstrat %in% Catchgears) == 0) {
+      stop("\nNo bds stratifications,\n",
+        paste(Pstrat, collapse = ", "), "\n",
+        "were found in catch stratifications,\n",
+        paste(Catchgears, collapse = ", "))
+    } else {
+      Pdata <- Pdata[Pdata[, "stratification"] %in% colnames(Catch), ]
+      Catch <- Catch[, c("Year", unique(Pdata[, "stratification"]))]
+      Catchgears = sort(names(Catch)[2:length(names(Catch))])
+      Pstrat = sort(unique(Pdata$stratification))
+      message("The following were truncated by these stratifications:")
+      message("Catch: ", paste(Catchgears, collapse = ", "))
+      message("Pdata: ", paste(Pstrat, collapse = ", "))
+    }
 
   } # End if
 
