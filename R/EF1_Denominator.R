@@ -135,12 +135,32 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
     test <- data.frame(Pdata, numsex[match(Pdata$SAMPLE_NO, numsex$SAMPLE_NO), "factor(SEX)"])
     test_OR <- test[test$state == "OR", ]
       if (dim(test_OR)[1] != 0) {
-        if (any(test_OR$F != ifelse(is.na(test_OR$FEMALE_NUM), 0, test_OR$FEMALE_NUM))) stop("Some OR data",
-          " don't have the proper number of females assigned to FEMALE_NUM.")
-        if (any(test_OR$M != ifelse(is.na(test_OR$MALE_NUM), 0, test_OR$MALE_NUM))) stop("Some OR data",
-          " don't have the proper number of males assigned to MALE_NUM.")
-        if (any(test_OR$U != ifelse(is.na(test_OR$UNK_NUM), 0, test_OR$UNK_NUM))) stop("Some OR data",
-          " don't have the proper number of unsexed fish assigned to UNK_NUM.")
+        messagebeg <- paste("\nSome OR bds data (see above)\n do not have the proper",
+          "number of samples assigned to the column ")
+        testTF <- test_OR$F != ifelse(is.na(test_OR$FEMALE_NUM), 0, test_OR$FEMALE_NUM)
+        if (any(testTF)) {
+          capture.output(type = "message",
+            test_OR[which(testTF),
+              c("SEX","SAMPLE_NO","FEMALE_NUM","MALE_NUM","UNK_NUM","F","M","U")]
+          )
+          stop(messagebeg, "FEMALE_NUM.")
+        }
+        testTF <- test_OR$M != ifelse(is.na(test_OR$MALE_NUM), 0, test_OR$MALE_NUM)
+        if (any(testTF)) {
+          capture.output(type = "message",
+            test_OR[which(testTF),
+              c("SEX","SAMPLE_NO","FEMALE_NUM","MALE_NUM","UNK_NUM","F","M","U")]
+          )
+          stop(messagebeg, "MALE_NUM.")
+        }
+        testTF <- test_OR$U != ifelse(is.na(test_OR$UNK_NUM), 0, test_OR$UNK_NUM)
+        if (any(testTF)) {
+          capture.output(type = "message",
+            test_OR[which(testTF),
+              c("SEX","SAMPLE_NO","FEMALE_NUM","MALE_NUM","UNK_NUM","F","M","U")]
+          )
+          stop(messagebeg, "UNK_NUM.")
+        }
       }
     # Check CA
     if (dim(test[test$state == "CA", ])[1] > 0) {
