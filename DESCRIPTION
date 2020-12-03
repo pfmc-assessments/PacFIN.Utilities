@@ -26,6 +26,7 @@ Imports:
     ggplot2,
     graphics,
     grDevices,
+    measurements,
     nwfscSurvey,
     stats,
     utils

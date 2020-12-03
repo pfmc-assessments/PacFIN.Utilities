@@ -16,8 +16,12 @@
 #'
 #' @param Pdata A cleaned PacFIN dataframe with column "stratification" appended.
 #' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
-#' @param Units The units of the Catch data frame, see
-#' \code{formals(getExpansion_2)$Units} for options.
+#' @param Units The units of the \code{Catch} data frame, see
+#' \code{measurements::conv_unit_options[["mass"]]}
+#' for options. Typical units are metric tonnes (e.g., \code{"metric_ton"})
+#' because that is the unit used in Stock Synthesis, but
+#' expansions are done in pounds because fish weights are in pounds.
+#' Thus, catches also need to be in pounds and will be converted as such.
 #' @param Convert A deprecated argument that is now set to \code{NULL}.
 #' Previously, it was a logical that defined if the Catch should be converted from
 #' metric tonnes to pounds, where \code{TRUE} is now the same as setting
@@ -71,13 +75,19 @@
 getExpansion_2 <- function(Pdata, Catch,
   Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95) {
 
-
-  # Check Unit input 
-  unit_check <- match.arg(Units, several.ok = FALSE)
+  # Check Unit input
+  Units <- match.arg(Units, several.ok = FALSE,
+    choices = c(measurements::conv_unit_options[["mass"]], "MT", "LB"))
+  Units <- switch(Units,
+    MT = "metric_ton",
+    LB = "lbs",
+    Units)
 
   # Check and stop if Convert input is used since it is not deprecated
   if(!is.null(Convert)) {
-    stop("Convert is deprecated. Please specify the Catch matrix units via the Unit input (either MT or LB).\n\n")
+    stop("Convert is deprecated.",
+      "Please specify the units of Catch via the Unit input (MT or LB).\n",
+      paste(measurements::conv_unit_options[["mass"]], collapse = ", "), "\n\n")
   }
 
   # Start clean
@@ -151,22 +161,8 @@ getExpansion_2 <- function(Pdata, Catch,
                                             "Sum_Sampled_Lbs")[[1]]
 
   # Convert Catch to lbs.
-  if (Units == "MT") {
-    cat("Converting Catch from metric tons to pounds (multiplying by 2204). \n\n")
-
-    if (ncol(Catch) > 2) {
-    
-      Catch[ , 2:ncol(Catch)] = Catch[ , 2:ncol(Catch)] * 2204
-
-    } else {
-      
-      Catch[,2] = Catch[,2] * 2204
-  
-    } # End if-else
-
-  } else { # End if Convert
-    cat("Catch is assumed to be in pounds. \n\n")  
-  }
+  Catch[ , 2:ncol(Catch)] <- measurements::conv_unit(to = "lbs",
+    x = Catch[ , 2:ncol(Catch)], from = Units)
 
   # Matching is on Year == fishyr.
   # Pdata$catch col gets the matched Catch.
@@ -243,6 +239,7 @@ getExpansion_2 <- function(Pdata, Catch,
   Pdata$Expansion_Factor_2[is.na(Pdata$Expansion_Factor_2)] = 1
 
   Pdata$Expansion_Factor_2 = capValues(Pdata$Expansion_Factor_2, maxExp)
+  Pdata[, "Final_Sample_Size"] <- capValues(Pdata$Expansion_Factor_1_L * Pdata$Expansion_Factor_2)
 
   cat("Summary of Expansion_Factor_2\n\n")
   print(summary(Pdata$Expansion_Factor_2))

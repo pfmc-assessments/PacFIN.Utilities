@@ -17,8 +17,12 @@ getExpansion_2(
 
 \item{Catch}{A dataframe of catch data, in pounds or in metric tonnes.}
 
-\item{Units}{The units of the Catch data frame, see
-\code{formals(getExpansion_2)$Units} for options.}
+\item{Units}{The units of the \code{Catch} data frame, see
+\code{measurements::conv_unit_options[["mass"]]}
+for options. Typical units are metric tonnes (e.g., \code{"metric_ton"})
+because that is the unit used in Stock Synthesis, but
+expansions are done in pounds because fish weights are in pounds.
+Thus, catches also need to be in pounds and will be converted as such.}
 
 \item{Convert}{A deprecated argument that is now set to \code{NULL}.
 Previously, it was a logical that defined if the Catch should be converted from
