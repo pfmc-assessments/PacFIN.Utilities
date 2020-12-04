@@ -1,12 +1,9 @@
-#' Expand PacFIN samples to Catch.
+#' Expand PacFIN Samples to Catch
 #'
-#' The second-stage expansion calculates the per-year, per-trip, per-stratum total catch
-#' divided by the sampled catch, and appends it to the input data as
+#' The second-stage expansion calculates the
+#' per-year, per-trip, per-stratum total catch
+#' divided by the sampled catch and appends it to the input data as
 #' \code{Expansion_Factor_2}.
-#'
-#' \subsection{Workflow}{
-#' \code{getExpansion_2} depends upon variables created by \code{\link{getExpansion_1}}
-#' }
 #'
 #' @export
 #'
@@ -33,6 +30,8 @@
 #' @template maxExp
 #' 
 #' @details
+#' The workflow requires that \code{getExpansion_2} is run after
+#' \code{\link{getExpansion_1}()} using the same data frame.
 #' The input PacFIN dataset must contain a column called \code{stratification},
 #' a character-valued user-designed stratification of the data whose values match the
 #' column-names in the Catch dataset.
@@ -145,20 +144,20 @@ getExpansion_2 <- function(Pdata, Catch,
 
   # Get summed sampled lbs per individual sample (tow).
 
-  tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
+  tows <- Pdata[!duplicated(Pdata$SAMPLE_NO),]
 
   # Get the totals by year and stratification
 
   strat = c("fishyr", "stratification")
 
-  SumSampled = aggregate(tows$Trip_Sampled_Lbs, 
-                         tows[,strat], sum, na.rm=T)
+  SumSampled <- aggregate(tows$Trip_Sampled_Lbs, 
+    tows[,strat], sum, na.rm=T)
 
   names(SumSampled)[3] = "Sum_Sampled_Lbs"
 
-  tows$Sum_Sampled_Lbs = find.matching.rows(tows, SumSampled, 
-                                            strat, strat,  
-                                            "Sum_Sampled_Lbs")[[1]]
+  tows$Sum_Sampled_Lbs <- find.matching.rows(
+    tows, SumSampled, strat, strat,
+    "Sum_Sampled_Lbs")[[1]]
 
   # Convert Catch to lbs.
   Catch[ , 2:ncol(Catch)] <- measurements::conv_unit(to = "lbs",
@@ -167,7 +166,7 @@ getExpansion_2 <- function(Pdata, Catch,
   # Matching is on Year == fishyr.
   # Pdata$catch col gets the matched Catch.
 
-  tows$catch = tows$state.gear = NULL
+  tows$catch <- tows$state.gear <- NULL
 
   for ( sg in 2:ncol(Catch) ) {
 

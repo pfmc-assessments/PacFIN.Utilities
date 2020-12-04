@@ -5,102 +5,63 @@
 \alias{PacFIN_Example}
 \title{Sample PacFIN Run}
 \description{
-Cut and paste each of the following commands in turn to
-see the workflow for processing PacFIN data.
-}
-\details{
+See the example at the end of this file to get a feel for
+the workflow for processing PacFIN data.
 The data files for species "XMPL" are supplied with this
-package, and can be used to explore the options of
+package and can be used to explore the options of
 the various functions.
 }
 \section{Getting Started}{
 
-
- \code{Pdata = cleanPacFIN(XMPL.BDS)}
-
- \code{head(Catch.XMPL)}
+See the example catch and biological (i.e., BDS) data for
+species XMPL. Create a \code{Pdata} data frame to work with.
+This data frame will have all of the appropriate columns that
+are needed for the functions within \pkg{PacFIN.Utilities}.
 }
 
 \section{Stratification}{
 
-
- \code{table(Pdata$geargroup)}
-
- \code{Pdata$mygear = Pdata$geargroup}
-
- \code{Pdata$mygear[ Pdata$mygear != c("HKL")] = "TWL"}
-
- \code{Pdata$stratification = paste(Pdata$state,Pdata$mygear, sep=".")}
-
- \code{table(Pdata$stratification)}
+For example, the column "geargroup" is created by
+\code{\link{cleanPacFIN}} and will likely be used to create
+the second-level expansions for composition data.
+Users must create a column called \code{"stratification"}
+that contains entries that match the column names of the
+catch data.
 }
 
 \section{Expansions}{
 
-
- \code{Pdata = getExpansion_1(Pdata)}
-
- \code{Pdata = getExpansion_2(Pdata, Catch.XMPL, Convert=T)}
-
- \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
+#1. Expand by fish ticket drop
+#2. Expand by fishery catch
+#3. Create sample size
 }
 
-\section{Length Comps}{
+\section{Compositions}{
 
-
- \code{Lcomps = getComps(Pdata, Comps="LEN")}
-
- \code{Lcomps = doSexRatio(Lcomps)}
-
- \code{writeComps(Lcomps, fname = "~/LenComps.csv")}
-}
-
-\section{Ages}{
-
-
- \code{Adata = getExpantion_1(Pdata)}
-
- \code{Adata = getExpansion_2(Adata, Catch.XMPL, Convert=T)}
-
- \code{Adata$Final_Sample_Size = Adata$Expansion_Factor_1 * Adata$Expansion_Factor_2}
-
- \code{Acomps = getComps(Adata, Comps="AGE")}
-
- \code{Acomps = doSexRatio(Acomps)}
-
- \code{writeComps(Acomps, fname= "~/Age.comps.csv")}
-}
-
-\section{Age-at-Length}{
-
-
- \code{Adata$Final_Sample_Size = 1}
-
- \code{ALcomps = getComps(Adata, Comps="AAL")}
-
- \code{ALcomps = doSexRatio(ALcomps)}
-
- \code{writeComps(ALcomps, fname = "~/AAL.Comps.csv")}
+#1. Get the compositions \code{\link{getComps}(Pdata, Comps="LEN")}
+#2. Do the sex ratio \code{\link{doSexRatio}()}
+#3. Write the compositions \code{\link{writeComps}()}
 }
 
 \examples{
+#### Getting Started
 data(XMPL.BDS)
 data(Catch.XMPL)
-catch <- Catch.XMPL
-unique(gsub("[A-Z]+\\\\.", "", colnames(catch)[-1]))
-# Don't clean it so you have ages and lengths
 Pdata <- cleanPacFIN(XMPL.BDS,
-  keep_gears = c("HKL", "TWL"),
+  keep_gears = unique(gsub("[A-Z]+\\\\.", "", colnames(catch)[-1])),
   keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
   CLEAN = FALSE)
-NROW(XMPL.BDS) - NROW(Pdata)
-table(Pdata[, c("geargroup", "age")])
-data <- getExpansion_1(Pdata)
-data[, "stratification"] <- paste(data[, "state"], data[, "geargroup"], sep = ".")
-data <- data[!is.na(data[, "lengthcm"]) & data[, "SAMPLE_YEAR"] \%in\% catch[, "Year"], ]
-data <- data[data[, "stratification"] \%in\% colnames(catch), ]
-test <- getExpansion_2(data, catch)
+
+#### Stratification
+Pdata[, "stratification"] <- paste(sep = ".",
+  Pdata[ , "state"], Pdata[, "geargroup"])
+
+#### Expansions by type e.g., (LEN, AGE, AAL)
+# Length (LEN)
+test <- getExpansion_1(Pdata)
+test <- getExpansion_2(test, Catch.XMPL, Units = "MT")
 test$Final_Sample_Size <- capValues(test$Expansion_Factor_1_L * test$Expansion_Factor_2)
 comps <- getComps(test[!is.na(test$lengthcm), ], Comps = "LEN")
 comps <- doSexRatio(comps)
+writeComps(comps)
 }

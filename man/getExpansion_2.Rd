@@ -2,7 +2,7 @@
 % Please edit documentation in R/getExpansion_2.R
 \name{getExpansion_2}
 \alias{getExpansion_2}
-\title{Expand PacFIN samples to Catch.}
+\title{Expand PacFIN Samples to Catch}
 \usage{
 getExpansion_2(
   Pdata,
@@ -42,16 +42,14 @@ Set \code{maxExp = Inf} to see largest values.}
 The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
 }
 \description{
-The second-stage expansion calculates the per-year, per-trip, per-stratum total catch
-divided by the sampled catch, and appends it to the input data as
+The second-stage expansion calculates the
+per-year, per-trip, per-stratum total catch
+divided by the sampled catch and appends it to the input data as
 \code{Expansion_Factor_2}.
 }
 \details{
-\subsection{Workflow}{
-\code{getExpansion_2} depends upon variables created by \code{\link{getExpansion_1}}
-}
-
-
+The workflow requires that \code{getExpansion_2} is run after
+\code{\link{getExpansion_1}()} using the same data frame.
 The input PacFIN dataset must contain a column called \code{stratification},
 a character-valued user-designed stratification of the data whose values match the
 column-names in the Catch dataset.
