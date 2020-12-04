@@ -260,8 +260,8 @@ cleanPacFIN <- function(
   if (is.null(keep_age_method)) {
     keep_age_method <- unique(Pdata[, "AGE_METHOD"])
   } else {
-    if ("B" %in% keep_age_method) keep_age_method <- c(kkeep_age_method, 1)
-    if ("S" %in% keep_age_method) keep_age_method <- c(kkeep_age_method, 2)
+    if ("B" %in% keep_age_method) keep_age_method <- c(keep_age_method, 1)
+    if ("S" %in% keep_age_method) keep_age_method <- c(keep_age_method, 2)
   }
   Pdata[!Pdata[, "AGE_METHOD"] %in% keep_age_method, "age"] <- -1
   # Remove bad OR samples
