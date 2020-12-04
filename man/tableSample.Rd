@@ -61,6 +61,7 @@ all(test[, "Year"] \%in\% 2000:2015)
     sum(as.numeric(test[, grepl("\\\\.fish", colnames(test))])),
     NROW(XMPL.BDS[!is.na(XMPL.BDS$FISH_LENGTH), ]))
 }
+unlink("fishery_LEN_samples.csv")
 }
 \author{
 Chantel Wetzel

@@ -5,11 +5,11 @@
 Example PacFIN biological dataset to use with \code{\link{PacFIN_Example}}
 }
 \description{
-Fake data for the PacFIN \code{\link{Workflow}} demonstration.
+Biological data from a pretend species.
 }
 \usage{data("XMPL.BDS")}
 \format{
-  A data frame with 20000 observations on the following 56 variables.
+  A data frame with 20000 observations on the following variables:
   \describe{
     \item{\code{SPID}}{a character vector}
     \item{\code{SAMPLE_NO}}{a character vector}
@@ -51,6 +51,8 @@ Fake data for the PacFIN \code{\link{Workflow}} demonstration.
     \item{\code{MALES_NUM}}{a numeric vector}
     \item{\code{FEMALES_NUM}}{a numeric vector}
     \item{\code{FEMALES_WGT}}{a numeric vector}
+    \item{\code{UNK_NUM}}{a numeric vector}
+    \item{\code{UNK_WT}}{a numeric vector}
     \item{\code{TOTAL_WGT}}{a numeric vector}
     \item{\code{RWT_LBS}}{a numeric vector}
     \item{\code{LWT_LBS}}{a numeric vector}
@@ -73,7 +75,7 @@ Fake data for the PacFIN \code{\link{Workflow}} demonstration.
     \item{\code{all_cluster_sum}}{a numeric vector}
     \item{\code{SPECIES_WGT}}{a numeric vector}
     \item{\code{CLUSTER_WGT}}{a numeric vector}
-    \item{\code{FRAME_WGT}}{a numeric vector}
+    \item{\code{FRAME_CLWT}}{a numeric vector}
     \item{\code{ADJ_CLWT}}{a numeric vector}
   }
 }

@@ -61,13 +61,15 @@ for (ii_f in c("fleet", "fleet + state"))
       if (!"state" %in% colnames(plotmea)) plotmea[, "state"] <- "all"
       
       g <- ggplot(data = plotmea,
-                  aes(x = time, y = F, linetype = wo, col = interaction(state, fleet, sep = "-", lex.order = TRUE))) +   
-                  geom_line(lwd = 0.7) + 
-                  facet_grid(ii_g, drop = FALSE) + 
-                  guides(col= guide_legend(title = "Fleet"), linetype = guide_legend(title = "")) + 
-                  ylab("") + 
-                  coord_cartesian(ylim=c(0, max(plotme$F)*ylimperc)) + 
-                  theme_bw() + theme(strip.background = element_rect(colour="black", fill="white"))
+        aes(x = time, y = F, linetype = .data[["wo"]],
+          col = interaction(.data[["state"]], .data[["fleet"]], sep = "-", lex.order = TRUE))) +
+        geom_line(lwd = 0.7) +
+        facet_grid(ii_g, drop = FALSE) +
+        guides(col= guide_legend(title = "Fleet"), linetype = guide_legend(title = "")) +
+        ylab("") + 
+        coord_cartesian(ylim=c(0, max(plotme$F)*ylimperc)) +
+        theme_bw() +
+        theme(strip.background = element_rect(colour="black", fill="white"))
       print(g)
     }
 

@@ -14,7 +14,7 @@ checkLenAge(
   keepAll = TRUE,
   sdFactor = 4,
   Optim = TRUE,
-  precision = 0,
+  precision = 1,
   verbose = FALSE,
   dir = NULL
 )
@@ -69,6 +69,10 @@ of digits the results will have after passing them through
 to the screen or not. Good for testing and exploring your data but
 can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
+
+\item{dir}{A file path to a directory where you want information saved to
+a file, or multiple files. If \code{NULL}, which is the default, then
+nothing is saved.}
 }
 \value{
 Returns a combined dataset in PacFIN format.
@@ -80,9 +84,8 @@ Outliers are determined using standard deviations
 (i.e., \code{sdFactor} input parameter).
 }
 \examples{
-pdata <- data(XMPL.BDS)
-pdata[, "FISH_LENGTH_TYPE"] <- ifelse(pdata[, "FISH_LENGTH_TYPE"] == "FALSE", "F", "T")
-pdata[, "UNK_WT"] <- NA
+data(XMPL.BDS)
+pdata <- XMPL.BDS
 pdata <- cleanPacFIN(pdata, keep_length_type = "F")
 test <-  checkLenAge(pdata)
 head(test)

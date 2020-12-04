@@ -95,5 +95,5 @@ and returns their ratio.
 \seealso{
 Called within this function are
 \code{\link{EF1_Numerator}} \code{\link{EF1_Denominator}}.
-Called after this function should be \code{\link{Expansion_Factor_2}}.
+Called after this function should be \code{\link{getExpansion_2}}.
 }

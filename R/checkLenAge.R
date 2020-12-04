@@ -37,24 +37,26 @@
 #' of digits the results will have after passing them through
 #' \code{\link{round}(x, digits = precision)}.
 #' @template verbose
+#' @param dir A file path to a directory where you want information saved to
+#' a file, or multiple files. If \code{NULL}, which is the default, then
+#' nothing is saved.
 #'
 #' @return Returns a combined dataset in PacFIN format.
 #' 
 #' @export
 #' @author Chantel Wetzel, Vlada Gertseva, James Thorson
 #' @examples
-#' pdata <- data(XMPL.BDS)
-#' pdata[, "FISH_LENGTH_TYPE"] <- ifelse(pdata[, "FISH_LENGTH_TYPE"] == "FALSE", "F", "T")
-#' pdata[, "UNK_WT"] <- NA
+#' data(XMPL.BDS)
+#' pdata <- XMPL.BDS
 #' pdata <- cleanPacFIN(pdata, keep_length_type = "F")
 #' test <-  checkLenAge(pdata)
 #' head(test)
-###################################################################
+
 checkLenAge <- function(Pdata,
   Par = list(K = 0.13, Linf = 55, L0 = 15, CV0 = 0.10, CV1 = 0.10),
   len_col = "lengthcm", age_col = "age", sex_col = "SEX",
   mult = 1, keepAll = TRUE, sdFactor = 4, Optim = TRUE,
-  precision = 0, verbose = FALSE, dir = NULL) {
+  precision = 1, verbose = FALSE, dir = NULL) {
 
   #### Initialize the three new columns
   Pdata$Lhat_pred <- NA
@@ -113,7 +115,7 @@ checkLenAge <- function(Pdata,
     }
 
     if (Optim) {
-      ests <- optim(fn = nwfscSurvey::GetVB.fn,
+      ests <- optim(fn = nwfscAgeingError::estgrowth.vb,
                   par = log(pars_in),
                   hessian = FALSE,
                   Ages = Pdata[use_data, age_col],
@@ -121,8 +123,8 @@ checkLenAge <- function(Pdata,
     } else {
         ests <- pars_in
     }
-    estsall[s, -1] <- exp(ests)
-    Pred <- nwfscSurvey::GetVB.fn(
+
+    Pred <- nwfscAgeingError::estgrowth.vb(
       Par = ests,
       ReturnType = "Pred",
       sdFactor = sdFactor,
@@ -152,7 +154,7 @@ checkLenAge <- function(Pdata,
       Pdata[, age_col] != -1, ]
     estsall <- data.frame(Sex = sex_vec,
       do.call("rbind", tapply(seq(NROW(tempdata)), tempdata[, sex_col],
-      function(x) exp(optim(fn = nwfscSurvey::GetVB.fn,
+      function(x) exp(optim(fn = nwfscAgeingError::estgrowth.vb,
                   par = log(pars_in),
                   hessian = FALSE,
                   Ages = tempdata[x, age_col],
@@ -179,7 +181,8 @@ checkLenAge <- function(Pdata,
    colnames(tempdata) <- c("Length_cm", "Age", "Sex")
    pars <- unlist(estsall[1, c(3, 4, 2, 5, 6), drop = TRUE])
    names(pars) <- NULL
-   latage <- PlotVarLengthAtAge.fn(dat = tempdata, parStart = pars,
+   latage <- nwfscSurvey::PlotVarLengthAtAge.fn(
+     dat = tempdata, parStart = pars,
      dir = dir, main = "PacFIN", ageBin = 1,
      bySex = !all(estsall[, "Sex"] == "A"),
      estVB = TRUE, legX = "bottomleft", dopng = TRUE)

@@ -38,7 +38,7 @@
 #' data(XMPL.BDS)
 #' data(Catch.XMPL)
 #' Pdata <- cleanPacFIN(XMPL.BDS,
-#'   keep_gears = unique(gsub("[A-Z]+\\.", "", colnames(catch)[-1])),
+#'   keep_gears = unique(gsub("[A-Z]+\\.", "", colnames(Catch.XMPL)[-1])),
 #'   keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
 #'   CLEAN = FALSE)
 #'
@@ -54,5 +54,6 @@
 #' comps <- getComps(test[!is.na(test$lengthcm), ], Comps = "LEN")
 #' comps <- doSexRatio(comps)
 #' writeComps(comps)
+#' unlink("out.csv")
 
 NULL

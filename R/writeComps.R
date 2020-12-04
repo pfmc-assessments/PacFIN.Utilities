@@ -108,6 +108,11 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
                       dummybins = FALSE, sum1 = FALSE, digits = 4,
                       overwrite = TRUE, verbose = FALSE) {
 
+  # To stop warning of no visible binding b/c assign is used
+  mComps <- NULL
+  fComps <- NULL
+  uComps <- NULL
+
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
     cat(paste("\nNote that if you didn't run doSexRatio,",

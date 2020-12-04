@@ -166,7 +166,7 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
     par(mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
       oma = c(4, 5, 3, 0.5))
     for (st in unique(Pdata$state)) {
-      plotdata <- subset(Pdata, state == st)
+      plotdata <- Pdata[Pdata[, "state"] == st, ]
       if (all(is.na(plotdata$Trip_Sampled_Lbs))) next
       boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
         ylab = "", xlab = "", xaxt = "n",
