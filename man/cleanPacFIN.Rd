@@ -9,7 +9,6 @@ cleanPacFIN(
   only_USINPFC = FALSE,
   keep_INPFC = NULL,
   remove_INPFC = NULL,
-  badRecords = NULL,
   keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
@@ -34,8 +33,6 @@ which originated in 2014. Data are pulled using sql calls, see
 \item{keep_INPFC}{a set of INPFC areas. NULL by default.}
 
 \item{remove_INPFC}{a set of INPFC areas.  NULL by default.}
-
-\item{badRecords}{a set of sample identifiers. NULL by default.}
 
 \item{keep_gears}{A vector of character values specifying which gear types you want
 to label as unique fleets. Order the vector the same way you want the fleets numbered.

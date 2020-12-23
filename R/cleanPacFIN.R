@@ -10,7 +10,6 @@
 #' @param only_USINPFC a logical value. FALSE by default.
 #' @param keep_INPFC a set of INPFC areas. NULL by default.
 #' @param remove_INPFC a set of INPFC areas.  NULL by default.
-#' @param badRecords a set of sample identifiers. NULL by default.
 #' @param keep_gears A vector of character values specifying which gear types you want
 #' to label as unique fleets. Order the vector the same way you want the fleets numbered.
 #' If the argument is missing, which is the default, then all found gear groups
@@ -109,7 +108,6 @@ cleanPacFIN <- function(
   only_USINPFC = FALSE,
   keep_INPFC = NULL,
   remove_INPFC = NULL,
-  badRecords = NULL,
   keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
@@ -313,12 +311,6 @@ cleanPacFIN <- function(
     Pdata <- Pdata[!Pdata$INPFC_AREA %in% remove_INPFC, ]
   }
 
-  Rec_summary[3] <- sum(Pdata$sample %in% badRecords)
-
-  if (CLEAN) {
-    Pdata <- Pdata[!Pdata$sample %in% badRecords, ]
-  }
-
   Rec_summary[4] <- sum(!Pdata$SAMPLE_TYPE %in% keep_sample_type)
 
   if (!is.null(keep_sample_type) & CLEAN) {
@@ -348,7 +340,6 @@ cleanPacFIN <- function(
     cat("Records not in USINPFC            ", Rec_summary[8], "\n")
     cat("Records not in INPFC_AREA:        ", Rec_summary[2], "\n")
     cat("Records in bad INPFC_AREA:        ", Rec_summary[9], "\n")
-    cat("Records in badRecords list:       ", Rec_summary[3], "\n")
     cat("Records with bad SAMPLE_TYPE      ", Rec_summary[4], "\n")
     cat("Records with bad SAMPLE_METHOD    ", Rec_summary[5], "\n")
     cat("Records with no SAMPLE_NO         ", Rec_summary[6], "\n")
