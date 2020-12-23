@@ -17,9 +17,9 @@ For example, if you wish to summarize by ageing method, then the argument
 would look like \code{strat = "agemethod"}.
 Or if you want to look at fleets and gear, then use
 \code{strat = c("fleet","usegear")}.
-# todo: deprecate defaults}
+todo: deprecate defaults}
 
-\item{valuename}{The column name that contains the 
+\item{valuename}{The column name that contains the
 catch values in \code{catch}}
 }
 \description{

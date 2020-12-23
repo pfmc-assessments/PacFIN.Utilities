@@ -15,12 +15,12 @@ cleanAges(
 \arguments{
 \item{Pdata}{A PacFIN dataset}
 
-\item{keep_age_methods}{By default, methods "B","S" and "" are 
+\item{keep_age_methods}{By default, methods "B","S" and "" are
 retained.}
 
 \item{minAge}{Minimum age to retain; default is 1.}
 
-\item{maxAge}{Maximum age to retain; default (NULL) returns all ages 
+\item{maxAge}{Maximum age to retain; default (NULL) returns all ages
 greater than \code{minAge}.}
 
 \item{CLEAN}{Default is TRUE.  If FALSE, return the input data unchanged.}

@@ -10,7 +10,7 @@ plotRawData(rawData, fname = NULL)
 \item{rawData}{an unfiltered PacFIN dataset}
 
 \item{fname}{A filename with the appropriate extension,
-used to save the function output to the disk. 
+used to save the function output to the disk.
 For example, \code{LenComps.csv} or
 \code{file.path(getwd(), "SampleSize.csv")}.
 Full, relative, or simple paths are allowed because the argument is used as
@@ -19,7 +19,7 @@ Note that various functions within PacFIN.Utilities have different default
 values for this input argument.}
 }
 \description{
-\code{plotRawData} creates a set of diagnostic plots and summaries, writing 
+\code{plotRawData} creates a set of diagnostic plots and summaries, writing
 pdfs and a text file in addition to plotting onscreen and console.
 }
 \details{
@@ -27,7 +27,6 @@ pdfs and a text file in addition to plotting onscreen and console.
 Run \code{plotRawData} to visualize and summarize the PacFIN data prior to
 running \code{\link{cleanPacFIN}}.
 }
-
 
 Will create a filename from the species ID if one is not provided.
 }

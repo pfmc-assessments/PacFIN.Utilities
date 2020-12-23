@@ -11,7 +11,7 @@ plotStrat(data, dir, ylimperc = 0.65, npages = 11, dolbins)
 
 \item{dir}{The directory you want to print the plots}
 
-\item{ylimperc}{The percent of the maximum value in the data 
+\item{ylimperc}{The percent of the maximum value in the data
 set that you want displayed on the y axis.}
 
 \item{npages}{The number of pages you want the plots split over.}

@@ -19,6 +19,10 @@ species code that you desire to pull data for. Known also as
 An example for sablefish would be
 \code{pacfin_species_code = "SABL"}.}
 
+\item{username}{The username you would like to use to access data from
+\code{datasourcename}. The default is to generate \code{username}
+from your computer name.}
+
 \item{password}{Your password for the \code{datasourcename}.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
@@ -38,14 +42,14 @@ you only want nominal catch for one or if you only wanted nominal catch.}
 \value{
 RData frames are saved to the disk and the pulled data
 are returned as a data frame.
-\list{
-  \item{CompFT - pulled data}
-  \item{Research.Tribal.Catch - summary by year, state, and fleet; 
-    fleets are as follows:
-    limited entry (LE), open access (OA), treaty indian (TI),
-    research (R), and unknown (XX)}
-  \item{Catch.INPFC - catch by INPFC area}
-  \item{Catch.PSMFC - catch by PSMFC area}
+\itemize{
+\item CompFT - pulled data
+\item Research.Tribal.Catch - summary by year, state, and fleet;
+fleets are as follows:
+limited entry (LE), open access (OA), treaty indian (TI),
+research (R), and unknown (XX)
+\item Catch.INPFC - catch by INPFC area
+\item Catch.PSMFC - catch by PSMFC area
 }
 }
 \description{

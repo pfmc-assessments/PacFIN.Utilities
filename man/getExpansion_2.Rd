@@ -31,7 +31,7 @@ metric tonnes to pounds, where \code{TRUE} is now the same as setting
 \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
 i.e., \code{Convert = TRUE} or \code{Units = "MT"},
 such that it can be used within Stock Synthesis.
-# todo: remove this input argument}
+todo: remove this input argument}
 
 \item{maxExp}{The maximum expansion factor
 (either a number or a quantile) for building expansions.
@@ -63,7 +63,7 @@ then the columns in Catch must be named "Year", "S_TWL" and "N_TWL"
 
 or if you used:
 
-\code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$season == 1 ] = "WINTER_TWL"} 
+\code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$season == 1 ] = "WINTER_TWL"}
 \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$season == 2 ] = "SUMMER_TWL"}
 
 then the columns in Catch must be named "Year", "WINTER_TWL", and "SUMMER_TWL".
@@ -79,7 +79,7 @@ in your data.  \strong{Year} is automatically included as a level of stratificat
 \item{WA fish are generally only expanded using Expansion_Factor_2.}
 \item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
 \item{For age-at-length comps, set Final_Expansion_Factor to 1 because
-  each fish represents only itself.}
+each fish represents only itself.}
 }
 }
 

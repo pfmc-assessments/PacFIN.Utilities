@@ -18,6 +18,10 @@ species code that you desire to pull data for. Known also as
 An example for sablefish would be
 \code{pacfin_species_code = "SABL"}.}
 
+\item{username}{The username you would like to use to access data from
+\code{datasourcename}. The default is to generate \code{username}
+from your computer name.}
+
 \item{password}{Your password for the \code{datasourcename}.}
 
 \item{savedir}{A file path to the directory where the results will be saved.

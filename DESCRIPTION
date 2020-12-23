@@ -29,6 +29,7 @@ Imports:
     measurements,
     nwfscAgeingError,
     nwfscSurvey,
+    RODBC,
     stats,
     utils
 Suggests:
@@ -40,5 +41,6 @@ Remotes:
   github::nwfsc-assess/nwfscSurvey@master
   github::nwfsc-assess/nwfscAgeingError@master
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Encoding: UTF-8

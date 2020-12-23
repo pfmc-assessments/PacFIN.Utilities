@@ -15,8 +15,8 @@ or age-composition data.}
 }
 \value{
 A plot of either 3 x 2 or 2 x 2 depending on whether or not unique
-  gear groups exist. Left column are plots of sample size by type and right
-  column is boxplots of either length or age and depth by year.
+gear groups exist. Left column are plots of sample size by type and right
+column is boxplots of either length or age and depth by year.
 }
 \description{
 \subsection{Workflow}{

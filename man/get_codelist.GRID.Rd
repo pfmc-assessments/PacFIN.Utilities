@@ -9,12 +9,12 @@ get_codelist.GRID()
 \value{
 A data frame with the following six columns:
 \itemize{
-  \item{TYPE}{integer value of 1 (gear code), 2 (gear group), or 3 (all)}
-  \item{GRID}{three letter grid code}
-  \item{GROUP}{three letter gear code}
-  \item{SHORT}{short description}
-  \item{DESCRIPTION}{long description}
-  \item{ENTERED}{date information was entered into table}
+\item{TYPE}{integer value of 1 (gear code), 2 (gear group), or 3 (all)}
+\item{GRID}{three letter grid code}
+\item{GROUP}{three letter gear code}
+\item{SHORT}{short description}
+\item{DESCRIPTION}{long description}
+\item{ENTERED}{date information was entered into table}
 }
 }
 \description{

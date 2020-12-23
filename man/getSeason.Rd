@@ -9,7 +9,7 @@ getSeason(
   season_type = -1,
   yearUp = NULL,
   yearDown = NULL,
-  plotResults = F,
+  plotResults = FALSE,
   verbose = FALSE
 )
 }
@@ -22,12 +22,12 @@ which originated in 2014. Data are pulled using sql calls, see
 
 \item{season_type}{Specify a \code{numeric} value for season type.
 If negative then all months will be assigned to season \code{1}.
-If \code{0} then seasons will be assinged from \code{Pdata$SAMPLE_MONTH},
+If \code{0} then seasons will be assigned from \code{Pdata$SAMPLE_MONTH},
 where each month is a unique season.
 If \code{1} then seasons are assigned according to methods used for Petrale,
 where winter months (\code{c(11:12, 1:2)}) are season \code{1} and
 the remaining months (summer) are assigned to season \code{2}.
-Please contact the function author if you wish to include an
+Please contact the package maintainer should you wish to include an
 additional seasonal scheme.}
 
 \item{yearUp}{Used to provide a list of months (i.e., \code{1:12})
@@ -48,19 +48,23 @@ is \code{TRUE}.}
 }
 \value{
 An additional column \code{season} is added to \code{Pdata}.
-  No columns are modified.
+No columns are modified.
 }
 \description{
-\subsection{Workflow}{
-Most assessments won't require \code{getSeason}. It is run by \code{\link{cleanPacFIN}}
-and users shouldn't need to worry about it.  If a specialized season structure is required,
-\code{getSeason} should be run immediately after \code{\link{cleanPacFIN}}
-}
-}
-\details{
-Several seasonal schemes are available, including the Petrale seasons
+Several seasonal schemes are available, including Petrale seasons
 (1 = winter months, 2 else).
-Contact the function author for more schemes if needed.
+Most assessments won't require \code{getSeason} because it is included
+in \link{cleanPacFIN}. If a specialized season structure is required,
+\code{getSeason} should be run immediately after \link{cleanPacFIN}.
+}
+\examples{
+test <- getSeason(
+  data.frame(SAMPLE_MONTH = 1:12, fishyr = rep(1:2, each = 6)),
+  verbose = TRUE)
+testthat::expect_true(all(test[, "season"] == 1))
+test <- getSeason(Pdata = test, season_type = 1, yearUp = 12)
+testthat::expect_equivalent(test[test[, "fishyr"] == 3, "season"], 1)
+
 }
 \author{
 Andi Stephens

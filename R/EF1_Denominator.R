@@ -103,7 +103,8 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
     if (verbose){
       cat("State variable was not assigned, getting state.\n\n")
     }
-    Pdata = getState(Pdata, CLEAN=T, verbose = verbose)
+    Pdata <- getState(Pdata, verbose = verbose,
+      source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID"))
 
   }
 

@@ -20,7 +20,7 @@ which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
 \item{fname}{A filename with the appropriate extension,
-used to save the function output to the disk. 
+used to save the function output to the disk.
 For example, \code{LenComps.csv} or
 \code{file.path(getwd(), "SampleSize.csv")}.
 Full, relative, or simple paths are allowed because the argument is used as
@@ -33,7 +33,7 @@ For example, if you wish to summarize by ageing method, then the argument
 would look like \code{strat = "agemethod"}.
 Or if you want to look at fleets and gear, then use
 \code{strat = c("fleet","usegear")}.
-# todo: deprecate defaults}
+todo: deprecate defaults}
 
 \item{comps}{Specify whether to calculate the length or age samples.
 The default is to calculate the number of length samples.}

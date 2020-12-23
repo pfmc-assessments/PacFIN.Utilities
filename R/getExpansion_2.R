@@ -26,7 +26,7 @@
 #' \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
 #' i.e., \code{Convert = TRUE} or \code{Units = "MT"},
 #' such that it can be used within Stock Synthesis.
-#' # todo: remove this input argument
+#' todo: remove this input argument
 #' @template maxExp
 #' 
 #' @details

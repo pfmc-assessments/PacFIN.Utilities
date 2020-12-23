@@ -26,7 +26,7 @@ For example, if you wish to summarize by ageing method, then the argument
 would look like \code{strat = "agemethod"}.
 Or if you want to look at fleets and gear, then use
 \code{strat = c("fleet","usegear")}.
-# todo: deprecate defaults}
+todo: deprecate defaults}
 
 \item{Comps}{The type of composition data to create. Options are
 length (\code{"LEN"},
@@ -46,12 +46,12 @@ can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
 
 \item{...}{Pass additional arguments to \code{getcomps_long}, such as
-\code{dropmissing = FALSE} where the default behaviour is 
+\code{dropmissing = FALSE} where the default behaviour is
 \code{dropmissing = TRUE}}
 }
 \value{
 A dataframe with composition data specific to the type specified
-  in \code{Comps} for males, females, and unsexed records.
+in \code{Comps} for males, females, and unsexed records.
 }
 \description{
 \subsection{Workflow}{
@@ -60,17 +60,17 @@ A dataframe with composition data specific to the type specified
 }
 \details{
 The aggregation is of the \code{Pdata$Final_Sample_Size} column value,
-  which should be set to the desired expansion:
-  
-  \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1} 
-  
-  or
-  
-  \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
-  
-  The default stratification is by fleet, fishyr, and season.
-  Columns \code{lengthcm}, \code{age} or both are added
-  depending on the \code{Comps} argument.
+which should be set to the desired expansion:
+
+\code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1}
+
+or
+
+\code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
+
+The default stratification is by fleet, fishyr, and season.
+Columns \code{lengthcm}, \code{age} or both are added
+depending on the \code{Comps} argument.
 }
 \author{
 Andi Stephens, Kelli Faye Johnson

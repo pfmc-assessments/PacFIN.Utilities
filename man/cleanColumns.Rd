@@ -12,7 +12,7 @@ cleanColumns(data, use = c("vdrfd", "raw"))
 \item{use}{Specify the column name category you would like to switch to.
 \code{match.arg} is used to allow for partial matches.
 Options include
-`r paste0("``", eval(formals(cleanColumns)[["use"]]), "``", collapse = ", ")`.
+\code{vdrfd}, \code{raw}.
 \code{"vdrfd"} will return the column names used prior to 2020, the default.
 \code{"raw"} will return the original column names as downloaded.}
 }

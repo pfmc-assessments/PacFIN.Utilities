@@ -19,7 +19,7 @@ character literals or numeric ranges.}
 smaller than the first value in splits.}
 }
 \value{
-Returns a vector the length of the input vector, with either numeric 
+Returns a vector the length of the input vector, with either numeric
 levels indicating the stratification of the input, or with Nnames assigning
 levels of the input vector.
 }
@@ -33,7 +33,6 @@ the values returned in the strats vector.
 running \code{\link{getComps}}.
 }
 
-
 Any values not given in \code{splits} will be assigned to stratum 0.
 This function can be used to designate fleet or for stratification
 based on depth or INPFC area.
@@ -43,8 +42,8 @@ based on depth or INPFC area.
 Pdata$use_depth = Stratify( Pdata$DEPTH_AVG, splits=list(0, 50, 100, 250, 500), numeric=T)
 
 Pdata$my_fleets = Stratify( Pdata$GEAR,
-           splits=list("GFS", c("MDT","TB"), "TR", c("LGL","FTS")),
-           Nnames=list("G1","G2","G3","G4") )
+splits=list("GFS", c("MDT","TB"), "TR", c("LGL","FTS")),
+Nnames=list("G1","G2","G3","G4") )
 }
 
 \author{

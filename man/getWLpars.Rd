@@ -19,7 +19,7 @@ is \code{TRUE}.}
 A data frame of weight-length parameters by sex.
 Parameters A and B are in the appropriate units to input
 into Stock Synthesis Wtlen_1_Fem and Wtlen_2_Fem, or
-Wtlen_1_Mal and Wtlen_1_Mal, parameters in the 
+Wtlen_1_Mal and Wtlen_1_Mal, parameters in the
 control file.
 }
 \description{

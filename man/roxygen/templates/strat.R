@@ -3,4 +3,4 @@
 #' would look like \code{strat = "agemethod"}.
 #' Or if you want to look at fleets and gear, then use
 #' \code{strat = c("fleet","usegear")}.
-#' # todo: deprecate defaults
+#' todo: deprecate defaults

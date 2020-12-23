@@ -14,7 +14,7 @@ at which to cap all data.}
 }
 \value{
 A vector of numeric values where no value is greater than the
-  maximum specified by \code{maxVal}.
+maximum specified by \code{maxVal}.
 }
 \description{
 \code{capValues} takes a numeric vector and returns a vector in which all
@@ -23,11 +23,11 @@ value.
 }
 \details{
 The maximum may be specified either as a
-quantile or as a number. 
+quantile or as a number.
 
 If \code{maxVal} is less than one, it is
 interpreted as a quantile, otherwise it is interpreted as the maximum
-value to return.  
+value to return.
 
 The default value is \code{0.95}, which caps all
 values in the input at the 95 percent quantile.
@@ -35,9 +35,9 @@ values in the input at the 95 percent quantile.
 \section{Example}{
 
 
-x = seq(1,10)  
-y <- capValues(x, 0.75)  
-z <- capValues(x, 5)  
+x = seq(1,10)
+y <- capValues(x, 0.75)
+z <- capValues(x, 5)
 rbind(x, y, z)
 }
 
