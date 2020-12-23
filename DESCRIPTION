@@ -34,7 +34,8 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    usethis
 Remotes:
   github::nwfsc-assess/nwfscSurvey@master
   github::nwfsc-assess/nwfscAgeingError@master
