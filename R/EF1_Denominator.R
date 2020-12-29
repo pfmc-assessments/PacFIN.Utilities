@@ -126,7 +126,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
     Pdata$SAMPLE_NO, FUN = sum)
   Wt_Sampled_L <- ave(ifelse(is.na(Pdata$length), NA, Pdata$FISH_WEIGHT),
     Pdata$SAMPLE_NO, FUN = sum)
-  Wt_Sampled_A <- ave(ifelse(Pdata$age == -1, NA, Pdata$FISH_WEIGHT),
+  Wt_Sampled_A <- ave(ifelse(is.na(Pdata$age), NA, Pdata$FISH_WEIGHT),
     Pdata$SAMPLE_NO, FUN = sum)
 
   check <- TRUE
@@ -200,7 +200,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
       FUN = sumNA)
     Wt_Sampled_3_L <- ave(ifelse(!is.na(Pdata$length), bestweight, 0),
       Pdata$SAMPLE_NO, FUN = sumNA)
-    Wt_Sampled_3_A <- ave(ifelse(Pdata$age != -1, bestweight, 0),
+    Wt_Sampled_3_A <- ave(ifelse(!is.na(Pdata$age), bestweight, 0),
       Pdata$SAMPLE_NO, FUN = sumNA)
     
     if (any(is.na(Pdata$Wt_Sampled_3[Pdata$state == "WA" & !is.na(Pdata$length)]))) {
@@ -225,23 +225,23 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
     apply(Pdata[, c("SAMPLE_NO", "CLUSTER_NO")], 1, paste, collapse = ""),
     Pdata[, "SAMPLE_NO"])
   for (ii in 1:nrow(Pdata)) {
-    if (!is.na(Pdata$length[ii]) & Pdata$age[ii] != -1) next
+    if (!is.na(Pdata$length[ii]) & !is.na(Pdata$age[ii])) next
     if (Pdata$state[ii] == "WA") next
-    if (is.na(Pdata$length[ii]) & Pdata$age[ii] == -1) {
+    if (is.na(Pdata$length[ii]) & is.na(Pdata$age[ii])) {
       if (Pdata$state[ii] == "CA") {
-        change <- which(identifier == 
-          paste(Pdata[ii, c("SAMPLE_NO", "CLUSTER_NO"), drop = TRUE], 
+        change <- which(identifier ==
+          paste(Pdata[ii, c("SAMPLE_NO", "CLUSTER_NO"), drop = TRUE],
             collapse = ""))
-        if (all(c(is.na(Pdata$length[change]), Pdata$age[change] == -1))) {
+        if (all(c(is.na(Pdata$length[change]), is.na(Pdata$age[change])))) {
           Pdata[change, "SPECIES_WGT"] <- NA
           next
         }
         Pdata[change, "SPECIES_WGT"] <- Pdata[ii, "SPECIES_WGT"] - bestweight[ii]
       }
       if (Pdata$state[ii] == "OR") {
-        change <- which(identifier == 
+        change <- which(identifier ==
           Pdata[ii, c("SAMPLE_NO"), drop = TRUE])
-        if (all(c(is.na(Pdata$length[change]), Pdata$age[change] == -1))) {
+        if (all(c(is.na(Pdata$length[change]), is.na(Pdata$age[change])))) {
           Pdata[change, c("UNK_WGT", "FEMALES_WGT", "MALES_WGT")] <- NA
           Pdata[change, c("UNK_NUM", "FEMALES_NUM", "MALES_NUM")] <- NA
           next
@@ -269,12 +269,12 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
   FEMALES_WGT_L <- FEMALES_WGT_A <- Pdata[, "FEMALES_WGT"]
   for (ii in 1:nrow(Pdata)) {
     # Good lengths Good ages
-    if (!is.na(Pdata$length[ii]) & Pdata$age[ii] != -1) next
-    if (is.na(Pdata$length[ii]) & Pdata$age[ii] == -1) next
+    if (!is.na(Pdata$length[ii]) & !is.na(Pdata$age[ii])) next
+    if (is.na(Pdata$length[ii]) & is.na(Pdata$age[ii])) next
     if (Pdata$state[ii] %in% ("WA")) next
     if (Pdata$state[ii] == "CA") {
       change <- which(identifier == 
-        paste(Pdata[ii, c("SAMPLE_NO", "CLUSTER_NO"), drop = TRUE], 
+        paste(Pdata[ii, c("SAMPLE_NO", "CLUSTER_NO"), drop = TRUE],
           collapse = ""))
     }
     if (Pdata$state[ii] %in% ("OR")) {
@@ -282,14 +282,14 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
         Pdata[ii, c("SAMPLE_NO"), drop = TRUE])
     }
     # Good lengths Bad ages
-    if (!is.na(Pdata$length[ii]) & Pdata$age[ii] == -1) {
+    if (!is.na(Pdata$length[ii]) & is.na(Pdata$age[ii])) {
       SPECIES_WGT_A[change] <- SPECIES_WGT_A[change] - bestweight[ii]
       if (Pdata$SEX[ii] == "U") UNK_WGT_A[change] <- UNK_WGT_A[change] - bestweight[ii]
       if (Pdata$SEX[ii] == "M") MALES_WGT_A[change] <- MALES_WGT_A[change] - bestweight[ii]
       if (Pdata$SEX[ii] == "F") FEMALES_WGT_A[change] <- FEMALES_WGT_A[change] - bestweight[ii]
     }
     # Bad lengths Good ages
-    if (is.na(Pdata$length[ii]) & Pdata$age[ii] != -1) {
+    if (is.na(Pdata$length[ii]) & !is.na(Pdata$age[ii])) {
       SPECIES_WGT_L[change] <- SPECIES_WGT_L[change] - bestweight[ii]
       if (Pdata$SEX[ii] == "U") UNK_WGT_L[change] <- UNK_WGT_L[change] - bestweight[ii]
       if (Pdata$SEX[ii] == "M") MALES_WGT_L[change] <- MALES_WGT_L[change] - bestweight[ii]

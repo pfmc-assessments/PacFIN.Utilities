@@ -150,7 +150,7 @@ cleanPacFIN <- function(
     if (!i %in% colnames(Pdata)) {
       Pdata[, i] <- switch(i,
         fishery = 1,
-        age = -1,
+        age = NA,
         INPFC_AREA = NA,
         UNK_WT = NA)
     } # End if
@@ -287,7 +287,7 @@ cleanPacFIN <- function(
     apply(
       Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata)), drop = FALSE],
       1, FUN = function(x) !any(x %in% keep_age_method)),
-    "age"] <- -1
+    "age"] <- NA
 
   #### Bad samples
 
@@ -298,7 +298,7 @@ cleanPacFIN <- function(
 
   # Remove lengths and ages for gears we don't want
   Pdata[!Pdata[, "geargroup"] %in% keep_gears, "length"] <- NA
-  Pdata[!Pdata[, "geargroup"] %in% keep_gears, "age"] <- -1
+  Pdata[!Pdata[, "geargroup"] %in% keep_gears, "age"] <- NA
 
   #### Sex-specific _WGT and _NUM
   # Calculate sex-specific weights and numbers
@@ -360,10 +360,8 @@ cleanPacFIN <- function(
       sum(!bad[, "goodsno"]))
     message("N with no usable length, age, or length and age:\n  ",
       sum(is.na(Pdata$length)), ", ",
-      sum(ifelse(is.na(Pdata$age), TRUE, Pdata[, "age"] < 0)), ", ", 
-      sum(is.na(Pdata$length) |
-          ifelse(is.na(Pdata$age), TRUE, Pdata[, "age"] < 0)
-          )
+      sum(is.na(Pdata$age)), ", ",
+      sum(is.na(Pdata$length) | is.na(Pdata$age))
       )
     message("N sample weights not available for OR or CA\n  ",
       "(note these are not removed with CLEAN):\n  ",

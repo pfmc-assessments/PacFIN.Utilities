@@ -38,11 +38,11 @@ tableSample <- function(Pdata,
   Pdata$strat <- apply(Pdata[, strat, drop = FALSE], 1, paste0, collapse = ".")
   comps <- match.arg(comps, several.ok = FALSE)
 	if (comps == "LEN"){
-		temp = Pdata[!is.na(Pdata$FISH_LENGTH),]
+		temp = Pdata[!is.na(Pdata$FISH_LENGTH), ]
 	}
 	
 	if (comps == "AGE"){
-		temp = Pdata[Pdata$age != -1,]
+		temp = Pdata[!is.na(Pdata$age), ]
 	}
 
 	if(!is.null(remove_yrs)){

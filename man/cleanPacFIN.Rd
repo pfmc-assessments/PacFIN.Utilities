@@ -6,7 +6,7 @@
 \usage{
 cleanPacFIN(
   Pdata,
-  keep_INPFC = unique(Pdata$INPFC_AREA),
+  keep_INPFC,
   keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
@@ -28,11 +28,11 @@ which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
 \item{keep_INPFC}{A vector of character values specifying which INPFC areas
-to keep. See \code{\link{ls_INPFC}(area = "ALL")} for a vector of options.
+to keep. See \verb{[ls_INPFC](area = "ALL")} for a vector of options.
 Note that PacFIN has some errors in this column, e.g., Columbia is listed
 as both CL and COL. For an internally generated list of areas within the
 lower 48 of the United States see \code{\link{ls_INPFC}(area = "US")}.
-The default is to keep all areas in the data set.}
+The default is to keep all areas.}
 
 \item{keep_gears}{A vector of character values specifying which gear types you want
 to label as unique fleets. Order the vector the same way you want the fleets numbered.
