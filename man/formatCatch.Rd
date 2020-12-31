@@ -2,15 +2,15 @@
 % Please edit documentation in R/formatCatch.R
 \name{formatCatch}
 \alias{formatCatch}
-\title{Format Catches from Long to Wide}
+\title{Format catches from long to wide}
 \usage{
 formatCatch(catch, strat, valuename = "catch")
 }
 \arguments{
 \item{catch}{A data frame with at least a column specifying
 the year the catches took place (e.g., Year), a column for
-each of the variables specified in strat, and a column that holds
-the measured catches specified using the \code{valuename} argument.}
+variable(s) specified in strat, and a column that holds
+the measured catches named (i.e., \code{catch[, valuename]}).}
 
 \item{strat}{A vector of column names to stratify the output over.
 For example, if you wish to summarize by ageing method, then the argument
@@ -20,11 +20,12 @@ Or if you want to look at fleets and gear, then use
 todo: deprecate defaults}
 
 \item{valuename}{The column name that contains the
-catch values in \code{catch}}
+catch values in the data frame \code{catch}.}
 }
 \description{
-Transform a long data frame of catches to a wide data frame.
-The colnames of the wide data frame will be in the format
-needed for the statification of stage-2 expansions of
-composition data, i.e., \code{getExpansion_2}.
+Transform a long data frame of catches to a wide data frame
+using \link[stats:reshape]{stats::reshape}.
+The column names of the wide data frame will be in the format
+needed for the stratification of stage-2 expansions of
+composition data, i.e., \link{getExpansion_2}.
 }

@@ -53,7 +53,6 @@ getState <- function (Pdata,
       "\ncould be assigned and were labeled as 'UNK'.")
     write.table(table(Pdata[, "state"]),
       col.names = FALSE, row.names = FALSE)
-    message("\n")
   } # End if verbose
 
   return(Pdata)
