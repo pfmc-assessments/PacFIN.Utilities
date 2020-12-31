@@ -9,8 +9,6 @@
 #'
 #' @author Andi Stephens
 #'
-#' @seealso \code{\link{Stratify}}
-#'
 #' @param Pdata A cleaned PacFIN dataframe with column "stratification" appended.
 #' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
 #' @param Units The units of the \code{Catch} data frame, see

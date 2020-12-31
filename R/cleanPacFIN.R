@@ -87,7 +87,7 @@
 #' stratifying the data according to the particulars of an assessment.
 #' }
 #'
-#' @seealso \code{\link{Stratify}}, \code{\link{getState}}, \code{\link{getSeason}}
+#' @seealso \code{\link{getState}}, \code{\link{getSeason}}
 #'
 #' @author Andi Stephens
 #' @examples
@@ -340,8 +340,8 @@ cleanPacFIN <- function(
 
   # Report removals
   if (verbose) {
-    message("\ncleanPacFIN Report")
-    message("N records, N remaining if CLEAN:\n  ",
+    message("cleanPacFIN Report")
+    message("N records, N remaining if CLEAN: ",
       NROW(Pdata), ", ", sum(bad[, "keep"]))
     message("N not given a state (keep_states): ",
       sum(!bad[, "goodstate"]))
@@ -358,13 +358,13 @@ cleanPacFIN <- function(
       sum(!bad[, "goodsmeth"]))
     message("N with SAMPLE_NO of NA: ",
       sum(!bad[, "goodsno"]))
-    message("N with no usable length, age, or length and age:\n  ",
+    message("N with no usable length, age, or length and age: ",
       sum(is.na(Pdata$length)), ", ",
       sum(is.na(Pdata$age)), ", ",
       sum(is.na(Pdata$length) | is.na(Pdata$age))
       )
     message("N sample weights not available for OR or CA\n  ",
-      "(note these are not removed with CLEAN):\n  ",
+      "(note these are not removed with CLEAN): ",
       sum(ORsw), ", ", sum(CAsw))
   }
 

@@ -83,9 +83,6 @@ each fish represents only itself.}
 }
 }
 
-\seealso{
-\code{\link{Stratify}}
-}
 \author{
 Andi Stephens
 }

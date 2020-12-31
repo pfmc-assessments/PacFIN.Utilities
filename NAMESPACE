@@ -2,7 +2,6 @@
 
 export(PullBDS.PacFIN)
 export(PullCatch.PacFIN)
-export(Stratify)
 export(capValues)
 export(checkINPFC)
 export(checkLenAge)

@@ -142,7 +142,7 @@ Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH
 NROW(XMPL.BDS) - NROW(Pdata)
 }
 \seealso{
-\code{\link{Stratify}}, \code{\link{getState}}, \code{\link{getSeason}}
+\code{\link{getState}}, \code{\link{getSeason}}
 }
 \author{
 Andi Stephens

@@ -24,8 +24,7 @@ Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
 }
 }
 \seealso{
-\code{\link{cleanPacFIN}}, \code{\link{Stratify}},
-\code{\link{getGearGroup}}.
+\code{\link{cleanPacFIN}}, \code{\link{getGearGroup}}.
 }
 \author{
 Andi Stephens, Kelli Faye Johnson

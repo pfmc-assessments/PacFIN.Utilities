@@ -17,8 +17,7 @@
 #' 
 #' @export
 #'
-#' @seealso \code{\link{cleanPacFIN}}, \code{\link{Stratify}},
-#' \code{\link{getGearGroup}}.
+#' @seealso \code{\link{cleanPacFIN}}, \code{\link{getGearGroup}}.
 #' 
 #############################################################################
 

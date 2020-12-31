@@ -58,9 +58,8 @@ console.
 \section{Optional functions}{
 
 \tabular{lcl}{
-\code{\link{combineCalCOM}}\tab\tab For combinining PacFIN and CalCOM data\cr
+\code{\link{combineCalCOM}}\tab\tab For combining PacFIN and CalCOM data\cr
 \code{\link{getSeason}}\tab\tab For treating data from seasonal fisheries, such as Petrale.\cr
-\code{\link{Stratify}}\tab\tab Reduces the values in a data column to an encoded or named subset.\cr
 }
 }
 
