@@ -254,7 +254,8 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     STRAT = AGE-1
 
     KeyNames = c(Names[1:STRAT])
-    inComps$key = paste.col(inComps[,KeyNames])
+    inComps$key = apply(inComps[,KeyNames, drop = FALSE],
+      1, paste, collapse = " ")
 
     # matrix will be Ages, Ntows, Nsamps.
     # it gets re-ordered later.
@@ -269,7 +270,8 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
       STRAT = AGE-2
 
       KeyNames = c(Names[1:STRAT], "lbin")
-      inComps$key = paste.col(inComps[,KeyNames])
+      inComps$key = apply(inComps[,KeyNames, drop = FALSE],
+        1, paste, collapse = " ")
 
       # matrix will be Ages, LbinLo, LbinHi, Ntows, Nsamps.
       # it gets re-ordered later.
@@ -286,7 +288,8 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     STRAT = LEN-1
 
     KeyNames = c(Names[1:STRAT])
-    inComps$key = paste.col(inComps[,KeyNames])
+    inComps$key = apply(inComps[,KeyNames, drop = FALSE],
+      1, paste, collapse = " ")
 
     # matrix will have Lbins, Ntows, Nsamps
     # it gets re-ordered later.
