@@ -6,8 +6,6 @@
 \usage{
 EF1_Denominator(
   Pdata,
-  Indiv_Wgts = TRUE,
-  calcWL = FALSE,
   fa = 2e-06,
   fb = 3.5,
   ma = 2e-06,
@@ -24,12 +22,6 @@ originating from the
 Pacific Fishieries Information Network (PacFIN) data warehouse,
 which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
-
-\item{Indiv_Wgts}{A logical value, controlling whether or not individual
-fish weights should be generated using the specified weight-length relationship.}
-
-\item{calcWL}{A logical value specifying whether or not to calculate the
-weight-length parameters from the supplied data.}
 
 \item{fa}{Female specific weight length coefficient.}
 

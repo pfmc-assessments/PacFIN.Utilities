@@ -22,9 +22,6 @@
 #' }
 #'
 #' @template Pdata
-#' @template Indiv_Wgts
-#' @param calcWL A logical value specifying whether or not to calculate the
-#' weight-length parameters from the supplied data.
 #' @template weightlengthparams
 #' @template verbose
 #' @param plot Create plots.  Default:  FALSE
@@ -57,15 +54,12 @@
 #
 ###########################################################################
 
-EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
-                            fa = 2e-06, fb = 3.5, 
-                            ma = 2e-06, mb = 3.5, 
-                            ua = 2e-06, ub = 3.5, 
+EF1_Denominator = function( Pdata,
+                            fa = 2e-06, fb = 3.5,
+                            ma = 2e-06, mb = 3.5,
+                            ua = 2e-06, ub = 3.5,
                             verbose = FALSE,
-                            plot = FALSE) 
-{
-  if (!Indiv_Wgts) stop("EF1_Denominator no longer works without ",
-    " parameters for the weight-length relationship.")
+                            plot = FALSE) {
 
   sumNA <- function(x) {
     out <- sum(x, na.rm = TRUE)
@@ -87,7 +81,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
   Pdata$Wt_Sampled     = NA
   Pdata$Wt_Method      = NA
 
-  if ( Indiv_Wgts == TRUE & verbose) {
+  if (verbose) {
 
     cat("\nIndividual weights will be generated from the following values:\n\n")
     cat(" Females:", fa,fb, "\n",
@@ -111,7 +105,7 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
   if (!"UNK_NUM" %in% colnames(Pdata)) {
     Pdata$UNK_NUM <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
     FUN = function(x) sumNA(x %in% c("U", "H")))
-  }  
+  }
   if (!"UNK_WT" %in% colnames(Pdata)) stop("Must get a newer ",
     "version of the bds data to work with this version of PacFIN.Utilities.")
   if (!"UNK_WGT" %in% colnames(Pdata)) Pdata$UNK_WGT <- Pdata$UNK_WT
@@ -170,52 +164,30 @@ EF1_Denominator = function( Pdata, Indiv_Wgts=TRUE, calcWL = FALSE,
     }
   }
 
-  #### Washington b/c there is no other method to find the sample weight.
-  # Only if there are individual weight factor and coefficients available
+  #### Sum of predicted fish weight per sample based on sex and length (mm)
+  # Washington b/c there is no other method to find the sample weight.
+  Pdata$LW_Calc_Wt <- getweight(Pdata$length, Pdata$SEX,
+    pars = data.frame(
+      "A" = c("females" = fa, "males" = ma, "all" = ua),
+      "B" = c("females" = fb, "males" = mb, "all" = ub)))
 
-  if (Indiv_Wgts) {
+  bestweight <- ifelse(is.na(Pdata$FISH_WEIGHT),
+    Pdata$LW_Calc_Wt, Pdata$FISH_WEIGHT)
+  Pdata$meanfishweight <- ave(bestweight, Pdata$SAMPLE_NO,
+    FUN = function(x) mean(x, na.rm = TRUE))
+  bestweight[is.na(bestweight)] <- Pdata$meanfishweight[is.na(bestweight)]
+  Pdata$Wt_Sampled_3 <- ave(bestweight, Pdata$SAMPLE_NO,
+    FUN = sumNA)
+  Wt_Sampled_3_L <- ave(ifelse(!is.na(Pdata$length), bestweight, 0),
+    Pdata$SAMPLE_NO, FUN = sumNA)
+  Wt_Sampled_3_A <- ave(ifelse(!is.na(Pdata$age), bestweight, 0),
+    Pdata$SAMPLE_NO, FUN = sumNA)
 
-    ############################################################################
-    #
-    # Create a predicted fish weight based on sex and length
-    # (use mm for fitted regression coefficients!)
-    # these will be summed to give the sample weight
-    #
-    ############################################################################
-
-    # if (calcWL) wlfish <- getWLpars(Pdata, verbose = verbose)
-    Pdata$LW_Calc_Wt <- getweight(Pdata$length, Pdata$SEX, 
-      pars = data.frame(
-        "A" = c("females" = fa, "males" = ma, "all" = ua),
-        "B" = c("females" = fb, "males" = mb, "all" = ub)))
-    # todo: create a switch to turn on use of fishery weight length relationship
-    # pars could also equal wlfish if no parameters and Indiv_Wfts is TRUE
-
-    bestweight <- ifelse(is.na(Pdata$FISH_WEIGHT),
-      Pdata$LW_Calc_Wt, Pdata$FISH_WEIGHT)
-    Pdata$meanfishweight <- ave(bestweight, Pdata$SAMPLE_NO,
-      FUN = function(x) mean(x, na.rm = TRUE))
-    bestweight[is.na(bestweight)] <- Pdata$meanfishweight[is.na(bestweight)]
-    Pdata$Wt_Sampled_3 <- ave(bestweight, Pdata$SAMPLE_NO,
-      FUN = sumNA)
-    Wt_Sampled_3_L <- ave(ifelse(!is.na(Pdata$length), bestweight, 0),
-      Pdata$SAMPLE_NO, FUN = sumNA)
-    Wt_Sampled_3_A <- ave(ifelse(!is.na(Pdata$age), bestweight, 0),
-      Pdata$SAMPLE_NO, FUN = sumNA)
-    
-    if (any(is.na(Pdata$Wt_Sampled_3[Pdata$state == "WA" & !is.na(Pdata$length)]))) {
-      warning("Some fish",
-          " from WA don't have an empirical or estimated weight,\n",
-          "and thus, they are not included in the first expansion.")
-    }
-  } else {
-
-    # Need for summary and boxplot
-    Pdata$LW_Calc_Wt = NA
-    Pdata$Wt_Sampled_3 = NA
-    Pdata$meanfishweight = NA
-
-  } # End if-else Indiv_Wgts
+  if (any(is.na(Pdata$Wt_Sampled_3[Pdata$state == "WA" & !is.na(Pdata$length)]))) {
+    warning("Some fish",
+        " from WA don't have an empirical or estimated weight,\n",
+        "and thus, they are not included in the first expansion.")
+  }
   # todo: calculate mean fish weight from sum of UNK_WT + FEMALES_WGT + MALE_WGT
   # or SPECIES_WGT by finding the number of fish that went into that number
   # and dividing.

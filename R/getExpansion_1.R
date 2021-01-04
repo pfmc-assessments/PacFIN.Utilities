@@ -25,7 +25,6 @@
 #' @template Pdata
 #' @template maxExp
 #' @param Exp_WA Default FALSE.  If TRUE, expand the WA samples.
-#' @template Indiv_Wgts
 #' @template weightlengthparams
 #' @template verbose
 #' @template plot
@@ -35,7 +34,7 @@
 #' Expansion_Factor_1 are available for setting the Final_Expansion_Factor.
 #'
 getExpansion_1 <- function(Pdata, maxExp = 0.95,
-  Indiv_Wgts = TRUE, Exp_WA = TRUE,
+  Exp_WA = TRUE,
   fa = NA, fb = NA, ma = NA, mb = NA, ua = NA, ub = NA,
   verbose = FALSE, plot = FALSE) {
 
@@ -60,7 +59,7 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
     } else plot.denom <- FALSE
   }
 
-  Pdata <- EF1_Denominator(Pdata, Indiv_Wgts = TRUE, calcWL = FALSE,
+  Pdata <- EF1_Denominator(Pdata,
     fa = fa, fb = fb, ma = ma, mb = mb, ua = ua, ub = ub,
     verbose = verbose, plot = plot.denom)
 

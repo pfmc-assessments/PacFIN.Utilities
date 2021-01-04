@@ -7,7 +7,6 @@
 getExpansion_1(
   Pdata,
   maxExp = 0.95,
-  Indiv_Wgts = TRUE,
   Exp_WA = TRUE,
   fa = NA,
   fb = NA,
@@ -30,9 +29,6 @@ which originated in 2014. Data are pulled using sql calls, see
 (either a number or a quantile) for building expansions.
 Typically, the default is 0.95.
 Set \code{maxExp = Inf} to see largest values.}
-
-\item{Indiv_Wgts}{A logical value, controlling whether or not individual
-fish weights should be generated using the specified weight-length relationship.}
 
 \item{Exp_WA}{Default FALSE.  If TRUE, expand the WA samples.}
 
