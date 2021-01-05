@@ -1,7 +1,7 @@
-#' Expand PacFIN Samples to Catch
+#' Expand PacFIN trip samples to catches
 #'
 #' The second-stage expansion calculates the
-#' per-year, per-trip, per-stratum total catch
+#' per-year and stratification (e.g., gear group) total catch
 #' divided by the sampled catch and appends it to the input data as
 #' \code{Expansion_Factor_2}.
 #'
@@ -9,7 +9,7 @@
 #'
 #' @author Andi Stephens
 #'
-#' @param Pdata A cleaned PacFIN dataframe with column "stratification" appended.
+#' @template Pdata
 #' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
 #' @param Units The units of the \code{Catch} data frame, see
 #' \code{measurements::conv_unit_options[["mass"]]}
@@ -26,31 +26,21 @@
 #' such that it can be used within Stock Synthesis.
 #' todo: remove this input argument
 #' @template maxExp
-#' 
-#' @details
-#' The workflow requires that \code{getExpansion_2} is run after
-#' \code{\link{getExpansion_1}()} using the same data frame.
-#' The input PacFIN dataset must contain a column called \code{stratification},
-#' a character-valued user-designed stratification of the data whose values match the
-#' column-names in the Catch dataset.
-#' 
-#' For example, if you've set \code{stratification} so that:
-#' 
-#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$state == CA ] = "S_TWL"}
-#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$state != CA ] = "N_TWL"}
-#' 
-#' then the columns in Catch must be named "Year", "S_TWL" and "N_TWL"
-#' 
-#' or if you used:
+#' @param stratification.cols A vector of column names in `Pdata` that you want
+#' to use as strata. These will match the way in which the catches are transformed
+#' from long to wide prior to inputting them into this function. If you leave
+#' this argument empty, then `Pdata` must already have a column named
+#' `stratification`. The function will look in the column names of the `Catch`
+#' data to determine the appropriate separator to use between columns when
+#' pasting the words together, which is done using [apply] and [paste].
+#' Historically, it was mandatory to make this column yourself, but in 2021,
+#' this input argument was added to reduce the number of extraneous calls that
+#' were needed between functions.
+#' You can use as many levels of stratification as you want except year because
+#' it is already included in the call to [stats::aggregate].
 #'
-#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$season == 1 ] = "WINTER_TWL"} 
-#' \code{   Pdata$stratification[ Pdata$geargroup == "TWL" & Pdata$season == 2 ] = "SUMMER_TWL"}
-#' 
-#' then the columns in Catch must be named "Year", "WINTER_TWL", and "SUMMER_TWL".
-#' 
-#' You can use as many levels of stratification in your data and catch as you want,
-#' as long as you encode those levels in \code{stratification} and in the column names
-#' in your data.  \strong{Year} is automatically included as a level of stratification.
+#' @seealso `getExpansion_2` is ran after [getExpansion_1] using the
+#' returned data frame.
 #'
 #' @template secExpansion
 #'
@@ -60,17 +50,16 @@
 #' @import graphics
 #' @import stats
 #' @import utils
-#' 
-#' 
-#' 
-# Calculate the stratified sampled biomass, All_Trips_Sampled_Lbs by summing
-# Trip_Sampled_Lbs. Calculate the stratified catch by summing MT * 2204.  The
-# per-trip, per-stratum Expansion_Factor_2 is the catch / sampled catch.
-#
-#############################################################################
-
+#'
+#' @details
+#' Calculate the stratified sampled biomass,
+#' All_Trips_Sampled_Lbs by summing
+#' Trip_Sampled_Lbs. Calculate the stratified catch by summing MT * 2204.  The
+#' per-trip, per-stratum Expansion_Factor_2 is the catch / sampled catch.
+#'
 getExpansion_2 <- function(Pdata, Catch,
-  Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95) {
+  Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95,
+  stratification.cols) {
 
   # Check Unit input
   Units <- match.arg(Units, several.ok = FALSE,
@@ -93,17 +82,23 @@ getExpansion_2 <- function(Pdata, Catch,
 
   if (length(Pdata$Trip_Sampled_Lbs) == 0) {
 
-    stop("Please run getExpansion_1 first\n\n")
+    stop("Please run getExpansion_1 first")
 
   } # End if
 
 
-  # Pdata must have a "stratification" column encoding gear.  
-  
+  # Pdata must have a "stratification" column
   if (length(Pdata$stratification) == 0) {
-
-    stop("Input data must have stratification encoded in column 'stratification'\n\n")
-
+    if (!missing(stratification.cols)) {
+      if (all(stratification.cols %in% colnames(Pdata))) {
+        separate <- unique(gsub("^[a-zA-Z]+(\\s*[[:punct:]]\\s*)[a-zA-Z]+$",
+          "\\1", colnames(Catch)[-1]))
+        Pdata[, "stratification"] <- apply(Pdata[, stratification.cols],
+          1, paste, collapse = separate)
+      } else {
+        stop("Pdata must have stratification column or provide stratification.cols")
+      }
+    }
   } # End if
 
   ############################################################################

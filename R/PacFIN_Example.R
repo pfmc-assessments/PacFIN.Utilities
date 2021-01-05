@@ -42,14 +42,11 @@
 #'   keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
 #'   CLEAN = FALSE)
 #'
-#' #### Stratification
-#' Pdata[, "stratification"] <- paste(sep = ".",
-#'   Pdata[ , "state"], Pdata[, "geargroup"])
-#'
 #' #### Expansions by type e.g., (LEN, AGE, AAL)
 #' # Length (LEN)
 #' test <- getExpansion_1(Pdata)
-#' test <- getExpansion_2(test, Catch.XMPL, Units = "MT")
+#' test <- getExpansion_2(test, Catch.XMPL, Units = "MT",
+#'   stratification.cols = c("state", "geargroup"))
 #' test$Final_Sample_Size <- capValues(test$Expansion_Factor_1_L * test$Expansion_Factor_2)
 #' comps <- getComps(test[!is.na(test$lengthcm), ], Comps = "LEN")
 #' comps <- doSexRatio(comps)
