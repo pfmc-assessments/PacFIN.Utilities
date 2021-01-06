@@ -2,12 +2,12 @@
 % Please edit documentation in R/getWLpars.R
 \name{getWLpars}
 \alias{getWLpars}
-\title{Calculate Weight-Length Relationship}
+\title{Calculate weight-length relationship parameters}
 \usage{
 getWLpars(data, verbose = FALSE)
 }
 \arguments{
-\item{data}{A data frame containing empircal weights and lengths
+\item{data}{A data frame containing empirical weights and lengths
 from sampled fish.}
 
 \item{verbose}{A logical value specifying if output should be written
@@ -25,11 +25,6 @@ control file.
 \description{
 Estimate parameters of the weight-length relationship for each
 sex and all sexes combined, where the latter includes unsexed fish.
-}
-\details{
-todo: Return model diagnostics if verbose. This will entail
-saving each model in an object and then extracting the pars
-via getline rather than doing it all in one step.
 }
 \author{
 Kelli Faye Johnson

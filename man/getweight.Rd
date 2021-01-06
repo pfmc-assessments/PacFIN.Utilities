@@ -2,9 +2,9 @@
 % Please edit documentation in R/getweight.R
 \name{getweight}
 \alias{getweight}
-\title{Calculate Weight From Parameters}
+\title{Calculate weight from length and the weight-length relationship}
 \usage{
-getweight(length, sex, pars)
+getweight(length, sex, pars, unit.out = c("lb", "kg"))
 }
 \arguments{
 \item{length}{A vector of fish lengths in mm.}
@@ -17,16 +17,34 @@ relationship as determined from empirical data. The data frame
 must have columns of \code{'A'} and \code{'B'}, as well as
 rows named \code{'U'}, at a minimum, \code{'F'}, and \code{'M'}.
 The output from \code{\link{getWLpars}} is formatted correctly as is.}
+
+\item{unit.out}{The desired units you wish the output to be in. See the
+function call for a list of default units available within the function.
+For example, \code{"lb"} would return the units of pounds.}
 }
 \value{
 A vector of weights determined from lengths and weight-length
 parameters input to the function.
-Weights are in pounds.
+Weights are in the same units used to calculate things, i.e., kg.
 }
 \description{
-Estimate fish weights from sex-specific, or not, parameters
-estimated, or formated the same way, as that returned from
-\code{\link{getWLpars}}.
+Estimate fish weights from potentially sex-specific weight-length
+relationship parameters returned from \link{getWLpars}.
+}
+\examples{
+data(XMPL.BDS)
+lfish <- 1:100; sfish <- rep("U", length(lfish))
+ans <- getweight(length = lfish, sex = sfish,
+  pars = getWLpars(cleanPacFIN(XMPL.BDS, CLEAN = FALSE,
+  keep_length_type = "F", keep_missing_length = FALSE)))
+testthat::expect_equivalent(ans[1], 3.625679e-08)
+\dontrun{
+plotWL(length = lfish, sex = sfish,
+weight = mapply(rnorm, mean = ans, MoreArgs = list(n = 1, sd = 0.001)),
+weight.calc = ans
+)
+}
+
 }
 \author{
 Kelli Faye Johnson

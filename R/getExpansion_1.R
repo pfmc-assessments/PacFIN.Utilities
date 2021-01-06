@@ -50,12 +50,11 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
   }
 
   if (is.character(plot)) {
-    fn <- gsub(".png", "", plot)
-    plot.denom <- paste0(fn, "_denom.png")
+    plot.denom <- ifelse(grepl("png", tools::file_ext(plot)),
+      plot, dirname(plot))
   } else {
     if (plot == TRUE) {
       plot.denom <- TRUE
-      grDevices::dev.new()
     } else plot.denom <- FALSE
   }
 
@@ -66,7 +65,8 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
   # Get Trip_Sampled_Lbs
   if (is.character(plot)) {
     fn <- gsub(".png", "", plot)
-    plot.num <- paste0(fn, "_numer.png")
+    plot.num <- file.path(ifelse(!grepl("png", tools::file_ext(plot)),
+      plot, dirname(plot)), "PacFIN_exp1_numer.png")
   } else {
     if (plot == TRUE) {
       plot.num <- TRUE
@@ -118,7 +118,8 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
   if (plot != FALSE){
 
     if (is.character(plot)) {
-      grDevices::png(plot)
+      png(file.path(ifelse(!grepl("png", tools::file_ext(plot)),
+        plot, dirname(plot)), "PacFIN_exp1.png"))
     } else {
       grDevices::dev.new()
     }
