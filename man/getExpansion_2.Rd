@@ -10,7 +10,9 @@ getExpansion_2(
   Units = c("MT", "LB"),
   Convert = NULL,
   maxExp = 0.95,
-  stratification.cols
+  stratification.cols,
+  verbose = TRUE,
+  savedir = getwd()
 )
 }
 \arguments{
@@ -55,6 +57,15 @@ this input argument was added to reduce the number of extraneous calls that
 were needed between functions.
 You can use as many levels of stratification as you want except year because
 it is already included in the call to \link[stats:aggregate]{stats::aggregate}.}
+
+\item{verbose}{A logical value specifying if output should be written
+to the screen or not. Good for testing and exploring your data but
+can be turned off when output indicates errors. The default value
+is \code{TRUE}.}
+
+\item{savedir}{A file path to the directory where the results will be saved.
+The default is the current working directory.
+The path can be relative or absolute.}
 }
 \value{
 The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
@@ -66,10 +77,13 @@ divided by the sampled catch and appends it to the input data as
 \code{Expansion_Factor_2}.
 }
 \details{
-Calculate the stratified sampled biomass,
-All_Trips_Sampled_Lbs by summing
-Trip_Sampled_Lbs. Calculate the stratified catch by summing MT * 2204.  The
-per-trip, per-stratum Expansion_Factor_2 is the catch / sampled catch.
+Find the catch for each year and grouping in \code{Catch} and divide by the
+pounds of fish that were collected for sampling for that same year and
+grouping. Sampled biomass is stored in \code{All_Trips_Sampled_Lbs}, which is
+the sum of Trip_Sampled_Lbs across sample numbers.
+Catches were already stratified (i.e., summed by group placed in a column
+for a given year or row). Catches are converted to pounds prior to dividing.
+Thus, per-stratum Expansion_Factor_2 is the catch / sampled catch.
 }
 \section{Expansion}{
 
