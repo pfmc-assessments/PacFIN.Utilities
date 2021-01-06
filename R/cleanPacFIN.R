@@ -158,7 +158,7 @@ cleanPacFIN <- function(
   Pdata$fishyr <- Pdata$SAMPLE_YEAR
   Pdata$year <- Pdata$SAMPLE_YEAR
   if (!missing(savedir)) {
-    png(filename = file.path(savedir, "cleanPacFIN_states.png"))
+    png(filename = file.path(savedir, "PacFIN_comp_season.png"))
     on.exit(dev.off(), add = TRUE)
   }
   Pdata <- getSeason(Pdata, verbose = verbose,
@@ -369,23 +369,7 @@ cleanPacFIN <- function(
   }
 
   if (!missing(savedir)) {
-    savedir <- normalizePath(savedir)
-    gg <- ggplot2::ggplot(data = Pdata,
-      ggplot2::aes(x = .data[["INPFC_AREA"]],
-      fill = factor(.data[["state"]]))) +
-      ggplot2::geom_bar() + ggplot2::theme_bw() +
-      ggplot2::labs(fill = "State", x = "INPFC area", y = "Count")
-    ggplot2::ggsave(gg,
-      file = file.path(savedir, "cleanPacFIN_INPFC.png"),
-      width = 6, height = 6, dpi = 500)
-    gg <- ggplot2::ggplot(data = Pdata,
-      ggplot2::aes(x = .data[["lengthcm"]],
-      y = .data[["age"]])) +
-      ggplot2::geom_point() + ggplot2::theme_bw() +
-      ggplot2::labs(x = "Length (cm)", y = "Age (year)")
-    suppressWarnings(ggplot2::ggsave(gg,
-      file = file.path(savedir, "cleanPacFIN_lengthvage.png"),
-      width = 6, height = 6, dpi = 500))
+    plotCleaned(Pdata, savedir = savedir)
   }
 
   Pdata[, "CLEAN"] <- bad[, "keep"]

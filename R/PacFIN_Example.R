@@ -40,7 +40,7 @@
 #' Pdata <- cleanPacFIN(XMPL.BDS,
 #'   keep_gears = unique(gsub("[A-Z]+\\.", "", colnames(Catch.XMPL)[-1])),
 #'   keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
-#'   CLEAN = FALSE)
+#'   CLEAN = FALSE, savedir = getwd())
 #'
 #' #### Expansions by type e.g., (LEN, AGE, AAL)
 #' # Length (LEN)
