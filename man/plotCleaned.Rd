@@ -2,30 +2,42 @@
 % Please edit documentation in R/plotCleaned.R
 \name{plotCleaned}
 \alias{plotCleaned}
-\title{Plot cleaned fishery age or length composition data.}
+\title{Plot cleaned fishery age- or length-composition data.}
 \usage{
-plotCleaned(Pdata, length = TRUE)
+plotCleaned(Pdata, savedir = getwd())
 }
 \arguments{
-\item{Pdata}{A matrix of age or length data returned from
-\code{\link{cleanPacFIN}}.}
+\item{Pdata}{A data frame of biological samples
+originating from the
+Pacific Fishieries Information Network (PacFIN) data warehouse,
+which originated in 2014. Data are pulled using sql calls, see
+\code{\link{PullBDS.PacFIN}()}.}
 
-\item{length}{A logical value defining whether or not \code{Pdata} is length-
-or age-composition data.}
+\item{savedir}{A file path to the directory where the results will be saved.
+The default is the current working directory.
+The path can be relative or absolute.}
 }
 \value{
-A plot of either 3 x 2 or 2 x 2 depending on whether or not unique
-  gear groups exist. Left column are plots of sample size by type and right
-  column is boxplots of either length or age and depth by year.
+The following figures are saved to \code{savedir}:
+\itemize{
+\item PacFIN_comp_Nbystate.png
+\item PacFIN_comp_distributions.png
+\item PacFIN_comp_NbyGRID.png
+\item PacFIN_comp_depth.png
+\item PacFIN_comp_geargroup.png
+\item PacFIN_comp_INPFC.png
+\item PacFIN_comp_lengthvage.png
+}
 }
 \description{
-\subsection{Workflow}{
-Can be used at any time after \code{\link{cleanPacFIN}}, has been run.
-}
+Save several figures to your computer that summarize the composition
+samples that are available for the given species. None of the figures
+are meant to be included in the stock assessment document, but rather,
+are for exploring the data.
 }
 \seealso{
-\code{\link{cleanPacFIN}}, \code{\link{Stratify}},
-\code{\link{getGearGroup}}.
+This function is called by \link{cleanPacFIN} and heavily
+relies on \link{getGearGroup} to create gear categories.
 }
 \author{
 Andi Stephens, Kelli Faye Johnson

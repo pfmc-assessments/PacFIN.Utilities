@@ -21,12 +21,12 @@ find.matching.rows(file, table, findex = 1, tindex = 1, tcol = 2, round. = T)
 }
 \description{
 Takes two tables with a shared primary key, and
-  returns the rows of the second table for which the
-  keys match those of the first.
+returns the rows of the second table for which the
+keys match those of the first.
 }
 \details{
 NOTE:  The way this is written assumes that the second table is a
-        superset of the first (i.e., that each value is matched).
+superset of the first (i.e., that each value is matched).
 }
 \seealso{
 A sub-function of \code{\link{getExpansion_1}}

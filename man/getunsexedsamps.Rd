@@ -21,7 +21,7 @@ the \code{good} argument. The returned vector will be of the same
 length as the supplied vectors.
 }
 \description{
-Identifiers that have female and male samples will be returned 
+Identifiers that have female and male samples will be returned
 as NA and only identifiers that had unsexed fish will be provided.
 }
 \author{

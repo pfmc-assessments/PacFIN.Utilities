@@ -2,9 +2,9 @@
 % Please edit documentation in R/getGearGroup.R
 \name{getGearGroup}
 \alias{getGearGroup}
-\title{Create column for gears according to PacFIN gears}
+\title{Create column for gear called \code{geargroup} according to PacFIN gears}
 \usage{
-getGearGroup(Pdata, spp = NULL, verbose = FALSE)
+getGearGroup(Pdata, spp = NULL, verbose = TRUE)
 }
 \arguments{
 \item{Pdata}{A data frame of biological samples
@@ -13,9 +13,9 @@ Pacific Fishieries Information Network (PacFIN) data warehouse,
 which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
-\item{spp}{A character string giving the species name to 
+\item{spp}{A character string giving the species name to
 ensure that the methods are species specific. Leave \code{NULL}
-if generic methods work for your species. 
+if generic methods work for your species.
 Currently, sablefish is the only species with species-specific code.}
 
 \item{verbose}{A logical value specifying if output should be written
@@ -24,23 +24,24 @@ can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
 }
 \value{
-A modified \code{data.frame} where an additional column labeled
-  \code{geargroup} is added to \code{Pdata}. No original columns are modified
-  in the process.
+A modified data frame where an additional column labeled
+\code{geargroup} is added to \code{Pdata}. No original columns are modified
+in the process.
 }
 \description{
-\subsection{Workflow}{
-\code{getGearGroup} is run by \code{\link{cleanPacFIN}} and users shouldn't need
-to worry about it.
-}
 Data from the PacFIN
-[gear table](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
+\href{http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt}{gear table}
 is used to create a column in \code{Pdata} called \code{geargroup}, where
 \code{Pdata$GRID} is recoded to \code{geargroup} according to the gear table.
 }
-\details{
-GRIDS according to the table taken from
-  [gear table](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
+\examples{
+ex <- getGearGroup(data.frame(GRID = c("PRT", "BMT", "FPT")), verbose = FALSE)
+table(ex)
+testthat::expect_equal(ex[ex[, "geargroup"] == "POT", "GRID"], "FPT")
+
+}
+\seealso{
+Reverse dependency of \link{cleanPacFIN}
 }
 \author{
 Andi Stephens

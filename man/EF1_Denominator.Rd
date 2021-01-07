@@ -6,8 +6,6 @@
 \usage{
 EF1_Denominator(
   Pdata,
-  Indiv_Wgts = TRUE,
-  calcWL = FALSE,
   fa = 2e-06,
   fb = 3.5,
   ma = 2e-06,
@@ -24,12 +22,6 @@ originating from the
 Pacific Fishieries Information Network (PacFIN) data warehouse,
 which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
-
-\item{Indiv_Wgts}{A logical value, controlling whether or not individual
-fish weights should be generated using the specified weight-length relationship.}
-
-\item{calcWL}{A logical value specifying whether or not to calculate the
-weight-length parameters from the supplied data.}
 
 \item{fa}{Female specific weight length coefficient.}
 
@@ -54,26 +46,26 @@ is \code{TRUE}.}
 Additional columns are added to \code{Pdata}:
 \itemize{
 \item Wt_Sampled_1: the sum of weights for male and female fish within the
-sample, this will ignore unsexed fish or hermaphrodites. 
+sample, this will ignore unsexed fish or hermaphrodites.
 \item Wt_Sampled_2: the species-specific sample weight only provided by
-  California because the cluster weight could include multiple species.
+California because the cluster weight could include multiple species.
 \item LW_Calc_Wt: individual weights predicted from the specified length-weight relationships.
-\item Wt_Sampled_3: The sum of empirical weights, for those fish within a 
+\item Wt_Sampled_3: The sum of empirical weights, for those fish within a
 sample where this information is available, and weights calculated from the
-length-weight relationship. This uses the empirical data if available and 
+length-weight relationship. This uses the empirical data if available and
 fills in with the expected weight.
 \item Wt_Sampled: the sample weight that will be used in subsequent analyses,
-  where this is preferentially the empirical weights; all NA values are 
-  subsequently filled in using Wt_Sampled_1, 
-  with NAs replaced with values from Wt_Sampled_2,
-  and NAs remaining replaced with values from Wt_Sampled_3.
+where this is preferentially the empirical weights; all NA values are
+subsequently filled in using Wt_Sampled_1,
+with NAs replaced with values from Wt_Sampled_2,
+and NAs remaining replaced with values from Wt_Sampled_3.
 \item Wt_Method: a \code{numeric} value starting with zero for empirical weights
-  and then denoting which method was used for \code{Wt_Sampled}.
+and then denoting which method was used for \code{Wt_Sampled}.
 }
 }
 \description{
 \subsection{Workflow}{
-\code{EF1_Denominator} is not run by the user.  It is a sub-function of 
+\code{EF1_Denominator} is not run by the user.  It is a sub-function of
 \code{\link{getExpansion_1}}
 }
 }
@@ -85,7 +77,7 @@ the hierarchical structure of:
 \enumerate{
 \item{\code{sum(Pdata$FEMALES_WGT + Pdata$MALES_WGT)} per unique \code{SAMPLE_NO}}
 \item{\code{sum(Pdata$SPECIES_WGT)} across all clusters in a sample, where the
-  species weight is determined from the \code{cluster_wt}}
+species weight is determined from the \code{cluster_wt}}
 \item{Calculate weights of males and females given the weight length relationship,
 if the length of a fish does not exist, then the median weight of all
 weighed fish in the sample is used.}

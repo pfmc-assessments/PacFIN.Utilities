@@ -36,24 +36,26 @@
 #' @examples
 #' #### Getting Started
 #' data(XMPL.BDS)
+#' # Catches are already in wide format, but the following goes long to wide
+#' # Catch.XMPL <- formatCatch(catch = rawcatch,
+#' #   strat = c("state", "geargroup"),
+#' #   valuename = "ROUND_WEIGHT_MTONS")
 #' data(Catch.XMPL)
 #' Pdata <- cleanPacFIN(XMPL.BDS,
 #'   keep_gears = unique(gsub("[A-Z]+\\.", "", colnames(Catch.XMPL)[-1])),
 #'   keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
-#'   CLEAN = FALSE)
-#'
-#' #### Stratification
-#' Pdata[, "stratification"] <- paste(sep = ".",
-#'   Pdata[ , "state"], Pdata[, "geargroup"])
+#'   CLEAN = FALSE, savedir = getwd())
 #'
 #' #### Expansions by type e.g., (LEN, AGE, AAL)
 #' # Length (LEN)
-#' test <- getExpansion_1(Pdata)
-#' test <- getExpansion_2(test, Catch.XMPL, Units = "MT")
+#' test <- getExpansion_1(Pdata[Pdata[, "geargroup"] %in% c("TWL", "HKL"),],
+#'   plot = getwd())
+#' test <- getExpansion_2(test, Catch.XMPL, Units = "MT",
+#'   stratification.cols = c("state", "geargroup"))
 #' test$Final_Sample_Size <- capValues(test$Expansion_Factor_1_L * test$Expansion_Factor_2)
 #' comps <- getComps(test[!is.na(test$lengthcm), ], Comps = "LEN")
-#' comps <- doSexRatio(comps)
-#' writeComps(comps)
+#' compsSR <- doSexRatio(comps)
+#' writeComps(compsSR)
 #' unlink("out.csv")
 
 NULL

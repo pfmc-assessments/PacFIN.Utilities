@@ -91,7 +91,7 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     WEIGHT_OF_FEMALES_LBS        FEMALES_WGT
     WEIGHT_OF_MALES_LBS          MALES_WGT
     WEIGHT_OF_LANDING_LBS        lwt_lbs
-    s.WEIGHT_OF_LANDING_LBS      RWT_LBS
+    WEIGHT_OF_LANDING_LBS        RWT_LBS
     ",
     quiet = TRUE, what = "", strip.white = TRUE),
     ncol = 2, byrow = TRUE)

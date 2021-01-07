@@ -26,13 +26,13 @@ as \code{png()} is used to save the plotting device.}
 }
 \value{
 A \code{Pdata} with additional columns, where
-  \code{Use_acs} is \code{all_cluster_sum} with NAs replaced by year-specific,
-  state-specific medians;
-  \code{Trip_Sampled_Lbs} is the sample weight in pounds;
+\code{Use_acs} is \code{all_cluster_sum} with NAs replaced by year-specific,
+state-specific medians;
+\code{Trip_Sampled_Lbs} is the sample weight in pounds;
 }
 \description{
 \subsection{Workflow}{
-\code{EF1_Numerator} is not run by the user.  It is a sub-function of 
+\code{EF1_Numerator} is not run by the user.  It is a sub-function of
 \code{\link{getExpansion_1}}
 }
 }
@@ -40,11 +40,11 @@ A \code{Pdata} with additional columns, where
 \code{Trip_Sampled_Lbs} is calculated differently for each state:
 \itemize{
 \item {California}{ = \code{Species_Percent_Sampled} *
-  \code{TOTAL_WGT};}
+\code{TOTAL_WGT};}
 \item {Oregon}{ = \code{Pdata$EXP_WT}.  Where missing,
-  use \code{Species_Percent_Sampled} * \code{TOTAL_WGT}, as for CA;}
+use \code{Species_Percent_Sampled} * \code{TOTAL_WGT}, as for CA;}
 \item {Washington}{ = \code{Pdata$RWT_LBS}, \code{Pdata$TOTAL_WGT},
-  median(RWT_LBS), or median(\code{Pdata$TOTAL_WGT});}
+median(RWT_LBS), or median(\code{Pdata$TOTAL_WGT});}
 \item {if all else fails}{ = use per-year, state-specific medians.}
 }
 }

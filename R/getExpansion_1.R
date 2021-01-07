@@ -25,7 +25,6 @@
 #' @template Pdata
 #' @template maxExp
 #' @param Exp_WA Default FALSE.  If TRUE, expand the WA samples.
-#' @template Indiv_Wgts
 #' @template weightlengthparams
 #' @template verbose
 #' @template plot
@@ -35,7 +34,7 @@
 #' Expansion_Factor_1 are available for setting the Final_Expansion_Factor.
 #'
 getExpansion_1 <- function(Pdata, maxExp = 0.95,
-  Indiv_Wgts = TRUE, Exp_WA = TRUE,
+  Exp_WA = TRUE,
   fa = NA, fb = NA, ma = NA, mb = NA, ua = NA, ub = NA,
   verbose = FALSE, plot = FALSE) {
 
@@ -51,23 +50,23 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
   }
 
   if (is.character(plot)) {
-    fn <- gsub(".png", "", plot)
-    plot.denom <- paste0(fn, "_denom.png")
+    plot.denom <- ifelse(grepl("png", tools::file_ext(plot)),
+      plot, dirname(plot))
   } else {
     if (plot == TRUE) {
       plot.denom <- TRUE
-      grDevices::dev.new()
     } else plot.denom <- FALSE
   }
 
-  Pdata <- EF1_Denominator(Pdata, Indiv_Wgts = TRUE, calcWL = FALSE,
+  Pdata <- EF1_Denominator(Pdata,
     fa = fa, fb = fb, ma = ma, mb = mb, ua = ua, ub = ub,
     verbose = verbose, plot = plot.denom)
 
   # Get Trip_Sampled_Lbs
   if (is.character(plot)) {
     fn <- gsub(".png", "", plot)
-    plot.num <- paste0(fn, "_numer.png")
+    plot.num <- file.path(ifelse(!grepl("png", tools::file_ext(plot)),
+      plot, dirname(plot)), "PacFIN_exp1_numer.png")
   } else {
     if (plot == TRUE) {
       plot.num <- TRUE
@@ -119,7 +118,8 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
   if (plot != FALSE){
 
     if (is.character(plot)) {
-      grDevices::png(plot)
+      png(file.path(ifelse(!grepl("png", tools::file_ext(plot)),
+        plot, dirname(plot)), "PacFIN_exp1.png"))
     } else {
       grDevices::dev.new()
     }

@@ -21,7 +21,7 @@ went into the calculation.
 }
 \description{
 Compute medians by categories with \code{NA} values omitted.
-This eliminates the need to match results back to the 
+This eliminates the need to match results back to the
 original data set using merge or indexing functions.
 }
 \examples{

@@ -20,15 +20,13 @@
 #' @author John R. Wallace, Kelli Faye Johnson
 #' @return RData frames are saved to the disk and the pulled data
 #' are returned as a data frame.
-#' \list{
-#'   \item{CompFT - pulled data}
-#'   \item{Research.Tribal.Catch - summary by year, state, and fleet; 
+#'   * CompFT - pulled data
+#'   * Research.Tribal.Catch - summary by year, state, and fleet; 
 #'     fleets are as follows:
 #'     limited entry (LE), open access (OA), treaty indian (TI),
-#'     research (R), and unknown (XX)}
-#'   \item{Catch.INPFC - catch by INPFC area}
-#'   \item{Catch.PSMFC - catch by PSMFC area}
-#' }
+#'     research (R), and unknown (XX)
+#'   * Catch.INPFC - catch by INPFC area
+#'   * Catch.PSMFC - catch by PSMFC area
 #'
 PullCatch.PacFIN <- function(pacfin_species_code,
   username = getUserName("PacFIN"), password, savedir = getwd(),

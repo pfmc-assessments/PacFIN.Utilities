@@ -84,10 +84,8 @@ Outliers are determined using standard deviations
 (i.e., \code{sdFactor} input parameter).
 }
 \examples{
-data(XMPL.BDS)
-pdata <- XMPL.BDS
-pdata <- cleanPacFIN(pdata, keep_length_type = "F")
-test <-  checkLenAge(pdata)
+example(cleanPacFIN)
+test <-  checkLenAge(Pdata)
 head(test)
 }
 \author{

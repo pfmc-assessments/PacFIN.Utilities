@@ -24,7 +24,7 @@ writeComps(
 \item{inComps}{A dataframe generated as described in Workflow, above.}
 
 \item{fname}{A filename with the appropriate extension,
-used to save the function output to the disk. 
+used to save the function output to the disk.
 For example, \code{LenComps.csv} or
 \code{file.path(getwd(), "SampleSize.csv")}.
 Full, relative, or simple paths are allowed because the argument is used as
@@ -86,32 +86,32 @@ before using \code{writeComps}.
 }
 \details{
 The structure of the input dataframe determines whether
-  \code{writeComps} produces age-, length-, or conditional-age-at-length-
-  composition data.
-  
-  Four sets of composition data are written to a single file specified
-  by \code{fname}.  These are:
-  \itemize{
-  \item{females followed by males}
-  \item{male data only}
-  \item{female data only}
-  \item{males and females recombined as unsexed fish}
-  }
-  
-  The output file is appended to, rather than overwritten, so you may
-  want to specify a new filename each time you generate a different
-  stratification or bin structure, e.g., "out.1.csv", "out.2.csv".
-  
-  Composition data are raw weights rather than proportions. Stock Synthesis
-  internally converts these to proportions.  The raw weights should be
-  examined for anomalies.
-  
-  To create proportions use \code{prop.table} on the columns
-  containing composition data.
+\code{writeComps} produces age-, length-, or conditional-age-at-length-
+composition data.
 
-  The columns in the output preceeding 'lengthcm' or 'age' are those that
-  were used in stratifying the data.
-  
+Four sets of composition data are written to a single file specified
+by \code{fname}.  These are:
+\itemize{
+\item{females followed by males}
+\item{male data only}
+\item{female data only}
+\item{males and females recombined as unsexed fish}
+}
+
+The output file is appended to, rather than overwritten, so you may
+want to specify a new filename each time you generate a different
+stratification or bin structure, e.g., "out.1.csv", "out.2.csv".
+
+Composition data are raw weights rather than proportions. Stock Synthesis
+internally converts these to proportions.  The raw weights should be
+examined for anomalies.
+
+To create proportions use \code{prop.table} on the columns
+containing composition data.
+
+The columns in the output preceeding 'lengthcm' or 'age' are those that
+were used in stratifying the data.
+
 \subsection{Reality Checks}{
 \itemize{
 \item{Set \code{verbose = TRUE} to follow progress}
@@ -119,9 +119,9 @@ The structure of the input dataframe determines whether
 \item{Examine the raw-weight output for anomalies}
 }}
 #' @return Appends data to the file given in \code{fname}.
- 
-  Conditionally returns a dataframe if the \code{out} argument
-  specifies the type of composition to return.
+
+Conditionally returns a dataframe if the \code{out} argument
+specifies the type of composition to return.
 }
 \seealso{
 \code{\link{getComps}}, \code{\link{doSexRatio}}

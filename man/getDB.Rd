@@ -19,6 +19,10 @@ getDB(
 computer. The default is \code{"PacFIN"} which will pull data from
 the Pacific Fisheries Information Network.}
 
+\item{username}{The username you would like to use to access data from
+\code{datasourcename}. The default is to generate \code{username}
+from your computer name.}
+
 \item{password}{Your password for the \code{datasourcename}.}
 
 \item{asis}{A logical, specifying whether or not to convert columns,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/PullBDS.PacFIN.R
 \name{PullBDS.PacFIN}
 \alias{PullBDS.PacFIN}
-\title{Pull Catch Data from PacFIN Database}
+\title{Pull biological data from PacFIN database}
 \usage{
 PullBDS.PacFIN(
   pacfin_species_code,
@@ -18,6 +18,10 @@ species code that you desire to pull data for. Known also as
 An example for sablefish would be
 \code{pacfin_species_code = "SABL"}.}
 
+\item{username}{The username you would like to use to access data from
+\code{datasourcename}. The default is to generate \code{username}
+from your computer name.}
+
 \item{password}{Your password for the \code{datasourcename}.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
@@ -25,12 +29,27 @@ The default is the current working directory.
 The path can be relative or absolute.}
 }
 \value{
-RData frames is saved to the disk and the pulled data
+RData frame is saved to the disk and the pulled data
 are returned as a data frame.
+The data frame is fairly raw in its form with only one column
+added, \code{all_cluster_sum}, which is the weight of all clusters sampled
+for a given sample number. Typically, \link{cleanPacFIN} will be used
+on the data frame after its retrieval.
 }
 \description{
-Pull Catch Data from the Comprehensive Fish Ticket table
+Pull biological data from the Comprehensive Biological Data Table
 in the PacFIN database.
+}
+\examples{
+\dontrun{
+# Enter password in place of xxx below
+mypw <- "xxx"
+pd <- PullBDS.PacFIN(pacfin_species_code = "POP", password = mypw)
+}
+
+}
+\seealso{
+\link{cleanPacFIN} to manipulate and subset the returned object.
 }
 \author{
 John R. Wallace, Kelli Faye Johnson

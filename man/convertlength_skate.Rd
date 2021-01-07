@@ -14,23 +14,23 @@ which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
 \item{returntype}{A character value from the list supplied that specifies
-the data you want returned. 
+the data you want returned.
 \itemize{
-  \item {\code{"all"}} {all lengths with the new estimates replacing 
-the input lengths} 
-  \item {\code{"estimated"}} {only the estimat lengths 
+\item {\code{"all"}} {all lengths with the new estimates replacing
+the input lengths}
+\item {\code{"estimated"}} {only the estimat lengths
 with all other lengths as NA such that the
 returned vector is the same length and the number of rows of the input data
 frame.}
 }}
 }
 \value{
-A vector of lengths. 
+A vector of lengths.
 See \code{returntype} for detailed information on what can be returned.
 }
 \description{
-Convert from disc and interspiracular width to length for skates, 
-Conversion parameters were derived from 
+Convert from disc and interspiracular width to length for skates,
+Conversion parameters were derived from
 West Coast Groundfish Bottom Trawl Survey data.
 }
 \author{

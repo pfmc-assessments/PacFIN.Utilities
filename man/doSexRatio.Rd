@@ -33,7 +33,7 @@ of F:M to assign the unsexed fish.}
 \value{
 Returns Comp data with unsexed fish now assigned sexes (the values for males and
 females in the comps have increased), however the original columns
-for unsexed fish remain unchanged.  The function that writes out the comps 
+for unsexed fish remain unchanged.  The function that writes out the comps
 \code{\link{writeComps}} sets these to zero.
 }
 \description{
@@ -43,8 +43,8 @@ doSexRatio determines gender for unsexed fish in Age or Length comps.
 Sex ratios are assigned after the data is stratified by \code{\link{getComps}}
 and before running \code{\link{writeComps}}.
 
-  \strong{If \code{\link{writeComps}} is run without running \code{doSexRatio}, all unsexed
-  fish will be discarded.}
+\strong{If \code{\link{writeComps}} is run without running \code{doSexRatio}, all unsexed
+fish will be discarded.}
 }
 }
 \details{
@@ -56,7 +56,7 @@ unsexed fish.
 \item{\code{C1 = doSexRatio(CompData)}}
 }
 
-If findRatio is TRUE, then the observed per-stratum ratio of females to males is used for 
+If findRatio is TRUE, then the observed per-stratum ratio of females to males is used for
 the usexed fish in each stratum, and no other parameters apply.
 \itemize{
 \item{\code{C1 = doSexRatio(Compdata, findRatio=T)}}
@@ -77,7 +77,7 @@ to the vector of ratios (unused for a single ratio).  If Age-at-Length comps, th
 Lengths.
 
 In this example, lengths (ages) below the lowest Bin will fall into the
-lowest bin; i.e., lengths from 0-15 will have ratio .5, and fish above 36 will have ratio 
+lowest bin; i.e., lengths from 0-15 will have ratio .5, and fish above 36 will have ratio
 0.7 applied.
 
 \itemize{

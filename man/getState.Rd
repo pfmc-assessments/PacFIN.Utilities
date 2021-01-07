@@ -2,13 +2,11 @@
 % Please edit documentation in R/getState.R
 \name{getState}
 \alias{getState}
-\title{Create a state field from \code{source} for the \code{data.frame}}
+\title{Create a state column based on input column specified in \code{source}}
 \usage{
 getState(
   Pdata,
-  source = "SOURCE_AGID",
-  CLEAN = TRUE,
-  keepPW = FALSE,
+  source = c("SOURCE_AGID", "PSMFC_ARID", "SAMPLE_AGENCY", "AGID", "AGENCY_CODE"),
   verbose = FALSE
 )
 }
@@ -20,15 +18,8 @@ which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
 \item{source}{The column name where state information is located in
-\code{Pdata}. Typical options are \code{'SOURCE_AGID'},
-\code{'PSMFC_ARID'}, or \code{'SAMPLE_AGENCY'}.}
-
-\item{CLEAN}{A logical value indicating if records for which state
-cannot be assigned are removed or if just summary stats on what would
-have been removed are generated.}
-
-\item{keepPW}{A logival value indicating if records for Pacific Whiting
-should be removed or kept in as their own state.}
+\code{Pdata}. See the function call for options, where only the first
+value will be used.}
 
 \item{verbose}{A logical value specifying if output should be written
 to the screen or not. Good for testing and exploring your data but
@@ -36,9 +27,16 @@ can be turned off when output indicates errors. The default value
 is \code{TRUE}.}
 }
 \description{
-\code{Pdata}, where \code{Pdata} is a \code{data.frame} from
-PacFIN.
-\subsection{Workflow}{
-\code{getState} is run by \code{\link{cleanPacFIN}}.
+Create a categorical column that specifies which state each row is from.
 }
+\examples{
+data(XMPL.BDS)
+invisible(getState(XMPL.BDS, verbose = FALSE))
+testthat::expect_equivalent(
+  table(getState(XMPL.BDS, verbose = FALSE)[, "state"])[3],
+  17292)
+
+}
+\seealso{
+\link{cleanPacFIN} calls this function
 }

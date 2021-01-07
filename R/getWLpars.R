@@ -1,25 +1,20 @@
-#' Calculate Weight-Length Relationship
-#' 
+#' Calculate weight-length relationship parameters
+#'
 #' Estimate parameters of the weight-length relationship for each
 #' sex and all sexes combined, where the latter includes unsexed fish.
-#' 
-#' todo: Return model diagnostics if verbose. This will entail
-#' saving each model in an object and then extracting the pars
-#' via getline rather than doing it all in one step.
-#' 
-#' @param data A data frame containing empircal weights and lengths
+#'
+#' @param data A data frame containing empirical weights and lengths
 #' from sampled fish.
 #' @template verbose
-#' 
-#' @import stats
+#'
 #' @author Kelli Faye Johnson
-#' @export 
+#' @export
 #' @return A data frame of weight-length parameters by sex.
 #' Parameters A and B are in the appropriate units to input
 #' into Stock Synthesis Wtlen_1_Fem and Wtlen_2_Fem, or
-#' Wtlen_1_Mal and Wtlen_1_Mal, parameters in the 
-#' control file. 
-#' 
+#' Wtlen_1_Mal and Wtlen_1_Mal, parameters in the
+#' control file.
+#'
 getWLpars <- function(data, verbose = FALSE) {
 
   getline <- function(model){
@@ -28,11 +23,12 @@ getWLpars <- function(data, verbose = FALSE) {
     B <- model$coefficients[2]
     sdres <- sd(model$residuals)
     Amean <- Amed*exp(0.5*sdres^2)
-    out <- as.numeric(c(
-      "Amedian" = Amed, 
-      "Asd" = sdres, 
-      "A" = Amean, 
+    out <- utils::type.convert(as.is = TRUE, c(
+      "median_intercept" = Amed,
+      "SD" = sdres,
+      "A" = Amean,
       "B" = B))
+    names(out) <- c("median_intercept", "SD", "A", "B")
     return(out)
   }
 
@@ -47,22 +43,28 @@ getWLpars <- function(data, verbose = FALSE) {
 
   dims <- dim(data)
   data <- data[
-    !is.na(data[, "weight"]) & 
+    !is.na(data[, "weight"]) &
     !is.na(data[, "length_cm"]), ]
   if (verbose) {
     message("Calculating the weight-length relationship from ",
-      nrow(data), "\nfish because ", dims[1] - nrow(data), 
+      nrow(data), "\nfish because ", dims[1] - nrow(data),
       " fish did not have empirical weights and lengths.")
   }
-  WLresults <- t(sapply(list(
-    "females" = "F", 
-    "males" = "M", 
-    "all" = c("F", "M", "U")), 
-    function(x) { setNames(
-      getline(lm(log(weight) ~ log(length_cm), 
-        data = data[data$sex %in% x, ])),
-      c("median_intercept", "SD", "A", "B"))
-    }))
+ 
+  lmgrowth <- function(sex, thedata = data) {
+    stats::lm(log(weight) ~ log(length_cm),
+        data = thedata[thedata$sex %in% sex, ])
+  }
+  mresults <- lapply(list(
+    females = "F",
+    males = "M",
+    all = c("F", "M", "U")),
+    FUN = lmgrowth)
+  if (verbose) {
+    message("Weight-Length model results by SEX:")
+    utils::capture.output(lapply(mresults, summary), type = "message")
+  }
+  WLresults <- t(vapply(mresults, FUN.VALUE = numeric(4), getline))
 
   return(WLresults)
 }

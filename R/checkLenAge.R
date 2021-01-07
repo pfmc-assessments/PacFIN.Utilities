@@ -46,10 +46,8 @@
 #' @export
 #' @author Chantel Wetzel, Vlada Gertseva, James Thorson
 #' @examples
-#' data(XMPL.BDS)
-#' pdata <- XMPL.BDS
-#' pdata <- cleanPacFIN(pdata, keep_length_type = "F")
-#' test <-  checkLenAge(pdata)
+#' example(cleanPacFIN)
+#' test <-  checkLenAge(Pdata)
 #' head(test)
 
 checkLenAge <- function(Pdata,
@@ -100,7 +98,6 @@ checkLenAge <- function(Pdata,
   for (s in seq_along(sex_vec)) {
     use_data <- !is.na(Pdata[, len_col]) &
                 !is.na(Pdata[, age_col]) &
-                Pdata[, age_col] != -1 &
                 Pdata[, sex_col] %in% sex_vec[s]
 
     if (length(Par[[1]]) > 1) {
@@ -150,8 +147,7 @@ checkLenAge <- function(Pdata,
     # Estimate pars again b/c some data may be removed if !keepAll
     tempdata <- Pdata[
       !is.na(Pdata[, len_col]) &
-      !is.na(Pdata[, age_col]) &
-      Pdata[, age_col] != -1, ]
+      !is.na(Pdata[, age_col]), ]
     estsall <- data.frame(Sex = sex_vec,
       do.call("rbind", tapply(seq(NROW(tempdata)), tempdata[, sex_col],
       function(x) exp(optim(fn = nwfscAgeingError::estgrowth.vb,

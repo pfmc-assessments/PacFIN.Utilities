@@ -5,12 +5,12 @@
 \alias{PacFIN.Utilities}
 \title{PacFIN.Utilities: Functions for working up PacFIN biological (BDS) data.}
 \description{
-The PacFIN.Utilites package provides functions for filtering, summarizing, expanding, and compiling 
+The PacFIN.Utilites package provides functions for filtering, summarizing, expanding, and compiling
 composition data, and writing out the final products:  length- age- and age-at-length
 compositions.
 }
 \details{
-Many of the functions described below write summary output to the console, and several create plots for 
+Many of the functions described below write summary output to the console, and several create plots for
 visualizing data at various steps in processing.  The information written to the console
 can be captured using the \code{\link{sink}} function to encapsulate your workflow:
 
@@ -32,7 +32,7 @@ are run.
 
 There is a complete runthrough of example data (species:  XMPL) available so
 that you can experiment with the package.  Use \code{help(PacFIN_Example)}
-to see how to filter, stratify and expand the data, and create length- age- 
+to see how to filter, stratify and expand the data, and create length- age-
 and age-at-length-compositions.
 }
 
@@ -58,9 +58,8 @@ console.
 \section{Optional functions}{
 
 \tabular{lcl}{
-\code{\link{combineCalCOM}}\tab\tab For combinining PacFIN and CalCOM data\cr
+\code{\link{combineCalCOM}}\tab\tab For combining PacFIN and CalCOM data\cr
 \code{\link{getSeason}}\tab\tab For treating data from seasonal fisheries, such as Petrale.\cr
-\code{\link{Stratify}}\tab\tab Reduces the values in a data column to an encoded or named subset.\cr
 }
 }
 
@@ -76,8 +75,8 @@ console.
 \section{Expansion caveats}{
 
 There is one manual step in the workflow.
-After running the expansion functions, data columns Expansion_Factor_1 and 
-Expansion_Factor_2 are available to use in manually setting the Final_Expansion_Factor. 
+After running the expansion functions, data columns Expansion_Factor_1 and
+Expansion_Factor_2 are available to use in manually setting the Final_Expansion_Factor.
 \itemize{
 \item{Age data are expanded separately from lengths}.
 \item{WA fish are generally only expanded using Expansion_Factor_2.}
@@ -89,7 +88,7 @@ Expansion_Factor_2 are available to use in manually setting the Final_Expansion_
 \section{Compostition functions}{
 
 \tabular{lcl}{
-\code{\link{getComps}}\tab\tab uses the Final_Sample_Size and the user-specified 
+\code{\link{getComps}}\tab\tab uses the Final_Sample_Size and the user-specified
 stratification to create comps.\cr
 \code{\link{doSexRatio}}\tab\tab separates the unsexed fish into males and females\cr
 \code{\link{writeComps}}\tab\tab formats the composition data for SS3 and writes it to a file.\cr
