@@ -334,7 +334,7 @@ cleanPacFIN <- function(
   bad[, "goodstype"] <- Pdata$SAMPLE_TYPE %in% keep_sample_type
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
-  bad[, "goodlen"] <- ifelse(keep_missing_lengths, TRUE, is.na(Pdata$length))
+  bad[, "goodlen"] <- ifelse(keep_missing_lengths, TRUE, !is.na(Pdata$length))
   bad[, "goodstate"] <- Pdata[, "state"] %in% keep_states
   bad[, "keep"] <- apply(bad[, grep("^good", colnames(bad))], 1, all)
 
