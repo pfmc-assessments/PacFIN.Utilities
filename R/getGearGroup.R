@@ -29,10 +29,10 @@ getGearGroup = function (Pdata, spp = NULL, verbose = TRUE) {
        "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt")
   }
   if (!"GRID" %in% colnames(Pdata)) {
-    if (!"PACFIN_GROUP_GEAR_CODE" %in% colnames(Pdata)) {
-      Pdata[, "GRID"] <- Pdata[, "PACFIN_GROUP_GEAR_CODE"]
+    if ("PACFIN_GEAR_CODE" %in% colnames(Pdata)) {
+      Pdata[, "GRID"] <- Pdata[, "PACFIN_GEAR_CODE"]
     } else {
-    stop("Pdata must have 'GRID' or 'PACFIN_GROUP_GEAR_CODE' as a column.")
+    stop("Pdata must have 'GRID' or 'PACFIN_GEAR_CODE' as a column.")
     }
   }
   if (is.factor(Pdata[, "GRID"])) {
