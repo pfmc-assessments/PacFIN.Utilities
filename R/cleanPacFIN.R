@@ -198,6 +198,12 @@ cleanPacFIN <- function(
   Pdata[, "FISH_LENGTH_TYPE"] <- ifelse(Pdata[, "FISH_LENGTH_TYPE"] != FALSE,
     as.character(Pdata[, "FISH_LENGTH_TYPE"]),
     "F")
+  # Check to see if FISH_LENGTH_TYPE == F and add the length to the FORK_LENGTH
+  # is missing. 
+  check = which(Pdata$FISH_LENGTH_TYPE == "F" & is.na(Pdata$FORK_LENGTH))
+  if(length(check) > 0){
+    Pdata$FORK_LENGTH[check] = Pdata$FISH_LENGTH
+  }
   Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% c("", "A", "F", NA),
     Pdata$FORK_LENGTH, NA)
   if (all(Pdata$SPID %in% c("LSKT", "BSKT"))) {
