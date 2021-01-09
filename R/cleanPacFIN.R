@@ -376,5 +376,18 @@ cleanPacFIN <- function(
   if (CLEAN) {
     Pdata <- Pdata[bad[, "keep"], ]
   }
+
+  if (!missing(savedir)) {
+    wlpars <- getWLpars(Pdata, verbose = FALSE)
+    utils::write.table(wlpars, sep = ",",
+      row.names = TRUE, col.names = TRUE,
+      file = file.path(savedir, "PacFIN_WLpars.csv"))
+    if (verbose) {
+      message("WL parameter estimates: see 'PacFIN_WLpars.csv'\n",
+        "If some rows are NA, consider setting ALL of them individually\n",
+        "'getExpansion_1('fa' = , 'fb' = , 'ma' = , ...)")
+    }
+  }
+
   return(Pdata)
 } # End cleanPacFIN
