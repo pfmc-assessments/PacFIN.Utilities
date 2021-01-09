@@ -50,7 +50,7 @@ getState <- function (Pdata,
   if (verbose) {
     message("There are ", nostate,
       " records for which the state (i.e., 'CA', 'OR', 'WA')",
-      "\ncould be assigned and were labeled as 'UNK'.")
+      "\ncould not be assigned and were labeled as 'UNK'.")
     write.table(table(Pdata[, "state"]),
       col.names = FALSE, row.names = FALSE)
   } # End if verbose
