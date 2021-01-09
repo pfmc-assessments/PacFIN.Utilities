@@ -8,7 +8,12 @@ getWLpars(data, verbose = FALSE)
 }
 \arguments{
 \item{data}{A data frame containing empirical weights and lengths
-from sampled fish.}
+from sampled fish.
+Weights should be available in the column \code{weight} or \code{FISH_WEIGHT}.
+Lengths should be available in the column \code{lengthcm}.
+Sexes should be available in the column \code{sex} or \code{SEX}.
+All column names will be changed to lower case before searching for
+the appropriate indexing.}
 
 \item{verbose}{A logical value specifying if output should be written
 to the screen or not. Good for testing and exploring your data but
@@ -20,7 +25,10 @@ A data frame of weight-length parameters by sex.
 Parameters A and B are in the appropriate units to input
 into Stock Synthesis Wtlen_1_Fem and Wtlen_2_Fem, or
 Wtlen_1_Mal and Wtlen_1_Mal, parameters in the
-control file.
+control file. Values of \code{NA} are returned for models that
+did not have enough data to properly estimate the parameters.
+This will happen when there are no females in your data set,
+for example.
 }
 \description{
 Estimate parameters of the weight-length relationship for each
