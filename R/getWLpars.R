@@ -58,7 +58,7 @@ getWLpars <- function(data, verbose = FALSE) {
   mresults <- lapply(list(
     females = "F",
     males = "M",
-    all = c("F", "M", "U")),
+    all = unique(data[, "sex"])),
     FUN = lmgrowth)
   if (verbose) {
     message("Weight-Length model results by SEX:")
