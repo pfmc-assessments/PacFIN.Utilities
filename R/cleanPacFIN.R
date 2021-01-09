@@ -112,20 +112,24 @@ cleanPacFIN <- function(
   CLEAN = TRUE,
   spp = NULL,
   verbose = FALSE,
+  area = "US",
   savedir) {
 
   #### Fill in missing inputs
+
+  # If keep_INPFC input missing automatically check to see what
+  # records are from the area specified (area = US as the default) 
   if (missing(keep_INPFC)) {
-    keep_INPFC <- unique(Pdata$INPFC_AREA)
-    if (is.null(keep_INPFC)) {
-      keep_INPFC <- ls_INPFC(area = "ALL")
-    }
+    keep_INPFC <- ls_INPFC(area = area)
   }
+  # Get geargroups based on GRID column
   Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
   if (missing(keep_gears)) {
     keep_gears <- sort(unique(Pdata[, "geargroup"]))
   }
   Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
+
+  # Check to see FISH_LENGTH_TYPE is NA or FALSE and correct to F (fork)
   if (all(Pdata[, "FISH_LENGTH_TYPE"] %in% c(FALSE, NA))) {
     Pdata[, "FISH_LENGTH_TYPE"] <- as.character("F")
   }
@@ -157,6 +161,8 @@ cleanPacFIN <- function(
   } # End for
   Pdata$fishyr <- Pdata$SAMPLE_YEAR
   Pdata$year <- Pdata$SAMPLE_YEAR
+
+  # Is savedir specified create data figure
   if (!missing(savedir)) {
     png(filename = file.path(savedir, "PacFIN_comp_season.png"))
     on.exit(dev.off(), add = TRUE)
@@ -251,20 +257,28 @@ cleanPacFIN <- function(
   }
 
   # Convert mm to cm
+  #if ("FISH_LENGTH_UNITS" %in% colnames(Pdata)) {
+  #  Pdata$lengthcm <- floor(mapply(measurements::conv_unit,
+  #    x = Pdata[, "length"],
+  #    from = ifelse(is.na(Pdata[, "FISH_LENGTH_UNITS"]),
+  #      "cm",
+  #      tolower(Pdata[, "FISH_LENGTH_UNITS"])
+  #      ),
+  #    MoreArgs = list(to = "cm"))
+  #  )
+  # Moving to the approach below due to speed:
+  # There can be a mixture of both cm and mm in a data set. Needs to convert
+  # ones in mm to cm and keep the cm records as is.
   if ("FISH_LENGTH_UNITS" %in% colnames(Pdata)) {
-    Pdata$lengthcm <- floor(mapply(measurements::conv_unit,
-      x = Pdata[, "length"],
-      from = ifelse(is.na(Pdata[, "FISH_LENGTH_UNITS"]),
-        "cm",
-        tolower(Pdata[, "FISH_LENGTH_UNITS"])
-        ),
-      MoreArgs = list(to = "cm"))
-    )
+    Pdata[,"lengthcm"] = ifelse(Pdata$FISH_LENGTH_UNITS == c("cm", "CM"),
+      Pdata$length, NA)
+    Pdata[,"lengthcm"] = ifelse(Pdata$FISH_LENGTH_UNITS == c("mm", "MM"),
+      Pdata$length / 10, Pdata[,"lengthcm"]) 
   } else {
     if (verbose) message("Length assumed to be in mm.")
     Pdata[, "lengthcm"] <- floor(Pdata[, "length"] / 10)
   }
-
+  
   #### Age (originally in cleanAges)
   if (!"FISH_AGE_YEARS_FINAL" %in% colnames(Pdata)) {
     Pdata$FISH_AGE_YEARS_FINAL <- NA
