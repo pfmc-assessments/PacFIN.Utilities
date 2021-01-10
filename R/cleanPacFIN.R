@@ -270,9 +270,9 @@ cleanPacFIN <- function(
   # There can be a mixture of both cm and mm in a data set. Needs to convert
   # ones in mm to cm and keep the cm records as is.
   if ("FISH_LENGTH_UNITS" %in% colnames(Pdata)) {
-    Pdata[,"lengthcm"] = ifelse(Pdata$FISH_LENGTH_UNITS == c("cm", "CM"),
+    Pdata[,"lengthcm"] = ifelse(Pdata$FISH_LENGTH_UNITS %in% c("cm", "CM"),
       Pdata$length, NA)
-    Pdata[,"lengthcm"] = ifelse(Pdata$FISH_LENGTH_UNITS == c("mm", "MM"),
+    Pdata[,"lengthcm"] = ifelse(Pdata$FISH_LENGTH_UNITS %in% c("mm", "MM"),
       Pdata$length / 10, Pdata[,"lengthcm"]) 
   } else {
     if (verbose) message("Length assumed to be in mm.")
