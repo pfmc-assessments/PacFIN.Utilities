@@ -16,7 +16,7 @@ ls_INPFC <- function(area = c("ALL", "US")) {
   area <- ifelse(area == "USA", "US", area)
   area <- match.arg(area, several.ok = FALSE)
   USvector <- c("VUS", "CL", "COL", "NC", "SC",
-    "CALCOM", "CP", "EK", "EU", "MT", "VN", "PS")
+    "CALCOM", "CP", "EK", "EU", "MT", "VN")
 
   out <- switch(area,
     "ALL" = INPFCTable[, "INPFC", drop = TRUE],
