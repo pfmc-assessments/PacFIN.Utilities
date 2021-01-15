@@ -154,14 +154,16 @@ getExpansion_2 <- function(Pdata, Catch,
   )
 
   # Find which trips don't have catch values associated with them
-  NoCatch <- aggregate(Sum_Sampled_Lbs ~ fishyr + stratification,
-    data = tows[is.na(tows[, "catch"]), ], length)
-  colnames(NoCatch)[3] <- "N"
-  if (length(NoCatch) > 0 & verbose) {
-    message("No Catch was found for these rows in Pdata, where\n",
-      "N is the number of rows with missing Catch info:")
-    print(NoCatch)
-  } # End if
+  if(sum(is.na(tows[, "catch"])) != 0){
+    NoCatch <- aggregate(Sum_Sampled_Lbs ~ fishyr + stratification,
+      data = tows[is.na(tows[, "catch"]), ], length)
+    colnames(NoCatch)[3] <- "N"
+    if (length(NoCatch) > 0 & verbose) {
+      message("No Catch was found for these rows in Pdata, where\n",
+        "N is the number of rows with missing Catch info:")
+      print(NoCatch)
+    } # End if
+  }
 
   # Expansion is calculated by dividing the catch by the Sum_Sampled_Lbs.
   tows$EF2 <- tows$catch/tows$Sum_Sampled_Lbs
