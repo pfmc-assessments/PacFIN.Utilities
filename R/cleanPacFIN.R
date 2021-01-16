@@ -34,7 +34,10 @@
 #' aged with methods other than those listed will no longer be considered aged.
 #' A value of \code{NULL}, the default, will keep all ageing methods. However,
 #' a vector of \code{c("B", "S", "", NA, 1, 2)} will keep all unaged fish and those
-#' that were aged with break and burn and surface reads.
+#' that were aged with break and burn and surface reads. If AGE_METHOD is numerical  
+#' c("B", 1) = break and burn, c("S", 2) = surface read, 3 = scales, c("T", 4) = thin 
+#' section, c("O", 5) = optical scanner, c("L", 6) = length read, 9 = unable to read,
+#' and U = unknown.
 #' @param keep_missing_lengths A logical value used when you want to subset the data
 #' for ages, i.e., keep all missing lengths because you care about age data that
 #' might not have an associated length. By default, missing lengths are removed,
@@ -106,13 +109,14 @@ cleanPacFIN <- function(
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
   keep_length_type,
-  keep_age_method = NULL,
+  keep_age_method = c("B", "S", 1, 2, "U"),
   keep_missing_lengths = FALSE,
   keep_states = c("WA", "OR", "CA"),
   CLEAN = TRUE,
   spp = NULL,
   verbose = FALSE,
   area = "US",
+  calc_lw = TRUE,
   savedir) {
 
   #### Fill in missing inputs
@@ -301,11 +305,13 @@ cleanPacFIN <- function(
         return(mean(x[!x %in% c(0, NA)], na.rm = FALSE))
     })
     )
+
+  badagemethod <- sum(!Pdata$AGE_METHOD %in% c(keep_age_method, ""))
   Pdata[
     apply(
       Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata)), drop = FALSE],
       1, FUN = function(x) !any(x %in% keep_age_method)),
-    "age"] <- NA
+      "age"] <- NA
 
   #### Bad samples
 
@@ -374,16 +380,20 @@ cleanPacFIN <- function(
       sum(!bad[, "goodstype"]))
     message("N not in keep_sample_method (SAMPLE_METHOD): ",
       sum(!bad[, "goodsmeth"]))
+    message("AGE_METHOD that are retained: ")
+    message( print(keep_age_method))
+    message("N not in keep_age_method (AGE_METHOD): ",
+      badagemethod)
     message("N with SAMPLE_NO of NA: ",
       sum(!bad[, "goodsno"]))
-    message("N with no usable length, age, or length and age: ",
-      sum(is.na(Pdata$length)), ", ",
-      sum(is.na(Pdata$age)), ", ",
-      sum(is.na(Pdata$length) | is.na(Pdata$age))
+    message("N with no usable length: ", sum(is.na(Pdata$length)),
+      "; N with no usable age: ", sum(is.na(Pdata$age)), 
+      "; N with no usable length and age: ", sum(is.na(Pdata$length) | is.na(Pdata$age))    
       )
-    message("N sample weights not available for OR or CA\n  ",
-      "(note these are not removed with CLEAN): ",
-      sum(ORsw), ", ", sum(CAsw))
+    message("N sample weights (EXP_WT) not available for OR: ", sum(ORsw), "\n",
+      "N sample weights not available for CA:  ", sum(CAsw), "\n",
+      "Note: the records with no available sample weights are not removed with CLEAN"
+      )
   }
 
   if (!missing(savedir)) {
