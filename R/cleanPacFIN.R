@@ -365,12 +365,16 @@ cleanPacFIN <- function(
   # Report removals
   if (verbose) {
     message("cleanPacFIN Report")
-    message("N records, N remaining if CLEAN: ",
-      NROW(Pdata), ", ", sum(bad[, "keep"]))
+    message("Original N records: ", NROW(Pdata), "; N remaining if CLEAN: ",
+       sum(bad[, "keep"]))
+    message("N records removed: ",
+       NROW(Pdata) - sum(bad[, "keep"]))
     message("N not given a state (keep_states): ",
       sum(!bad[, "goodstate"]))
     message("N not in US INPFC and 'NA': ",
-      sum(Pdata[, "INPFC_AREA"] %in% ls_INPFC(area = "US")))
+      sum(!Pdata[, "INPFC_AREA"] %in% ls_INPFC(area = "US")))
+    # The values from the below check can be differnt that the one above because
+    # the checkINPFC function assigns records from c("JF", "VCN", "VUS", "WJ")] <- "VN"
     message("N not in 'keep_INPFC' (INPFC_AREA): ",
       sum(!bad[, "goodINPFC"]))
     message("N SAMPLE_TYPEs changed from M to S",
