@@ -137,18 +137,25 @@ cleanPacFIN <- function(
   if (all(Pdata[, "FISH_LENGTH_TYPE"] %in% c(FALSE, NA))) {
     Pdata[, "FISH_LENGTH_TYPE"] <- as.character("F")
   }
+
   if (missing(keep_length_type)) {
     keep_length_type <- sort(unique(c(Pdata[, "FISH_LENGTH_TYPE"],
       "", "A", "D", "F", "R", "S", "T", "U", NA)))
   }
+
   if (is.null(keep_age_method)) {
     keep_age_method <- unique(
       unlist(Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata))])
       )
   } else {
-    if ("B" %in% keep_age_method) keep_age_method <- c(keep_age_method, 1)
-    if ("S" %in% keep_age_method) keep_age_method <- c(keep_age_method, 2)
+    if ("B" %in% keep_age_method & !"1" %in% keep_age_method) {
+      keep_age_method <- c(keep_age_method, 1)
+    }
+    if ("S" %in% keep_age_method & !"1" %in% keep_age_method) {
+      keep_age_method <- c(keep_age_method, 2)
+    }
   }
+
   if ("CA" %in% keep_states) {
     keep_INPFC <- c(keep_INPFC, "CALCOM")
   }
@@ -171,6 +178,7 @@ cleanPacFIN <- function(
     png(filename = file.path(savedir, "PacFIN_comp_season.png"))
     on.exit(dev.off(), add = TRUE)
   }
+
   Pdata <- getSeason(Pdata, verbose = verbose,
     plotResults = !missing(savedir))
 
@@ -180,6 +188,7 @@ cleanPacFIN <- function(
   Pdata[, "INPFC_AREA"] <- gsub("^VUS$", "VN", Pdata[, "INPFC_AREA"])
   Pdata <- getState(Pdata, verbose = verbose,
     source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID"))
+
   if ("CA" %in% keep_states) {
     Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
     Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_METHOD), "SAMPLE_METHOD"] <- "R"
@@ -203,17 +212,20 @@ cleanPacFIN <- function(
       Pdata[, "FISH_LENGTH_UNITS"]
       )
   }
+
   # Fix FISH_LENGTH_TYPE if changed to TRUE FALSE because only entry is F
   # for fork length, which gets changed to a logical
   Pdata[, "FISH_LENGTH_TYPE"] <- ifelse(Pdata[, "FISH_LENGTH_TYPE"] != FALSE,
     as.character(Pdata[, "FISH_LENGTH_TYPE"]),
     "F")
+
   # If FISH_LENGTH_TYPE == F but FORK_LENGTH is NA replace it with FISH_LENGTH 
   Pdata$FORK_LENGTH = ifelse(Pdata$FISH_LENGTH_TYPE == "F" & is.na(Pdata$FORK_LENGTH),
     Pdata$FISH_LENGTH, Pdata$FORK_LENGTH)
 
   Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% c("", "A", "F", NA),
     Pdata$FORK_LENGTH, NA)
+
   if (all(Pdata$SPID %in% c("LSKT", "BSKT"))) {
     Pdata$length <- ifelse(
       # type "A" is associated with disc width for skates
@@ -221,37 +233,46 @@ cleanPacFIN <- function(
       width2length,
       Pdata$length)
   }
+
   Pdata$length <- ifelse(
     "D" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "D" &
     Pdata$FORK_LENGTH != Pdata$FISH_LENGTH,
       Pdata$FORK_LENGTH, Pdata$length)
+
   Pdata$length <- ifelse(
     # type "R" is associated with inter-spiracle width for skates (used by WDFW)
     "R" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "R",
     width2length,
     Pdata$length)
+
   Pdata$length <- ifelse(
     "S" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "S",
     Pdata$FISH_LENGTH,
     Pdata$length)
+
   Pdata$length <- ifelse(
     "T" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "T",
     Pdata$FISH_LENGTH,
     Pdata$length)
+
   Pdata$length <- ifelse(
     "U" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "U",
     ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
     Pdata$length)
+
   Pdata$length <- ifelse(
     "" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "",
     Pdata$FISH_LENGTH,
     Pdata$length)
+
   Pdata$length <- ifelse(
     NA %in% keep_length_type & is.na(Pdata$FISH_LENGTH_TYPE),
     ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
     Pdata$length)
+
   Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% keep_length_type,
     Pdata$length, NA)
+
   Pdata$length[Pdata$length == 0] <- NA
   goodtypes <- c("", "A", "D", "F", "R", "S", "T", "U", NA)
   if (any(!Pdata$FISH_LENGTH_TYPE %in% goodtypes)) {
@@ -270,6 +291,7 @@ cleanPacFIN <- function(
   #      ),
   #    MoreArgs = list(to = "cm"))
   #  )
+
   # Moving to the approach below due to speed:
   # There can be a mixture of both cm and mm in a data set. Needs to convert
   # ones in mm to cm and keep the cm records as is.
@@ -287,6 +309,7 @@ cleanPacFIN <- function(
   if (!"FISH_AGE_YEARS_FINAL" %in% colnames(Pdata)) {
     Pdata$FISH_AGE_YEARS_FINAL <- NA
   }
+
   for (iiname in grep("AGE_METHOD[0-9]+$", colnames(Pdata), value = TRUE)) {
     iinum <- type.convert(as.is = TRUE, gsub("[a-zA-Z_]", "", iiname))
     Pdata[, paste0("age", iinum)] <- ifelse(
@@ -294,6 +317,7 @@ cleanPacFIN <- function(
       Pdata[, paste0("age", iinum)],
       NA)
   }
+
   # Take the average of all non-zero or non-NA ages if multiple reads
   # are available
   Pdata[, "age"] <- ifelse(!is.na(Pdata$FISH_AGE_YEARS_FINAL),
@@ -330,8 +354,10 @@ cleanPacFIN <- function(
     measurements::conv_unit(Pdata$FISH_WEIGHT, from = "g", to = "lbs"),
     Pdata$SEX, Pdata$SAMPLE_NO,
     FUN = sum)
+
   sn <- stats::ave(Pdata$FISH_WEIGHT, Pdata$SEX, Pdata$SAMPLE_NO,
     FUN = function(x) sum(!is.na(x)))
+
   Pdata[, "MALES_NUM"] <- ifelse(
     is.na(Pdata[, "MALES_NUM"]) & Pdata[, "SEX"] == "M",
     sn, Pdata[, "MALES_NUM"])
@@ -409,15 +435,17 @@ cleanPacFIN <- function(
     Pdata <- Pdata[bad[, "keep"], ]
   }
 
-  if (!missing(savedir)) {
-    wlpars <- getWLpars(Pdata, verbose = FALSE)
-    utils::write.table(wlpars, sep = ",",
-      row.names = TRUE, col.names = TRUE,
-      file = file.path(savedir, "PacFIN_WLpars.csv"))
-    if (verbose) {
-      message("WL parameter estimates: see 'PacFIN_WLpars.csv'\n",
-        "If some rows are NA, consider setting ALL of them individually\n",
-        "'getExpansion_1('fa' = , 'fb' = , 'ma' = , ...)")
+  if(calc_lw){
+    if (!missing(savedir)) {
+      wlpars <- getWLpars(Pdata, verbose = FALSE)
+      utils::write.table(wlpars, sep = ",",
+        row.names = TRUE, col.names = TRUE,
+        file = file.path(savedir, "PacFIN_WLpars.csv"))
+      if (verbose) {
+        message("WL parameter estimates: see 'PacFIN_WLpars.csv'\n",
+          "If some rows are NA, consider setting ALL of them individually\n",
+          "'getExpansion_1('fa' = , 'fb' = , 'ma' = , ...)")
+      }
     }
   }
 
