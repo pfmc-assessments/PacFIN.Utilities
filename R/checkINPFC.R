@@ -28,7 +28,7 @@ checkINPFC <- function(data, keep = ls_INPFC(area = "US")) {
   data[data == "COL"] <- "CL"
   data[data == "EU"] <- "EK"
   # Change areas to Vancouver, most are landed in Neah Bay
-  data[data %in% c("JF", "VCN", "VUS", "WJ")] <- "VN"
+  # data[data %in% c("JF", "VCN", "VUS", "WJ")] <- "VN"
 
   return(ifelse(data %in% keep, TRUE, FALSE))
 }
