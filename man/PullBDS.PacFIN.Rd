@@ -2,13 +2,14 @@
 % Please edit documentation in R/PullBDS.PacFIN.R
 \name{PullBDS.PacFIN}
 \alias{PullBDS.PacFIN}
-\title{Pull biological data from PacFIN database}
+\title{Pull biological data from the PacFIN database}
 \usage{
 PullBDS.PacFIN(
   pacfin_species_code,
   username = getUserName("PacFIN"),
   password,
-  savedir = getwd()
+  savedir = getwd(),
+  verbose = TRUE
 )
 }
 \arguments{
@@ -27,18 +28,54 @@ from your computer name.}
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.
 The path can be relative or absolute.}
+
+\item{verbose}{A logical value specifying if output should be written
+to the screen or not. Good for testing and exploring your data but
+can be turned off when output indicates errors.
+The printing doesn't affect any of the returned objects, instead,
+printing makes it easier to see if the data has errors and what was
+done to rectify them in the given function.
+Sorry, but the default is to always print to the screen,
+i.e., \code{verbose = TRUE}, so you do not miss out on anything.
+This is standard practice for packages in the nwfsc-assess organization.}
 }
 \value{
-RData frame is saved to the disk and the pulled data
+An RData object is saved to the disk and the pulled data
 are returned as a data frame.
-The data frame is fairly raw in its form with only one column
-added, \code{all_cluster_sum}, which is the weight of all clusters sampled
-for a given sample number. Typically, \link{cleanPacFIN} will be used
-on the data frame after its retrieval.
+The saved data can be read back in using \link{load}, but note that
+the object is named inside of the \code{.RData} file, and thus,
+the object will retain the name of \code{bds.pacfin} within your work space.
+In February of 2021, the returned object was renamed from \code{out}
+to \code{bds.pacfin} in an attempt to be more clear.
+
+Be aware that the data are changed from a long table to a wide table
+using the combination of unique \code{FISH_IDs} in a given year and \code{AGE_SEQUENCE_NUMBER}.
+Users are warned if there are non-unique \code{FISH_IDs} in a given year as these data
+are automatically removed from the data frame. So, it is good to have \code{verbose = TRUE}.
+This change from long to wide allows for rows equating to a single fish with columns
+containing information about all measurements for that fish. Multiple age reads and
+information about those reads such as age reader will be in the columns.
+So, if your data had at most three duplicate reads, then you will see numbers up
+to \code{3} pasted onto the end of relevant column names. This is to help you match duplicate
+reads to the relevant information. All information from age reader #1 will be in
+a column with no tag, i.e., \code{age} instead of \code{age2}.
+
+The data frame is fairly raw with only one column,
+\code{all_cluster_sum} -- the weight of all clusters sampled for a given sample number,
+being calculated and added.
+Some column names have been renamed, these pertain to the reading of ages.
+For example \code{AGE_IN_YEARS} is now \code{age}, which can be followed by a number if the age
+was a second, third, fourth, ... read. Numeric values signify columns like \code{age}
+where the information was gleaned from another row with the same unique FISH_ID
+in a given year. Having this information of double reads by FISH_ID will facilitate
+the estimation of ageing error.
 }
 \description{
-Pull biological data from the Comprehensive Biological Data Table
-in the PacFIN database.
+Pull biological data from the
+Comprehensive Biological Data (comprehensive_bds_comm) table
+in the PacFIN database (PACFIN_MARTS).
+Data are in their raw form and should be cleaned either by hand or
+using \link{cleanPacFIN}.
 }
 \examples{
 \dontrun{
@@ -49,7 +86,10 @@ pd <- PullBDS.PacFIN(pacfin_species_code = "POP", password = mypw)
 
 }
 \seealso{
-\link{cleanPacFIN} to manipulate and subset the returned object.
+\itemize{
+\item \link{cleanColumns} to change to legacy column names
+\item \link{cleanPacFIN} to manipulate and subset the returned object
+}
 }
 \author{
 John R. Wallace, Kelli Faye Johnson
