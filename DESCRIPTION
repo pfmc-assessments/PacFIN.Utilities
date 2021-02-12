@@ -23,14 +23,17 @@ Depends:
 License: MIT + file LICENSE
 LazyData: true
 Imports:
+    dplyr,
     ggplot2,
     graphics,
     grDevices,
     measurements,
     nwfscAgeingError,
     nwfscSurvey,
+    purrr,
     RODBC,
     stats,
+    tidyr,
     utils
 Suggests:
     knitr,
