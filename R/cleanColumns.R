@@ -95,10 +95,14 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     ",
     quiet = TRUE, what = "", strip.white = TRUE),
     ncol = 2, byrow = TRUE)
+
   colnames(master) <- c("raw", "vdrfd")
   matches <- match(colnames(data), master[, "raw"])
   colnames(data) <- ifelse(is.na(matches),
     colnames(data),
     master[matches, use])
+
+  data$RWT_LBS = data$lwt_lbs
+  
   return(data)
 }
