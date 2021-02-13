@@ -35,7 +35,7 @@
 #' A value of \code{NULL}, the default, will keep all ageing methods. However,
 #' a vector of \code{c("B", "S", "", NA, 1, 2)} will keep all unaged fish and those
 #' that were aged with break and burn and surface reads. If AGE_METHOD is numerical  
-#' c("B", 1) = break and burn, c("S", 2) = surface read, 3 = scales, c("T", 4) = thin 
+#' c("B", "BB", 1) = break and burn, c("S", 2) = surface read, 3 = scales, c("T", 4) = thin 
 #' section, c("O", 5) = optical scanner, c("L", 6) = length read, 9 = unable to read,
 #' and U = unknown.
 #' @param keep_missing_lengths A logical value used when you want to subset the data
@@ -105,11 +105,12 @@
 cleanPacFIN <- function(
   Pdata,
   keep_INPFC,
+  keep_PSMFC,
   keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
   keep_length_type,
-  keep_age_method = c("B", "S", 1, 2, "U"),
+  keep_age_method = c("B", "BB", "S", 1, 2, "U"),
   keep_missing_lengths = FALSE,
   keep_states = c("WA", "OR", "CA"),
   CLEAN = TRUE,
@@ -126,6 +127,10 @@ cleanPacFIN <- function(
   if (missing(keep_INPFC)) {
     keep_INPFC <- ls_INPFC(area = area)
   }
+  if(missing(keep_PSMFC)){
+    keep_PSMFC = c("1A", "1B", "1C", "2A", "2B", "2C", "2E", "2F", "3A", "3B", "3C")
+  }
+
   # Get geargroups based on GRID column
   Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
   if (missing(keep_gears)) {
@@ -184,8 +189,8 @@ cleanPacFIN <- function(
 
   #### Areas
   Pdata[, "INPFC_AREA"] <- gsub("\\s", "", Pdata[, "INPFC_AREA"])
-  Pdata[, "INPFC_AREA"] <- gsub("^COL$", "CL", Pdata[, "INPFC_AREA"])
-  Pdata[, "INPFC_AREA"] <- gsub("^VUS$", "VN", Pdata[, "INPFC_AREA"])
+  #Pdata[, "INPFC_AREA"] <- gsub("^COL$", "CL", Pdata[, "INPFC_AREA"])
+  #Pdata[, "INPFC_AREA"] <- gsub("^VUS$", "VN", Pdata[, "INPFC_AREA"])
   Pdata <- getState(Pdata, verbose = verbose,
     source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID"))
 
@@ -341,6 +346,11 @@ cleanPacFIN <- function(
 
   # Remove bad OR samples
   Pdata$SAMPLE_TYPE[Pdata$SAMPLE_NO %in% paste0("OR", badORnums)] <- "S"
+  # Accoriding to Ali at ODFW these records should be removed - additionally
+  # they do not have EXP_WT values
+  if ("SAMPLE_QUALITY" %in% colnames(Pdata)) {
+    Pdata$SAMPLE_TYPE[Pdata$SAMPLE_QUALITY == 63] <- "S"
+  }
   ORsw <- is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR"
   CAsw <- is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA"
 
@@ -377,10 +387,12 @@ cleanPacFIN <- function(
   Pdata$FEMALES_WGT[is.na(Pdata$FEMALES_NUM) & Pdata$FEMALES_WGT == 0] <- NA
   Pdata$UNK_WT[is.na(Pdata$UNK_NUM) & Pdata$UNK_WT == 0] <- NA
 
+
   #### Summary and return
   # bad records
   bad <- Pdata[, 1:2]
   bad[, "goodPSMFC"] <- checkPSMFC(Pdata, keep = keep_PSMFC)
+  #bad[, "goodINPFC"] <- checkINPFC(Pdata, keep = keep_INPFC)
   bad[, "goodstype"] <- Pdata$SAMPLE_TYPE %in% keep_sample_type
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
@@ -397,12 +409,12 @@ cleanPacFIN <- function(
        NROW(Pdata) - sum(bad[, "keep"]))
     message("N not given a state (keep_states): ",
       sum(!bad[, "goodstate"]))
-    message("N not in US INPFC and 'NA': ",
-      sum(!Pdata[, "INPFC_AREA"] %in% ls_INPFC(area = "US")))
+    message("N not in US PSMFC or 'NA': ",
+      sum(!bad[, "goodPSMFC"]))
     # The values from the below check can be differnt that the one above because
     # the checkINPFC function assigns records from c("JF", "VCN", "VUS", "WJ")] <- "VN"
-    message("N not in 'keep_INPFC' (INPFC_AREA): ",
-      sum(!bad[, "goodINPFC"]))
+    #message("N not in 'keep_INPFC' (INPFC_AREA): ",
+    #  sum(!bad[, "goodINPFC"]))
     message("N SAMPLE_TYPEs changed from M to S",
       " for special samples from OR: ",
       sum(Pdata$SAMPLE_NO %in% paste0("OR", badORnums)))
