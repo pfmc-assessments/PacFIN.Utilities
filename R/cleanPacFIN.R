@@ -148,7 +148,7 @@ cleanPacFIN <- function(
       unlist(Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata))])
       )
   } else {
-    if ("B" %in% keep_age_method & !"1" %in% keep_age_method) {
+    if (any(c("B", "BB") %in% keep_age_method) & !"1" %in% keep_age_method) {
       keep_age_method <- c(keep_age_method, 1)
     }
     if ("S" %in% keep_age_method & !"1" %in% keep_age_method) {
@@ -380,7 +380,7 @@ cleanPacFIN <- function(
   #### Summary and return
   # bad records
   bad <- Pdata[, 1:2]
-  bad[, "goodINPFC"] <- checkINPFC(Pdata, keep = keep_INPFC)
+  bad[, "goodPSMFC"] <- checkPSMFC(Pdata, keep = keep_PSMFC)
   bad[, "goodstype"] <- Pdata$SAMPLE_TYPE %in% keep_sample_type
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
