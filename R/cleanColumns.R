@@ -22,8 +22,8 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     ADJUSTED_CLUSTER_WEIGHT_LBS  ADJ_CLWT
     ADJUSTED_GEAR_CODE           ADJ_GRID
     AGENCY_AGE_STRUCTURE_CODE    AGE_STRUCT_AGCODE
-    AGENCY_CODE                  AGID
-    AGENCY_CODE                  SAMPLE_AGID
+    AGENCY_CODE                  SOURCE_AGID
+    AGID                         SOURCE_AGID
     AGENCY_CONDITION_CODE        COND_AGCODE
     AGENCY_GEAR_CODE             GEAR
     AGENCY_GRADE_CODE            GRADE_AGCODE
@@ -82,7 +82,6 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     PSMFC_CATCH_AREA_CODE        PSMFC_ARID
     REMOVAL_TYPE_CODE            REMOVAL_TYPE
     ROUND_WEIGHT_LBS             CATCH.LBS
-    SAMPLE_AGENCY                SOURCE_AGID
     SAMPLE_METHOD_CODE           SAMPLE_METHOD
     SAMPLE_NUMBER                SAMPLE_NO
     SEX_CODE                     SEX

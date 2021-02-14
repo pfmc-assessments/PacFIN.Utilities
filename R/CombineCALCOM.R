@@ -77,7 +77,6 @@ combineCalCOM = function ( Pdata, CalCOM ) {
   Cal.dat$SAMPLE_DAY   = as.numeric(CalCOM$SAMPLE_DAY)
   Cal.dat$SOURCE_AGID  = "CalCOM"
   Cal.dat$PSMFC_ARID   = "CalCOM"
-  Cal.dat$SAMPLE_AGENCY = "CalCOM"
   Cal.dat$age1         = as.numeric(CalCOM$AGE)
   Cal.dat$age2         = as.numeric(CalCOM$AGE)
   Cal.dat$age3         = as.numeric(CalCOM$AGE)

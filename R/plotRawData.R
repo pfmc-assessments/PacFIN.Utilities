@@ -71,10 +71,6 @@ plotRawData = function( rawData, fname=NULL ) {
   print(table(rawData$SAMPLE_YEAR,useNA="ifany"))
   cat("\n\n")
 
-  cat("SOURCE_AGID vs. SAMPLE_AGENCY\n")
-  print(table(rawData$SOURCE_AGID,rawData$SAMPLE_AGENCY,useNA="ifany"))
-  cat("\n\n")
-
   cat("FISH_LENGTH_TYPE\n")
   print(table(rawData$FISH_LENGTH_TYPE,useNA="ifany"))
   cat("\n\n")

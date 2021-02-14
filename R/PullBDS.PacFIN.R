@@ -63,6 +63,16 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   rawdata <- getDB(sql.bds(pacfin_species_code),
     username = username, password = password)
 
+  #### Check if SAMPLE_AGENCY has values and remove
+  sample_agency <- unique(rawdata[, "SAMPLE_AGENCY"])
+  if (!is.na(sample_agency[1])) {
+    warning("SAMPLE_AGENCY includes non-NULL values and should be extracted.\n",
+      "Contact the package maintainer to request this and note the following:\n",
+      "SAMPLE_AGENCY == ", knitr::combine_words(sample_agency))
+  }
+  rm(sample_agency)
+  rawdata <- rawdata[, -match("SAMPLE_AGENCY", colnames(rawdata))]
+
   #### Manipulate rawdata columns
   subset <- !(duplicated(rawdata$FISH_ID) & is.na(rawdata$AGE_SEQUENCE_NUMBER))
   if (sum(!subset) > 0 & verbose) {
@@ -77,7 +87,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
       mutate(AGE_SEQUENCE_NUMBER = tidyr::replace_na(AGE_SEQUENCE_NUMBER, 1)),
     names_from = AGE_SEQUENCE_NUMBER,
     values_from = dplyr::matches(
-      match = "^age[dby]*$|^age_|_AGED|TURE_CODE|BDS_ID|AGE_ID|DATE_AGE|AGENCY_SAMPLE_NUMBER|SAMPLE_AGECY",
+      match = "^age[dby]*$|^age_|_AGED|TURE_CODE|BDS_ID|AGE_ID|DATE_AGE|AGENCY_SAMPLE_NUMBER",
       ignore.case = TRUE),
     values_fill = NA,
     names_glue = "{.value}.{AGE_SEQUENCE_NUMBER}") %>%

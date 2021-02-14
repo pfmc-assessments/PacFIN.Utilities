@@ -4,11 +4,7 @@
 \alias{getState}
 \title{Create a state column based on input column specified in \code{source}}
 \usage{
-getState(
-  Pdata,
-  source = c("SOURCE_AGID", "PSMFC_ARID", "SAMPLE_AGENCY", "AGID", "AGENCY_CODE"),
-  verbose = FALSE
-)
+getState(Pdata, source = c("AGENCY_CODE", "SOURCE_AGID"), verbose = FALSE)
 }
 \arguments{
 \item{Pdata}{A data frame of biological samples
@@ -31,8 +27,49 @@ Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
 This is standard practice for packages in the nwfsc-assess organization.}
 }
+\value{
+The input data frame is returned with an additional column,
+\code{state}, which is filled with two-character values identifying the state or
+a three-character value \code{UNK} for all rows that do not have an assigned state.
+All rows are returned, but users should pay attention to the warning that is
+returned for rows that have no state id.
+}
 \description{
 Create a categorical column that specifies which state each row is from.
+}
+\details{
+With the creation of the comprehensive bds table in PacFIN, the column called
+\code{SAMPLE_AGENCY} was deprecated; more specifically, the column is
+available but filled with \code{NULL} values.
+Thus, PacFIN.Utilities no longer maintains \code{SAMPLE_AGENCY} that was being converted
+to \code{SOURCE_AGID} and all identification of
+state records should be based on \code{AGENCY_CODE} or \code{SOURCE_AGID}, where the latter is
+just the converted column name (see \link{cleanColumns}).
+\code{AGENCY_CODE} is a column created by PacFIN to identify which agency provided
+the data. In the 2019 sablefish data there were four unique values in \code{AGENCY_CODE},
+\itemize{
+\item C - CDFW
+\item O - ODFW
+\item W - WDFW
+\item M - \verb{SAMPLE_AGENCY == NMFS Tiburon} samples from 1997.
+None of the \code{M} samples were in the comprehensive table as of 2021.
+}
+
+It is no longer advisable as of February 14, 2021 to create states based on
+\code{PSMFC_CATCH_AREA_CODE} or \code{PSMFC_ARID} because areas are not mutually
+exclusive to a state. Previous code set areas 3\link{a-z} to Washington,
+2\link{a-z} to Oregon, and 3\link{a-z} to California.
+The \href{https://pacfin.psmfc.org/wp-content/uploads/2019/03/PacFIN_Comprehensive_BDS_Commercial.pdf}{PacFIN documentation}
+suggests that the following area codes can be assigned to the following states:
+\itemize{
+\item WA: 1C, 2A, 2B, 2C, 2E, 2F, 3A, 3B, 3C, 3N, 3S
+\item OR: 1C, 2A, 2B, 2C, 2E, 2F, 3A, 3B, CS
+\item CA: 1A, 1B, 1C
+Rather than supporting one or the other, users are now left to deciphering which
+PSMFC areas they want to assign to which states on there own. Hopefully, the guidance
+above will be helpful. If you see the need to use PSMFC_CATCH_AREA_CODE to set states
+please contact the package maintainer.
+}
 }
 \examples{
 data(XMPL.BDS)
@@ -43,5 +80,5 @@ testthat::expect_equivalent(
 
 }
 \seealso{
-\link{cleanPacFIN} calls this function
+\link{cleanPacFIN} calls \code{getState}.
 }
