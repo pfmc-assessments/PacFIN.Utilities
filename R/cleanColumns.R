@@ -81,7 +81,7 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     PRODUCT_USE_CODE             PRODUCT_USE
     PSMFC_CATCH_AREA_CODE        PSMFC_AREA
     REMOVAL_TYPE_CODE            REMOVAL_TYPE
-    ROUND_WEIGHT_LBS             CATCH.LBS
+    ROUND_WEIGHT_LBS             RWT_LBS
     SAMPLE_AGENCY                SOURCE_AGID
     SAMPLE_METHOD_CODE           SAMPLE_METHOD
     SAMPLE_NUMBER                SAMPLE_NO
@@ -90,8 +90,7 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     VESSEL_NUM                   DRVID
     WEIGHT_OF_FEMALES_LBS        FEMALES_WGT
     WEIGHT_OF_MALES_LBS          MALES_WGT
-    WEIGHT_OF_LANDING_LBS        lwt_lbs
-    WEIGHT_OF_LANDING_LBS        RWT_LBS
+    WEIGHT_OF_LANDING_LBS        TOTAL_WGT
     ",
     quiet = TRUE, what = "", strip.white = TRUE),
     ncol = 2, byrow = TRUE)
@@ -102,7 +101,7 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     colnames(data),
     master[matches, use])
 
-  data$RWT_LBS = data$lwt_lbs
+  data$lwt_lbs = data$LWT_LBS
   
   return(data)
 }
