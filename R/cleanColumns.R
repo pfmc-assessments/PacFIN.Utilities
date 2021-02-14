@@ -79,7 +79,7 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     PORT_CODE                    PORT
     PRODUCT_FORM_CODE            PRODUCT_FROM
     PRODUCT_USE_CODE             PRODUCT_USE
-    PSMFC_CATCH_AREA_CODE        PSMFC_AREA
+    PSMFC_CATCH_AREA_CODE        PSMFC_ARID
     REMOVAL_TYPE_CODE            REMOVAL_TYPE
     ROUND_WEIGHT_LBS             CATCH.LBS
     SAMPLE_AGENCY                SOURCE_AGID

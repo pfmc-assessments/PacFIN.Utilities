@@ -16,7 +16,6 @@ sql.bds <- function(pacfin_species_code) {
           o.UNK_WT
  ",
   # Consider changing VESSEL_NUM to VESSEL_ID b/c less NULL
-          # xxx PSMFC_ARID,
           # xxx TOTAL_WGT, might be spp weight
           # xxx WGTMAX, i don't think this one matters
           # xxx WGTMIN, i don't think this one matters
