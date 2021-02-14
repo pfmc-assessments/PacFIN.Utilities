@@ -90,8 +90,8 @@ PullBDS.PacFIN <- function(pacfin_species_code,
       match = "^age[dby]*$|^age_|_AGED|TURE_CODE|BDS_ID|AGE_ID|DATE_AGE|AGENCY_SAMPLE_NUMBER",
       ignore.case = TRUE),
     values_fill = NA,
-    names_glue = "{.value}.{AGE_SEQUENCE_NUMBER}") %>%
-    dplyr::rename_with(.fn = ~gsub("\\.1", "", .x)) %>%
+    names_glue = "{.value}{AGE_SEQUENCE_NUMBER}") %>%
+    dplyr::rename_with(.fn = ~gsub("1$", "", .x)) %>%
     data.frame
 
   bds.pacfin[, "all_cluster_sum"] <- stats::ave(FUN = sum, na.rm = TRUE,
