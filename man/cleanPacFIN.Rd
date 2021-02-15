@@ -6,7 +6,7 @@
 \usage{
 cleanPacFIN(
   Pdata,
-  keep_INPFC,
+  keep_INPFC = lifecycle::deprecated(),
   keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
@@ -27,12 +27,7 @@ Pacific Fishieries Information Network (PacFIN) data warehouse,
 which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
-\item{keep_INPFC}{A vector of character values specifying which INPFC areas
-to keep. See \verb{[ls_INPFC](area = "ALL")} for a vector of options.
-Note that PacFIN has some errors in this column, e.g., Columbia is listed
-as both CL and COL. For an internally generated list of areas within the
-lower 48 of the United States see \code{\link{ls_INPFC}(area = "US")}.
-The default is to keep all areas.}
+\item{keep_INPFC}{\emph{Deprecated}. Areas are now defined using different methods.}
 
 \item{keep_gears}{A vector of character values specifying which gear types you want
 to label as unique fleets. Order the vector the same way you want the fleets numbered.
@@ -71,10 +66,9 @@ i.e., \code{keep_missing_lengths = FALSE}, but they are only removed if
 \item{keep_states}{A vector of states that you want to keep, where each state
 is defined using a two-letter abbreviation, e.g., \code{WA}. The default is to keep
 data from all three states, even though California data often do not
-have information on sample type, sample method, or INPFC area. The default,
-\code{keep_states = c("WA", "OR", "CA")}, is to keep the data and add California to
-\code{keep_INPFC}. Add \code{'UNK'} to the vector if you want to keep data not assigned
-to a state.}
+have information on sample type or sample method. The default,
+\code{keep_states = c("WA", "OR", "CA")}, is to keep the data.
+Add \code{'UNK'} to the vector if you want to keep data not assigned to a state.}
 
 \item{CLEAN}{A logical value used when you want to remove data from the input
 data set. The default is \code{TRUE}. Where the opposite returns the original
@@ -119,8 +113,9 @@ convert units to those appropriate for the rest of the code.
 }
 \details{
 The original fields in the returned data are left untouched,
-with the exception of SEX, which is modified so that unidentified fish are labeled
-"U".
+with the exception of \code{SEX}.
+The column \code{SEX} is modified using \link{getSex} and upon return will only include
+character values such that fish with an unidentified sex are now \code{"U"}.
 
 \subsection{Workflow}{
 If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}

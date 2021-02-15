@@ -6,12 +6,7 @@
 #' @export
 #'
 #' @template Pdata
-#' @param keep_INPFC A vector of character values specifying which INPFC areas
-#' to keep. See `[ls_INPFC](area = "ALL")` for a vector of options.
-#' Note that PacFIN has some errors in this column, e.g., Columbia is listed
-#' as both CL and COL. For an internally generated list of areas within the
-#' lower 48 of the United States see \code{\link{ls_INPFC}(area = "US")}.
-#' The default is to keep all areas.
+#' @param keep_INPFC *Deprecated*. Areas are now defined using different methods.
 #' @param keep_gears A vector of character values specifying which gear types you want
 #' to label as unique fleets. Order the vector the same way you want the fleets numbered.
 #' If the argument is missing, which is the default, then all found gear groups
@@ -43,10 +38,9 @@
 #' @param keep_states A vector of states that you want to keep, where each state
 #' is defined using a two-letter abbreviation, e.g., `WA`. The default is to keep
 #' data from all three states, even though California data often do not
-#' have information on sample type, sample method, or INPFC area. The default,
-#' `keep_states = c("WA", "OR", "CA")`, is to keep the data and add California to
-#' `keep_INPFC`. Add `'UNK'` to the vector if you want to keep data not assigned
-#' to a state.
+#' have information on sample type or sample method. The default,
+#' `keep_states = c("WA", "OR", "CA")`, is to keep the data.
+#' Add `'UNK'` to the vector if you want to keep data not assigned to a state.
 #' @param CLEAN A logical value used when you want to remove data from the input
 #' data set. The default is \code{TRUE}. Where the opposite returns the original
 #' data with additional columns and reports on what would have been removed.
@@ -102,7 +96,7 @@
 
 cleanPacFIN <- function(
   Pdata,
-  keep_INPFC,
+  keep_INPFC = lifecycle::deprecated(),
   keep_gears,
   keep_sample_type = c("", "M"),
   keep_sample_method = "R",
@@ -115,13 +109,18 @@ cleanPacFIN <- function(
   verbose = FALSE,
   savedir) {
 
-  #### Fill in missing inputs
-  if (missing(keep_INPFC)) {
-    keep_INPFC <- unique(Pdata$INPFC_AREA)
-    if (is.null(keep_INPFC)) {
-      keep_INPFC <- ls_INPFC(area = "ALL")
-    }
+  if (lifecycle::is_present(keep_INPFC)) {
+    lifecycle::deprecate_stop(
+      when = "0.0.1.0005",
+      what = paste0("cleanPacFIN(keep_INPFC = )"),
+      details = paste0(
+        "It is thought that PSMFC areas can decipher much of what was\n",
+        "previously determined with INPFC areas."
+        )
+      )
   }
+
+  #### Fill in missing inputs
   Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
   if (missing(keep_gears)) {
     keep_gears <- sort(unique(Pdata[, "geargroup"]))
@@ -142,17 +141,13 @@ cleanPacFIN <- function(
     if ("B" %in% keep_age_method) keep_age_method <- c(keep_age_method, 1)
     if ("S" %in% keep_age_method) keep_age_method <- c(keep_age_method, 2)
   }
-  if ("CA" %in% keep_states) {
-    keep_INPFC <- c(keep_INPFC, "CALCOM")
-  }
 
   #### Column names
-  for (i in c("fishery", "age", "INPFC_AREA", "UNK_WT")) {
+  for (i in c("fishery", "age", "UNK_WT")) {
     if (!i %in% colnames(Pdata)) {
       Pdata[, i] <- switch(i,
         fishery = 1,
         age = NA,
-        INPFC_AREA = NA,
         UNK_WT = NA)
     } # End if
   } # End for
@@ -166,15 +161,11 @@ cleanPacFIN <- function(
     plotResults = !missing(savedir))
 
   #### Areas
-  Pdata[, "INPFC_AREA"] <- gsub("\\s", "", Pdata[, "INPFC_AREA"])
-  Pdata[, "INPFC_AREA"] <- gsub("^COL$", "CL", Pdata[, "INPFC_AREA"])
-  Pdata[, "INPFC_AREA"] <- gsub("^VUS$", "VN", Pdata[, "INPFC_AREA"])
   Pdata <- getState(Pdata, verbose = verbose,
     source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID"))
   if ("CA" %in% keep_states) {
     Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
     Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_METHOD), "SAMPLE_METHOD"] <- "R"
-    Pdata[Pdata$state == "CA" & is.na(Pdata$INPFC_AREA), "INPFC_AREA"] <- "CALCOM"
   }
 
   #### Sex
@@ -328,9 +319,9 @@ cleanPacFIN <- function(
   Pdata$UNK_WT[is.na(Pdata$UNK_NUM) & Pdata$UNK_WT == 0] <- NA
 
   #### Summary and return
-  # bad records
+  # bad records: keep TRUEs
   bad <- Pdata[, 1:2]
-  bad[, "goodINPFC"] <- checkINPFC(Pdata, keep = keep_INPFC)
+  bad[, "goodarea"] <- is.na(getArea(Pdata, verbose = verbose))
   bad[, "goodstype"] <- Pdata$SAMPLE_TYPE %in% keep_sample_type
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
@@ -340,15 +331,13 @@ cleanPacFIN <- function(
 
   # Report removals
   if (verbose) {
-    message("cleanPacFIN Report")
+    message("\ncleanPacFIN Report")
     message("N records, N remaining if CLEAN: ",
       NROW(Pdata), ", ", sum(bad[, "keep"]))
     message("N not given a state (keep_states): ",
       sum(!bad[, "goodstate"]))
-    message("N not in US INPFC and 'NA': ",
-      sum(Pdata[, "INPFC_AREA"] %in% ls_INPFC(area = "US")))
-    message("N not in 'keep_INPFC' (INPFC_AREA): ",
-      sum(!bad[, "goodINPFC"]))
+    message("N should be removed b/c they were collected outside US West Coast: ",
+      sum(!bad[, "goodarea"]))
     message("N SAMPLE_TYPEs changed from M to S",
       " for special samples from OR: ",
       sum(Pdata$SAMPLE_NO %in% paste0("OR", badORnums)))
