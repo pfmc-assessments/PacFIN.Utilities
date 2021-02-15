@@ -69,8 +69,9 @@
 #'
 #' @details
 #' The original fields in the returned data are left untouched,
-#' with the exception of SEX, which is modified so that unidentified fish are labeled
-#' "U".
+#' with the exception of `SEX`.
+#' The column `SEX` is modified using [getSex] and upon return will only include
+#' character values such that fish with an unidentified sex are now `"U"`.
 #'
 #' \subsection{Workflow}{
 #' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
@@ -177,8 +178,7 @@ cleanPacFIN <- function(
   }
 
   #### Sex
-  Pdata[is.na(Pdata[, "SEX"]), "SEX"] <- "U"
-  Pdata[Pdata[, "SEX"] == 0, "SEX"] <- "U"
+  Pdata[, "SEX"] <- getSex(data.vector = Pdata[, "SEX"], verbose = verbose)
 
   #### Lengths
   # Use FISH_LENGTH if there is no FORK_LENGTH.
