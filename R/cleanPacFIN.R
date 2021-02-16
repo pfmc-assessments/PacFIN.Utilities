@@ -326,8 +326,6 @@ cleanPacFIN <- function(
     message("\ncleanPacFIN Report")
     message("N records, N remaining if CLEAN: ",
       NROW(Pdata), ", ", sum(bad[, "keep"]))
-    message("N not given a state (keep_states): ",
-      sum(!bad[, "goodstate"]))
     message("N should be removed b/c they were collected outside US West Coast: ",
       sum(!bad[, "goodarea"]))
     message("N SAMPLE_TYPEs changed from M to S",
