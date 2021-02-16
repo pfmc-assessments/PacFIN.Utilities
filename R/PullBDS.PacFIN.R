@@ -11,6 +11,7 @@
 #' @template password
 #' @template savedir
 #' @template verbose
+#' @importFrom magrittr %>%
 #' @export
 #' @author John R. Wallace, Kelli Faye Johnson
 #' @return An RData object is saved to the disk and the pulled data
@@ -91,8 +92,8 @@ PullBDS.PacFIN <- function(pacfin_species_code,
       dplyr::rename(age = dplyr::matches("^AGE_IN_YEARS")) %>%
       dplyr::rename(agedby = dplyr::matches("PERSON_WHO_AGED")) %>%
       dplyr::rename(AGE_METHOD = dplyr::matches("AGE_METHOD_CODE")) %>%
-      mutate(AGE_SEQUENCE_NUMBER = tidyr::replace_na(AGE_SEQUENCE_NUMBER, 1)),
-    names_from = AGE_SEQUENCE_NUMBER,
+      dplyr::mutate(AGE_SEQUENCE_NUMBER = tidyr::replace_na(.data[["AGE_SEQUENCE_NUMBER"]], 1)),
+    names_from = .data[["AGE_SEQUENCE_NUMBER"]],
     values_from = dplyr::matches(
       match = "^age[dby]*$|^age_|_AGED|TURE_CODE|BDS_ID|AGE_ID|DATE_AGE|AGENCY_SAMPLE_NUMBER",
       ignore.case = TRUE),
