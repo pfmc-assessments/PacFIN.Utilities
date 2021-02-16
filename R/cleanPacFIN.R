@@ -126,9 +126,6 @@ cleanPacFIN <- function(
     keep_gears <- sort(unique(Pdata[, "geargroup"]))
   }
   Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
-  if (all(Pdata[, "FISH_LENGTH_TYPE"] %in% c(FALSE, NA))) {
-    Pdata[, "FISH_LENGTH_TYPE"] <- as.character("F")
-  }
   if (missing(keep_length_type)) {
     keep_length_type <- sort(unique(c(Pdata[, "FISH_LENGTH_TYPE"],
       "", "A", "D", "F", "R", "S", "T", "U", NA)))
@@ -184,11 +181,6 @@ cleanPacFIN <- function(
       Pdata[, "FISH_LENGTH_UNITS"]
       )
   }
-  # Fix FISH_LENGTH_TYPE if changed to TRUE FALSE because only entry is F
-  # for fork length, which gets changed to a logical
-  Pdata[, "FISH_LENGTH_TYPE"] <- ifelse(Pdata[, "FISH_LENGTH_TYPE"] != FALSE,
-    as.character(Pdata[, "FISH_LENGTH_TYPE"]),
-    "F")
   Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% c("", "A", "F", NA),
     Pdata$FORK_LENGTH, NA)
   if (all(Pdata$SPID %in% c("LSKT", "BSKT"))) {

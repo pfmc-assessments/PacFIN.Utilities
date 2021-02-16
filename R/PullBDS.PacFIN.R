@@ -79,6 +79,13 @@ PullBDS.PacFIN <- function(pacfin_species_code,
     message("Duplicated FISH_ID & AGE_SEQUENCE_NUMBER were removed.")
     print(rawdata[!subset, c("SAMPLE_YEAR", "SAMPLE_NUMBER")])
   }
+
+  # Fix FISH_LENGTH_TYPE if changed to a logical because only entry is fork length (F)
+  rawdata[, "FISH_LENGTH_TYPE"] <- ifelse(
+    rawdata[, "FISH_LENGTH_TYPE"] != FALSE,
+    as.character(rawdata[, "FISH_LENGTH_TYPE"]),
+    "F")
+
   bds.pacfin <- tidyr::pivot_wider(
     rawdata[subset, ] %>%
       dplyr::rename(age = dplyr::matches("^AGE_IN_YEARS")) %>%
