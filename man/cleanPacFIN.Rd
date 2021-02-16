@@ -12,7 +12,7 @@ cleanPacFIN(
   keep_sample_method = "R",
   keep_length_type,
   keep_age_method = NULL,
-  keep_missing_lengths = FALSE,
+  keep_missing_lengths = lifecycle::deprecated(),
   keep_states = c("WA", "OR", "CA"),
   CLEAN = TRUE,
   spp = NULL,
@@ -57,11 +57,9 @@ A value of \code{NULL}, the default, will keep all ageing methods. However,
 a vector of \code{c("B", "S", "", NA, 1, 2)} will keep all unaged fish and those
 that were aged with break and burn and surface reads.}
 
-\item{keep_missing_lengths}{A logical value used when you want to subset the data
-for ages, i.e., keep all missing lengths because you care about age data that
-might not have an associated length. By default, missing lengths are removed,
-i.e., \code{keep_missing_lengths = FALSE}, but they are only removed if
-\code{CLEAN = TRUE}.}
+\item{keep_missing_lengths}{\emph{Deprecated}. Just subset them using
+\verb{is.na(Pdata[, 'length']) after running }cleanPacFIN` if you want to remove
+lengths, though there is no need because the package accommodates keeping them in.}
 
 \item{keep_states}{A vector of states that you want to keep, where each state
 is defined using a two-letter abbreviation, e.g., \code{WA}. The default is to keep

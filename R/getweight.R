@@ -23,7 +23,7 @@
 #' lfish <- 1:100; sfish <- rep("U", length(lfish))
 #' ans <- getweight(length = lfish, sex = sfish,
 #'   pars = getWLpars(cleanPacFIN(XMPL.BDS, CLEAN = FALSE,
-#'   keep_length_type = "F", keep_missing_length = FALSE)))
+#'   keep_length_type = "F")))
 #' testthat::expect_equivalent(ans[1], 3.625679e-08)
 #' \dontrun{
 #' plotWL(length = lfish, sex = sfish,

@@ -28,6 +28,7 @@ Imports:
     graphics,
     grDevices,
     lifecycle,
+    magrittr,
     measurements,
     nwfscAgeingError,
     nwfscSurvey,

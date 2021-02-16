@@ -32,7 +32,7 @@
 #' Foreign samples, those coming from outside of the EEZ, could be in your data.
 #' The PacFIN documentation for
 #' [areas](https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/ar_tree.txt)
-#' identifies areas ZY or ZZ or 9[GMYZ] as those outside of the EEZ.
+#' identifies areas `ZY` or `ZZ` or `9[GMYZ]` as those outside of the EEZ.
 #' Additionally, 3D and 3N make up VC, which is Canadian catches within the Vancouver area.
 #' @template Pdata
 #' @template verbose
@@ -71,13 +71,13 @@ getArea <- function(Pdata, verbose = FALSE) {
   out[grepl("5[a-z]", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "CAN"
 
   if (verbose) {
-    message("The table below summarizes the number of records that are outside of\n",
+    message("\nThe table below summarizes the number of records that are outside of\n",
       "the area that should be included for US West Coast stock assessments\n",
-      "by PSMFC area, or some derivative thereof.\n",
-      "Use Pdata[is.na(getArea(Pdata)), ] to filter for good areas.")
+      "by PSMFC area, or some derivative thereof.")
+    outtable <- table("PSMFC" = Pdata[, PSMFCcol], description = out)
     capture.output(
       type = "message",
-      table("PSMFC" = Pdata[, PSMFCcol], "CLEAN" = out)
+      outtable[apply(outtable, 1, function(x) !all(x == 0)), ]
       )
   }
 

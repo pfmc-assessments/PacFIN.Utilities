@@ -20,8 +20,8 @@
 #'
 #' It is no longer advisable as of February 14, 2021 to create states based on
 #' `PSMFC_CATCH_AREA_CODE` or `PSMFC_ARID` because areas are not mutually
-#' exclusive to a state. Previous code set areas 3[a-z] to Washington,
-#' 2[a-z] to Oregon, and 3[a-z] to California.
+#' exclusive to a state. Previous code set areas `1[a-z]` to Washington,
+#' `2[a-z]` to Oregon, and `3[a-z]` to California.
 #' The [PacFIN documentation](https://pacfin.psmfc.org/wp-content/uploads/2019/03/PacFIN_Comprehensive_BDS_Commercial.pdf)
 #' suggests that the following area codes can be assigned to the following states:
 #' * WA: 1C, 2A, 2B, 2C, 2E, 2F, 3A, 3B, 3C, 3N, 3S
@@ -49,9 +49,13 @@
 #'
 #' @examples
 #' data(XMPL.BDS)
-#' invisible(getState(XMPL.BDS, verbose = FALSE))
+#' invisible(getState(XMPL.BDS,
+#'   source = grep("AGENCY_CODE|SOURCE_AGID", colnames(XMPL.BDS), value = TRUE)[1],
+#'   verbose = FALSE))
 #' testthat::expect_equivalent(
-#'   table(getState(XMPL.BDS, verbose = FALSE)[, "state"])[3],
+#'   table(getState(XMPL.BDS,
+#'   source = grep("AGENCY_CODE|SOURCE_AGID", colnames(XMPL.BDS), value = TRUE)[1],
+#'   verbose = FALSE)[, "state"])[3],
 #'   17292)
 #'
 getState <- function (Pdata,
@@ -82,11 +86,10 @@ getState <- function (Pdata,
   nostate <- sum(!Pdata[, "state"] %in% states)
 
   if (verbose) {
-    message("There are ", nostate,
+    message("\nThere are ", nostate,
       " records for which the state (i.e., 'CA', 'OR', 'WA')",
       "\ncould not be assigned and were labeled as 'UNK'.")
-    write.table(table(Pdata[, "state"]),
-      col.names = FALSE, row.names = FALSE)
+    capture.output(type = "message", table(Pdata[, "state"]))
   } # End if verbose
 
   return(Pdata)

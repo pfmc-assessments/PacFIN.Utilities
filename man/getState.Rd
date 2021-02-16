@@ -57,8 +57,8 @@ None of the \code{M} samples were in the comprehensive table as of 2021.
 
 It is no longer advisable as of February 14, 2021 to create states based on
 \code{PSMFC_CATCH_AREA_CODE} or \code{PSMFC_ARID} because areas are not mutually
-exclusive to a state. Previous code set areas 3\link{a-z} to Washington,
-2\link{a-z} to Oregon, and 3\link{a-z} to California.
+exclusive to a state. Previous code set areas \code{1[a-z]} to Washington,
+\code{2[a-z]} to Oregon, and \code{3[a-z]} to California.
 The \href{https://pacfin.psmfc.org/wp-content/uploads/2019/03/PacFIN_Comprehensive_BDS_Commercial.pdf}{PacFIN documentation}
 suggests that the following area codes can be assigned to the following states:
 \itemize{
@@ -73,9 +73,13 @@ please contact the package maintainer.
 }
 \examples{
 data(XMPL.BDS)
-invisible(getState(XMPL.BDS, verbose = FALSE))
+invisible(getState(XMPL.BDS,
+  source = grep("AGENCY_CODE|SOURCE_AGID", colnames(XMPL.BDS), value = TRUE)[1],
+  verbose = FALSE))
 testthat::expect_equivalent(
-  table(getState(XMPL.BDS, verbose = FALSE)[, "state"])[3],
+  table(getState(XMPL.BDS,
+  source = grep("AGENCY_CODE|SOURCE_AGID", colnames(XMPL.BDS), value = TRUE)[1],
+  verbose = FALSE)[, "state"])[3],
   17292)
 
 }

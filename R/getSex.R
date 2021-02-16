@@ -25,7 +25,7 @@ getSex <- function(data.vector, verbose = FALSE) {
   out[out == "2"] <- "F"
 
   if (verbose) {
-    message("The following 'input' values to SEX were returned as 'output':")
+    message("\nThe following 'input' values to SEX were returned as 'output':")
     capture.output(
       type = "message",
       table("input" = data.vector, "output" = out, useNA = "always")

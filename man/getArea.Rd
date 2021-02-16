@@ -64,7 +64,7 @@ Where, 4a corresponds to everything east of Cape Flattery
 Foreign samples, those coming from outside of the EEZ, could be in your data.
 The PacFIN documentation for
 \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/ar_tree.txt}{areas}
-identifies areas ZY or ZZ or 9\link{GMYZ} as those outside of the EEZ.
+identifies areas \code{ZY} or \code{ZZ} or \code{9[GMYZ]} as those outside of the EEZ.
 Additionally, 3D and 3N make up VC, which is Canadian catches within the Vancouver area.
 }
 \seealso{

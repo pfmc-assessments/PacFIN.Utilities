@@ -30,11 +30,9 @@
 #' A value of \code{NULL}, the default, will keep all ageing methods. However,
 #' a vector of \code{c("B", "S", "", NA, 1, 2)} will keep all unaged fish and those
 #' that were aged with break and burn and surface reads.
-#' @param keep_missing_lengths A logical value used when you want to subset the data
-#' for ages, i.e., keep all missing lengths because you care about age data that
-#' might not have an associated length. By default, missing lengths are removed,
-#' i.e., \code{keep_missing_lengths = FALSE}, but they are only removed if
-#' \code{CLEAN = TRUE}.
+#' @param keep_missing_lengths *Deprecated*. Just subset them using
+#' `is.na(Pdata[, 'length']) after running `cleanPacFIN` if you want to remove
+#' lengths, though there is no need because the package accommodates keeping them in.
 #' @param keep_states A vector of states that you want to keep, where each state
 #' is defined using a two-letter abbreviation, e.g., `WA`. The default is to keep
 #' data from all three states, even though California data often do not
@@ -103,13 +101,14 @@ cleanPacFIN <- function(
   keep_sample_method = "R",
   keep_length_type,
   keep_age_method = NULL,
-  keep_missing_lengths = FALSE,
+  keep_missing_lengths = lifecycle::deprecated(),
   keep_states = c("WA", "OR", "CA"),
   CLEAN = TRUE,
   spp = NULL,
   verbose = FALSE,
   savedir) {
 
+  #### Deprecate old input arguments
   if (lifecycle::is_present(keep_INPFC)) {
     lifecycle::deprecate_stop(
       when = "0.0.1.0005",
@@ -120,12 +119,23 @@ cleanPacFIN <- function(
         )
       )
   }
+  if (lifecycle::is_present(keep_missing_lengths)) {
+    lifecycle::deprecate_stop(
+      when = "0.0.1.0005",
+      what = paste0("cleanPacFIN(keep_missing_lengths = )"),
+      details = paste0(
+        "All down-stream functionality works without filtering,\n",
+        "but Pdata[is.na(Pdata[['length']]), ] can be used to filter them out."
+        )
+      )
+  }
+
   #### CLEAN COLUMNS
   if ("PACFIN_SPECIES_CODE" %in% colnames(Pdata)) {
     Pdata <- cleanColumns(Pdata)
   }
 
-  #### Fill in missing inputs
+  #### Fill in missing input arguments
   Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
   if (missing(keep_gears)) {
     keep_gears <- sort(unique(Pdata[, "geargroup"]))
@@ -139,9 +149,6 @@ cleanPacFIN <- function(
     keep_age_method <- unique(
       unlist(Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata))])
       )
-  } else {
-    if ("B" %in% keep_age_method) keep_age_method <- c(keep_age_method, 1)
-    if ("S" %in% keep_age_method) keep_age_method <- c(keep_age_method, 2)
   }
 
   #### Column names
@@ -174,113 +181,21 @@ cleanPacFIN <- function(
   Pdata[, "SEX"] <- getSex(data.vector = Pdata[, "SEX"], verbose = verbose)
 
   #### Lengths
-  # Use FISH_LENGTH if there is no FORK_LENGTH.
-  width2length <- convertlength_skate(Pdata, returntype = "estimated")
-
-  if (!is.null(spp) && spp %in% c("hake", "pacific hake")) {
-    Pdata[, "FORK_LENGTH"] <- ifelse(is.na(Pdata[, "FORK_LENGTH"]),
-      Pdata[, "FISH_LENGTH"], Pdata[, "FORK_LENGTH"])
-    Pdata[, "FISH_LENGTH_UNITS"] <- ifelse(
-      tolower(Pdata[, "FISH_LENGTH_UNITS"]) == "cm" & Pdata[, "FISH_LENGTH"] > 90,
-      "MM",
-      Pdata[, "FISH_LENGTH_UNITS"]
-      )
-  }
-  Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% c("", "A", "F", NA),
-    Pdata$FORK_LENGTH, NA)
-  if (all(Pdata$SPID %in% c("LSKT", "BSKT"))) {
-    Pdata$length <- ifelse(
-      # type "A" is associated with disc width for skates
-      "A" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "A",
-      width2length,
-      Pdata$length)
-  }
-  Pdata$length <- ifelse(
-    "D" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "D" &
-    Pdata$FORK_LENGTH != Pdata$FISH_LENGTH,
-      Pdata$FORK_LENGTH, Pdata$length)
-  Pdata$length <- ifelse(
-    # type "R" is associated with inter-spiracle width for skates (used by WDFW)
-    "R" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "R",
-    width2length,
-    Pdata$length)
-  Pdata$length <- ifelse(
-    "S" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "S",
-    Pdata$FISH_LENGTH,
-    Pdata$length)
-  Pdata$length <- ifelse(
-    "T" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "T",
-    Pdata$FISH_LENGTH,
-    Pdata$length)
-  Pdata$length <- ifelse(
-    "U" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "U",
-    ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
-    Pdata$length)
-  Pdata$length <- ifelse(
-    "" %in% keep_length_type & Pdata$FISH_LENGTH_TYPE == "",
-    Pdata$FISH_LENGTH,
-    Pdata$length)
-  Pdata$length <- ifelse(
-    NA %in% keep_length_type & is.na(Pdata$FISH_LENGTH_TYPE),
-    ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
-    Pdata$length)
-  Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% keep_length_type,
-    Pdata$length, NA)
-  Pdata$length[Pdata$length == 0] <- NA
-  goodtypes <- c("", "A", "D", "F", "R", "S", "T", "U", NA)
-  if (any(!Pdata$FISH_LENGTH_TYPE %in% goodtypes)) {
-    stop("cleanPacFIN can only accommodate the following FISH_LENGTH_TYPEs:\n",
-      sprintf("'%s' ", goodtypes),
-      "\nPlease contact the package maintainer to add additional types.")
-  }
-
-  # Convert mm to cm
-  if ("FISH_LENGTH_UNITS" %in% colnames(Pdata)) {
-    Pdata$lengthcm <- floor(mapply(measurements::conv_unit,
-      x = Pdata[, "length"],
-      from = ifelse(is.na(Pdata[, "FISH_LENGTH_UNITS"]),
-        "cm",
-        tolower(Pdata[, "FISH_LENGTH_UNITS"])
-        ),
-      MoreArgs = list(to = "cm"))
-    )
-  } else {
-    if (verbose) message("Length assumed to be in mm.")
-    Pdata[, "lengthcm"] <- floor(Pdata[, "length"] / 10)
-  }
+  Pdata[, "length"] <- getLength(Pdata, verbose = verbose,
+    keep = keep_length_type)
+  Pdata[, "lengthcm"] <- floor(Pdata[, "length"] / 10)
 
   #### Age (originally in cleanAges)
-  if (!"FISH_AGE_YEARS_FINAL" %in% colnames(Pdata)) {
-    Pdata$FISH_AGE_YEARS_FINAL <- NA
-  }
-  for (iiname in grep("AGE_METHOD[0-9]+$", colnames(Pdata), value = TRUE)) {
-    iinum <- type.convert(as.is = TRUE, gsub("[a-zA-Z_]", "", iiname))
-    Pdata[, paste0("age", iinum)] <- ifelse(
-      Pdata[, paste0("AGE_METHOD", iinum)] %in% keep_age_method,
-      Pdata[, paste0("age", iinum)],
-      NA)
-  }
-  # Take the average of all non-zero or non-NA ages if multiple reads
-  # are available
-  Pdata[, "age"] <- ifelse(!is.na(Pdata$FISH_AGE_YEARS_FINAL),
-    Pdata$FISH_AGE_YEARS_FINAL,
-    apply(Pdata[, grep("age[0-9]+$", colnames(Pdata))], 1,
-      FUN = function(x) {
-        if (all(is.na(x))) return(NA)
-        if (all(x == 0)) return(NA)
-        return(mean(x[!x %in% c(0, NA)], na.rm = FALSE))
-    })
-    )
-  Pdata[
-    apply(
-      Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata)), drop = FALSE],
-      1, FUN = function(x) !any(x %in% keep_age_method)),
-    "age"] <- NA
+  Pdata[, "age"] <- getAge(Pdata, verbose = verbose,
+    keep = keep_age_method)
 
   #### Bad samples
-
   # Remove bad OR samples
   Pdata$SAMPLE_TYPE[Pdata$SAMPLE_NO %in% paste0("OR", badORnums)] <- "S"
+  # Via Chantel, from Ali at ODFW, do not keep b/c they don't have exp_wt or FTID
+  if ("SAMPLE_QUALITY" %in% colnames(Pdata)) {
+    Pdata[Pdata[["SAMPLE_QUALITY"]] == 63, "SAMPLE_TYPE"] <- "S"
+  }
   ORsw <- is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR"
   CAsw <- is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA"
 
@@ -322,17 +237,12 @@ cleanPacFIN <- function(
   bad[, "goodstype"] <- Pdata$SAMPLE_TYPE %in% keep_sample_type
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
-  bad[, "goodlen"] <- ifelse(keep_missing_lengths, TRUE, !is.na(Pdata$length))
   bad[, "goodstate"] <- Pdata[, "state"] %in% keep_states
   bad[, "keep"] <- apply(bad[, grep("^good", colnames(bad))], 1, all)
 
   # Report removals
   if (verbose) {
-    message("\ncleanPacFIN Report")
-    message("N records, N remaining if CLEAN: ",
-      NROW(Pdata), ", ", sum(bad[, "keep"]))
-    message("N should be removed b/c they were collected outside US West Coast: ",
-      sum(!bad[, "goodarea"]))
+    message("\n")
     message("N SAMPLE_TYPEs changed from M to S",
       " for special samples from OR: ",
       sum(Pdata$SAMPLE_NO %in% paste0("OR", badORnums)))
@@ -342,14 +252,15 @@ cleanPacFIN <- function(
       sum(!bad[, "goodsmeth"]))
     message("N with SAMPLE_NO of NA: ",
       sum(!bad[, "goodsno"]))
-    message("N with no usable length, age, or length and age: ",
-      sum(is.na(Pdata$length)), ", ",
-      sum(is.na(Pdata$age)), ", ",
-      sum(is.na(Pdata$length) | is.na(Pdata$age))
-      )
-    message("N sample weights not available for OR or CA\n  ",
-      "(note these are not removed with CLEAN): ",
-      sum(ORsw), ", ", sum(CAsw))
+    message("N without length: ", sum(is.na(Pdata$length)))
+    message("N without age: ", sum(is.na(Pdata$age)))
+    message("N without length and age: ", sum(is.na(Pdata$length) | is.na(Pdata$age)))
+    message("N records: ", NROW(Pdata))
+    message("N remaining if CLEAN: ", sum(bad[, "keep"]))
+    message("N records will be removed if CLEAN: ", NROW(Pdata) - sum(bad[, "keep"]))
+    message("The following are not removed with CLEAN ...")
+    message("N sample weights not available for OR: ", sum(ORsw))
+    message("N sample weights not available for CA: ", sum(CAsw))
   }
 
   if (!missing(savedir)) {

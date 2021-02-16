@@ -1,0 +1,131 @@
+#' Get length for PacFIN commercial samples
+#'
+#' Get length for PacFIN commercial samples in millimeters.
+#' Lengths are converted for skates from type R and A to actual lengths.
+#' Other, more standard lengths, are filtered for types in `keep`.
+#'
+#' @template Pdata
+#' @template verbose
+#' @template keep
+#'
+#' @export
+#' @return A vector of lengths in millimeters. Values of `NA` indicate that
+#' the length should not be used in down-stream calculations.
+#'
+getLength <- function(Pdata, verbose = FALSE, keep) {
+
+  #### Initial checks
+  # Can only accommodate good types
+  goodtypes <- c("", "A", "D", "F", "R", "S", "T", "U", NA)
+  if (any(!Pdata$FISH_LENGTH_TYPE %in% goodtypes)) {
+    stop("cleanPacFIN can only accommodate the following FISH_LENGTH_TYPEs:\n",
+      sprintf("'%s' ", goodtypes),
+      "\nPlease contact the package maintainer to add additional types.")
+  }
+
+  # Move FISH_LENGTH to FORK_LENGTH if FORK_LENGTH is NA and type is F
+  # for downstream code to work
+  Pdata[, "FORK_LENGTH"] <- ifelse(
+    is.na(Pdata[, "FORK_LENGTH"]) & Pdata[, "FISH_LENGTH_TYPE"] == "F",
+    Pdata[, "FISH_LENGTH"],
+    Pdata[, "FORK_LENGTH"]
+    )
+
+  # Convert FISH_LENGTH from disk width to length
+  width2length <- convertlength_skate(Pdata, returntype = "estimated")
+
+  # Fix incorrect FISH_LENGTH_UNITS for hake
+  if (length(grep("PWHT", Pdata[["SPID"]])) > 0) {
+    if (verbose) message("Still fixing WA FISH_LENGTH_UNITS")
+    Pdata[, "FISH_LENGTH_UNITS"] <- ifelse(
+      tolower(Pdata[, "FISH_LENGTH_UNITS"]) == "cm" & Pdata[, "FISH_LENGTH"] > 90,
+      "MM",
+      Pdata[, "FISH_LENGTH_UNITS"]
+      )
+  }
+
+  #### Make "length" column in mm
+  # Start with fork lengths for those that are available and if "F" in keep
+  Pdata$length <- ifelse(Pdata$FISH_LENGTH_TYPE %in% c("", "A", "F", NA),
+    Pdata$FORK_LENGTH, NA)
+
+  # Work with skate data
+  # A is disc width
+  # R is inter-spiracle width for skates (used by WDFW)
+  if (all(Pdata$SPID %in% c("LSKT", "BSKT"))) {
+    Pdata$length <- ifelse(
+      "A" %in% keep & Pdata$FISH_LENGTH_TYPE == "A",
+      width2length,
+      Pdata$length)
+  }
+  Pdata$length <- ifelse(
+    "R" %in% keep & Pdata$FISH_LENGTH_TYPE == "R",
+    width2length,
+    Pdata$length)
+
+  # Work with dorsal length
+  if (
+    verbose &
+    "D" %in% keep &
+    length(grep("D", Pdata[["FISH_LENGTH_TYPE"]]) > 0)
+    ) {
+    message("Using dorsal lengths, are you sure you want dorsal lengths?")
+  }
+  Pdata$length <- ifelse(
+    "D" %in% keep & Pdata$FISH_LENGTH_TYPE == "D" &
+    Pdata$FORK_LENGTH != Pdata$FISH_LENGTH,
+      Pdata$FORK_LENGTH, Pdata$length)
+
+  # Work with standard length measurements and unknown type
+  Pdata$length <- ifelse(
+    "S" %in% keep & Pdata$FISH_LENGTH_TYPE == "S",
+    Pdata$FISH_LENGTH,
+    Pdata$length)
+  Pdata$length <- ifelse(
+    "T" %in% keep & Pdata$FISH_LENGTH_TYPE == "T",
+    Pdata$FISH_LENGTH,
+    Pdata$length)
+  Pdata$length <- ifelse(
+    "U" %in% keep & Pdata$FISH_LENGTH_TYPE == "U",
+    ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
+    Pdata$length)
+  Pdata$length <- ifelse(
+    "" %in% keep & Pdata$FISH_LENGTH_TYPE == "",
+    Pdata$FISH_LENGTH,
+    Pdata$length)
+  Pdata$length <- ifelse(
+    NA %in% keep & is.na(Pdata$FISH_LENGTH_TYPE),
+    ifelse(is.na(Pdata$FORK_LENGTH), Pdata$FISH_LENGTH, Pdata$FORK_LENGTH),
+    Pdata$length)
+
+  # A double check that lengths for methods not in keep are NA
+  Pdata$length <- ifelse(
+    Pdata$FISH_LENGTH_TYPE %in% keep,
+    Pdata$length,
+    NA)
+
+  # Assign all fish of length zero to NA
+  Pdata$length[Pdata$length == 0] <- NA
+
+  # Ensure everything is in mm
+  if ("FISH_LENGTH_UNITS" %in% colnames(Pdata)) {
+    Pdata$length <- ifelse(
+      tolower(Pdata[, "FISH_LENGTH_UNITS"]) == "cm",
+      Pdata[, "length"] * 10,
+      Pdata[, "length"])
+  } else {
+    if (verbose) message("Length assumed to be in mm.")
+  }
+
+  if (verbose) {
+    message("\nThe following length types were kept in the data:")
+    capture.output(type = "message",
+      table(Pdata[, grep("LENGTH_TYPE", colnames(Pdata))])
+      )
+    message(
+      "Lengths (mm) ranged from ",
+      paste(collapse = " to ", range(Pdata[["FISH_LENGTH"]], na.rm = TRUE))
+      )
+  }
+  return(Pdata[["length"]])
+}
