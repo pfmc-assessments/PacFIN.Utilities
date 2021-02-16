@@ -63,9 +63,10 @@
 #'
 #' @details
 #' The original fields in the returned data are left untouched,
-#' with the exception of `SEX`.
-#' The column `SEX` is modified using [getSex] and upon return will only include
+#' with the exception of
+#' * `SEX`: modified using [getSex] and upon return will only include
 #' character values such that fish with an unidentified sex are now `"U"`.
+#' * age: the best ages to use going forward rather than just the first age read.
 #'
 #' \subsection{Workflow}{
 #' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}

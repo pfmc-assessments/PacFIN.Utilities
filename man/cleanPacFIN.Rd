@@ -113,9 +113,12 @@ convert units to those appropriate for the rest of the code.
 }
 \details{
 The original fields in the returned data are left untouched,
-with the exception of \code{SEX}.
-The column \code{SEX} is modified using \link{getSex} and upon return will only include
+with the exception of
+\itemize{
+\item \code{SEX}: modified using \link{getSex} and upon return will only include
 character values such that fish with an unidentified sex are now \code{"U"}.
+\item age: the best ages to use going forward rather than just the first age read.
+}
 
 \subsection{Workflow}{
 If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
