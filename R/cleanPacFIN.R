@@ -119,6 +119,10 @@ cleanPacFIN <- function(
         )
       )
   }
+  #### CLEAN COLUMNS
+  if ("PACFIN_SPECIES_CODE" %in% colnames(Pdata)) {
+    Pdata <- cleanColumns(Pdata)
+  }
 
   #### Fill in missing inputs
   Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
