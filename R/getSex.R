@@ -28,7 +28,7 @@ getSex <- function(data.vector, verbose = FALSE) {
     message("The following 'input' values to SEX were returned as 'output':")
     capture.output(
       type = "message",
-      table("input" = data.vector, "return" = out, useNA = "always")
+      table("input" = data.vector, "output" = out, useNA = "always")
       )
   }
 
