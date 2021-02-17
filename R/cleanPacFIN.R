@@ -196,8 +196,6 @@ cleanPacFIN <- function(
   if ("SAMPLE_QUALITY" %in% colnames(Pdata)) {
     Pdata[Pdata[["SAMPLE_QUALITY"]] == 63, "SAMPLE_TYPE"] <- "S"
   }
-  ORsw <- is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR"
-  CAsw <- is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA"
 
   # Remove lengths and ages for gears we don't want
   Pdata[!Pdata[, "geargroup"] %in% keep_gears, "length"] <- NA
@@ -239,6 +237,9 @@ cleanPacFIN <- function(
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
   bad[, "goodstate"] <- Pdata[, "state"] %in% keep_states
   bad[, "keep"] <- apply(bad[, grep("^good", colnames(bad))], 1, all)
+  # Move this check to after the keep to only report based on kept records
+  ORsw <- is.na(Pdata[bad$keep, "EXP_WT"]) & Pdata[bad$keep, "state"] == "OR"
+  CAsw <- is.na(Pdata[bad$keep, "SPECIES_WGT"]) & Pdata[bad$keep, "state"] == "CA"
 
   # Report removals
   if (verbose) {
