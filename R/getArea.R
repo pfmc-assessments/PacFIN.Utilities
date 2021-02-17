@@ -66,7 +66,7 @@ getArea <- function(Pdata, verbose = FALSE) {
   out[grepl("4A", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "Sound and Straits"
 
   # Find outside EEZ
-  out[grepl("Z[yz]|9[gmyz]", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "Outside EEZ"
+  out[grepl("Z[yz]|9[gmyzu]", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "Outside EEZ"
   out[grepl("3[DN]", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "CAN (VNCVR)"
   out[grepl("5[a-z]", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "CAN"
 
