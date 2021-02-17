@@ -90,7 +90,6 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     WEIGHT_OF_FEMALES_LBS        FEMALES_WGT
     WEIGHT_OF_MALES_LBS          MALES_WGT
     WEIGHT_OF_LANDING_LBS        lwt_lbs
-    WEIGHT_OF_LANDING_LBS        RWT_LBS
     ",
     quiet = TRUE, what = "", strip.white = TRUE),
     ncol = 2, byrow = TRUE)
@@ -99,5 +98,12 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
   colnames(data) <- ifelse(is.na(matches),
     colnames(data),
     master[matches, use])
+
+    # CRW: Above the WEIGHT_OF_LANDING_LBS was being assinged twice with the 
+    # second assingment coming through (RWT_LBS). Also assigning this value
+    # to TOTAL_WGT since these two columns have been collapsed to have 
+    # TOTAL_WGT for CA and RWT_LBS for WA.
+    data$RWT_LBS <- data$TOTAL_WGT <- data$lwt_lbs 
+
   return(data)
 }
