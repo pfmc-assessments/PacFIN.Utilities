@@ -172,10 +172,8 @@ cleanPacFIN <- function(
   #### Areas
   Pdata <- getState(Pdata, verbose = verbose,
     source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID"))
-  if ("CA" %in% keep_states) {
-    Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
-    Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_METHOD), "SAMPLE_METHOD"] <- "R"
-  }
+  # California doesn't record SAMPLE_TYPE so we assume they are all Market samples
+  Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
 
   #### Sex
   Pdata[, "SEX"] <- getSex(data.vector = Pdata[, "SEX"], verbose = verbose)
