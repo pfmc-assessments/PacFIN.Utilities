@@ -69,8 +69,9 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
   # Calculate Species_Percent_Sampled.  (Actually, fraction sampled).
   #
   ############################################################################
-  if (!"Wt_Sampled" %in% colnames(Pdata)) stop("The column Wt_Sampled",
-    " must be in your dataframe, run EF1_Denominator.")
+  if (!"Wt_Sampled" %in% colnames(Pdata)){ 
+    stop("The column Wt_Sampled must be in your dataframe, run EF1_Denominator.") 
+  }
   tows$Species_Percent_Sampled = tows$Wt_Sampled/tows$Use_acs
   # CRW: The line below does errors if the Species_Percent_Samples is NA
   # This is arising from NAs in the Use_acs (the tows$median were also NA)
