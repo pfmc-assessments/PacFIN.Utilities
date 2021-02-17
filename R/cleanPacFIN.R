@@ -343,7 +343,6 @@ cleanPacFIN <- function(
       "age"] <- NA
 
   #### Bad samples
-
   # Remove bad OR samples
   Pdata$SAMPLE_TYPE[Pdata$SAMPLE_NO %in% paste0("OR", badORnums)] <- "S"
   # Accoriding to Ali at ODFW these records should be removed - additionally
@@ -351,8 +350,6 @@ cleanPacFIN <- function(
   if ("SAMPLE_QUALITY" %in% colnames(Pdata)) {
     Pdata$SAMPLE_TYPE[Pdata$SAMPLE_QUALITY == 63] <- "S"
   }
-  ORsw <- is.na(Pdata[, "EXP_WT"]) & Pdata[, "state"] == "OR"
-  CAsw <- is.na(Pdata[, "SPECIES_WGT"]) & Pdata[, "state"] == "CA"
 
   # Remove lengths and ages for gears we don't want
   Pdata[!Pdata[, "geargroup"] %in% keep_gears, "length"] <- NA
@@ -397,13 +394,19 @@ cleanPacFIN <- function(
   bad[, "goodstype"] <- Pdata$SAMPLE_TYPE %in% keep_sample_type
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
-  if(keep_missing_lengths){
+  # CRW: Removing keep_missing_lengths check
     bad[, "goodlen"] <- TRUE
   }else{
     bad[, "goodlen"] <- !is.na(Pdata$length)
   }
   bad[, "goodstate"] <- Pdata[, "state"] %in% keep_states
   bad[, "keep"] <- apply(bad[, grep("^good", colnames(bad))], 1, all)
+
+
+  # CRW: I moved this check lower because I want to only report on the 
+  # records that are determined "good"
+  ORsw <- is.na(Pdata[bad$keep, "EXP_WT"]) & Pdata[bad$keep, "state"] == "OR"
+  CAsw <- is.na(Pdata[bad$keep, "SPECIES_WGT"]) & Pdata[bad$keep, "state"] == "CA"
 
   # Report removals
   if (verbose) {
