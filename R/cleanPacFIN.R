@@ -392,7 +392,8 @@ cleanPacFIN <- function(
   # bad records
   bad <- Pdata[, 1:2]
   bad[, "goodPSMFC"] <- checkPSMFC(Pdata, keep = keep_PSMFC)
-  #bad[, "goodINPFC"] <- checkINPFC(Pdata, keep = keep_INPFC)
+  bad[, "goodINPFC"] <- ifelse(bad[, "goodPSMFC"] == TRUE, 
+                        checkINPFC(Pdata, keep = keep_INPFC), FALSE)
   bad[, "goodstype"] <- Pdata$SAMPLE_TYPE %in% keep_sample_type
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
