@@ -61,6 +61,9 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
   # to let users know how many data points are being interpolated
   # rather than calculated from raw information
 
+  tows$median_test <- getMed(tows$Use_acs, 
+    tows$SAMPLE_YEAR, tows$state)$median
+
   ############################################################################
   #
   # Calculate Species_Percent_Sampled.  (Actually, fraction sampled).
@@ -72,8 +75,17 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
   # CRW: The line below does errors if the Species_Percent_Samples is NA
   # This is arising from NAs in the Use_acs (the tows$median were also NA)
   # May need to make the calculation of this on line 56:59 more robust.
-  tows$Use_Percent <- tows$TOTAL_WGT * 
-    ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
+
+  # CRW: The line below was giving a dimension error: 
+  # Error in `$<-.data.frame`(`*tmp*`, Use_Percent, value = numeric(0)) : 
+  # replacement has 0 rows, data has 3186
+  # tows$Use_Percent <- tows$TOTAL_WGT * 
+  #  ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
+  # Low tech fix:
+  find = which(tows$Species_Percent_Sampled > 1)
+  tows$Use_Percent[find]  <- tows$TOTAL_WGT[find] * 1
+  tows$Use_Percent[-find] <- tows$TOTAL_WGT[-find] * tows$Species_Percent_Sampled[-find]
+
   # KFJ(2019-03-29): Determine if when percent should be multiplied by
   # round weight rather than total weight.
   # I looked at a few fish tickets and it appears as though Round Weight for 
@@ -95,6 +107,9 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
   # Default
   tows$Trip_Sampled_Lbs[tows$state=="CA"] = tows$Use_Percent[tows$state=="CA"]
   tows$Trip_Sampled_Lbs[tows$state=="OR"] = tows$EXP_WT[tows$state=="OR"]
+  # CRW: Need to decide what to do with RWT_LBS. Swithc over to TOTAL_WGT if that
+  # is where this informaiton for WA is now or in cleanColumns create 
+  # RWT_LBS column equal to the TOTAL_WGT
   tows$Trip_Sampled_Lbs[tows$state=="WA"] = tows$RWT_LBS[tows$state=="WA"]
   if (any(!unique(tows$state) %in% c("CA", "OR", "WA"))) warning("The state(s) '",
     paste(unique(tows$state)[!unique(tows$state) %in% c("CA", "OR", "WA")], 
