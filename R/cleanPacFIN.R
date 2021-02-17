@@ -38,11 +38,6 @@
 #' c("B", "BB", 1) = break and burn, c("S", 2) = surface read, 3 = scales, c("T", 4) = thin 
 #' section, c("O", 5) = optical scanner, c("L", 6) = length read, 9 = unable to read,
 #' and U = unknown.
-#' @param keep_missing_lengths A logical value used when you want to subset the data
-#' for ages, i.e., keep all missing lengths because you care about age data that
-#' might not have an associated length. By default, missing lengths are removed,
-#' i.e., \code{keep_missing_lengths = FALSE}, but they are only removed if
-#' \code{CLEAN = TRUE}.
 #' @param keep_states A vector of states that you want to keep, where each state
 #' is defined using a two-letter abbreviation, e.g., `WA`. The default is to keep
 #' data from all three states, even though California data often do not
@@ -111,7 +106,6 @@ cleanPacFIN <- function(
   keep_sample_method = "R",
   keep_length_type,
   keep_age_method = c("B", "BB", "S", 1, 2, "U"),
-  keep_missing_lengths = FALSE,
   keep_states = c("WA", "OR", "CA"),
   CLEAN = TRUE,
   spp = NULL,
@@ -296,7 +290,6 @@ cleanPacFIN <- function(
   #      ),
   #    MoreArgs = list(to = "cm"))
   #  )
-
   # Moving to the approach below due to speed:
   # There can be a mixture of both cm and mm in a data set. Needs to convert
   # ones in mm to cm and keep the cm records as is.
@@ -314,6 +307,7 @@ cleanPacFIN <- function(
   if (!"FISH_AGE_YEARS_FINAL" %in% colnames(Pdata)) {
     Pdata$FISH_AGE_YEARS_FINAL <- NA
   }
+
 
   for (iiname in grep("AGE_METHOD[0-9]+$", colnames(Pdata), value = TRUE)) {
     iinum <- type.convert(as.is = TRUE, gsub("[a-zA-Z_]", "", iiname))
@@ -384,7 +378,6 @@ cleanPacFIN <- function(
   Pdata$FEMALES_WGT[is.na(Pdata$FEMALES_NUM) & Pdata$FEMALES_WGT == 0] <- NA
   Pdata$UNK_WT[is.na(Pdata$UNK_NUM) & Pdata$UNK_WT == 0] <- NA
 
-
   #### Summary and return
   # bad records
   bad <- Pdata[, 1:2]
@@ -395,10 +388,11 @@ cleanPacFIN <- function(
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
   # CRW: Removing keep_missing_lengths check
-    bad[, "goodlen"] <- TRUE
-  }else{
-    bad[, "goodlen"] <- !is.na(Pdata$length)
-  }
+  # Due to a check in the 1st expansion - if you remove a fish from an OR
+  # sample the sample will fail the internal check of the true number of 
+  # fish in the data frame and the numbers in the MALES_NUM & FEMALES_NUM.
+  # The two options is to retain the NA lengths during expansion or throw 
+  # out whole samples. Retaining hte NAs would likely work best across species.
   bad[, "goodstate"] <- Pdata[, "state"] %in% keep_states
   bad[, "keep"] <- apply(bad[, grep("^good", colnames(bad))], 1, all)
 
