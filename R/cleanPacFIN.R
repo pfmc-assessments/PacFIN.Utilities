@@ -152,11 +152,10 @@ cleanPacFIN <- function(
   }
 
   #### Column names
-  for (i in c("fishery", "age", "UNK_WT")) {
+  for (i in c("fishery", "UNK_WT")) {
     if (!i %in% colnames(Pdata)) {
       Pdata[, i] <- switch(i,
         fishery = 1,
-        age = NA,
         UNK_WT = NA)
     } # End if
   } # End for
