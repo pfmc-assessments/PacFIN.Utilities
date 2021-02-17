@@ -69,6 +69,9 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
   if (!"Wt_Sampled" %in% colnames(Pdata)) stop("The column Wt_Sampled",
     " must be in your dataframe, run EF1_Denominator.")
   tows$Species_Percent_Sampled = tows$Wt_Sampled/tows$Use_acs
+  # CRW: The line below does errors if the Species_Percent_Samples is NA
+  # This is arising from NAs in the Use_acs (the tows$median were also NA)
+  # May need to make the calculation of this on line 56:59 more robust.
   tows$Use_Percent <- tows$TOTAL_WGT * 
     ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
   # KFJ(2019-03-29): Determine if when percent should be multiplied by
