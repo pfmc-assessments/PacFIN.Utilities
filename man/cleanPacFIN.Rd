@@ -2,7 +2,7 @@
 % Please edit documentation in R/cleanPacFIN.R
 \name{cleanPacFIN}
 \alias{cleanPacFIN}
-\title{Clean raw PacFIN biological data}
+\title{Clean raw PacFIN data}
 \usage{
 cleanPacFIN(
   Pdata,
@@ -29,12 +29,25 @@ which originated in 2014. Data are pulled using sql calls, see
 
 \item{keep_INPFC}{\emph{Deprecated}. Areas are now defined using different methods.}
 
-\item{keep_gears}{A vector of character values specifying which gear types you want
-to label as unique fleets. Order the vector the same way you want the fleets numbered.
+\item{keep_gears}{A character vector including only the gear types you want
+to label as unique fleets. Order matters and will define fleet numbering.
 If the argument is missing, which is the default, then all found gear groups
-are maintained and order alphabetically. For more details see documentation for
-\code{?\link{getGearGroup}} that lists a web link for where you can find the
-available gear groupings and how they link to \code{"GRID"} within your data.}
+are maintained and ordered alphabetically. For more details see
+\link{getGearGroup} that lists a web link for where you can find the
+available gear groupings and how they link to \code{"GRID"} within your data.
+GRID is a legacy term from PacFIN, now identified as
+PACFIN_GEAR_CODE in the biological and fish ticket data, where
+GR is short for gear and
+ID is short for identification.
+Typical entries will include character values such as \code{HKL}, \code{POT}, \code{TWL},
+where the latter is short for all non-shrimp trawls and
+\code{TWS} is shrimp trawls.
+Other gear identification codes and their definitions include
+\code{DRG} which is dredge gear,
+\code{MSC} which is all other miscellaneous gear such as diving or river trawls,
+\code{NET} which is all non-trawl net gear,
+\code{NTW} which is non-trawl gear, and
+\code{TLS} which is trolling gear.}
 
 \item{keep_sample_type}{A vector of character values specifying the types of
 samples you want to keep. The default is to keep \code{c("", "M")}. Available
@@ -44,18 +57,30 @@ commercial on-board (C).}
 \item{keep_sample_method}{A vector of character values specifying the types of
 sampling methods you want to keep. The default is to keep \code{"R"}, which
 refers to samples that were sampled randomly. Available types include
-random (R), stratified (S), systematic (N), purposive (P), and special (X).}
+random (R), stratified (S), systematic (N), purposive (P), and special (X).
+As of February 17, 2021,
+Washington is the only state with a sample type of \code{""}, and it was limited
+to two special samples of yelloweye rockfish.}
 
 \item{keep_length_type}{A vector of character values specifying the types of
 length samples to keep. There is no default value, though users will typically
 want to keep \code{c("", "F", "A")}, but should also think about using
-\code{c("", "F", "A", NA)}.}
+\code{c("", "F", "A", NA)}. Note that types other than those listed below
+can be present, especially if you are dealing with a skate.
+\code{A} is alternate length,
+\code{D} is dorsal length,
+\code{F} is fork length,
+\code{S} is standard length, and
+\code{T} is total length.}
 
 \item{keep_age_method}{A vector of ageing methods to retain in the data. All fish
 aged with methods other than those listed will no longer be considered aged.
 A value of \code{NULL}, the default, will keep all ageing methods. However,
-a vector of \code{c("B", "S", "", NA, 1, 2)} will keep all unaged fish and those
-that were aged with break and burn and surface reads.}
+a vector of \code{c("B", "BB", S", "", NA, 1, 2)} will keep all unaged fish and those
+that were aged with break and burn and surface reads. You do not really need
+to include such a verbose vector of values though because numbers are converted
+to appropriate character codes in \link{getAge}. Therefore, something like
+\code{c("B", "S")} would be sufficient to keep all break and burn and surface reads.}
 
 \item{keep_missing_lengths}{\emph{Deprecated}. Just subset them using
 \verb{is.na(Pdata[, 'length']) after running }cleanPacFIN` if you want to remove
@@ -63,9 +88,7 @@ lengths, though there is no need because the package accommodates keeping them i
 
 \item{keep_states}{A vector of states that you want to keep, where each state
 is defined using a two-letter abbreviation, e.g., \code{WA}. The default is to keep
-data from all three states, even though California data often do not
-have information on sample type or sample method. The default,
-\code{keep_states = c("WA", "OR", "CA")}, is to keep the data.
+data from all three states, \code{keep_states = c("WA", "OR", "CA")}.
 Add \code{'UNK'} to the vector if you want to keep data not assigned to a state.}
 
 \item{CLEAN}{A logical value used when you want to remove data from the input
@@ -101,13 +124,18 @@ fleet \tab initialized to 1\cr
 fishery \tab initialized to 1\cr
 season \tab initialized to 1.  Change using \code{\link{getSeason}}\cr
 state \tab initialized from SOURCE_AGID.  Change using \code{\link{getState}}\cr
+length \tab length in mm, where \code{NA} indicates length is not available\cr
 lengthcm \tab floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH\cr
 geargroup \tab the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
 }
 }
 \description{
-Clean raw data from PacFIN to remove unsuitable samples and
-convert units to those appropriate for the rest of the code.
+Clean raw PacFIN data to remove unsuitable samples if \code{CLEAN = TRUE} and
+convert units of measured quantities to work with downstream functions.
+Raw data are meant to be inclusive of everything from PacFIN so users can
+explore all that is available, but this means that raw data will \strong{ALWAYS}
+include information that is not appropriate for use in
+US West Coast stock assessments.
 }
 \details{
 The original fields in the returned data are left untouched,
@@ -143,7 +171,7 @@ Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH
 NROW(XMPL.BDS) - NROW(Pdata)
 }
 \seealso{
-\code{\link{getState}}, \code{\link{getSeason}}
+\link{getState}, \link{getSeason}
 }
 \author{
 Andi Stephens
