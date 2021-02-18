@@ -61,7 +61,7 @@
 getExpansion_2 <- function(Pdata, Catch,
   Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95,
   stratification.cols,
-  verbose = TRUE, savedir = getwd()) {
+  verbose = TRUE, savedir) {
 
   #### Set up
   # Check Unit input
@@ -154,14 +154,16 @@ getExpansion_2 <- function(Pdata, Catch,
   )
 
   # Find which trips don't have catch values associated with them
-  NoCatch <- aggregate(Sum_Sampled_Lbs ~ fishyr + stratification,
-    data = tows[is.na(tows[, "catch"]), ], length)
-  colnames(NoCatch)[3] <- "N"
-  if (length(NoCatch) > 0 & verbose) {
-    message("No Catch was found for these rows in Pdata, where\n",
-      "N is the number of rows with missing Catch info:")
-    print(NoCatch)
-  } # End if
+  if (sum(is.na(tows[, "catch"])) != 0){
+    NoCatch <- aggregate(Sum_Sampled_Lbs ~ fishyr + stratification,
+      data = tows[is.na(tows[, "catch"]), ], length)
+    colnames(NoCatch)[3] <- "N"
+    if (length(NoCatch) > 0 & verbose) {
+      message("No Catch was found for these rows in Pdata, where\n",
+        "N is the number of rows with missing Catch info:")
+      print(NoCatch)
+    } # End if
+  }
 
   # Expansion is calculated by dividing the catch by the Sum_Sampled_Lbs.
   tows$EF2 <- tows$catch/tows$Sum_Sampled_Lbs
@@ -193,19 +195,25 @@ getExpansion_2 <- function(Pdata, Catch,
 
   if (nNA > 0) {
     NA_EF2[, "FREQ"] <- 1
-    png(file.path(savedir, "PacFIN_exp2_NAreplace.png"))
-    on.exit(dev.off(), add = TRUE)
-    graphics::barplot(
-      stats::xtabs(NA_EF2$FREQ ~ NA_EF2$state + NA_EF2$fishyr),
-      col = grDevices::rainbow(3),
-      legend.text = TRUE, xlab = "Year", ylab = "Samples",
-      main = "Second-stage expansion values of NA replaced by 1")
+    if (!missing(savedir)) {
+      png(file.path(savedir, "PacFIN_exp2_NAreplace.png"))
+      on.exit(dev.off(), add = TRUE)
+      graphics::barplot(
+        stats::xtabs(NA_EF2$FREQ ~ NA_EF2$state + NA_EF2$fishyr),
+        col = grDevices::rainbow(3),
+        legend.text = TRUE, xlab = "Year", ylab = "Samples",
+        main = "Second-stage expansion values of NA replaced by 1")
+    } else {
+      message("Specify savedir if you want a figure to show the NA Expansion_Factor_2 values replaced by 1.")
+    }
   } # End if
 
-  png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
-  on.exit(dev.off(), add = TRUE)
-  boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,
-    main = "", xlab = "Year", ylab = "Second-stage expansion factor")
+  if (!missing(savedir)) {
+    png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
+    on.exit(dev.off(), add = TRUE)
+    boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,
+      main = "", xlab = "Year", ylab = "Second-stage expansion factor")
+  }
 
   invisible(Pdata)
 
