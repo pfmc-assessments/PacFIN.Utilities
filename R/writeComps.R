@@ -381,7 +381,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
                       mComps$Nsamps / mComps$Ntows < 44, 
                       mComps$Ntows + 0.138 * mComps$Nsamps, 7.06 * mComps$Ntows), 0 )
   Ninput_u <- round(ifelse( 
-                      mComps$Nsamps / uComps$Ntows < 44, 
+                      uComps$Nsamps / uComps$Ntows < 44, 
                       uComps$Ntows + 0.138 * mComps$Nsamps,
                       7.06 * uComps$Ntows), 0 )
 
