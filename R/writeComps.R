@@ -103,8 +103,8 @@
 #' @import utils
 #'
 ##############################################################################
-writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
-                      maxAge=Inf, partition = 2, ageErr=0, returns = "FthenM",
+writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
+                      maxAge = Inf, partition = 2, ageErr = 0, 
                       dummybins = FALSE, sum1 = FALSE, digits = 4,
                       overwrite = TRUE, verbose = FALSE) {
 
@@ -113,10 +113,20 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   fComps <- NULL
   uComps <- NULL
 
+  # Which comps are we doing?
+  Names = names(inComps)
+  AGE = which(Names == "age")
+  LEN = which(Names == "lengthcm")
+
+  if(is.null(fname)){
+    if(length(LEN) > 0) { fname = "PacFIN_lengths.out"}
+    if(length(AGE) >0 ) { fname = "PacFIN_ages.out" }
+  }
+
   if (verbose){
     cat(paste("Writing comps to file", fname, "\n"))
-    cat(paste("\nNote that if you didn't run doSexRatio,",
-      "all unsexed fish disappear at this point.\n\n"))
+    #cat(paste("\nNote that if you didn't run doSexRatio,",
+    #  "all unsexed fish disappear at this point.\n\n"))
     flush.console()
   }
   # check for existence of the file before writing anything
@@ -133,35 +143,29 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   }
 
   # Adding columns in case a sex is not represented in inComps
-  if(length(  inComps$male) == 0) {
-    inComps$male = inComps$msamps = inComps$mtows = 0 }
+  if(length(inComps$male) == 0) {
+    inComps$male <- inComps$msamps <- inComps$mtows <- 0 
+  }
   if(length(inComps$female) == 0) {
-    inComps$female = inComps$fsamps = inComps$ftows = 0}
+    inComps$female <- inComps$fsamps <- inComps$ftows <- 0
+  }
+  if(length(inComps$unsexed) == 0){
+    inComps$unsexed <- inComps$usamps <- inComps$utows <- 0
+  }
 
   # Unsexed fish should have been assigned sex with doSexRatio.  
   # Re-using those columns to represent males + females
-  inComps$unsexed = inComps$male + inComps$female
-  inComps$usamps = inComps$msamps + inComps$fsamps
-  inComps$utows = inComps$alltows
-
-  # Which comps are we doing?
-
-  Names = names(inComps)
-  AGE = which(Names == "age")
-  LEN = which(Names == "lengthcm")
+  inComps$both   <- inComps$male + inComps$female
+  inComps$bothsamps <- inComps$msamps + inComps$fsamps
+  inComps$bothtows  <- inComps$alltows
 
   # Fix length bins
-
   if ( !is.null(inComps$lengthcm) ) {
-
     if ( is.null(lbins) ) {
-
       if (verbose) {
         cat("\nNo length bins provided, using data as-is\n\n")
       }
-
       lbins = sort(unique(inComps$lengthcm))
-
     } # End if for lbins
 
     # Re-code actual lengths to be lbins
@@ -186,180 +190,118 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
       lbins <- c(lbins, Inf)
       LbinLo <- c(0, lbins[-1])
     }
-    LbinHi = c(lbins[-1] - 1, Inf)
 
-    inComps$lbin = findInterval(inComps$lengthcm, lbins, all.inside=T)
-    
-    
-    # if (verbose) {
-    #  cat(paste("Bins:\n\n", LbinLo, "\n",
-    #           LbinHi, "\n\n",
-    #           "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
-    # }
-    
-    
+    LbinHi <- c(lbins[-1] - 1, Inf)
+    inComps$lbin <- findInterval(inComps$lengthcm, lbins, all.inside = TRUE)    
+  } # End if for lbins
 
-  } # End if
-
-    # Fix age bins
-
+  # Fix age bins
   if ( !is.null(inComps$age) ) {
-
     if ( is.null(abins) ) {
-
       if (verbose){
         cat("\nNo age bins provided, using data as-is\n\n")
       }
-
       abins = sort(unique(inComps$age))
-
       abins = abins[abins < maxAge]
-
     } # End if for abins
 
-    # Re-code actual ages to be abins
-    
-    if (dummybins) {
-      
-      if (min(abins) > 0) {
-        
+    # Re-code actual ages to be abins    
+    if (dummybins) {      
+      if (min(abins) > 0) {        
         abins = c(0, abins)
-      }
-      
-      abins <- c(abins, max(abins) + diff(tail(abins, 2)), Inf)
-      
-    } else {
-      
-      abins <- c(abins, Inf)
-      
+      }      
+      abins <- c(abins, max(abins) + diff(tail(abins, 2)), Inf)      
+    } else {      
+      abins <- c(abins, Inf)      
     } # End if-else dummybins
 
     # add extra, dummy bin because all.inside=T
-
-    inComps$abin = findInterval(inComps$age, abins, all.inside=T)
-
-    # if (verbose) {
-    #  cat(paste("Abins:\n\n", abins, "\n\n",
-    #    "Note that last bin is a dummy bin needed for internal purposes.\n\n"))
-    # }
-    
+    inComps$abin = findInterval(inComps$age, abins, all.inside = TRUE)    
   } # End if inComps$ages
 
   AAL = FALSE
-
   if ( length(AGE) > 0 ) {
-
-    target = "abin"
-
-    STRAT = AGE-1
-
-    KeyNames = c(Names[1:STRAT])
-    inComps$key = apply(inComps[,KeyNames, drop = FALSE],
-      1, paste, collapse = " ")
+    target <- "abin"
+    STRAT  <- AGE-1
+    KeyNames <- c(Names[1:STRAT])
+    inComps$key <- apply(inComps[,KeyNames, drop = FALSE], 1, paste, collapse = " ")
 
     # matrix will be Ages, Ntows, Nsamps.
     # it gets re-ordered later.
-
-    NCOLS = 2 + length(abins)
-    OutNames = c(paste("A",abins, sep=""), "Ntows","Nsamps")
+    NCOLS <- 2 + length(abins)
+    OutNames <- c(paste("A",abins, sep=""), "Ntows","Nsamps")
 
     if ( length(LEN) > 0 ) {
-
-      AAL = TRUE
-
-      STRAT = AGE-2
-
-      KeyNames = c(Names[1:STRAT], "lbin")
-      inComps$key = apply(inComps[,KeyNames, drop = FALSE],
-        1, paste, collapse = " ")
+      AAL <- TRUE
+      STRAT <- AGE-2
+      KeyNames <- c(Names[1:STRAT], "lbin")
+      inComps$key <- apply(inComps[,KeyNames, drop = FALSE], 1, paste, collapse = " ")
 
       # matrix will be Ages, LbinLo, LbinHi, Ntows, Nsamps.
       # it gets re-ordered later.
-
-      NCOLS =  4 + length(abins)
-      OutNames = c(paste("A",abins,sep=""), "lbin","Ntows","Nsamps")
-
+      NCOLS <-  4 + length(abins)
+      OutNames <- c(paste("A",abins,sep=""), "lbin","Ntows","Nsamps")
     } # End if
-
   } else {
-
-    target = "lbin"
-
-    STRAT = LEN-1
-
-    KeyNames = c(Names[1:STRAT])
-    inComps$key = apply(inComps[,KeyNames, drop = FALSE],
-      1, paste, collapse = " ")
+    target <- "lbin"
+    STRAT <- LEN - 1
+    KeyNames <- c(Names[1:STRAT])
+    inComps$key <- apply(inComps[,KeyNames, drop = FALSE], 1, paste, collapse = " ")
 
     # matrix will have Lbins, Ntows, Nsamps
     # it gets re-ordered later.
-
-    NCOLS = 2 + length(lbins)
-    OutNames = c(paste0("L",lbins), "Ntows","Nsamps")
-
+    NCOLS <- 2 + length(lbins)
+    OutNames <- c(paste0("L",lbins), "Ntows","Nsamps")
   } # End if-else
 
   # Rename columns to be used below
-
-  names(inComps)[which(names(inComps) == "female")] = "f"
-  names(inComps)[which(names(inComps) == "male")] = "m"
-  names(inComps)[which(names(inComps) == "unsexed")] = "u"
+  names(inComps)[which(names(inComps) == "female")] <- "f"
+  names(inComps)[which(names(inComps) == "male")]   <- "m"
+  names(inComps)[which(names(inComps) == "unsexed")]<- "u"
 
   # We'll work key by key
-
-  uKeys = inComps$key[!duplicated(inComps$key)]
+  uKeys <- inComps$key[!duplicated(inComps$key)]
 
   # Save the matching stratification columns
-
-  uStrat = inComps[!duplicated(inComps$key), 1:STRAT]
+  uStrat <- inComps[!duplicated(inComps$key), 1:STRAT]
 
   if (verbose) {
     cat(length(uKeys), "unique keys for", nrow(inComps), "records\n\n")
-    head(inComps)
+    #head(inComps)
     cat("\n\n")
     flush.console()
   }
+
   # For each sex in turn
-
-  for ( g in c("m","f","u")) {
-
-    myname = g
-    if (myname == "u") { myname = "b" }
+  for ( g in c("m","f","u","both")) {
+    myname <- g
+    #if (myname == "u") { myname <- "b" }
     if (verbose) {
       cat(paste("Assembling, sex is:", myname, "\n"))
       flush.console()
     }
-    tows = which(names(inComps) == paste(g,"tows",sep=""))
-    samps = which(names(inComps) == paste(g,"samps",sep=""))
+    tows  <- which(names(inComps) == paste(g, "tows", sep = ""))
+    samps <- which(names(inComps) == paste(g, "samps", sep = ""))
 
     # Create output matrix
-
-    output = data.frame(matrix(nrow=length(uKeys), ncol=NCOLS, 0))
-
-    names(output) = OutNames
+    output <- data.frame(matrix(nrow = length(uKeys), ncol = NCOLS, 0))
+    names(output) <- OutNames
 
     for ( k in 1:length(uKeys) ) {
-
       # Get the matching records
-
-      slice = inComps[inComps$key == uKeys[k],]
+      slice <- inComps[inComps$key == uKeys[k], ]
 
       if ( AAL ) {
-
-        output$lbin[k] = slice$lbin[1]
-
+        output$lbin[k] <- slice$lbin[1]
       } # End if
-
-      output$Nsamps[k] = sum(slice[,samps], na.rm=T)
+      output$Nsamps[k] <- sum(slice[,samps], na.rm = TRUE)
 
       # Use max here to take care of spurious NA problem that arises in getComps
       # for lengths where there are unsexed fish and no sexed fish.
-
-      output$Ntows[k] = max(slice[,tows], na.rm=T)
+      output$Ntows[k] <- max(slice[,tows], na.rm = TRUE)
 
       for ( s in 1:length(slice[,target]) ) {
-
-          index = slice[s,target]
+          index <- slice[s, target]
 
           #KFJ(2015-05-01) TODO:
           # BUG ... If there is more than one row for a given index or bin
@@ -371,136 +313,122 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
           # the target vector sequentially, without checking the corresponding length/age.
 
           # But summing the bin doesn't hurt anything.
-
-          output[k,index] = slice[s,g] + output[k, index]
-
+          output[k, index] <- slice[s, g] + output[k, index]
       } # End for s
 
     } # End for k
 
     # Save and identify
-
-    output[is.na(output)] = 0
+    output[is.na(output)] <- 0
 
     if ( AAL ) {
-
-      output$LbinLo = LbinLo[output$lbin]
-      output$LbinHi = LbinHi[output$lbin]
-
+      output$LbinLo <- LbinLo[output$lbin]
+      output$LbinHi <- LbinHi[output$lbin]
     } # End if
 
     # assign to a name like 'mComps' or 'fComps'
-    assign(paste(g, "Comps", sep=""), output)
-
+    assign(paste(g, "Comps", sep = ""), output)
   } # End for g
 
 
   # Now assemble everything and write to a file
   # Note that we are stripping the last, dummy bin.
 
-  NCOLS = ifelse(AAL, NCOLS-5, NCOLS-3)
+  NCOLS <- ifelse(AAL, NCOLS - 5, NCOLS - 3)
   # KFJ(2015-06-16): Can also use the following b/c
   # with Inf as the last dummy column it will not be
   # selected as a number, and if other columns are later
   # added for some reason then the code will not break.
   # NCOLS <- max(grep("[A-Z]{1}[0-9]+", colnames(output)))
 
-  blanks = mComps[1:NCOLS]
-  blanks[,] = 0
+  # CRW: I think this is creating a matrix of a specific size (mComps)
+  # which is then being erased (blanks[,] <- 0)
+  blanks <- mComps[1:NCOLS]
+  blanks[,] <- 0
 
   if (!"fishyr" %in% colnames(uStrat)) stop("fishyr should be a column")
-  if (!"fleet" %in% colnames(uStrat)) stop("fleet should be a column")
-  uStrat <- data.frame(uStrat[, c("fishyr", "fleet"), drop = FALSE],
-    uStrat[, !colnames(uStrat) %in% c("fishyr", "fleet"), drop = FALSE])
+  if (!"fleet"  %in% colnames(uStrat)) stop("fleet should be a column")
+  uStrat <- data.frame(uStrat[, "fishyr"], 
+                       month = 1,
+                       uStrat[, 'fleet'])
+  colnames(uStrat) <-  c("fishyr", "month", "fleet")
 
   # Fill the rest of the values
-
-  uStrat$sex = NA
-  uStrat$partition = partition
-  uStrat$ageErr = ageErr
+  uStrat$sex <- NA
+  uStrat$partition <- partition
 
   if ( AAL ) {
-
     # Note that until empty rows are removed, the LbinLo and LbinHi columns
     # are the same in each dataset
-
-    uStrat$LbinLo = fComps$LbinLo
-    uStrat$LbinHi = fComps$LbinHi
-
+    uStrat$ageErr <- ageErr
+    uStrat$LbinLo <- fComps$LbinLo
+    uStrat$LbinHi <- fComps$LbinHi
   }
 
-
-  Nsamps = rowSums(cbind(fComps$Nsamps, mComps$Nsamps), na.rm=T)
-
-  Ninput = round(ifelse( 
-                 round(Nsamps / uComps$Ntows, 0) < 44, 
-                 uComps$Ntows + 0.138 * Nsamps, 7.06 * uComps$Ntows), 0 )
-
-  if(!AAL){
-    FthenM = cbind(uStrat, uComps$Ntows, Nsamps, Ninput, fComps[,1:NCOLS], mComps[,1:NCOLS])
-  } else {
-    FthenM = cbind(uStrat, uComps$Ntows, Nsamps, fComps[,1:NCOLS], mComps[,1:NCOLS])
+  if ( length(AGE) > 0 ) {
+    uStrat$ageErr <- ageErr
+    uStrat$LbinLo <- -1
+    uStrat$LbinHi <- -1    
   }
 
+  Ninput_b <- round(ifelse( 
+                      round(bothComps$Nsamps / bothComps$Ntows, 0) < 44, 
+                      bothComps$Ntows + 0.138 * bothComps$Nsamps, 7.06 * bothComps$Ntows), 0 )
+  Ninput_f <- round(ifelse( 
+                      round(fComps$Nsamps / fComps$Ntows, 0) < 44, 
+                      fComps$Ntows + 0.138 * fComps$Nsamps, 7.06 * fComps$Ntows), 0 )
+  Ninput_m <- round(ifelse( 
+                      round(mComps$Nsamps / mComps$Ntows, 0) < 44, 
+                      mComps$Ntows + 0.138 * mComps$Nsamps, 7.06 * mComps$Ntows), 0 )
+  Ninput_u <- round(ifelse( 
+                      round(Nsamps_u / sum(uComps$Ntows), 0) < 44, 
+                      uComps$Ntows + 0.138 * Nsamps_u, 7.06 * uComps$Ntows), 0 )
 
-  Ninput = round(ifelse( 
-                 round(mComps$Nsamps / mComps$Ntows, 0) < 44, 
-                 mComps$Ntows + 0.138 * mComps$Nsamps, 7.06 * mComps$Ntows), 0 )
   if(!AAL){
-    Mout = cbind(uStrat, mComps$Ntows, mComps$Nsamps, Ninput, blanks, mComps[1:NCOLS])
+    FthenM <- cbind(uStrat, round(bothComps$Ntows, 0), round(bothComps$Nsamps, 0), Ninput_b, 
+                    fComps[,1:NCOLS], mComps[,1:NCOLS])
+    Fout  <- cbind(uStrat, round(fComps$Ntows, 0), round(fComps$Nsamps, 0), Ninput_f, 
+                    fComps[,1:NCOLS], fComps[,1:NCOLS])
+    Mout  <- cbind(uStrat, round(mComps$Ntows, 0), round(mComps$Nsamps, 0), Ninput_m, 
+                    mComps[,1:NCOLS], mComps[,1:NCOLS])
+    Uout  <- cbind(uStrat, round(uComps$Ntows, 0), round(uComps$Nsamps, 0), Ninput_u,
+                     uComps[,1:NCOLS], uComps[,1:NCOLS]) 
   } else {
-    Mout = cbind(uStrat, mComps$Ntows, mComps$Nsamps, blanks, mComps[1:NCOLS])
+    Fout <- cbind(uStrat, round(fComps$Ntows, 0), Nsamps_f, fComps[,1:NCOLS], fComps[,1:NCOLS])
+    Mout <- cbind(uStrat, round(mComps$Ntows, 0), Nsamps_m, mComps[,1:NCOLS], mComps[,1:NCOLS])
+    Uout <- cbind(uStrat, round(bothComps$Ntows, 0), Nsamps_u, uComps[,1:NCOLS], uComps[,1:NCOLS])
+    FthenM <- NULL
   }
 
-  Ninput = round(ifelse( 
-                 round(fComps$Nsamps / fComps$Ntows, 0) < 44, 
-                 fComps$Ntows + 0.138 * fComps$Nsamps, 7.06 * fComps$Ntows), 0 )
-
-  if(!AAL){
-    Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, Ninput, fComps[1:NCOLS], blanks)
-  } else {
-    Fout = cbind(uStrat, fComps$Ntows, fComps$Nsamps, fComps[1:NCOLS], blanks)
-  } 
-
-  Ninput = round(ifelse( 
-                 round(uComps$Nsamps / uComps$Ntows, 0) < 44, 
-                 uComps$Ntows + 0.138 * uComps$Nsamps, 7.06 * uComps$Ntows), 0 )
-
-  if(!AAL){
-    Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, Ninput, uComps[1:NCOLS], blanks)
-  } else {
-    Uout = cbind(uStrat, uComps$Ntows, uComps$Nsamps, uComps[1:NCOLS], blanks)
-  } 
   # Make it pretty
+  index <- which(names(Fout) == "round(fComps$Ntows, 0)")
+  names(Mout)[index]   <- "Ntows"
+  names(Fout)[index]   <- "Ntows"
+  names(Uout)[index]   <- "Ntows"
+  if(!AAL) { names(FthenM)[index] <- "Ntows" }
 
-  index = which(names(Fout) == "fComps$Ntows")
-
-  names(Mout)[index] = "Ntows"
-  names(Fout)[index] = "Ntows"
-  names(Uout)[index] = "Ntows"
-  names(FthenM)[index] = "Ntows"
-
-  names(Mout)[index + 1] = "Nsamps"
-  names(Fout)[index + 1] = "Nsamps"
-  names(Uout)[index + 1] = "Nsamps"
-  names(FthenM)[index + 1] = "Nsamps"
+  names(Mout)[index + 1]   <- "Nsamps"
+  names(Fout)[index + 1]   <- "Nsamps"
+  names(Uout)[index + 1]   <- "Nsamps"
+  if(!AAL) { names(FthenM)[index + 1] <- "Nsamps" }
 
   if(!AAL){
-    names(Mout)[index + 2] = "InputN"
-    names(Fout)[index + 2] = "InputN"
-    names(Uout)[index + 2] = "InputN"
-    names(FthenM)[index + 2] = "InputN"    
+    names(Mout)[index + 2]   <- "InputN"
+    names(Fout)[index + 2]   <- "InputN"
+    names(Uout)[index + 2]   <- "InputN"
+    names(FthenM)[index + 2] <- "InputN"    
   }
-
 
   # Remove empty rows
-  Fout = Fout[Fout$Nsamps > 0,]
-  Mout = Mout[Mout$Nsamps > 0,]
+  FthenM <- FthenM[FthenM$Nsamps > 0, ]
+  Fout <- Fout[Fout$Nsamps > 0, ]
+  Mout <- Mout[Mout$Nsamps > 0, ]
+  Uout <- Uout[Uout$Nsamps > 0, ]
 
-  if(dim(Uout)[1] != 0) { Uout$sex = 0}
-  if(dim(Fout)[1] != 0) { Fout$sex = 1}
-  if(dim(Mout)[1] != 0) { Mout$sex = 2}
-  if(dim(FthenM)[1] != 0) {FthenM$sex = 3 }
+  if(dim(Uout)[1] != 0)   { Uout$sex <- 0}
+  if(dim(Fout)[1] != 0)   { Fout$sex <- 1}
+  if(dim(Mout)[1] != 0)   { Mout$sex <- 2}
+  if(dim(FthenM)[1] != 0) { FthenM$sex <- 3 }
 
   # function to rescale comps to sum to 1
   # IGT(2019-04-25): I tried using an apply function but kept messing up,
@@ -514,6 +442,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     }
     return(out)
   }
+
   # function to round comps
   round.comps <- function(out, digits){
     value.names <- grep("^[alfmALFM][0-9]+", colnames(out), value = TRUE)
@@ -521,7 +450,6 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
       round(out[,names(out) %in% value.names], digits = digits)
     return(out)
   }
-
   
   # optionally rescale to sum to 1
   # this needs to happen after combining FthenM rather than to
@@ -536,7 +464,7 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
     }
   }
   # optionally round off to chosen value
-  if(!is.null(digits)){
+  if(!missing(digits)){
     if(verbose){
       message("rounding values to ", digits, " digits")
     }
@@ -547,50 +475,52 @@ writeComps = function(inComps, fname="out.csv", abins=NULL, lbins=NULL,
   }
   
   # Print the whole shebang out to a file.
-
   ## # Turn off warnings about "appending column names to file"
   oldwarn = options("warn")
   options("warn" = -1)
 
   if (verbose) {
+    cat("Writing FthenM, dimensions:", dim(FthenM), "\n")
+  }
+  IDstring = paste("\n\n", "Females then males")
+  cat(file = fname, IDstring, "\n", append = FALSE)  
+  write.table(file = fname, FthenM, sep = ",", col.names = TRUE, 
+    row.names = FALSE, append = TRUE)
+
+  if (verbose) {
     cat("Writing F only, dimensions:", dim(Fout), "\n")
   }
-
   IDstring = paste("\n\n", "Females only")
-  cat(file=fname, IDstring, "\n", append=FALSE)
-  
-  write.table(file=fname, Fout, sep=",", col.names=T, row.names=F, append=T)
+  cat(file = fname, IDstring, "\n", append = TRUE)  
+  write.table(file = fname, Fout, sep = ",", col.names = TRUE, 
+    row.names = FALSE, append = TRUE)
   
   if (verbose) {
     cat("Writing M only, dimensions:", dim(Mout), "\n")
-  }
-  
+  }  
   IDstring = paste("\n\n",  "Males only")
-  cat(file=fname, IDstring, "\n", append=T)
-  
-  write.table(file=fname, Mout, sep=",", col.names=T, row.names=F, append=T)
-  
+  cat(file = fname, IDstring, "\n", append = TRUE)  
+  write.table(file = fname, Mout, sep =",", col.names = TRUE, 
+    row.names = FALSE, append = TRUE)
+
   if (verbose) {
-    cat("Writing combined sexes as females, dimensions:", dim(Uout), " \n")
+    cat("Writing U only, dimensions:", dim(Uout), " \n")
+  } 
+
+  if("sexRatio" %in% colnames(inComps)){ 
+    u_message <- paste("\n\n", 
+      "Sex ratio was applied and unsexed are included above: only reported as a diagnostic") 
+  } else {
+    u_message <- paste("\n\n", "Usexed only") 
   }
-  
-  IDstring = paste("\n\n", "Sexes combined")
-  cat(file=fname, IDstring, "\n", append=T)
-  
-  write.table(file=fname, Uout, sep=",", col.names=T, row.names=F, append=T)
-  
-  if (verbose) {
-    cat("Writing FthenM, dimensions:", dim(FthenM), "\n")
-  }
-  
-  IDstring = paste("\n\n", "Females then males")
-  cat(file=fname, IDstring, "\n", append = TRUE)
-  
-  write.table(file=fname, FthenM, sep=",", col.names=T, row.names=F, append=T)
-  
+
+  IDstring = u_message
+  cat(file = fname, IDstring, "\n", append = TRUE)  
+  write.table(file = fname, Uout, sep = ",", col.names = TRUE, 
+    row.names = FALSE, append = TRUE)
+ 
   # Reset warnings
-  options("warn" = oldwarn[[1]])
-  
-  invisible(eval(parse(text = returns)))
-  
+  #options("warn" = oldwarn[[1]])  
+  #invisible(eval(parse(text = returns)))  
+
 } # End function writeComps
