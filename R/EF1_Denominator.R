@@ -130,7 +130,7 @@ EF1_Denominator = function(Pdata,
     Wt_Sampled_1_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) + 
       FEMALES_WGT + MALES_WGT + UNK_WT) *
       ifelse(all(is.na(length)), 0, 1)
-    ) %>% ungroup() %>% group_by(SAMPLE_NO, CLUSTER_NO) %>%
+    ) %>% dplyr::ungroup() %>% dplyr::group_by(SAMPLE_NO, CLUSTER_NO) %>%
   # Do the same for CLUSTER_WGT
   dplyr::mutate(
     Wt_Sampled_2_A = (-1 * sum(ifelse(is.na(age), bestweight, 0)) + 
@@ -139,7 +139,7 @@ EF1_Denominator = function(Pdata,
           CLUSTER_WGT) * ifelse(all(is.na(length)), 0, 1)
     ) %>% 
   # Bring the calculations back to the full scale of the data frame
-  ungroup() %>%
+  dplyr::ungroup() %>%
   # Coalesce sets things to downstream values, only if NA, i.e.,
   # Wt_Sampled_[AL] is set by priority left to right 1, 2, 3
   dplyr::mutate(
