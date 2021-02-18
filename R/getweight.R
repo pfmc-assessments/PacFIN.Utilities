@@ -12,10 +12,19 @@
 #' rows named \code{'U'}, at a minimum, \code{'F'}, and \code{'M'}.
 #' The output from \code{\link{getWLpars}} is formatted correctly as is.
 #' @template unit.out
+#' @param weight A vector of fish weights, where the units for each
+#' measurement are specified in `unit.in`.
+#' @param unit.in A vector of units for each measurement in `weight`.
+#' Options include `KG`, `G`, `LB`, `UNK`. Where, the latter leads to
+#' the assumption that your units are in grams and will be converted
+#' as such.
 #'
 #' @export
 #' @author Kelli Faye Johnson
-#' @return A vector of weights determined from lengths and weight-length
+#' @return A vector of measurements in the unit specified using
+#' `unit.out`. If weights were provided, then the weights are also
+#' the output. If lengths were provided, then they are converted
+#' to weights. Where, weights are determined from lengths and weight-length
 #' parameters input to the function.
 #' Weights are in the same units used to calculate things, i.e., kg.
 #' @examples
@@ -32,7 +41,27 @@
 #' )
 #' }
 #'
-getweight <- function(length, sex, pars, unit.out = c("lb", "kg")) {
+getweight <- function(
+  length,
+  sex,
+  pars,
+  unit.out = c("lb", "kg"),
+  weight,
+  unit.in) {
+
+  if (!missing(weight)) {
+    transformweight <- weight * mapply(switch, unit.in,
+        MoreArgs = list(
+          G = 0.00220462,
+          KG = 2.20462,
+          UNK = 0.00220462,
+          0.00220462)
+        )
+    if (unit.out == "kg") {
+      transformweight <- transformweight * 0.453592
+    }
+    return(transformweight)
+  }
 
   #### Original equation
   # a * (length / 10)^b * 2.20462 [length = cm; weight = kg]

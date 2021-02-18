@@ -1,51 +1,69 @@
-###########################################################################
-#
 #' Calculate the denominator for the level-1 expansion factor.
 #'
-#' \subsection{Workflow}{
-#' \code{EF1_Denominator} is not run by the user.  It is a sub-function of
-#' \code{\link{getExpansion_1}}
-#' }
+#' Calculate the denominator for the level-1 expansion, where the denominator
+#' is the weight of all fish in the sample.
+#' `EF1_Denominator` is not run by the user, it is a sub-function of
+#' [getExpansion_1].
 #'
-#'
+#' @details
 #' The denominator of the level-1 expansion factor is the weight of the sampled
-#' fish in a tow. The calcuation is done one in three ways, all of which
-#' are returned, though the column used in subsequent analyses is based on
-#' the hierarchical structure of:
-#' \enumerate{
-#' \item{\code{sum(Pdata$FEMALES_WGT + Pdata$MALES_WGT)} per unique \code{SAMPLE_NO}}
-#' \item{\code{sum(Pdata$SPECIES_WGT)} across all clusters in a sample, where the
-#'   species weight is determined from the \code{cluster_wt}}
-#' \item{Calculate weights of males and females given the weight length relationship,
-#' if the length of a fish does not exist, then the median weight of all
-#' weighed fish in the sample is used.}
-#' }
+#' fish in the sample unit, where for fisheries data, this unit is most often
+#' the trip level because information on individual hauls is not available.
+#' For a survey, tow- or haul-level data are typically available.
+#' The sum of the weight in the sample is calculated different for each state
+#' based on the data that are available.
+#' 
+#' Oregon provides information on the weight of females and males in the sample
+#' via the `WEIGHT_OF_FEMALES` and `WEIGHT_OF_MALES` columns. These are often
+#' model-based weights, which would be the only way they can get weights when
+#' the fish were not weighed themselves. The weight of unsexed fish is calculated
+#' internally by the code and added to the female and male weight.
+#' **todo**: Let Oregon know that this calculation is being done and they may want
+#' to provide UNK_WGT.
+#' 
+#' California sample weights were previously based on the column labeled
+#' `SPECIES_WEIGHT`. Now, California data is parsed by PacFIN to furnish
+#' species-specific cluster weights. Prior, cluster weights included the weight
+#' of all species in the sample. Now, `CLUSTER_WEIGHT` is the weight in that
+#' cluster for the species of interest. This was verified for dover sole by
+#' Kelli F. Johnson in February of 2021. Thus, the code uses `CLUSTER_WEIGHT`
+#' rather than `SPECIES_WEIGHT` now.
+#' **todo**: determine if this should be the only cluster-specific value going forward?
+#'
+#' Washington does not pretend to provide any information regarding total weight
+#' of fish in the sample. Therefore, this value is calculated by summing the
+#' empirical weight of fish. For fish that were not weighed, a weight is
+#' calculated given the input parameters. It is up to the user to calculate
+#' these if they want them based on more data than what is included in `Pdata`.
+#' Finally, for fish that have no length and therefore no predicted weight,
+#' the mean of fish weight in the sample is used to assign all fish a weight.
+#'
+#' Another thing to note in the calculation of the denominator is that sample
+#' weights are length- and age-specific values. You would not want to weight
+#' an age sample based on how many lengths were measured. So, the weights of
+#' fish that are not lengthed are backed out of the sample weight and the
+#' weight of fish that are not aged are backed out of the sample weight to
+#' create length- and age-specific sample weights. Only these specific sample
+#' weights should be used going forward.
 #'
 #' @template Pdata
 #' @template weightlengthparams
 #' @template verbose
-#' @param plot Create plots.  Default:  FALSE
+#' @param plot A logical that specifies if plots should be created or not.
+#' The default is `FALSE`.
 #' @return Additional columns are added to \code{Pdata}:
-#' \itemize{
-#' \item Wt_Sampled_1: the sum of weights for male and female fish within the
-#' sample, this will ignore unsexed fish or hermaphrodites.
-#' \item Wt_Sampled_2: the species-specific sample weight only provided by
-#'   California because the cluster weight could include multiple species.
-#' \item LW_Calc_Wt: individual weights predicted from the specified length-weight relationships.
-#' \item Wt_Sampled_3: The sum of empirical weights, for those fish within a
-#' sample where this information is available, and weights calculated from the
-#' length-weight relationship. This uses the empirical data if available and
-#' fills in with the expected weight.
-#' \item Wt_Sampled: the sample weight that will be used in subsequent analyses,
-#'   where this is preferentially the empirical weights; all NA values are
-#'   subsequently filled in using Wt_Sampled_1,
-#'   with NAs replaced with values from Wt_Sampled_2,
-#'   and NAs remaining replaced with values from Wt_Sampled_3.
-#' \item Wt_Method: a \code{numeric} value starting with zero for empirical weights
-#'   and then denoting which method was used for \code{Wt_Sampled}.
-#' }
+#' * `Wt_Sampled_1`: the sum of sex-specific weights within the sample.
+#' * `Wt_Sampled_2`: the species-specific sample weight only provided by
+#'   California in cluster weight.
+#' * `LW_Calc_Wt`: individual weights predicted from the specified 
+#'   length-weight relationships.
+#' * `Wt_Sampled_3`: The sum of empirical weights, for those fish within a
+#'   sample where this information is available, and weights calculated from the
+#'   length-weight relationship. This uses the empirical data if available and
+#'   fills in with the expected weight or mean-sample weight.
+#'
 #' @author Andi Stephens
-#' @seealso \code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
+#' @seealso [EF1_Numerator], [getExpansion_1], [getExpansion_2]
 #' @import grDevices
 #' @import graphics
 #' @import stats
@@ -58,19 +76,6 @@ EF1_Denominator = function(Pdata,
   verbose = FALSE,
   plot = FALSE) {
 
-  sumNA <- function(x) {
-    out <- sum(x, na.rm = TRUE)
-    ifelse(out == 0, NA, out)
-  }
-
-# Clean up.  Muddled results if this function has been previously run.
-  Pdata$Wt_Sampled_1   = NA
-  Pdata$Wt_Sampled_2   = NA
-  Pdata$LW_Calc_Wt     = NA
-  Pdata$Wt_Sampled_3   = NA
-  Pdata$Wt_Sampled     = NA
-  Pdata$Wt_Method      = NA
-
   if (verbose) {
     cat("\nIndividual weights will be generated from the following values:\n\n")
     cat(" Females:", fa,fb, "\n",
@@ -78,253 +83,85 @@ EF1_Denominator = function(Pdata,
         "Unknowns and hermaphrodites:",  ua,ub, "\n\n")
   } # End if verbose
 
-  # Assign 'state' if it's not already there.
-  if (length(which(names(Pdata) == "state")) == 0) {
-    if (verbose){
-      cat("State variable was not assigned, getting state.\n\n")
-    }
-    Pdata <- getState(Pdata, verbose = verbose,
-      source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID"))
-  }
-
-  if (!"UNK_NUM" %in% colnames(Pdata)) {
-    Pdata$UNK_NUM <- ave(Pdata$SEX, Pdata$SAMPLE_NO,
-    FUN = function(x) sumNA(x %in% c("U", "H")))
-  }
-  if (!"UNK_WT" %in% colnames(Pdata)) stop("Must get a newer ",
-    "version of the bds data to work with this version of PacFIN.Utilities.")
-  if (!"UNK_WGT" %in% colnames(Pdata)) Pdata$UNK_WGT <- Pdata$UNK_WT
-  if (!"FEMALE_NUM" %in% colnames(Pdata)) Pdata$FEMALE_NUM <- Pdata$FEMALES_NUM
-  if (!"MALE_NUM" %in% colnames(Pdata))   Pdata$MALE_NUM <- Pdata$MALES_NUM
-
-  # Everything is calculated in terms of unique samples.
-  # Calculate the sampled weight based on weights of individual fish
-  # If there are any fish that are not weighed in the sample then
-  # Wt_Sampled will be NA and you need to estimate the weight later.
-  Pdata$Wt_Sampled <- ave(Pdata$FISH_WEIGHT,
-    Pdata$SAMPLE_NO, FUN = sum)
-  Wt_Sampled_L <- ave(ifelse(is.na(Pdata$length), NA, Pdata$FISH_WEIGHT),
-    Pdata$SAMPLE_NO, FUN = sum)
-  Wt_Sampled_A <- ave(ifelse(is.na(Pdata$age), NA, Pdata$FISH_WEIGHT),
-    Pdata$SAMPLE_NO, FUN = sum)
-
-  check <- TRUE
-  if (check) {
-    # Check OR
-    numsex <- aggregate(factor(SEX) ~ SAMPLE_NO, data = Pdata, table)
-    test <- data.frame(Pdata, numsex[match(Pdata$SAMPLE_NO, numsex$SAMPLE_NO), "factor(SEX)"])
-    test_OR <- test[test$state == "OR", ]
-      if (dim(test_OR)[1] != 0) {
-        messagebeg <- paste("\nSome OR bds data (see above)\n do not have the proper",
-          "number of samples assigned to the column ")
-        testTF <- test_OR$F != ifelse(is.na(test_OR$FEMALE_NUM), 0, test_OR$FEMALE_NUM)
-        if (any(testTF)) {
-          capture.output(type = "message",
-            test_OR[which(testTF),
-              c("SEX","SAMPLE_NO","FEMALE_NUM","MALE_NUM","UNK_NUM","F","M","U")]
-          )
-          stop(messagebeg, "FEMALE_NUM.")
-        }
-        testTF <- test_OR$M != ifelse(is.na(test_OR$MALE_NUM), 0, test_OR$MALE_NUM)
-        if (any(testTF)) {
-          capture.output(type = "message",
-            test_OR[which(testTF),
-              c("SEX","SAMPLE_NO","FEMALE_NUM","MALE_NUM","UNK_NUM","F","M","U")]
-          )
-          stop(messagebeg, "MALE_NUM.")
-        }
-        testTF <- test_OR$U != ifelse(is.na(test_OR$UNK_NUM), 0, test_OR$UNK_NUM)
-        if (any(testTF)) {
-          capture.output(type = "message",
-            test_OR[which(testTF),
-              c("SEX","SAMPLE_NO","FEMALE_NUM","MALE_NUM","UNK_NUM","F","M","U")]
-          )
-          stop(messagebeg, "UNK_NUM.")
-        }
-      }
-    # Check CA
-    if (dim(test[test$state == "CA", ])[1] > 0) {
-      if (dim(Pdata[is.na(Pdata$SPECIES_WGT) & Pdata$state == "CA", ])[1] != 0) stop("Some CA data",
-        " don't have a 'SPECIES_WGT' for a given cluster.")
-    }
-  }
-
-  #### Sum of predicted fish weight per sample based on sex and length (mm)
-  # Washington b/c there is no other method to find the sample weight.
-  Pdata$LW_Calc_Wt <- getweight(Pdata$length, Pdata$SEX,
+  # Calculate weight based on length-weight relationship
+  Pdata$LW_Calc_Wt <- getweight(
+    length = Pdata$length,
+    sex = Pdata$SEX,
     pars = data.frame(
       "A" = c("females" = fa, "males" = ma, "all" = ua),
       "B" = c("females" = fb, "males" = mb, "all" = ub)),
-    unit.out = "kg")
-  bestweight <- ifelse(is.na(Pdata$FISH_WEIGHT),
-    Pdata$LW_Calc_Wt, Pdata$FISH_WEIGHT)
-  Pdata$meanfishweight <- ave(bestweight, Pdata$SAMPLE_NO,
-    FUN = function(x) mean(x, na.rm = TRUE))
-  bestweight[is.na(bestweight)] <- Pdata$meanfishweight[is.na(bestweight)]
-  Pdata$Wt_Sampled_3 <- ave(bestweight, Pdata$SAMPLE_NO,
-    FUN = sumNA)
-  Wt_Sampled_3_L <- ave(ifelse(!is.na(Pdata$length), bestweight, 0),
-    Pdata$SAMPLE_NO, FUN = sumNA)
-  Wt_Sampled_3_A <- ave(ifelse(!is.na(Pdata$age), bestweight, 0),
-    Pdata$SAMPLE_NO, FUN = sumNA)
+    unit.out = "lb"
+    )
 
-  if (any(is.na(Pdata$Wt_Sampled_3[Pdata$state == "WA" & !is.na(Pdata$length)]))) {
-    warning("Some fish",
-        " from WA don't have an empirical or estimated weight,\n",
-        "and thus, they are not included in the first expansion.")
-  }
-  # todo: calculate mean fish weight from sum of UNK_WT + FEMALES_WGT + MALE_WGT
-  # or SPECIES_WGT by finding the number of fish that went into that number
-  # and dividing.
+  #### Calculate sample weight using FISH_WEIGHT in lbs
+  Pdata <- Pdata %>%
+  # Use FISH_WEIGHT if available and calculated from WL relationship when NA
+  # Note the change in units for FISH_WEIGHT from KG to LBS
+  dplyr::mutate(
+    bestweight = dplyr::case_when(
+      is.na(FISH_WEIGHT) ~ LW_Calc_Wt,
+      TRUE ~ FISH_WEIGHT * 2.20462)
+    ) %>%
+  # Group by SAMPLE_NO so all subsequent calculations are done on subsets
+  # of the data, i.e., mean(bestweight) is mean of the bestweight in a
+  # specific sample
+  dplyr::group_by(SAMPLE_NO) %>%
+  dplyr::mutate(
+    bestweight = ifelse(
+      is.na(bestweight),
+      mean(bestweight),
+      bestweight)
+    ) %>%
+  # Calculate WA sample weights and weight of unsexed fish per SAMPLE_NO
+  dplyr::mutate(
+    Wt_Sampled_3_L = sum(na.rm = TRUE,
+      ifelse(is.na(length), NA, bestweight)),
+    Wt_Sampled_3_A = sum(na.rm = TRUE,
+      ifelse(is.na(age), NA, bestweight)),
+    UNK_WT = sum(ifelse(SEX == "U", bestweight, 0)),
+    UNK_NUM = sum(SEX == "U")
+    ) %>%
+  # Back out the weight of fish that have no length or age for each
+  # specific sample weight, if all are NA in sample, then set to 0.
+  dplyr::mutate(
+    Wt_Sampled_1_A = (-1 * sum(ifelse(is.na(age), bestweight, 0)) + 
+      FEMALES_WGT + MALES_WGT + UNK_WT) *
+      ifelse(all(is.na(age)), 0, 1),
+    Wt_Sampled_1_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) + 
+      FEMALES_WGT + MALES_WGT + UNK_WT) *
+      ifelse(all(is.na(length)), 0, 1)
+    ) %>% ungroup() %>% group_by(SAMPLE_NO, CLUSTER_NO) %>%
+  # Do the same for CLUSTER_WGT
+  dplyr::mutate(
+    Wt_Sampled_2_A = (-1 * sum(ifelse(is.na(age), bestweight, 0)) + 
+          CLUSTER_WGT) * ifelse(all(is.na(age)), 0, 1),
+    Wt_Sampled_2_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) + 
+          CLUSTER_WGT) * ifelse(all(is.na(length)), 0, 1)
+    ) %>% 
+  # Bring the calculations back to the full scale of the data frame
+  ungroup() %>%
+  # Coalesce sets things to downstream values, only if NA, i.e.,
+  # Wt_Sampled_[AL] is set by priority left to right 1, 2, 3
+  dplyr::mutate(
+    Wt_Sampled_A = dplyr::coalesce(Wt_Sampled_1_A, Wt_Sampled_2_A, Wt_Sampled_3_A),
+    Wt_Sampled_L = dplyr::coalesce(Wt_Sampled_1_L, Wt_Sampled_2_L, Wt_Sampled_3_L)
+    ) %>%
+  # Return a data frame rather than a tibble
+  data.frame
 
-  # Determine if any fish within a sample were not aged or lengthed
-  identifier <- ifelse(Pdata[, "state"] == "CA",
-    apply(Pdata[, c("SAMPLE_NO", "CLUSTER_NO")], 1, paste, collapse = ""),
-    Pdata[, "SAMPLE_NO"])
-  for (ii in 1:nrow(Pdata)) {
-    if (!is.na(Pdata$length[ii]) & !is.na(Pdata$age[ii])) next
-    if (Pdata$state[ii] == "WA") next
-    if (is.na(Pdata$length[ii]) & is.na(Pdata$age[ii])) {
-      if (Pdata$state[ii] == "CA") {
-        change <- which(identifier ==
-          paste(Pdata[ii, c("SAMPLE_NO", "CLUSTER_NO"), drop = TRUE],
-            collapse = ""))
-        if (all(c(is.na(Pdata$length[change]), is.na(Pdata$age[change])))) {
-          Pdata[change, "SPECIES_WGT"] <- NA
-          next
-        }
-        Pdata[change, "SPECIES_WGT"] <- Pdata[ii, "SPECIES_WGT"] - bestweight[ii]
-      }
-      if (Pdata$state[ii] == "OR") {
-        change <- which(identifier ==
-          Pdata[ii, c("SAMPLE_NO"), drop = TRUE])
-        if (all(c(is.na(Pdata$length[change]), is.na(Pdata$age[change])))) {
-          Pdata[change, c("UNK_WGT", "FEMALES_WGT", "MALES_WGT")] <- NA
-          Pdata[change, c("UNK_NUM", "FEMALES_NUM", "MALES_NUM")] <- NA
-          next
-        }
-        if (Pdata$SEX[ii] == "U") {
-          Pdata[change, "UNK_WGT"] <- Pdata[ii, "UNK_WGT"] - bestweight[ii]
-          Pdata[change, "UNK_NUM"] <- Pdata[ii, "UNK_NUM"] - 1
-        }
-        if (Pdata$SEX[ii] == "M") {
-          Pdata[change, "MALES_WGT"] <- Pdata[ii, "MALES_WGT"] - bestweight[ii]
-          Pdata[change, "MALES_NUM"] <- Pdata[ii, "MALES_NUM"] - 1
-        }
-        if (Pdata$SEX[ii] == "F") {
-          Pdata[change, "FEMALES_WGT"] <- Pdata[ii, "FEMALES_WGT"] - bestweight[ii]
-          Pdata[change, "FEMALES_NUM"] <- Pdata[ii, "FEMALES_NUM"] - 1
-        }
-      }
-    }
-  }
-  if (any(Pdata$SPECIES_WGT < 0, na.rm = TRUE)) stop("Some California samples were",
-    " reduced to below zero 'SPECIES_WGT', which is not plausible.")
-  SPECIES_WGT_L <- SPECIES_WGT_A <- Pdata[, "SPECIES_WGT"]
-  UNK_WGT_L <- UNK_WGT_A <- Pdata[, "UNK_WGT"]
-  MALES_WGT_L <- MALES_WGT_A <- Pdata[, "MALES_WGT"]
-  FEMALES_WGT_L <- FEMALES_WGT_A <- Pdata[, "FEMALES_WGT"]
-  for (ii in 1:nrow(Pdata)) {
-    # Good lengths Good ages
-    if (!is.na(Pdata$length[ii]) & !is.na(Pdata$age[ii])) next
-    if (is.na(Pdata$length[ii]) & is.na(Pdata$age[ii])) next
-    if (Pdata$state[ii] %in% ("WA")) next
-    if (Pdata$state[ii] == "CA") {
-      change <- which(identifier ==
-        paste(Pdata[ii, c("SAMPLE_NO", "CLUSTER_NO"), drop = TRUE],
-          collapse = ""))
-    }
-    if (Pdata$state[ii] %in% ("OR")) {
-      change <- which(identifier ==
-        Pdata[ii, c("SAMPLE_NO"), drop = TRUE])
-    }
-    # Good lengths Bad ages
-    if (!is.na(Pdata$length[ii]) & is.na(Pdata$age[ii])) {
-      SPECIES_WGT_A[change] <- SPECIES_WGT_A[change] - bestweight[ii]
-      if (Pdata$SEX[ii] == "U") UNK_WGT_A[change] <- UNK_WGT_A[change] - bestweight[ii]
-      if (Pdata$SEX[ii] == "M") MALES_WGT_A[change] <- MALES_WGT_A[change] - bestweight[ii]
-      if (Pdata$SEX[ii] == "F") FEMALES_WGT_A[change] <- FEMALES_WGT_A[change] - bestweight[ii]
-    }
-    # Bad lengths Good ages
-    if (is.na(Pdata$length[ii]) & !is.na(Pdata$age[ii])) {
-      SPECIES_WGT_L[change] <- SPECIES_WGT_L[change] - bestweight[ii]
-      if (Pdata$SEX[ii] == "U") UNK_WGT_L[change] <- UNK_WGT_L[change] - bestweight[ii]
-      if (Pdata$SEX[ii] == "M") MALES_WGT_L[change] <- MALES_WGT_L[change] - bestweight[ii]
-      if (Pdata$SEX[ii] == "F") FEMALES_WGT_L[change] <- FEMALES_WGT_L[change] - bestweight[ii]
-    }
-  }
+  #### Summary and boxplot
+  # todo: revamp the summary and plots
+  printemp = data.frame(cbind(Pdata$Wt_Sampled_1_L, Pdata$Wt_Sampled_2_L,
+                              Pdata$Wt_Sampled_3_L, Pdata$Wt_Sampled_L))
 
-  #### Oregon - MALES_WGT and FEMALES_WGT is only available from Oregon.
-  # Allow sum to be calculated when there are no males or no females
-  # because weights are NA in those instances rather than a value of zero.
-  # todo: Get JW to include UNK_NUM and UNK_WGT
-  Pdata$Wt_Sampled_1 <- apply(Pdata[, c("UNK_WGT", "MALES_WGT", "FEMALES_WGT")],
-    1, sumNA)
-  Wt_Sampled_1_L <- apply(data.frame(UNK_WGT_L, MALES_WGT_L, FEMALES_WGT_L),
-      1, sumNA)
-  Wt_Sampled_1_A <- apply(data.frame(UNK_WGT_A, MALES_WGT_A, FEMALES_WGT_A),
-      1, sumNA)
-
-  #### California - multiple species can be sampled in one sample number
-  # SPECIES_WGT is specific to a cluster, so sum the species weight across clusters
-  # within a given sample
-    # For every sample_no get the species_wgt for a given cluster
-    # Assign each answer to entries with that sample_no in Pdata
-  Pdata$Wt_Sampled_2 <- stats::ave(ifelse(
-      duplicated(paste(Pdata$SAMPLE_NO, Pdata$CLUSTER_NO)),
-      0, Pdata$SPECIES_WGT), Pdata$SAMPLE_NO, FUN = sum)
-  Wt_Sampled_2_L <- stats::ave(ifelse(
-      duplicated(paste(Pdata$SAMPLE_NO, Pdata$CLUSTER_NO)),
-      0, SPECIES_WGT_L), Pdata$SAMPLE_NO, FUN = sum)
-  Wt_Sampled_2_A <- stats::ave(ifelse(
-      duplicated(paste(Pdata$SAMPLE_NO, Pdata$CLUSTER_NO)),
-      0, SPECIES_WGT_A), Pdata$SAMPLE_NO, FUN = sum)
-
-  ############################################################################
-  #
-  # Use calculated weights for Wt_Sampled.
-  #
-  ############################################################################
-
-  Pdata$Wt_Method <- 0
-  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = 1
-  Pdata$Wt_Sampled[Pdata$Wt_Method == 1] = Pdata$Wt_Sampled_1[Pdata$Wt_Method == 1]
-  Wt_Sampled_L[is.na(Wt_Sampled_L)] <- Wt_Sampled_1_L[is.na(Wt_Sampled_L)]
-  Wt_Sampled_A[is.na(Wt_Sampled_A)] <- Wt_Sampled_1_A[is.na(Wt_Sampled_A)]
-
-  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = 2
-  Pdata$Wt_Sampled[is.na(Pdata$Wt_Sampled)] = Pdata$Wt_Sampled_2[is.na(Pdata$Wt_Sampled)]
-  Wt_Sampled_L[is.na(Wt_Sampled_L)] <- Wt_Sampled_2_L[is.na(Wt_Sampled_L)]
-  Wt_Sampled_A[is.na(Wt_Sampled_A)] <- Wt_Sampled_2_A[is.na(Wt_Sampled_A)]
-  Wt_Sampled_L[Wt_Sampled_L == 0] <- NA
-  Wt_Sampled_A[Wt_Sampled_A == 0] <- NA
-
-  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = 3
-  Pdata$Wt_Sampled[is.na(Pdata$Wt_Sampled)] = Pdata$Wt_Sampled_3[is.na(Pdata$Wt_Sampled)]
-  Wt_Sampled_L[is.na(Wt_Sampled_L)] <- Wt_Sampled_3_L[is.na(Wt_Sampled_L)]
-  Wt_Sampled_A[is.na(Wt_Sampled_A)] <- Wt_Sampled_3_A[is.na(Wt_Sampled_A)]
-  Wt_Sampled_L[Wt_Sampled_L == 0] <- NA
-  Wt_Sampled_A[Wt_Sampled_A == 0] <- NA
-
-  Pdata$Wt_Method[is.na(Pdata$Wt_Sampled)] = NA
-  Pdata$Wt_Sampled_L <- Wt_Sampled_L
-  Pdata$Wt_Sampled_A <- Wt_Sampled_A
-
-  # Summary and boxplot
-
-  printemp = data.frame(cbind(Pdata$Wt_Sampled_1, Pdata$Wt_Sampled_2,
-                              Pdata$Wt_Sampled_3, Pdata$Wt_Sampled))
-
-  names(printemp) = c("M+F","SPECIES_WT","L-W","Final Wt_Sampled")
+  names(printemp) = c("M+F+U","Cluster","L-W","Final Wt_Sampled")
 
   if (verbose) {
     cat("\nSample weights\n\n")
     print(summary(printemp))
-    cat("\nWt_Methods:\n\n")
-    print(summary(as.factor(Pdata$Wt_Method)))
   }
 
-  NA_Wt_Sampled <- Pdata[is.na(Pdata$Wt_Sampled), ]
+  NA_Wt_Sampled <- Pdata[is.na(Pdata$Wt_Sampled_L), ]
   nNA <- NROW(NA_Wt_Sampled)
 
   if (plot != FALSE) {
@@ -341,7 +178,7 @@ EF1_Denominator = function(Pdata,
     }
     par(mfrow = c(1, ifelse(nNA > 0, 2, 1)), mgp = c(2.5, 0.5, 0))
     boxplot(as.data.frame(printemp),
-      names = c("M+F", "species", "pred. w/ L-W", "final"),
+      names = names(printemp),
       ylab = "Sample weight (lbs)", xlab = "First-stage expansion denominator")
     if (nNA > 0) {
       barplot(xtabs(NA_Wt_Sampled$FREQ ~ NA_Wt_Sampled$state + NA_Wt_Sampled$fishyr),

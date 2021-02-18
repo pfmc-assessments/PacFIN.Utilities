@@ -45,51 +45,72 @@ Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
 This is standard practice for packages in the nwfsc-assess organization.}
 
-\item{plot}{Create plots.  Default:  FALSE}
+\item{plot}{A logical that specifies if plots should be created or not.
+The default is \code{FALSE}.}
 }
 \value{
 Additional columns are added to \code{Pdata}:
 \itemize{
-\item Wt_Sampled_1: the sum of weights for male and female fish within the
-sample, this will ignore unsexed fish or hermaphrodites.
-\item Wt_Sampled_2: the species-specific sample weight only provided by
-California because the cluster weight could include multiple species.
-\item LW_Calc_Wt: individual weights predicted from the specified length-weight relationships.
-\item Wt_Sampled_3: The sum of empirical weights, for those fish within a
+\item \code{Wt_Sampled_1}: the sum of sex-specific weights within the sample.
+\item \code{Wt_Sampled_2}: the species-specific sample weight only provided by
+California in cluster weight.
+\item \code{LW_Calc_Wt}: individual weights predicted from the specified
+length-weight relationships.
+\item \code{Wt_Sampled_3}: The sum of empirical weights, for those fish within a
 sample where this information is available, and weights calculated from the
 length-weight relationship. This uses the empirical data if available and
-fills in with the expected weight.
-\item Wt_Sampled: the sample weight that will be used in subsequent analyses,
-where this is preferentially the empirical weights; all NA values are
-subsequently filled in using Wt_Sampled_1,
-with NAs replaced with values from Wt_Sampled_2,
-and NAs remaining replaced with values from Wt_Sampled_3.
-\item Wt_Method: a \code{numeric} value starting with zero for empirical weights
-and then denoting which method was used for \code{Wt_Sampled}.
+fills in with the expected weight or mean-sample weight.
 }
 }
 \description{
-\subsection{Workflow}{
-\code{EF1_Denominator} is not run by the user.  It is a sub-function of
-\code{\link{getExpansion_1}}
-}
+Calculate the denominator for the level-1 expansion, where the denominator
+is the weight of all fish in the sample.
+\code{EF1_Denominator} is not run by the user, it is a sub-function of
+\link{getExpansion_1}.
 }
 \details{
 The denominator of the level-1 expansion factor is the weight of the sampled
-fish in a tow. The calcuation is done one in three ways, all of which
-are returned, though the column used in subsequent analyses is based on
-the hierarchical structure of:
-\enumerate{
-\item{\code{sum(Pdata$FEMALES_WGT + Pdata$MALES_WGT)} per unique \code{SAMPLE_NO}}
-\item{\code{sum(Pdata$SPECIES_WGT)} across all clusters in a sample, where the
-species weight is determined from the \code{cluster_wt}}
-\item{Calculate weights of males and females given the weight length relationship,
-if the length of a fish does not exist, then the median weight of all
-weighed fish in the sample is used.}
-}
+fish in the sample unit, where for fisheries data, this unit is most often
+the trip level because information on individual hauls is not available.
+For a survey, tow- or haul-level data are typically available.
+The sum of the weight in the sample is calculated different for each state
+based on the data that are available.
+
+Oregon provides information on the weight of females and males in the sample
+via the \code{WEIGHT_OF_FEMALES} and \code{WEIGHT_OF_MALES} columns. These are often
+model-based weights, which would be the only way they can get weights when
+the fish were not weighed themselves. The weight of unsexed fish is calculated
+internally by the code and added to the female and male weight.
+\strong{todo}: Let Oregon know that this calculation is being done and they may want
+to provide UNK_WGT.
+
+California sample weights were previously based on the column labeled
+\code{SPECIES_WEIGHT}. Now, California data is parsed by PacFIN to furnish
+species-specific cluster weights. Prior, cluster weights included the weight
+of all species in the sample. Now, \code{CLUSTER_WEIGHT} is the weight in that
+cluster for the species of interest. This was verified for dover sole by
+Kelli F. Johnson in February of 2021. Thus, the code uses \code{CLUSTER_WEIGHT}
+rather than \code{SPECIES_WEIGHT} now.
+\strong{todo}: determine if this should be the only cluster-specific value going forward?
+
+Washington does not pretend to provide any information regarding total weight
+of fish in the sample. Therefore, this value is calculated by summing the
+empirical weight of fish. For fish that were not weighed, a weight is
+calculated given the input parameters. It is up to the user to calculate
+these if they want them based on more data than what is included in \code{Pdata}.
+Finally, for fish that have no length and therefore no predicted weight,
+the mean of fish weight in the sample is used to assign all fish a weight.
+
+Another thing to note in the calculation of the denominator is that sample
+weights are length- and age-specific values. You would not want to weight
+an age sample based on how many lengths were measured. So, the weights of
+fish that are not lengthed are backed out of the sample weight and the
+weight of fish that are not aged are backed out of the sample weight to
+create length- and age-specific sample weights. Only these specific sample
+weights should be used going forward.
 }
 \seealso{
-\code{\link{EF1_Numerator}}, \code{\link{getExpansion_1}}, \code{\link{getExpansion_2}}
+\link{EF1_Numerator}, \link{getExpansion_1}, \link{getExpansion_2}
 }
 \author{
 Andi Stephens

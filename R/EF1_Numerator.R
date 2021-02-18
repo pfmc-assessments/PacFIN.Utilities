@@ -1,26 +1,32 @@
-#########################################################################
-#'
-#' Calculate the numerator for the first level expansion factor.
-#'
-#' \subsection{Workflow}{
-#' \code{EF1_Numerator} is not run by the user.  It is a sub-function of 
-#' \code{\link{getExpansion_1}}
-#' }
+#' Calculate the numerator for the first level expansion factor
 #' 
-#' @details \code{Trip_Sampled_Lbs} is calculated differently for each state:
-#' \itemize{
-#' \item {California}{ = \code{Species_Percent_Sampled} *
-#'   \code{TOTAL_WGT};}
-#' \item {Oregon}{ = \code{Pdata$EXP_WT}.  Where missing,
-#'   use \code{Species_Percent_Sampled} * \code{TOTAL_WGT}, as for CA;}
-#' \item {Washington}{ = \code{Pdata$RWT_LBS}, \code{Pdata$TOTAL_WGT},
-#'   median(RWT_LBS), or median(\code{Pdata$TOTAL_WGT});}
-#' \item {if all else fails}{ = use per-year, state-specific medians.}
-#' }
+#' Calculate the numerator for the first-level expansion factor, where
+#' the numerator is the species-specific landing weight for a given sample.
+#' Thus, if two clusters were sampled from a single trip,
+#' they would both use the same landing weight.
+#'
+#' @details
+#' Previously, `Trip_Sampled_Lbs` was calculated differently for each state.
+#' For California, `Species_Percent_Sampled * TOTAL_WGT`.
+#' For Oregon, `Pdata$EXP_WT` and if missing, the same as California.
+#' For Washington, `Pdata$RWT_LBS`, `Pdata$TOTAL_WGT`, `RWT_LBS`, or
+#' `median(Pdata$TOTAL_WGT)`.
+#' Then, if all else failed, per-year, state-specific medians.
+#' 
+#' Now, PacFIN works hard behind the scenes to provide species-specific landing
+#' weights for each sampled fish. Therefore, we no longer rely on code to
+#' calculate a fabricated landing weight. Species-specific landing weights are
+#' available in either `EXPANDED_SAMPLE_WEIGHT` or `WEIGHT_OF_LANDING_LBS`.
+#' The former, is specific to Oregon and samples that do not provide an expanded
+#' sample weight should not be used more than likely anyway.
+#'
+#' **todo**:
+#' * determine if we want to flag some bad samples in [cleanPacFIN].
+#' * fix up the plotting and summary code
+#'
+#' @seealso [getExpansion_1] calls this function.
 #' @return A \code{Pdata} with additional columns, where
-#'   \code{Use_acs} is \code{all_cluster_sum} with NAs replaced by year-specific,
-#'   state-specific medians;
-#'   \code{Trip_Sampled_Lbs} is the sample weight in pounds;
+#' `Trip_Sampled_Lbs` is the sample weight in pounds.
 #'
 #' @template Pdata
 #' @template verbose
@@ -33,146 +39,8 @@
 
 EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
 
-  # Start clean
-
-  Pdata$Use_acs        = NA
-  Pdata$Trip_Sampled_Lbs = NA
-
-  tows = Pdata[!duplicated(Pdata$SAMPLE_NO),]
-
-  ############################################################################
-  #
-  # First the all_cluster_sums, replacing NA with medians.
-  #
-  #############################################################################
-  tows$Use_acs = tows$all_cluster_sum
-
-  tows$Use_acs[tows$Use_acs == 0] = NA
-
-  # Use median from year, state, gear, grade if total landed weight is missing
-  # medians are calculated with all groups first then eliminating from the 
-  # right, where the last ditch effort is the median by year across all
-  # grades, gears, and states
-  tows$median <- getMed(tows$Use_acs, 
-    tows$SAMPLE_YEAR, tows$state, tows$geargroup, tows$GRADE)$median
-  tows$Use_acs[is.na(tows$Use_acs)] <- tows$median[is.na(tows$Use_acs)]
-  Pdata$Use_acs = tows$Use_acs[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
-  # KFJ(2019-03-29): todo - print information to the screen 
-  # to let users know how many data points are being interpolated
-  # rather than calculated from raw information
-
-  tows$median_test <- getMed(tows$Use_acs, 
-    tows$SAMPLE_YEAR, tows$state)$median
-
-  ############################################################################
-  #
-  # Calculate Species_Percent_Sampled.  (Actually, fraction sampled).
-  #
-  ############################################################################
-  if (!"Wt_Sampled" %in% colnames(Pdata)){ 
-    stop("The column Wt_Sampled must be in your dataframe, run EF1_Denominator.") 
-  }
-  tows$Species_Percent_Sampled = tows$Wt_Sampled/tows$Use_acs
-  # CRW: The line below does errors if the Species_Percent_Samples is NA
-  # This is arising from NAs in the Use_acs (the tows$median were also NA)
-  # May need to make the calculation of this on line 56:59 more robust.
-
-  # CRW: The line below was giving a dimension error: 
-  # Error in `$<-.data.frame`(`*tmp*`, Use_Percent, value = numeric(0)) : 
-  # replacement has 0 rows, data has 3186
-  # tows$Use_Percent <- tows$TOTAL_WGT * 
-  #  ifelse(tows$Species_Percent_Sampled > 1,  1, tows$Species_Percent_Sampled)
-  # Low tech fix:
-  find = which(tows$Species_Percent_Sampled > 1)
-  tows$Use_Percent[find]  <- tows$TOTAL_WGT[find] * 1
-  tows$Use_Percent[-find] <- tows$TOTAL_WGT[-find] * tows$Species_Percent_Sampled[-find]
-
-  # KFJ(2019-03-29): Determine if when percent should be multiplied by
-  # round weight rather than total weight.
-  # I looked at a few fish tickets and it appears as though Round Weight for 
-  # California is the species-specific sampled weight.
-  # For CA TOTAL_WGT is the sum of the landed weight for species that were
-  # sampled. That is, if you landed boccacio, sablefish, and yellowtail in 
-  # a tow but only sampled boccacio and sablefish, then TOTAL_WGT would 
-  # be the landed weight of sablefish and bocaccio. For this example, 
-  # RWT_WT would be the sablefish landed weight if sablefish was the species
-  # that you cared about.
-
-  ############################################################################
-  #
-  # Get total weight per SAMPLE_NO, calculated differently for each state.
-  # Replace NAs with state/fishyr specific medians.
-  #
-  ############################################################################
-
-  # Default
-  tows$Trip_Sampled_Lbs[tows$state=="CA"] = tows$Use_Percent[tows$state=="CA"]
-  tows$Trip_Sampled_Lbs[tows$state=="OR"] = tows$EXP_WT[tows$state=="OR"]
-  # CRW: Need to decide what to do with RWT_LBS. Swithc over to TOTAL_WGT if that
-  # is where this informaiton for WA is now or in cleanColumns create 
-  # RWT_LBS column equal to the TOTAL_WGT
-  tows$Trip_Sampled_Lbs[tows$state=="WA"] = tows$RWT_LBS[tows$state=="WA"]
-  if (any(!unique(tows$state) %in% c("CA", "OR", "WA"))) warning("The state(s) '",
-    paste(unique(tows$state)[!unique(tows$state) %in% c("CA", "OR", "WA")], 
-      collapse = ", "), "' do not have methods for Trip_Sampled_Lbs")
-  tows$Trip_Sampled_Lbs[tows$Trip_Sampled_Lbs == 0] = NA
-
-  # California uses Percent of TOTAL_WGT.
-  # Find percent of TOTAL_WGT attributable to the spp of interest based 
-  # on the percent of all sampled fish that are your species. 
-
-  # Oregon uses EXP_WT by preference.
-  # EXP_WT will be the species-specific landing weight for the sample and will
-  # account for dressed landings.
-  # OR data is sometimes missing EXP_WT earlier than 1973
-  # so use Species_Percent_Sampled, as for CA.
-
-  indices = which(tows$state=="OR" & is.na(tows$Trip_Sampled_Lbs))
-  tows$Trip_Sampled_Lbs[indices] = tows$Use_Percent[indices]
-  # KFJ(2019-03-29): Using the percent of the total weight is more in
-  # error than just using the total weight for Oregon because fish
-  # might have a condition other than round when sampled.
-  # Oregon samples are more species-specific, so the amount of
-  # contamination of other species in the sample might be less of 
-  # an error than just using the total weight. 
-  # TOTAL_WGT can be the amount of the clusters rather than the landing weight
-  # for OR. This is not the best way forward, but keeping it for now.
-  # todo - check with Ali for how to proceed when EXP_WT is not available. 
-
-  # Washington uses RWT_LBS as default.
-  tows$Trip_Sampled_Lbs <- ifelse(
-    tows$state == "WA" & 
-    is.na(tows$Trip_Sampled_Lbs),
-    tows$TOTAL_WGT, tows$Trip_Sampled_Lbs)
-  # KFJ(2019-03-29): Is it better to use TOTAL_WGT rather than a median of 
-  # roundweight? Need to ask Theresa best practice here.
-  # Many fish that were sampled using alternate or fork length are 
-  # included here.
-  # Before the median of trip_sampled_lbs for those that were found 
-  # was used before median round weight 
-
-  # Get row-by-row alignment with tows for each median.
-  # Fill CA and OR annual median Trip_Sampled_Lbs.
-  tows$Trip_Sampled_Lbs <- ifelse(
-    is.na(tows$Trip_Sampled_Lbs) & tows$state %in% c("OR", "CA"),
-    getMed(tows$Trip_Sampled_Lbs, 
-      tows$state, tows$SAMPLE_YEAR, tows$geargroup, tows$GRADE)$median, 
-    tows$Trip_Sampled_Lbs)
-  # Same for WA, but the preferred value is first RWT_LBS, then TOTAL_WGT.
-  tows$Trip_Sampled_Lbs <- ifelse(
-    is.na(tows$Trip_Sampled_Lbs) & tows$state=="WA",
-    getMed(tows$RWT_LBS, 
-      tows$state, tows$SAMPLE_YEAR, tows$geargroup, tows$GRADE)$median, 
-    tows$Trip_Sampled_Lbs)
-  tows$Trip_Sampled_Lbs <- ifelse(
-    is.na(tows$Trip_Sampled_Lbs) & tows$state=="WA",
-    getMed(tows$TOTAL_WGT, 
-      tows$state, tows$SAMPLE_YEAR, tows$geargroup, tows$GRADE)$median, 
-    tows$Trip_Sampled_Lbs)
-
-  # Match Trip_Sampled_Lbs to the larger dataset.
-
-  Pdata$Trip_Sampled_Lbs = tows$Trip_Sampled_Lbs[match(Pdata$SAMPLE_NO, tows$SAMPLE_NO)]
+  Pdata$Trip_Sampled_Lbs <- dplyr::coalesce(
+    Pdata[["EXP_WT"]], Pdata[["RWT_LBS"]])
 
   if (verbose){
     cat("\nSampled pounds per trip:\n\n")
@@ -185,7 +53,7 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
     par(mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
       oma = c(4, 5, 3, 0.5))
     for (st in unique(Pdata$state)) {
-      plotdata <- Pdata[Pdata[, "state"] == st, ]
+      plotdata <- Pdata[Pdata[, "state"] == st & !is.na(Pdata[["Trip_Sampled_Lbs"]]), ]
       if (all(is.na(plotdata$Trip_Sampled_Lbs))) next
       boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
         ylab = "", xlab = "", xaxt = "n",

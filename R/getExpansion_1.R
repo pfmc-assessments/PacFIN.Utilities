@@ -1,5 +1,5 @@
 #' First-Stage Expansion for Composition Data
-#' 
+#'
 #' First-stage expansions account for unsampled fish in the smallest
 #' measured unit. Where, in PacFIN data, the smallest unit is that
 #' which is available to the port or dockside sampler, so more than
@@ -28,6 +28,8 @@
 #' @template weightlengthparams
 #' @template verbose
 #' @template plot
+#' @importFrom magrittr %>%
+#'
 #' @return A \code{data.frame} where all of the original columns in
 #' \code{Pdata} remain unaltered but additional columns are added.
 #' In particular columns starting with
@@ -77,23 +79,20 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
 
   # Expansion_Factor_1
 
-  Pdata$Expansion_Factor_1 <- Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled
   Pdata$Expansion_Factor_1_L <- Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled_L
   Pdata$Expansion_Factor_1_A <- Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled_A
 
-  Pdata$Expansion_Factor_1[Pdata$Expansion_Factor_1 < 1] <- 1
   Pdata$Expansion_Factor_1_L[Pdata$Expansion_Factor_1_L < 1] <- 1
   Pdata$Expansion_Factor_1_A[Pdata$Expansion_Factor_1_A < 1] <- 1
 
   # In most cases, WA data can't be expanded.
   if (Exp_WA != TRUE) {
-    Pdata$Expansion_Factor_1[Pdata$state == "WA"] <- 1
     Pdata$Expansion_Factor_1_L[Pdata$state == "WA"] <- 1
     Pdata$Expansion_Factor_1_A[Pdata$state == "WA"] <- 1
     cat("\n\nWA expansions set to 1. Fish tickets do not represent whole trips in WA.\n\n")
   } # End if
 
-  NA_EF1 <- Pdata[is.na(Pdata$Expansion_Factor_1),]
+  NA_EF1 <- Pdata[is.na(Pdata$Expansion_Factor_1_L),]
   nNA <- NROW(NA_EF1)
 
   if (verbose) {
@@ -101,17 +100,15 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
   }
 
   # Now replace NAs with 1.
-  Pdata$Expansion_Factor_1[is.na(Pdata$Expansion_Factor_1)] <- 1
   Pdata$Expansion_Factor_1_L[is.na(Pdata$Expansion_Factor_1_L)] <- 1
   Pdata$Expansion_Factor_1_A[is.na(Pdata$Expansion_Factor_1_A)] <- 1
 
-  Pdata$Expansion_Factor_1 <- capValues(Pdata$Expansion_Factor_1, maxExp)
   Pdata$Expansion_Factor_1_L <- capValues(Pdata$Expansion_Factor_1_L, maxExp)
   Pdata$Expansion_Factor_1_A <- capValues(Pdata$Expansion_Factor_1_A, maxExp)
 
   if (verbose) {
     cat("\nCapping Expansion_Factor_1 at ", maxExp, "\n\n")
-    print(summary(Pdata$Expansion_Factor_1))
+    print(summary(Pdata$Expansion_Factor_1_L))
   }
 
   # Generate plots and save them to the disk if specified.
@@ -150,8 +147,8 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
         mfrow = c(1, 1))
     } # End if
 
-    graphics::boxplot(Pdata$Expansion_Factor_1 ~ Pdata$fishyr,
-      ylab ="Expansion_Factor_1",
+    graphics::boxplot(Pdata$Expansion_Factor_1_L ~ Pdata$fishyr,
+      ylab ="Expansion_Factor_1_L",
       xlab = "", frame.plot = FALSE)
     
     graphics::mtext(side = 1, outer = TRUE, "Year", line = 2)

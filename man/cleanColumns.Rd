@@ -18,6 +18,10 @@ Options include
 }
 \value{
 An augmented data frame with new column names.
+Prior to February 13, 2021, the column \code{lwt_lbs} was the result of
+\code{WEIGHT_OF_LANDING_LBS} in catch data. To increase the consistency across catch
+and bds data, the column name is now changed to \code{RWT_LBS}. Downstream code will
+need to be modified to accommodate the new column name.
 }
 \description{
 Change column names of comprehensive PacFIN columns to those

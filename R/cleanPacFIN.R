@@ -213,6 +213,12 @@ cleanPacFIN <- function(
   Pdata[, "age"] <- getAge(Pdata, verbose = verbose,
     keep = keep_age_method)
 
+  #### Weight (random units in)
+  Pdata[, "FISH_WEIGHT"] <- getweight(
+    weight = Pdata[["FISH_WEIGHT"]],
+    unit.in = Pdata[["FISH_WEIGHT_UNITS"]],
+    unit.out = "kg")
+
   #### Bad samples
   # Remove bad OR samples
   Pdata$SAMPLE_TYPE[Pdata$SAMPLE_NO %in% paste0("OR", badORnums)] <- "S"
@@ -224,33 +230,6 @@ cleanPacFIN <- function(
   # Remove lengths and ages for gears we don't want
   Pdata[!Pdata[, "geargroup"] %in% keep_gears, "length"] <- NA
   Pdata[!Pdata[, "geargroup"] %in% keep_gears, "age"] <- NA
-
-  #### Sex-specific _WGT and _NUM
-  # Calculate sex-specific weights and numbers
-  sw <- stats::ave(
-    measurements::conv_unit(Pdata$FISH_WEIGHT, from = "g", to = "lbs"),
-    Pdata$SEX, Pdata$SAMPLE_NO,
-    FUN = sum)
-  sn <- stats::ave(Pdata$FISH_WEIGHT, Pdata$SEX, Pdata$SAMPLE_NO,
-    FUN = function(x) sum(!is.na(x)))
-  Pdata[, "MALES_NUM"] <- ifelse(
-    is.na(Pdata[, "MALES_NUM"]) & Pdata[, "SEX"] == "M",
-    sn, Pdata[, "MALES_NUM"])
-  Pdata[, "FEMALES_NUM"] <- ifelse(
-    is.na(Pdata[, "FEMALES_NUM"]) & Pdata[, "SEX"] == "F",
-    sn, Pdata[, "FEMALES_NUM"])
-  Pdata[, "MALES_WGT"] <- ifelse(
-    is.na(Pdata[, "MALES_WGT"]) & Pdata[, "SEX"] == "M",
-    sw, Pdata[, "MALES_WGT"])
-  Pdata[, "FEMALES_WGT"] <- ifelse(
-    is.na(Pdata[, "FEMALES_WGT"]) & Pdata[, "SEX"] == "F",
-    sw, Pdata[, "FEMALES_WGT"])
-  Pdata[, "UNK_WT"] <- ifelse(
-    is.na(Pdata[, "UNK_WT"]) & Pdata[, "SEX"] == "U",
-    sw, Pdata[, "UNK_WT"])
-  Pdata$MALES_WGT[is.na(Pdata$MALES_NUM) & Pdata$MALES_WGT == 0] <- NA
-  Pdata$FEMALES_WGT[is.na(Pdata$FEMALES_NUM) & Pdata$FEMALES_WGT == 0] <- NA
-  Pdata$UNK_WT[is.na(Pdata$UNK_NUM) & Pdata$UNK_WT == 0] <- NA
 
   #### Summary and return
   # bad records: keep TRUEs

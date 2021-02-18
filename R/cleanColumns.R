@@ -14,6 +14,10 @@
 #' @export
 #' @author John R. Wallace, Kelli Faye Johnson
 #' @return An augmented data frame with new column names.
+#' Prior to February 13, 2021, the column `lwt_lbs` was the result of
+#' `WEIGHT_OF_LANDING_LBS` in catch data. To increase the consistency across catch
+#' and bds data, the column name is now changed to `RWT_LBS`. Downstream code will
+#' need to be modified to accommodate the new column name.
 #'
 cleanColumns <- function(data, use = c("vdrfd", "raw")) {
   use <- match.arg(use)
@@ -81,7 +85,7 @@ cleanColumns <- function(data, use = c("vdrfd", "raw")) {
     PRODUCT_USE_CODE             PRODUCT_USE
     PSMFC_CATCH_AREA_CODE        PSMFC_ARID
     REMOVAL_TYPE_CODE            REMOVAL_TYPE
-    ROUND_WEIGHT_LBS             CATCH.LBS
+    ROUND_WEIGHT_LBS             RWT_LBS
     SAMPLE_METHOD_CODE           SAMPLE_METHOD
     SAMPLE_NUMBER                SAMPLE_NO
     SEX_CODE                     SEX

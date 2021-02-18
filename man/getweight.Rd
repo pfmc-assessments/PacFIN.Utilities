@@ -4,7 +4,7 @@
 \alias{getweight}
 \title{Calculate weight from length and the weight-length relationship}
 \usage{
-getweight(length, sex, pars, unit.out = c("lb", "kg"))
+getweight(length, sex, pars, unit.out = c("lb", "kg"), weight, unit.in)
 }
 \arguments{
 \item{length}{A vector of fish lengths in mm.}
@@ -21,9 +21,20 @@ The output from \code{\link{getWLpars}} is formatted correctly as is.}
 \item{unit.out}{The desired units you wish the output to be in. See the
 function call for a list of default units available within the function.
 For example, \code{"lb"} would return the units of pounds.}
+
+\item{weight}{A vector of fish weights, where the units for each
+measurement are specified in \code{unit.in}.}
+
+\item{unit.in}{A vector of units for each measurement in \code{weight}.
+Options include \code{KG}, \code{G}, \code{LB}, \code{UNK}. Where, the latter leads to
+the assumption that your units are in grams and will be converted
+as such.}
 }
 \value{
-A vector of weights determined from lengths and weight-length
+A vector of measurements in the unit specified using
+\code{unit.out}. If weights were provided, then the weights are also
+the output. If lengths were provided, then they are converted
+to weights. Where, weights are determined from lengths and weight-length
 parameters input to the function.
 Weights are in the same units used to calculate things, i.e., kg.
 }

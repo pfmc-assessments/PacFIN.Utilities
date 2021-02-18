@@ -2,7 +2,7 @@
 % Please edit documentation in R/EF1_Numerator.R
 \name{EF1_Numerator}
 \alias{EF1_Numerator}
-\title{Calculate the numerator for the first level expansion factor.}
+\title{Calculate the numerator for the first level expansion factor}
 \usage{
 EF1_Numerator(Pdata, verbose = FALSE, plot = FALSE)
 }
@@ -31,27 +31,37 @@ as \code{png()} is used to save the plotting device.}
 }
 \value{
 A \code{Pdata} with additional columns, where
-\code{Use_acs} is \code{all_cluster_sum} with NAs replaced by year-specific,
-state-specific medians;
-\code{Trip_Sampled_Lbs} is the sample weight in pounds;
+\code{Trip_Sampled_Lbs} is the sample weight in pounds.
 }
 \description{
-\subsection{Workflow}{
-\code{EF1_Numerator} is not run by the user.  It is a sub-function of
-\code{\link{getExpansion_1}}
-}
+Calculate the numerator for the first-level expansion factor, where
+the numerator is the species-specific landing weight for a given sample.
+Thus, if two clusters were sampled from a single trip,
+they would both use the same landing weight.
 }
 \details{
-\code{Trip_Sampled_Lbs} is calculated differently for each state:
+Previously, \code{Trip_Sampled_Lbs} was calculated differently for each state.
+For California, \code{Species_Percent_Sampled * TOTAL_WGT}.
+For Oregon, \code{Pdata$EXP_WT} and if missing, the same as California.
+For Washington, \code{Pdata$RWT_LBS}, \code{Pdata$TOTAL_WGT}, \code{RWT_LBS}, or
+\code{median(Pdata$TOTAL_WGT)}.
+Then, if all else failed, per-year, state-specific medians.
+
+Now, PacFIN works hard behind the scenes to provide species-specific landing
+weights for each sampled fish. Therefore, we no longer rely on code to
+calculate a fabricated landing weight. Species-specific landing weights are
+available in either \code{EXPANDED_SAMPLE_WEIGHT} or \code{WEIGHT_OF_LANDING_LBS}.
+The former, is specific to Oregon and samples that do not provide an expanded
+sample weight should not be used more than likely anyway.
+
+\strong{todo}:
 \itemize{
-\item {California}{ = \code{Species_Percent_Sampled} *
-\code{TOTAL_WGT};}
-\item {Oregon}{ = \code{Pdata$EXP_WT}.  Where missing,
-use \code{Species_Percent_Sampled} * \code{TOTAL_WGT}, as for CA;}
-\item {Washington}{ = \code{Pdata$RWT_LBS}, \code{Pdata$TOTAL_WGT},
-median(RWT_LBS), or median(\code{Pdata$TOTAL_WGT});}
-\item {if all else fails}{ = use per-year, state-specific medians.}
+\item determine if we want to flag some bad samples in \link{cleanPacFIN}.
+\item fix up the plotting and summary code
 }
+}
+\seealso{
+\link{getExpansion_1} calls this function.
 }
 \author{
 Andi Stephens

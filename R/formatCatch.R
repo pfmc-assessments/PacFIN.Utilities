@@ -26,7 +26,7 @@ formatCatch <- function(catch, strat, valuename = "catch") {
   # Get a new column that will lead to column names in the wide format
   # and check for duplicates per grouping
   if ("state" %in% strat & !"state" %in% colnames(catch)) {
-    catch <- getState(catch, source = "AGID", verbose = FALSE)
+    catch <- getState(catch, verbose = FALSE)
   }
   if ("geargroup" %in% strat & !"geargroup" %in% colnames(catch)) {
     catch <- getGearGroup(catch, verbose = FALSE)

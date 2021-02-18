@@ -118,7 +118,7 @@ getExpansion_2 <- function(Pdata, Catch,
         paste(Catchgears, collapse = ", "))
     } else {
       Pdata <- Pdata[Pdata[, "stratification"] %in% colnames(Catch), ]
-      Catch <- Catch[, c("Year", unique(Pdata[, "stratification"]))]
+      Catch <- Catch[, c(colnames(Catch)[yearcol], unique(Pdata[, "stratification"]))]
       if (verbose) {
         message("Data were truncated to just these stratifications:")
         message("Catch: ",
@@ -178,8 +178,10 @@ getExpansion_2 <- function(Pdata, Catch,
   nNA <- nrow(NA_EF2)
   Pdata$Expansion_Factor_2[is.na(Pdata$Expansion_Factor_2)] <- 1
   Pdata$Expansion_Factor_2 <- capValues(Pdata$Expansion_Factor_2, maxExp)
-  Pdata[, "Final_Sample_Size"] <- capValues(
+  Pdata[, "Final_Sample_Size_L"] <- capValues(
     Pdata$Expansion_Factor_1_L * Pdata$Expansion_Factor_2)
+  Pdata[, "Final_Sample_Size_A"] <- capValues(
+    Pdata$Expansion_Factor_1_A * Pdata$Expansion_Factor_2)
 
   #### Summary information
   if (verbose) {
