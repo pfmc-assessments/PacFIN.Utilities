@@ -373,17 +373,24 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   Ninput_b <- round(ifelse( 
                       bothComps$Nsamps / bothComps$Ntows < 44, 
-                      bothComps$Ntows + 0.138 * bothComps$Nsamps, 7.06 * bothComps$Ntows), 0 )
+                      bothComps$Ntows + 0.138 * bothComps$Nsamps, 
+                      7.06 * bothComps$Ntows), 0 )
+  Ninput_b[is.na(Ninput_b)] = 0
   Ninput_f <- round(ifelse( 
                       fComps$Nsamps / fComps$Ntows < 44, 
-                      fComps$Ntows + 0.138 * fComps$Nsamps, 7.06 * fComps$Ntows), 0 )
+                      fComps$Ntows + 0.138 * fComps$Nsamps, 
+                      7.06 * fComps$Ntows), 0 )
+  Ninput_f[is.na(Ninput_f)] = 0
   Ninput_m <- round(ifelse( 
                       mComps$Nsamps / mComps$Ntows < 44, 
-                      mComps$Ntows + 0.138 * mComps$Nsamps, 7.06 * mComps$Ntows), 0 )
+                      mComps$Ntows + 0.138 * mComps$Nsamps, 
+                      7.06 * mComps$Ntows), 0 )
+  Ninput_m[is.na(Ninput_m)] = 0
   Ninput_u <- round(ifelse( 
                       uComps$Nsamps / uComps$Ntows < 44, 
-                      uComps$Ntows + 0.138 * mComps$Nsamps,
+                      uComps$Ntows + 0.138 * uComps$Nsamps,
                       7.06 * uComps$Ntows), 0 )
+  Ninput_u[is.na(Ninput_u)] = 0
 
   if(!AAL){
     FthenM <- cbind(uStrat, round(bothComps$Ntows, 0), round(bothComps$Nsamps, 0), Ninput_b, 
