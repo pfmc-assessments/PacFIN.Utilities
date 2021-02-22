@@ -209,14 +209,18 @@ cleanPacFIN <- function(
   Pdata[, "lengthcm"] <- floor(Pdata[, "length"] / 10)
 
   #### Age (originally in cleanAges)
-  Pdata[, "age"] <- getAge(Pdata, verbose = verbose,
-    keep = keep_age_method)
+  if (sum(is.na(Pdata$AGE_METHOD)) != nrow(Pdata)){
+    Pdata[, "age"] <- getAge(Pdata, verbose = verbose,
+      keep = keep_age_method)
+  } 
 
   #### Weight (random units in)
-  Pdata[, "FISH_WEIGHT"] <- getweight(
-    weight = Pdata[["FISH_WEIGHT"]],
-    unit.in = Pdata[["FISH_WEIGHT_UNITS"]],
-    unit.out = "kg")
+  if (sum(is.na(Pdata$FISH_WEIGHT)) != nrow(Pdata)){
+    Pdata[, "FISH_WEIGHT"] <- getweight(
+      weight = Pdata[["FISH_WEIGHT"]],
+      unit.in = Pdata[["FISH_WEIGHT_UNITS"]],
+      unit.out = "kg")
+  }
 
   #### Bad samples
   # Remove bad OR samples
