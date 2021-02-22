@@ -1,6 +1,6 @@
 Package: PacFIN.Utilities
 Title: Generate fishery composition data from PacFIN data for the NWFSC
-Version: 0.0.1.0005
+Version: 0.0.1.9999
 Authors@R: c(
     person(given = c("Kelli", "F."),
       family = "Johnson",
