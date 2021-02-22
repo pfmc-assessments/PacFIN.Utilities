@@ -89,10 +89,14 @@ getExpansion_2 <- function(Pdata, Catch,
   if (length(Pdata$stratification) == 0) {
     if (!missing(stratification.cols)) {
       if (all(stratification.cols %in% colnames(Pdata))) {
+        if (length(stratification.cols) == 1) {
+          Pdata[, "stratification"] <- Pdata[, stratification.cols]
+        } else {
         separate <- unique(gsub("^[a-zA-Z]+(\\s*[[:punct:]]\\s*)[a-zA-Z]+$",
           "\\1", colnames(Catch)[-1]))
         Pdata[, "stratification"] <- apply(Pdata[, stratification.cols],
           1, paste, collapse = separate)
+        }
       } else {
         stop("Pdata must have stratification column or provide stratification.cols")
       }
