@@ -462,11 +462,11 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   if(sum1){
     if(verbose){
       message("rescaling comps to sum to 1")
-      if( dim(Uout)[1] != 0)   { Uout   <- rescale.comps(Uout) }
-      if( dim(Fout)[1] != 0)   { Fout   <- rescale.comps(Fout) }
-      if( dim(Mout)[1] != 0)   { Mout   <- rescale.comps(Mout) }
-      if( dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) }
     }
+    if( dim(Uout)[1] != 0)   { Uout   <- rescale.comps(Uout) }
+    if( dim(Fout)[1] != 0)   { Fout   <- rescale.comps(Fout) }
+    if( dim(Mout)[1] != 0)   { Mout   <- rescale.comps(Mout) }
+    if( dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) }
   }
   # optionally round off to chosen value
   if(!missing(digits)){
