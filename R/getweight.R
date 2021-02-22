@@ -29,6 +29,7 @@
 #' Weights are in the same units used to calculate things, i.e., kg.
 #' @examples
 #' data(XMPL.BDS)
+#' XMPL.BDS[["FISH_WEIGHT_UNITS"]] <- "KG"
 #' lfish <- 1:100; sfish <- rep("U", length(lfish))
 #' ans <- getweight(length = lfish, sex = sfish,
 #'   pars = getWLpars(cleanPacFIN(XMPL.BDS, CLEAN = FALSE,

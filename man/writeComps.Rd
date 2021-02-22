@@ -73,9 +73,12 @@ done to rectify them in the given function.
 Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
 This is standard practice for packages in the nwfsc-assess organization.}
+}
+\value{
+Appends data to the file given in \code{fname}.
 
-\item{returns}{One of ("FthenM", "Fout", "Mout", or "Uout").  Choose return value
-of the function.  Default: FthenM}
+Conditionally returns a dataframe if the \code{out} argument
+specifies the type of composition to return.
 }
 \description{
 Write out composition data to a file, binning the data as specified.
@@ -122,10 +125,6 @@ were used in stratifying the data.
 \item{Use \code{dummybins} to evaluate bin structure}
 \item{Examine the raw-weight output for anomalies}
 }}
-#' @return Appends data to the file given in \code{fname}.
-
-Conditionally returns a dataframe if the \code{out} argument
-specifies the type of composition to return.
 }
 \seealso{
 \code{\link{getComps}}, \code{\link{doSexRatio}}

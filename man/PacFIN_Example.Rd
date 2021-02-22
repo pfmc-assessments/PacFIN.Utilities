@@ -46,6 +46,7 @@ catch data.
 \examples{
 #### Getting Started
 data(XMPL.BDS)
+XMPL.BDS[["FISH_WEIGHT_UNITS"]] <- "KG"
 # Catches are already in wide format, but the following goes long to wide
 # Catch.XMPL <- formatCatch(catch = rawcatch,
 #   strat = c("state", "geargroup"),

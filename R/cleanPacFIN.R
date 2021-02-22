@@ -14,7 +14,7 @@
 #' If the argument is missing, which is the default, then all found gear groups
 #' are maintained and ordered alphabetically. For more details see
 #' [getGearGroup] that lists a web link for where you can find the
-#' available gear groupings and how they link to \code{"GRID"} within your data.
+#' available gear groupings and how they link to `"GRID"` within your data.
 #' GRID is a legacy term from PacFIN, now identified as
 #' PACFIN_GEAR_CODE in the biological and fish ticket data, where
 #' GR is short for gear and
@@ -29,7 +29,7 @@
 #' `NTW` which is non-trawl gear, and
 #' `TLS` which is trolling gear.
 #' @param keep_sample_type A vector of character values specifying the types of
-#' samples you want to keep. The default is to keep \code{c("", "M")}. Available
+#' samples you want to keep. The default is to keep `c("", "M")`. Available
 #' types include market (M), research (R), special request (S), and
 #' commercial on-board (C).
 #' @param keep_sample_method A vector of character values specifying the types of
@@ -41,8 +41,8 @@
 #' to two special samples of yelloweye rockfish.
 #' @param keep_length_type A vector of character values specifying the types of
 #' length samples to keep. There is no default value, though users will typically
-#' want to keep \code{c("", "F", "A")}, but should also think about using
-#' \code{c("", "F", "A", NA)}. Note that types other than those listed below
+#' want to keep `c("", "F", "A")`, but should also think about using
+#' `c("", "F", "A", NA)`. Note that types other than those listed below
 #' can be present, especially if you are dealing with a skate.
 #' `A` is alternate length,
 #' `D` is dorsal length,
@@ -51,8 +51,8 @@
 #' `T` is total length.
 #' @param keep_age_method A vector of ageing methods to retain in the data. All fish
 #' aged with methods other than those listed will no longer be considered aged.
-#' A value of \code{NULL}, the default, will keep all ageing methods. However,
-#' a vector of \code{c("B", "BB", S", "", NA, 1, 2)} will keep all unaged fish and those
+#' A value of `NULL`, the default, will keep all ageing methods. However,
+#' a vector of `c("B", "BB", S", "", NA, 1, 2)` will keep all unaged fish and those
 #' that were aged with break and burn and surface reads. You do not really need
 #' to include such a verbose vector of values though because numbers are converted
 #' to appropriate character codes in [getAge]. Therefore, something like
@@ -65,7 +65,7 @@
 #' data from all three states, `keep_states = c("WA", "OR", "CA")`.
 #' Add `'UNK'` to the vector if you want to keep data not assigned to a state.
 #' @param CLEAN A logical value used when you want to remove data from the input
-#' data set. The default is \code{TRUE}. Where the opposite returns the original
+#' data set. The default is `TRUE`. Where the opposite returns the original
 #' data with additional columns and reports on what would have been removed.
 #' @template spp
 #' @template verbose
@@ -75,16 +75,14 @@
 #' @return The input data filtered for desired areas and record types
 #' specified, with added columns
 #'
-#' \tabular{ll}{
-#'   year \tab initialized from SAMPLE_YEAR\cr
-#'   fleet \tab initialized to 1\cr
-#'   fishery \tab initialized to 1\cr
-#'   season \tab initialized to 1.  Change using \code{\link{getSeason}}\cr
-#'   state \tab initialized from SOURCE_AGID.  Change using \code{\link{getState}}\cr
-#'   length \tab length in mm, where `NA` indicates length is not available\cr
-#'   lengthcm \tab floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH\cr
-#'   geargroup \tab the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
-#' }
+#' * year: initialized from SAMPLE_YEAR\cr
+#' * fleet: initialized to 1
+#' * fishery: initialized to 1
+#' * season: initialized to 1.  Change using [getSeason]
+#' * state: initialized from SOURCE_AGID.  Change using [getState]
+#' * length: length in mm, where `NA` indicates length is not available
+#' * lengthcm: floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH
+#' * geargroup: the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.
 #'
 #' @details
 #' The original fields in the returned data are left untouched,
@@ -100,11 +98,11 @@
 #'
 #' \subsection{Furthermore}{
 #' The values created as new columns are for use by other functions in this package.
-#' In particular, \code{fishyr} and \code{season} are useful if there are multiple
+#' In particular, `fishyr` and `season` are useful if there are multiple
 #' seasons (e.g., winter and summer, as in the petrale sole assessment), and the
 #' year is adjusted so that "winter" occurs in one year, rather than across two.
 #'
-#' The \code{fleet}, \code{fishery}, and \code{state} columns are meant for use in
+#' The `fleet`, `fishery`, and `state` columns are meant for use in
 #' stratifying the data according to the particulars of an assessment.
 #' }
 #'
@@ -113,6 +111,7 @@
 #' @author Andi Stephens
 #' @examples
 #' data(XMPL.BDS)
+#' XMPL.BDS[["FISH_WEIGHT_UNITS"]] <- "KG"
 #' Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]))
 #' NROW(XMPL.BDS) - NROW(Pdata)
 #' # This time don't clean it

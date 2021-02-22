@@ -76,7 +76,7 @@ can be present, especially if you are dealing with a skate.
 \item{keep_age_method}{A vector of ageing methods to retain in the data. All fish
 aged with methods other than those listed will no longer be considered aged.
 A value of \code{NULL}, the default, will keep all ageing methods. However,
-a vector of \code{c("B", "BB", S", "", NA, 1, 2)} will keep all unaged fish and those
+a vector of \verb{c("B", "BB", S", "", NA, 1, 2)} will keep all unaged fish and those
 that were aged with break and burn and surface reads. You do not really need
 to include such a verbose vector of values though because numbers are converted
 to appropriate character codes in \link{getAge}. Therefore, something like
@@ -117,16 +117,15 @@ The path can be relative or absolute.}
 \value{
 The input data filtered for desired areas and record types
 specified, with added columns
-
-\tabular{ll}{
-year \tab initialized from SAMPLE_YEAR\cr
-fleet \tab initialized to 1\cr
-fishery \tab initialized to 1\cr
-season \tab initialized to 1.  Change using \code{\link{getSeason}}\cr
-state \tab initialized from SOURCE_AGID.  Change using \code{\link{getState}}\cr
-length \tab length in mm, where \code{NA} indicates length is not available\cr
-lengthcm \tab floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH\cr
-geargroup \tab the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt
+\itemize{
+\item year: initialized from SAMPLE_YEAR\cr
+\item fleet: initialized to 1
+\item fishery: initialized to 1
+\item season: initialized to 1.  Change using \link{getSeason}
+\item state: initialized from SOURCE_AGID.  Change using \link{getState}
+\item length: length in mm, where \code{NA} indicates length is not available
+\item lengthcm: floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH
+\item geargroup: the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.
 }
 }
 \description{
@@ -163,6 +162,7 @@ stratifying the data according to the particulars of an assessment.
 }
 \examples{
 data(XMPL.BDS)
+XMPL.BDS[["FISH_WEIGHT_UNITS"]] <- "KG"
 Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]))
 NROW(XMPL.BDS) - NROW(Pdata)
 # This time don't clean it

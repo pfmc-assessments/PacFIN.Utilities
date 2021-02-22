@@ -35,9 +35,6 @@
 #' and code should be updated accordingly if you really want 0.
 #' @param ageErr     Defaults to 1.
 #' 
-#' @param returns  One of ("FthenM", "Fout", "Mout", or "Uout").  Choose return value
-#' of the function.  Default: FthenM
-#' 
 #' @param dummybins A logcial value specifying whether data outside of the
 #'   lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
 #'   or be placed in the specified bins. Default is \code{TRUE}.  Dummy
@@ -90,7 +87,7 @@
 #' \item{Use \code{dummybins} to evaluate bin structure}
 #' \item{Examine the raw-weight output for anomalies}
 #' }}
-#'#' @return Appends data to the file given in \code{fname}.
+#' @return Appends data to the file given in \code{fname}.
 #'  
 #'   Conditionally returns a dataframe if the \code{out} argument
 #'   specifies the type of composition to return.
