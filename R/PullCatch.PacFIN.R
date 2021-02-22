@@ -32,6 +32,8 @@ PullCatch.PacFIN <- function(pacfin_species_code,
   username = getUserName("PacFIN"), password, savedir = getwd(),
   addnominal = TRUE) {
 
+  inputcode <- pacfin_species_code
+
   #### Pull from PacFIN
   if (missing(password)) {
     password <- readline(prompt = "Enter PacFIN password without quotes\n")
@@ -80,7 +82,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
 
   #### Save appropriate summaries
   savefn <- file.path(savedir, paste(sep = ".",
-    pacfin_species_code[1], "CompFT",
+    inputcode, "CompFT",
     format(Sys.Date(), "%d.%b.%Y"),
     "RData"))
   save(data, file = savefn)
