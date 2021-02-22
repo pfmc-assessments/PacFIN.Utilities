@@ -12,7 +12,7 @@ getExpansion_2(
   maxExp = 0.95,
   stratification.cols,
   verbose = TRUE,
-  savedir = getwd()
+  savedir
 )
 }
 \arguments{

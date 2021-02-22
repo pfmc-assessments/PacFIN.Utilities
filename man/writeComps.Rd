@@ -6,13 +6,12 @@
 \usage{
 writeComps(
   inComps,
-  fname = "out.csv",
+  fname = NULL,
   abins = NULL,
   lbins = NULL,
   maxAge = Inf,
   partition = 2,
   ageErr = 0,
-  returns = "FthenM",
   dummybins = FALSE,
   sum1 = FALSE,
   digits = 4,
@@ -50,9 +49,6 @@ and code should be updated accordingly if you really want 0.}
 
 \item{ageErr}{Defaults to 1.}
 
-\item{returns}{One of ("FthenM", "Fout", "Mout", or "Uout").  Choose return value
-of the function.  Default: FthenM}
-
 \item{dummybins}{A logcial value specifying whether data outside of the
 lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
 or be placed in the specified bins. Default is \code{TRUE}.  Dummy
@@ -77,6 +73,9 @@ done to rectify them in the given function.
 Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
 This is standard practice for packages in the nwfsc-assess organization.}
+
+\item{returns}{One of ("FthenM", "Fout", "Mout", or "Uout").  Choose return value
+of the function.  Default: FthenM}
 }
 \description{
 Write out composition data to a file, binning the data as specified.
