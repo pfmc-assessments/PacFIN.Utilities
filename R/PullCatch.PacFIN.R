@@ -52,29 +52,30 @@ PullCatch.PacFIN <- function(pacfin_species_code,
   }
   data <- getDB(sql.catch(pacfin_species_code),
     username = username, password = password)
-  data <- cleanColumns(data)
 
   #### Create summaries
   data.fleet <- stats::aggregate(
     list(
-      Catch.mt = data[["CATCH.LBS"]] / 2204.62,
+      ROUND_WEIGHT_LBS = data[["ROUND_WEIGHT_LBS"]],
       ROUND_WEIGHT_MTONS = data[["ROUND_WEIGHT_MTONS"]]),
-    data[, c("YEAR", "FLEET", "AGID")],
+    data[, c("LANDING_YEAR", "FLEET_CODE", "AGENCY_CODE")],
     sum, na.rm = TRUE)
-  data.woR <- data[data[["FLEET"]] != "R", ]
+  data.woR <- data[data[["FLEET_CODE"]] != "R", ]
   data.inpfc <- stats::aggregate(
     list(
-      CATCH.KG = data.woR[["CATCH.LBS"]] / 2.20462,
+      ROUND_WEIGHT_LBS = data.woR[["ROUND_WEIGHT_LBS"]],
       ROUND_WEIGHT_MTONS = data.woR[["ROUND_WEIGHT_MTONS"]]),
-    data.woR[, c("COUNCIL", "DAHL_SECTOR", "SPID",
-      "GRGROUP", "PCID", "GRID", "INPFC_ARID", "PERIOD", "YEAR", "AGID")],
+    data.woR[, c("COUNCIL_CODE", "DAHL_GROUNDFISH_CODE", "PACFIN_SPECIES_CODE",
+      "PACFIN_GROUP_GEAR_CODE", "PACFIN_PORT_CODE", "PACFIN_GEAR_CODE",
+      "INPFC_AREA_TYPE_CODE", "LANDING_MONTH", "LANDING_YEAR", "AGENCY_CODE")],
     sum, na.rm = TRUE)
   data.psmfc <- stats::aggregate(
     list(
-      CATCH.KG = data.woR[["CATCH.LBS"]] / 2.20462,
+      ROUND_WEIGHT_LBS = data.woR[["ROUND_WEIGHT_LBS"]],
       ROUND_WEIGHT_MTONS = data.woR[["ROUND_WEIGHT_MTONS"]]),
-    data.woR[, c("COUNCIL", "DAHL_SECTOR", "SPID",
-      "GRGROUP", "PCID", "GRID", "ARID", "PERIOD", "YEAR", "AGID")],
+    data.woR[, c("COUNCIL_CODE", "DAHL_GROUNDFISH_CODE", "PACFIN_SPECIES_CODE",
+      "PACFIN_GROUP_GEAR_CODE", "PACFIN_PORT_CODE", "PACFIN_GEAR_CODE",
+      "PACFIN_CATCH_AREA_CODE", "LANDING_MONTH", "LANDING_YEAR", "AGENCY_CODE")],
     sum, na.rm = TRUE)
 
   #### Save appropriate summaries

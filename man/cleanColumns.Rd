@@ -4,29 +4,21 @@
 \alias{cleanColumns}
 \title{Change Column Names to Vdrfd}
 \usage{
-cleanColumns(data, use = c("vdrfd", "raw"))
+cleanColumns(data)
 }
 \arguments{
-\item{data}{A data frame with column names.}
-
-\item{use}{Specify the column name category you would like to switch to.
-\code{match.arg} is used to allow for partial matches.
-Options include
-\code{vdrfd}, \code{raw}.
-\code{"vdrfd"} will return the column names used prior to 2020, the default.
-\code{"raw"} will return the original column names as downloaded.}
+\item{data}{A data frame with named columns.}
 }
 \value{
-An augmented data frame with new column names.
-Prior to February 13, 2021, the column \code{lwt_lbs} was the result of
-\code{WEIGHT_OF_LANDING_LBS} in catch data. To increase the consistency across catch
-and bds data, the column name is now changed to \code{RWT_LBS}. Downstream code will
-need to be modified to accommodate the new column name.
+A data frame with fewer columns and some names changed.
 }
 \description{
-Change column names of comprehensive PacFIN columns to those
-used in legacy code.
+Clean columns of a data frame from PacFIN.
+All description columns are removed.
+Should you want anything different, please feel free to
+post an issue on github, email the package maintainer, or submit a
+pull request.
 }
 \author{
-John R. Wallace, Kelli Faye Johnson
+Kelli Faye Johnson
 }
