@@ -115,7 +115,7 @@ cleanColumns.catch <- function(data) {
 
   #### REMOVE columns that are redundant and make things cluttered
   data <- data %>%
-    dplyr::select(dplyr::matches("LANDING|AGENCY|GEAR|AREA|_MT|_LBS"))
+    dplyr::select(dplyr::matches("LANDING|AGENCY|GEAR|AREA|_MT|_LBS|PORT"))
 
   return(data)
 
