@@ -108,7 +108,7 @@ getComps = function( Pdata, strat = NULL,
 #' is assumed all are unsexed and will be returned as such.
 #'
 getcomps_long <- function(data, towstrat, type,
-  towid = "SAMPLE_NO", weightid = "Final_Sample_Size",
+  towid = "SAMPLE_NO", weightid = "Final_Sample_Size_L",
   dropmissing = TRUE) {
 
   if (!all(towstrat %in% colnames(data))) stop("Not all towstrat are available.")
@@ -157,7 +157,10 @@ getcomps_long <- function(data, towstrat, type,
       by = data[, towstrat, drop = FALSE],
       lenique, drop = dropmissing),
     by = towstrat, all.x = TRUE)
-  comp <- comp[, -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))]
+
+  if(length(grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))) > 0){
+    comp <- comp[, -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))]
+  }
   colnames(comp) <- gsub("(.+)\\.([A-Z])", "\\L\\2\\1", colnames(comp),
     perl = TRUE)
   colnames(comp) <- gsub("freq|freq.+", "samps", colnames(comp),
