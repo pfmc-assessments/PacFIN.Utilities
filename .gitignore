@@ -4,3 +4,4 @@ inst/extdata/*
 Petrale_Transcript.txt
 .Rproj.user
 data-raw/*
+password.txt
