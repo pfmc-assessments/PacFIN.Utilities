@@ -9,7 +9,8 @@ PullCatch.PacFIN(
   username = getUserName("PacFIN"),
   password,
   savedir = getwd(),
-  addnominal = TRUE
+  addnominal = TRUE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -37,7 +38,19 @@ code within PacFIN, e.g., \code{pacfin_species_code = c("DOVR", "DVR1")}.
 Users can also input a vector to pacfin_species_code if you want to
 specify the species and the nominal species code without searching for
 it. This is helpful for when you are getting data for two species and
-you only want nominal catch for one or if you only wanted nominal catch.}
+you only want nominal catch for one or if you only wanted nominal catch.
+Nominal species code will be searched for using \link{PullNominal.PacFIN} if
+the input value for \code{addnominal} is \code{TRUE}.}
+
+\item{verbose}{A logical value specifying if output should be written
+to the screen or not. Good for testing and exploring your data but
+can be turned off when output indicates errors.
+The printing doesn't affect any of the returned objects, instead,
+printing makes it easier to see if the data has errors and what was
+done to rectify them in the given function.
+Sorry, but the default is to always print to the screen,
+i.e., \code{verbose = TRUE}, so you do not miss out on anything.
+This is standard practice for packages in the nwfsc-assess organization.}
 }
 \value{
 RData frames are saved to the disk and the pulled data
@@ -56,6 +69,9 @@ research (R), and unknown (XX)
 Pull Catch Data from the Comprehensive Fish Ticket table
 in the PacFIN database.
 }
+\seealso{
+\link{PullNominal.PacFIN} for how nominal species codes are determined.
+}
 \author{
-John R. Wallace, Kelli Faye Johnson
+Kelli Faye Johnson
 }

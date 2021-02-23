@@ -16,8 +16,13 @@
 #' specify the species and the nominal species code without searching for
 #' it. This is helpful for when you are getting data for two species and
 #' you only want nominal catch for one or if you only wanted nominal catch.
+#' Nominal species code will be searched for using [PullNominal.PacFIN] if
+#' the input value for `addnominal` is `TRUE`.
+#' @template verbose
+#'
 #' @export
-#' @author John R. Wallace, Kelli Faye Johnson
+#' @author Kelli Faye Johnson
+#' @seealso [PullNominal.PacFIN] for how nominal species codes are determined.
 #' @return RData frames are saved to the disk and the pulled data
 #' are returned as a data frame.
 #'   * CompFT - pulled data
@@ -30,7 +35,7 @@
 #'
 PullCatch.PacFIN <- function(pacfin_species_code,
   username = getUserName("PacFIN"), password, savedir = getwd(),
-  addnominal = TRUE) {
+  addnominal = TRUE, verbose = FALSE) {
 
   inputcode <- pacfin_species_code
 
@@ -38,19 +43,23 @@ PullCatch.PacFIN <- function(pacfin_species_code,
   if (missing(password)) {
     password <- readline(prompt = "Enter PacFIN password without quotes\n")
   }
-  ar <- getDB(sql.area(),
-    username = username, password = password)
+
   # Find nominal code if there is one and the user hasn't passed it
-  if (addnominal) {
-    spp <- getDB(sql.species(),
-      username = username, password = password)
-    pacfin_species_code <- spp[
-      grepl(paste0(collapse = "|", gsub("NOM. ", "",
-        spp[
-          match(pacfin_species_code, spp[["PACFIN_SPECIES_CODE"]]),
-          "PACFIN_SPECIES_COMMON_NAME"])),
-        spp[, "PACFIN_SPECIES_COMMON_NAME"]
-      ), "PACFIN_SPECIES_CODE"]
+  if (addnominal[1] == TRUE) {
+    thenominal <- PullNominal.PacFIN(
+      pacfin_species_code = pacfin_species_code,
+      username = username,
+      password = password)
+    pacfin_species_code <- c(pacfin_species_code, na.omit(thenominal))
+    if (verbose) {
+      message("The following nominal species codes were added: ",
+        knitr::combine_words(thenominal)
+        )
+    }
+  } else { # Add the nominal code passed by the user unless FALSE
+    if (addnominal[1] != FALSE) {
+      pacfin_species_code <- c(pacfin_species_code, addnominal)
+    }
   }
   data <- getDB(sql.catch(pacfin_species_code),
     username = username, password = password)
