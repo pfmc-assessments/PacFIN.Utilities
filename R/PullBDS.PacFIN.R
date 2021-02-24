@@ -104,11 +104,6 @@ PullBDS.PacFIN <- function(pacfin_species_code,
     dplyr::rename_with(.fn = ~gsub("1$", "", .x)) %>%
     data.frame
 
-  bds.pacfin[, "all_cluster_sum"] <- stats::ave(FUN = sum, na.rm = TRUE,
-    x = ifelse(yes = 0, no = bds.pacfin$CLUSTER_WEIGHT_LBS,
-      test = duplicated(apply(MARGIN = 1, FUN = paste, collapse = " ",
-        bds.pacfin[, c("SAMPLE_NUMBER", "CLUSTER_SEQUENCE_NUMBER")]))),
-    bds.pacfin$SAMPLE_NUMBER)
 
   #### Save appropriate summaries
   savefn <- file.path(savedir,
