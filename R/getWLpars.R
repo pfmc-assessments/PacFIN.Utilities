@@ -5,11 +5,19 @@
 #'
 #' @param data A data frame containing empirical weights and lengths
 #' from sampled fish.
-#' Weights should be available in the column `weight` or `FISH_WEIGHT`.
-#' Lengths should be available in the column `lengthcm`.
 #' Sexes should be available in the column `sex` or `SEX`.
-#' All column names will be changed to lower case before searching for
-#' the appropriate indexing.
+#' @param col.length A numeric or character value specifying the column
+#' to use in `data` for length information. These lengths are assumed to
+#' be in centimeters. The default value is `lengthcm`, which is added
+#' to a data set automatically when running [cleanPacFIN].
+#' @param col.weight A numeric or character value specifying the column
+#' to use in `data` for weight information. These weights are assumed to
+#' be in kilograms The default value is `weightkg`, which is added
+#' to a data set automatically when running [cleanPacFIN].
+#' Using kilograms is the default because Stock Synthesis assumes the
+#' weight-length parameters are calculated using centimeters and kilograms.
+#' The reported values are easily scaled to give you results in grams if
+#' you wish to have more standard parameter estimates.
 #' @template verbose
 #'
 #' @author Kelli Faye Johnson
@@ -23,7 +31,12 @@
 #' This will happen when there are no females in your data set,
 #' for example.
 #'
-getWLpars <- function(data, verbose = FALSE) {
+getWLpars <- function(
+  data,
+  col.length = "lengthcm",
+  col.weight = "weightkg",
+  verbose = FALSE
+  ) {
 
   getline <- function(model){
     # function to get row of table of weight-length values
@@ -61,19 +74,19 @@ getWLpars <- function(data, verbose = FALSE) {
     return(out)
   }
 
+  col.length <- tolower(col.length)
+  col.weight <- tolower(col.weight)
   colnames(data) <- tolower(colnames(data))
   colnames(data) <- gsub("fish_weight", "weight", colnames(data))
   colnames(data) <- gsub("lengthcm", "length_cm", colnames(data))
-  if (!any(c("sex", "weight", "length_cm") %in% colnames(data))) {
-    warning("Necessary columns, i.e., sex, weight, and length_cm,",
-      " are not available in the data set.")
-    return(NULL)
-  }
+  stopifnotcolumn(data = data, string = col.length)
+  stopifnotcolumn(data = data, string = col.weight)
+  stopifnotcolumn(data = data, string = "sex")
 
   dims <- dim(data)
   data <- data[
-    !is.na(data[, "weight"]) &
-    !is.na(data[, "length_cm"]), ]
+    !is.na(data[[col.weight]]) &
+    !is.na(data[[col.length]]), ]
   if (verbose) {
     message("Calculating the weight-length relationship from ",
       nrow(data), "\nfish because ", dims[1] - nrow(data),

@@ -51,6 +51,10 @@
 #' @template verbose
 #' @param plot A logical that specifies if plots should be created or not.
 #' The default is `FALSE`.
+#' @param col.weight The name of column that contains the weight of the fish
+#' in kilograms. Units are important here because kilograms will be converted
+#' to pounds to match other weight calculations.
+#' The default is `weightkg`, which is created using [cleanPacFIN].
 #' @return Additional columns are added to \code{Pdata}:
 #' * `Wt_Sampled_1`: the sum of sex-specific weights within the sample.
 #' * `Wt_Sampled_2`: the species-specific sample weight only provided by
@@ -74,7 +78,8 @@ EF1_Denominator = function(Pdata,
   ma = 2e-06, mb = 3.5,
   ua = 2e-06, ub = 3.5,
   verbose = FALSE,
-  plot = FALSE) {
+  plot = FALSE,
+  col.weight = "weightkg") {
 
   if (verbose) {
     cat("\nIndividual weights will be generated from the following values:\n\n")
@@ -82,6 +87,8 @@ EF1_Denominator = function(Pdata,
         "Males:",  ma,mb, "\n",
         "Unknowns and hermaphrodites:",  ua,ub, "\n\n")
   } # End if verbose
+
+  stopifnotcolumn(Pdata, col.weight)
 
   # Calculate weight based on length-weight relationship
   Pdata$LW_Calc_Wt <- getweight(
@@ -95,12 +102,12 @@ EF1_Denominator = function(Pdata,
 
   #### Calculate sample weight using FISH_WEIGHT in lbs
   Pdata <- Pdata %>%
-  # Use FISH_WEIGHT if available and calculated from WL relationship when NA
-  # Note the change in units for FISH_WEIGHT from KG to LBS
+  # Use weightkg if available and calculated from WL relationship when NA
+  # Note the change in units for weightkg from KG to LBS
   dplyr::mutate(
     bestweight = dplyr::case_when(
-      is.na(FISH_WEIGHT) ~ LW_Calc_Wt,
-      TRUE ~ FISH_WEIGHT * 2.20462)
+      is.na(weightkg) ~ LW_Calc_Wt,
+      TRUE ~ weightkg * 2.20462)
     ) %>%
   # Group by SAMPLE_NO so all subsequent calculations are done on subsets
   # of the data, i.e., mean(bestweight) is mean of the bestweight in a
@@ -117,25 +124,25 @@ EF1_Denominator = function(Pdata,
     Wt_Sampled_3_L = sum(na.rm = TRUE,
       ifelse(is.na(length), NA, bestweight)),
     Wt_Sampled_3_A = sum(na.rm = TRUE,
-      ifelse(is.na(age), NA, bestweight)),
+      ifelse(is.na(Age), NA, bestweight)),
     UNK_WT = sum(ifelse(SEX == "U", bestweight, 0)),
     UNK_NUM = sum(SEX == "U")
     ) %>%
-  # Back out the weight of fish that have no length or age for each
+  # Back out the weight of fish that have no length or Age for each
   # specific sample weight, if all are NA in sample, then set to 0.
   dplyr::mutate(
-    Wt_Sampled_1_A = (-1 * sum(ifelse(is.na(age), bestweight, 0)) + 
+    Wt_Sampled_1_A = (-1 * sum(ifelse(is.na(Age), bestweight, 0)) +
       FEMALES_WGT + MALES_WGT + UNK_WT) *
-      ifelse(all(is.na(age)), 0, 1),
-    Wt_Sampled_1_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) + 
+      ifelse(all(is.na(Age)), 0, 1),
+    Wt_Sampled_1_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
       FEMALES_WGT + MALES_WGT + UNK_WT) *
       ifelse(all(is.na(length)), 0, 1)
     ) %>% dplyr::ungroup() %>% dplyr::group_by(SAMPLE_NO, CLUSTER_NO) %>%
   # Do the same for CLUSTER_WGT
   dplyr::mutate(
-    Wt_Sampled_2_A = (-1 * sum(ifelse(is.na(age), bestweight, 0)) + 
-          CLUSTER_WGT) * ifelse(all(is.na(age)), 0, 1),
-    Wt_Sampled_2_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) + 
+    Wt_Sampled_2_A = (-1 * sum(ifelse(is.na(Age), bestweight, 0)) +
+          CLUSTER_WGT) * ifelse(all(is.na(Age)), 0, 1),
+    Wt_Sampled_2_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
           CLUSTER_WGT) * ifelse(all(is.na(length)), 0, 1)
     ) %>% 
   # Bring the calculations back to the full scale of the data frame
@@ -187,7 +194,7 @@ EF1_Denominator = function(Pdata,
         ylab = "N samples w/ first-stage expansion denominator = NA",
         args.legend = list(x = "topleft", bty = "n"))
     }
-    gg <- plotWL(Pdata[,"lengthcm"], Pdata[, "SEX"], Pdata[, "FISH_WEIGHT"],
+    gg <- plotWL(Pdata[,"lengthcm"], Pdata[, "SEX"], Pdata[, "weightkg"],
       Pdata[, "LW_Calc_Wt"])
     ggplot2::ggsave(gg, file = plot2,
       width = 6, height = 6, units = "in")

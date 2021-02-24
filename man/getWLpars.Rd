@@ -4,16 +4,31 @@
 \alias{getWLpars}
 \title{Calculate weight-length relationship parameters}
 \usage{
-getWLpars(data, verbose = FALSE)
+getWLpars(
+  data,
+  col.length = "lengthcm",
+  col.weight = "weightkg",
+  verbose = FALSE
+)
 }
 \arguments{
 \item{data}{A data frame containing empirical weights and lengths
 from sampled fish.
-Weights should be available in the column \code{weight} or \code{FISH_WEIGHT}.
-Lengths should be available in the column \code{lengthcm}.
-Sexes should be available in the column \code{sex} or \code{SEX}.
-All column names will be changed to lower case before searching for
-the appropriate indexing.}
+Sexes should be available in the column \code{sex} or \code{SEX}.}
+
+\item{col.length}{A numeric or character value specifying the column
+to use in \code{data} for length information. These lengths are assumed to
+be in centimeters. The default value is \code{lengthcm}, which is added
+to a data set automatically when running \link{cleanPacFIN}.}
+
+\item{col.weight}{A numeric or character value specifying the column
+to use in \code{data} for weight information. These weights are assumed to
+be in kilograms The default value is \code{weightkg}, which is added
+to a data set automatically when running \link{cleanPacFIN}.
+Using kilograms is the default because Stock Synthesis assumes the
+weight-length parameters are calculated using centimeters and kilograms.
+The reported values are easily scaled to give you results in grams if
+you wish to have more standard parameter estimates.}
 
 \item{verbose}{A logical value specifying if output should be written
 to the screen or not. Good for testing and exploring your data but

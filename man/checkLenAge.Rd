@@ -8,7 +8,7 @@ checkLenAge(
   Pdata,
   Par = list(K = 0.13, Linf = 55, L0 = 15, CV0 = 0.1, CV1 = 0.1),
   len_col = "lengthcm",
-  age_col = "age",
+  age_col = "Age",
   sex_col = "SEX",
   mult = 1,
   keepAll = TRUE,

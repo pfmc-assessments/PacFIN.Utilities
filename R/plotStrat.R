@@ -15,8 +15,8 @@ plotStrat <- function(data, dir, ylimperc = 0.65, npages = 11, dolbins) {
 for (ii_f in c("fleet", "fleet + state")) 
 {
   withage <- data.frame(writeComps(doSexRatio(getComps(
-    data[!is.na(data$lengthcm) & data$age != -1, ], 
-    strat = switch(ii_f, fleet = NULL, c("state")), 
+    data[!is.na(data$lengthcm) & !is.na(data$Age), ],
+    strat = switch(ii_f, fleet = NULL, c("state")),
     Comps = "LEN"), Rvector = 0.50), 
     fname = file.path(dir, "ignoreme.csv"), sum1 = TRUE,
     lbins = dolbins, returns = "Uout", partition = 2), "wo" = "only aged")

@@ -1,6 +1,6 @@
 ###########################################################################
 #
-#' Aggregate composition data by length, age, or age-at-length according to the
+#' Aggregate composition data by length, Age, or age-at-length according to the
 #' given stratification.
 #' 
 #' \subsection{Workflow}{
@@ -19,8 +19,8 @@
 #'   \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
 #'   
 #'   The default stratification is by fleet, fishyr, and season.
-#'   Columns \code{lengthcm}, \code{age} or both are added
-#'   depending on the \code{Comps} argument.
+#'   Columns `lengthcm`, `Age` or both are added
+#'   depending on the `Comps` argument.
 #'   
 #' @template Pdata
 #' @template strat
@@ -29,11 +29,11 @@
 #'   which will typically be left at their default value of
 #'   \code{c('fleet', 'fishyr', 'season')}.
 #' @template verbose
-#' @param ... Pass additional arguments to \code{getcomps_long}, such as
-#' \code{dropmissing = FALSE} where the default behaviour is 
-#' \code{dropmissing = TRUE}
+#' @param ... Pass additional arguments to `getcomps_long`, such as
+#' `dropmissing = FALSE` where the default behavior is
+#' `dropmissing = TRUE`
 #' @return A dataframe with composition data specific to the type specified
-#'   in \code{Comps} for males, females, and unsexed records.
+#'   in `Comps` for males, females, and unsexed records.
 #' @author Andi Stephens, Kelli Faye Johnson
 #' @import grDevices
 #' @import graphics
@@ -68,11 +68,11 @@ getComps = function( Pdata, strat = NULL,
   TowStrat <- c(strat, switch(Comps,
     LEN = usualSuspects,
     AGE = usualSuspects,
-    c(usualSuspects, "age")))
+    c(usualSuspects, "Age")))
   usualSuspects <- switch(Comps,
     LEN = c(usualSuspects, "lengthcm"),
-    AGE = c(usualSuspects, "age"),
-    c(usualSuspects, "lengthcm", "age"))
+    AGE = c(usualSuspects, "Age"),
+    c(usualSuspects, "lengthcm", "Age"))
 
   if (verbose) {
     cat("\nAggregating, stratification is by", paste(c(strat, usualSuspects), collapse=", "), "\n\n")
@@ -91,7 +91,7 @@ getComps = function( Pdata, strat = NULL,
 #' @param towstrat A vector of character values providing the column
 #' names for which you want compositions for.
 #' @param type A character value specifying which category to
-#' summarize by, i.e., \code{"length"} or \code{"age"}.
+#' summarize by, i.e., `"length"` or `"Age"`.
 #' @param towid A vector of character values providing the column
 #' names that generate a unique id for each sample.
 #' @param weightid A character value giving the column name that
@@ -113,7 +113,7 @@ getcomps_long <- function(data, towstrat, type,
 
   if (!all(towstrat %in% colnames(data))) stop("Not all towstrat are available.")
   if (!type %in% colnames(data)) stop("'type' must be a column in data",
-    " i.e., 'lengthcm' or 'age'")
+    " i.e., 'lengthcm' or 'Age'")
 
   # Create a unique id for each sample
   data[, "uniqueid"] <- apply(data[, towid, drop = FALSE],

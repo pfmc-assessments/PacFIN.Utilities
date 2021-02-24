@@ -57,9 +57,9 @@ plotRawData = function( rawData, fname=NULL ) {
   meanLen = tapply(len$len,list(len$SAMPLE_NO,len$SAMPLE_YEAR),mean)
 
   age = rawData[!is.na(rawData$FISH_AGE_YEARS_FINAL),]
-  age$age = age$FISH_AGE_YEARS_FINAL
+  age$Age = age$FISH_AGE_YEARS_FINAL
   atows = age[!duplicated(age$SAMPLE_NO),]
-  meanAge = tapply(age$age,list(age$SAMPLE_NO,age$SAMPLE_YEAR),mean)
+  meanAge = tapply(age$Age,list(age$SAMPLE_NO,age$SAMPLE_YEAR),mean)
 
   # Print tables
 
@@ -123,14 +123,10 @@ plotRawData = function( rawData, fname=NULL ) {
   print(table(age$SAMPLE_YEAR,age$SOURCE_AGID))
   cat("\n\n")
 
-  cat("age2 vs. age3 for aged fish\n")
-  print(table(age$age2,age$age3,useNA="ifany"))
+  cat("age vs. ageX for aged fish\n")
+  print(table(age[, grep("^age[0-9]*$", colnames(age))], useNA = "ifany"))
   cat("\n\n")
 
-  cat("age1 vs. age2 for aged fish\n")
-  print(table(age$age1,age$age2,useNA="ifany"))
-  cat("\n\n")
-  
   sink()
 
   # Plots
@@ -157,7 +153,7 @@ plotRawData = function( rawData, fname=NULL ) {
 
   hist(ltows$DEPTH_AVG, xlab="", main="DEPTH_AVG")
 
-  hist(age$age,nclass=30, xlab="", main="Age")
+  hist(age$Age,nclass=30, xlab="", main="Age")
 
   par(mfrow=c(2,1))
   boxplot(as.list(as.data.frame(meanLen)),varwidth=T,main="Mean length")

@@ -91,13 +91,10 @@ PullCatch.PacFIN <- function(pacfin_species_code,
 
   #### Save appropriate summaries
   savefn <- file.path(savedir, paste(sep = ".",
-    inputcode, "CompFT",
+    "PacFIN", inputcode, "CompFT",
     format(Sys.Date(), "%d.%b.%Y"),
     "RData"))
   save(data, file = savefn)
-  save(data.fleet, file = gsub("CompFT", "Research.Tribal.Catch", savefn))
-  save(data.inpfc, file = gsub("([A-Z]+)[.]CompFT", "PacFIN.\\1.Catch.INPFC", savefn))
-  save(data.psmfc, file = gsub("([A-Z]+)[.]CompFT", "PacFIN.\\1.Catch.PSMFC", savefn))
 
   return(data)
 }

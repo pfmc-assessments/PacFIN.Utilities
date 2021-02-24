@@ -46,7 +46,7 @@ doSexRatio = function( CompData, ratioU, maxsizeU, GTsizeU, savedir ) {
   # it back at the end!
   AGE_FLAG = FALSE
   if ( length(CompData$lengthcm) == 0 ) {
-    index = which(names(CompData) == "age")
+    index = which(names(CompData) == "Age")
     names(CompData)[index] = "lengthcm"
     AGE_FLAG = TRUE
   } # End if
@@ -140,7 +140,7 @@ doSexRatio = function( CompData, ratioU, maxsizeU, GTsizeU, savedir ) {
   # it back at the end!
   if (AGE_FLAG) {
     index = which(names(CompData) == "lengthcm")
-    names(CompData)[index] = "age"
+    names(CompData)[index] = "Age"
   } # End if
 
   cat("\nDone.\n\n")

@@ -6,7 +6,7 @@
 #' @template Pdata
 #' @template fname
 #' @template strat
-#' @param comps Specify whether to calculate the length or age samples.
+#' @param comps Specify whether to calculate the length or Age samples.
 #' The default is to calculate the number of length samples.
 #' @param remove_yrs A vector of years to remove from the data before
 #' summarizing sample sizes. The default of \code{NULL} leads to no
@@ -42,7 +42,7 @@ tableSample <- function(Pdata,
 	}
 	
 	if (comps == "AGE"){
-		temp = Pdata[!is.na(Pdata$age), ]
+		temp = Pdata[!is.na(Pdata$Age), ]
 	}
 
 	if(!is.null(remove_yrs)){

@@ -112,7 +112,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   # Which comps are we doing?
   Names = names(inComps)
-  AGE = which(Names == "age")
+  AGE = which(Names == "Age")
   LEN = which(Names == "lengthcm")
 
   if(is.null(fname)){
@@ -195,31 +195,31 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     }
 
     LbinHi <- c(lbins[-1] - 1, Inf)
-    inComps$lbin <- findInterval(inComps$lengthcm, lbins, all.inside = TRUE)    
+    inComps$lbin <- findInterval(inComps$lengthcm, lbins, all.inside = TRUE)
   } # End if for lbins
 
   # Fix age bins
-  if ( !is.null(inComps$age) ) {
+  if ( !is.null(inComps$Age) ) {
     if ( is.null(abins) ) {
       if (verbose){
         cat("\nNo age bins provided, using data as-is\n\n")
       }
-      abins = sort(unique(inComps$age))
+      abins = sort(unique(inComps$Age))
       abins = abins[abins < maxAge]
     } # End if for abins
 
-    # Re-code actual ages to be abins    
+    # Re-code actual ages to be abins
     if (dummybins) {      
-      if (min(abins) > 0) {        
+      if (min(abins) > 0) {
         abins = c(0, abins)
       }      
-      abins <- c(abins, max(abins) + diff(tail(abins, 2)), Inf)      
+      abins <- c(abins, max(abins) + diff(tail(abins, 2)), Inf)
     } else {      
-      abins <- c(abins, Inf)      
+      abins <- c(abins, Inf)
     } # End if-else dummybins
 
     # add extra, dummy bin because all.inside=T
-    inComps$abin = findInterval(inComps$age, abins, all.inside = TRUE)    
+    inComps$abin = findInterval(inComps$Age, abins, all.inside = TRUE)
   } # End if inComps$ages
 
   AAL = FALSE
@@ -371,39 +371,39 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   if ( length(AGE) > 0 ) {
     uStrat$ageErr <- ageErr
     uStrat$LbinLo <- -1
-    uStrat$LbinHi <- -1    
+    uStrat$LbinHi <- -1
   }
 
   Ninput_b <- round(ifelse( 
-                      bothComps$Nsamps / bothComps$Ntows < 44, 
-                      bothComps$Ntows + 0.138 * bothComps$Nsamps, 
+                      bothComps$Nsamps / bothComps$Ntows < 44,
+                      bothComps$Ntows + 0.138 * bothComps$Nsamps,
                       7.06 * bothComps$Ntows), 0 )
   Ninput_b[is.na(Ninput_b)] = 0
   Ninput_f <- round(ifelse( 
-                      fComps$Nsamps / fComps$Ntows < 44, 
-                      fComps$Ntows + 0.138 * fComps$Nsamps, 
+                      fComps$Nsamps / fComps$Ntows < 44,
+                      fComps$Ntows + 0.138 * fComps$Nsamps,
                       7.06 * fComps$Ntows), 0 )
   Ninput_f[is.na(Ninput_f)] = 0
   Ninput_m <- round(ifelse( 
-                      mComps$Nsamps / mComps$Ntows < 44, 
-                      mComps$Ntows + 0.138 * mComps$Nsamps, 
+                      mComps$Nsamps / mComps$Ntows < 44,
+                      mComps$Ntows + 0.138 * mComps$Nsamps,
                       7.06 * mComps$Ntows), 0 )
   Ninput_m[is.na(Ninput_m)] = 0
   Ninput_u <- round(ifelse( 
-                      uComps$Nsamps / uComps$Ntows < 44, 
+                      uComps$Nsamps / uComps$Ntows < 44,
                       uComps$Ntows + 0.138 * uComps$Nsamps,
                       7.06 * uComps$Ntows), 0 )
   Ninput_u[is.na(Ninput_u)] = 0
 
   if(!AAL){
-    FthenM <- cbind(uStrat, round(bothComps$Ntows, 0), round(bothComps$Nsamps, 0), Ninput_b, 
+    FthenM <- cbind(uStrat, round(bothComps$Ntows, 0), round(bothComps$Nsamps, 0), Ninput_b,
                     fComps[,1:NCOLS], mComps[,1:NCOLS])
-    Fout  <- cbind(uStrat, round(fComps$Ntows, 0), round(fComps$Nsamps, 0), Ninput_f, 
+    Fout  <- cbind(uStrat, round(fComps$Ntows, 0), round(fComps$Nsamps, 0), Ninput_f,
                     fComps[,1:NCOLS], fComps[,1:NCOLS])
-    Mout  <- cbind(uStrat, round(mComps$Ntows, 0), round(mComps$Nsamps, 0), Ninput_m, 
+    Mout  <- cbind(uStrat, round(mComps$Ntows, 0), round(mComps$Nsamps, 0), Ninput_m,
                     mComps[,1:NCOLS], mComps[,1:NCOLS])
     Uout  <- cbind(uStrat, round(uComps$Ntows, 0), round(uComps$Nsamps, 0), Ninput_u,
-                     uComps[,1:NCOLS], uComps[,1:NCOLS]) 
+                     uComps[,1:NCOLS], uComps[,1:NCOLS])
   } else {
     Fout <- cbind(uStrat, round(fComps$Ntows, 0), Nsamps_f, fComps[,1:NCOLS], fComps[,1:NCOLS])
     Mout <- cbind(uStrat, round(mComps$Ntows, 0), Nsamps_m, mComps[,1:NCOLS], mComps[,1:NCOLS])
@@ -427,7 +427,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     names(Mout)[index + 2]   <- "InputN"
     names(Fout)[index + 2]   <- "InputN"
     names(Uout)[index + 2]   <- "InputN"
-    names(FthenM)[index + 2] <- "InputN"    
+    names(FthenM)[index + 2] <- "InputN"
   }
 
   # Remove empty rows
@@ -495,7 +495,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   }
   IDstring = paste("\n\n", "Females then males")
   cat(file = fname, IDstring, "\n", append = FALSE)  
-  write.table(file = fname, FthenM, sep = ",", col.names = TRUE, 
+  write.table(file = fname, FthenM, sep = ",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
 
   if (verbose) {
@@ -503,35 +503,35 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   }
   IDstring = paste("\n\n", "Females only")
   cat(file = fname, IDstring, "\n", append = TRUE)  
-  write.table(file = fname, Fout, sep = ",", col.names = TRUE, 
+  write.table(file = fname, Fout, sep = ",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
   
   if (verbose) {
     cat("Writing M only, dimensions:", dim(Mout), "\n")
   }  
   IDstring = paste("\n\n",  "Males only")
-  cat(file = fname, IDstring, "\n", append = TRUE)  
-  write.table(file = fname, Mout, sep =",", col.names = TRUE, 
+  cat(file = fname, IDstring, "\n", append = TRUE)
+  write.table(file = fname, Mout, sep =",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
 
   if (verbose) {
     cat("Writing U only, dimensions:", dim(Uout), " \n")
   } 
 
-  if("sexRatio" %in% colnames(inComps)){ 
+  if("sexRatio" %in% colnames(inComps)){
     u_message <- paste("\n\n", 
       "Sex ratio was applied and unsexed are included above: only reported as a diagnostic") 
   } else {
-    u_message <- paste("\n\n", "Usexed only") 
+    u_message <- paste("\n\n", "Usexed only")
   }
 
   IDstring = u_message
-  cat(file = fname, IDstring, "\n", append = TRUE)  
-  write.table(file = fname, Uout, sep = ",", col.names = TRUE, 
+  cat(file = fname, IDstring, "\n", append = TRUE)
+  write.table(file = fname, Uout, sep = ",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
  
   # Reset warnings
-  #options("warn" = oldwarn[[1]])  
-  #invisible(eval(parse(text = returns)))  
+  #options("warn" = oldwarn[[1]])
+  #invisible(eval(parse(text = returns)))
 
 } # End function writeComps

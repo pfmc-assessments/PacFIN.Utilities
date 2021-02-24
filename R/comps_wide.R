@@ -29,7 +29,7 @@
 #' temp <- data.frame(
 #'   state = rep(c("WA", "OR"), length.out = 30),
 #'   year = rep(2010:2015, each = 5),
-#'   age = rep(1:15, 2),
+#'   Age = rep(1:15, 2),
 #'   ap = rlnorm(n = 30))
 #' comps <- comps_wide(temp, breaks = 3:8, col_proportions = "ap")
 #' testthat::expect_equal(NCOL(comps), 8)
@@ -38,7 +38,7 @@
 #' }
 #'
 comps_wide <- function(data, breaks,
-  col_bins = "age",
+  col_bins = "Age",
   col_proportions = "lf",
   includeplusgroup = TRUE) {
 

@@ -13,7 +13,8 @@ EF1_Denominator(
   ua = 2e-06,
   ub = 3.5,
   verbose = FALSE,
-  plot = FALSE
+  plot = FALSE,
+  col.weight = "weightkg"
 )
 }
 \arguments{
@@ -47,6 +48,11 @@ This is standard practice for packages in the nwfsc-assess organization.}
 
 \item{plot}{A logical that specifies if plots should be created or not.
 The default is \code{FALSE}.}
+
+\item{col.weight}{The name of column that contains the weight of the fish
+in kilograms. Units are important here because kilograms will be converted
+to pounds to match other weight calculations.
+The default is \code{weightkg}, which is created using \link{cleanPacFIN}.}
 }
 \value{
 Additional columns are added to \code{Pdata}:

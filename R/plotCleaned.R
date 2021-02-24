@@ -44,7 +44,7 @@ plotCleaned <- function (Pdata, savedir = getwd()) {
     legend.text = TRUE, xaxt = "n",
     xlab = "", ylab = "Length samples per state",
     args.legend = list(x = "topleft", bty = "n"))
-  barplot(xtabs(!is.na(Pdata$age) ~ Pdata$state + Pdata$fishyr),
+  barplot(xtabs(!is.na(Pdata$Age) ~ Pdata$state + Pdata$fishyr),
     col = rainbow(length(unique(Pdata$state))),
     legend.text = FALSE,
     xlab = "Year", ylab = "Age samples per state",
@@ -58,9 +58,9 @@ plotCleaned <- function (Pdata, savedir = getwd()) {
   boxplot(Pdata$lengthcm ~ Pdata$fishyr,
     xlab = "", ylab = "Length (cm)", xaxt = "n",
     frame.plot = TRUE, ylim = c(0, max(Pdata$lengthcm, na.rm = TRUE)))
-  boxplot(Pdata$age ~ Pdata$fishyr,
+  boxplot(Pdata$Age ~ Pdata$fishyr,
     xlab = "Year", ylab = "Age",
-    frame.plot = TRUE, ylim = c(0, max(Pdata$age, na.rm = TRUE)))
+    frame.plot = TRUE, ylim = c(0, max(Pdata$Age, na.rm = TRUE)))
 
   png(file.path(savedir, "PacFIN_comp_NbyGRID.png"))
   on.exit(dev.off(), add = TRUE)
@@ -73,7 +73,7 @@ plotCleaned <- function (Pdata, savedir = getwd()) {
     legend.text = TRUE, xlab = "", xaxt = "n",
     ylab = "Length samples per gear",
     args.legend = list(x = "topleft", bty = "n", ncol = ceiling(nGRID / 4)))
-  barplot(xtabs(!is.na(Pdata$age) ~ Pdata$GRID + Pdata$fishyr),
+  barplot(xtabs(!is.na(Pdata$Age) ~ Pdata$GRID + Pdata$fishyr),
     col = rainbow(nGRID),
     legend.text = FALSE, xlab = "Year",
     ylab = "Age samples per gear",
@@ -97,7 +97,7 @@ plotCleaned <- function (Pdata, savedir = getwd()) {
       legend.text = TRUE, xaxt = "n",
       xlab = "", ylab = "Length samples per gear group",
       args.legend = list(x = "topleft", bty = "n"))
-    barplot(xtabs(!is.na(Pdata$age) ~ Pdata$geargroup + Pdata$fishyr),
+    barplot(xtabs(!is.na(Pdata$Age) ~ Pdata$geargroup + Pdata$fishyr),
       col = rainbow(length(unique(Pdata$geargroup))),
       legend.text = FALSE,
       xlab = "Year", ylab = "Age samples per gear group",
@@ -117,7 +117,7 @@ plotCleaned <- function (Pdata, savedir = getwd()) {
     width = 6, height = 6, dpi = 500)
   gg <- ggplot2::ggplot(data = Pdata,
     ggplot2::aes(x = .data[["lengthcm"]],
-    y = .data[["age"]])) +
+    y = .data[["Age"]])) +
     ggplot2::geom_point() + ggplot2::theme_bw() +
     ggplot2::labs(x = "Length (cm)", y = "Age (year)")
   suppressWarnings(ggplot2::ggsave(gg,

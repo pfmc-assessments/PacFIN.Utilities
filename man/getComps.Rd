@@ -2,7 +2,7 @@
 % Please edit documentation in R/getComps.R
 \name{getComps}
 \alias{getComps}
-\title{Aggregate composition data by length, age, or age-at-length according to the
+\title{Aggregate composition data by length, Age, or age-at-length according to the
 given stratification.}
 \usage{
 getComps(
@@ -51,7 +51,7 @@ i.e., \code{verbose = TRUE}, so you do not miss out on anything.
 This is standard practice for packages in the nwfsc-assess organization.}
 
 \item{...}{Pass additional arguments to \code{getcomps_long}, such as
-\code{dropmissing = FALSE} where the default behaviour is
+\code{dropmissing = FALSE} where the default behavior is
 \code{dropmissing = TRUE}}
 }
 \value{
@@ -74,7 +74,7 @@ or
 \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
 
 The default stratification is by fleet, fishyr, and season.
-Columns \code{lengthcm}, \code{age} or both are added
+Columns \code{lengthcm}, \code{Age} or both are added
 depending on the \code{Comps} argument.
 }
 \author{

@@ -35,7 +35,7 @@ Or if you want to look at fleets and gear, then use
 \code{strat = c("fleet","usegear")}.
 todo: deprecate defaults}
 
-\item{comps}{Specify whether to calculate the length or age samples.
+\item{comps}{Specify whether to calculate the length or Age samples.
 The default is to calculate the number of length samples.}
 
 \item{remove_yrs}{A vector of years to remove from the data before

@@ -17,22 +17,23 @@
 #' @return An RData object is saved to the disk and the pulled data
 #' are returned as a data frame.
 #' The saved data can be read back in using [load], but note that
-#' the object is named inside of the `.RData` file, and thus,
-#' the object will retain the name of `bds.pacfin` within your work space.
+#' the object is named `bds.pacfin` inside of the `.RData` file, and thus,
+#' the object will retain this name within your work space.
 #' In February of 2021, the returned object was renamed from `out`
 #' to `bds.pacfin` in an attempt to be more clear.
 #'
-#' Be aware that the data are changed from a long table to a wide table
-#' using the combination of unique `FISH_IDs` in a given year and `AGE_SEQUENCE_NUMBER`.
-#' Users are warned if there are non-unique `FISH_IDs` in a given year as these data
-#' are automatically removed from the data frame. So, it is good to have `verbose = TRUE`.
+#' Upon download, the data are changed from a long table to a wide table
+#' using the combination of unique `FISH_ID` and `AGE_SEQUENCE_NUMBER`.
+#' Users are warned if `verbose = TRUE` when there are non-unique `FISH_IDs` and these data
+#' are automatically removed from the data frame.
 #' This change from long to wide allows for rows equating to a single fish with columns
 #' containing information about all measurements for that fish. Multiple age reads and
 #' information about those reads such as age reader will be in the columns.
-#'  So, if your data had at most three duplicate reads, then you will see numbers up
-#' to `3` pasted onto the end of relevant column names. This is to help you match duplicate
-#' reads to the relevant information. All information from age reader #1 will be in
-#' a column with no tag, i.e., `age` instead of `age2`.
+#' So, if your data had at most three duplicate reads,
+#' then you will see numbers up to `3` pasted onto the end of relevant column names.
+#' This is to help you match duplicate reads to other relevant information.
+#' Not all double reads are currently available within PacFIN and
+#' users should contact the ageing labs if they wish to inform ageing-error matrices.
 #' 
 #' `AGE_COUNT` is a somewhat cryptic column name and does not always make sense
 #' when compared to `AGE_SEQUENCE_NUMBER`. It was determined that the former is
@@ -44,12 +45,16 @@
 #' numbers for a given `FISH_ID`, and in this case, `AGE_COUNT` will be the
 #' maximum `AGE_SEQUENCE_NUMBER` for a given `FISH_ID`.
 #'
-#' Some column names have been renamed, these pertain to the reading of ages.
-#' For example `AGE_IN_YEARS` is now `age`, which can be followed by a number if the age
-#' was a second, third, fourth, ... read. Numeric values signify columns like `age`
-#' where the information was gleaned from another row with the same unique FISH_ID
-#' in a given year. Having this information of double reads by FISH_ID will facilitate
-#' the estimation of ageing error.
+#' `FINAL_FISH_AGE_IN_YEARS` is known as the best age for a given fish.
+#' This will not always match an age reader or be a number determinable
+#' from the individual age reads in `AGE_IN_YEARS`. Patrick explained to me
+#' that when age reads do not agree, particularly for younger fish, then
+#' the senior reader will work together with the junior reader to determine
+#' an agreed-upon age. Other times, the senior reader's value will always
+#' be used, or it could be that together they determine that they were both
+#' wrong and a new age is proposed as the `resolved age`. Nevertheless,
+#' it can be quite messy and there is no way to predict the best age.
+#'
 #' @seealso
 #' * [cleanColumns] to change to legacy column names
 #' * [cleanPacFIN] to manipulate and subset the returned object
@@ -60,9 +65,13 @@
 #' pd <- PullBDS.PacFIN(pacfin_species_code = "POP", password = mypw)
 #' }
 #'
-PullBDS.PacFIN <- function(pacfin_species_code,
-  username = getUserName("PacFIN"), password, savedir = getwd(),
-  verbose = TRUE) {
+PullBDS.PacFIN <- function(
+  pacfin_species_code,
+  username = getUserName("PacFIN"),
+  password,
+  savedir = getwd(),
+  verbose = TRUE
+  ) {
 
   #### Pull from PacFIN
   if (missing(password)) {
@@ -92,7 +101,10 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   # Check for NULL FISH_ID
   FISH_ID <- is.na(rawdata[["FISH_ID"]])
   if (sum(FISH_ID) > 0) {
-    warning("FISH_ID is NULL for ", sum(FISH_ID), ", records will be removed (see below).")
+    warning(call. = FALSE, immediate. = TRUE,
+      "FISH_ID is NULL for ", sum(FISH_ID), " ", pacfin_species_code,
+      " record(s) that was(were) removed (see below)."
+      )
     print(rawdata[FISH_ID, c("SAMPLE_YEAR", "SAMPLE_NUMBER", "BDS_ID")])
     rawdata <- rawdata[!FISH_ID, ]
   }
@@ -129,8 +141,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
       names_from = dplyr::matches("AGE_SEQUENCE_NUMBER"),
       values_from = c(dplyr::matches("AGE_ID"), AGE_METHOD:AGENCY_AGE_STRUCTURE_CODE),
       names_glue = "{.value}{AGE_SEQUENCE_NUMBER}",
-      values_fill = NA) %>%
-    dplyr::rename_with(.fn = ~gsub("1$", "", .x))
+      values_fill = NA)
   # Short check b/c pivot_wider can make lists
   if (!class(bds.pacfin[["age"]]) %in% c("integer", "logical")) {
     stop("pivot_wider goofed up!")

@@ -29,9 +29,11 @@
 #' `NTW` which is non-trawl gear, and
 #' `TLS` which is trolling gear.
 #' @param keep_sample_type A vector of character values specifying the types of
-#' samples you want to keep. The default is to keep `c("", "M")`. Available
+#' samples you want to keep. The default is to keep `c("M")`. Available
 #' types include market (M), research (R), special request (S), and
-#' commercial on-board (C).
+#' commercial on-board (C). There are additional samples without a `SAMPLE_TYPE`,
+#' but they are only kept if you include `NA` in your call.
+#' All sample types from California are assigned to `M`.
 #' @param keep_sample_method A vector of character values specifying the types of
 #' sampling methods you want to keep. The default is to keep \code{"R"}, which
 #' refers to samples that were sampled randomly. Available types include
@@ -82,19 +84,15 @@
 #' * state: initialized from SOURCE_AGID.  Change using [getState]
 #' * length: length in mm, where `NA` indicates length is not available
 #' * lengthcm: floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH
-#' * geargroup: the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.
+#' * geargroup: the gear group associated with each [GRID](http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr)
+#' * weightkg: fish weight in kg from FISH_WEIGHT and FISH_WEIGHT_UNITS
 #'
 #' @details
 #' The original fields in the returned data are left untouched,
 #' with the exception of
 #' * `SEX`: modified using [getSex] and upon return will only include
 #' character values such that fish with an unidentified sex are now `"U"`.
-#' * age: the best ages to use going forward rather than just the first age read.
-#'
-#' \subsection{Workflow}{
-#' If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
-#' first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
-#' }
+#' * Age: the best ages to use going forward rather than just the first age read.
 #'
 #' \subsection{Furthermore}{
 #' The values created as new columns are for use by other functions in this package.
@@ -123,7 +121,7 @@ cleanPacFIN <- function(
   Pdata,
   keep_INPFC = lifecycle::deprecated(),
   keep_gears,
-  keep_sample_type = c("", "M"),
+  keep_sample_type = c("M"),
   keep_sample_method = "R",
   keep_length_type,
   keep_age_method = NULL,
@@ -209,18 +207,17 @@ cleanPacFIN <- function(
   Pdata[, "lengthcm"] <- floor(Pdata[, "length"] / 10)
 
   #### Age (originally in cleanAges)
-  if (sum(is.na(Pdata$AGE_METHOD)) != nrow(Pdata)){
-    Pdata[, "age"] <- getAge(Pdata, verbose = verbose,
-      keep = keep_age_method)
-  } 
+  # Named to "Age" to match nwfscSurvey where Age is used.
+  Pdata[, "Age"] <- getAge(Pdata, verbose = verbose,
+    keep = keep_age_method)
 
   #### Weight (random units in)
-  if (sum(is.na(Pdata$FISH_WEIGHT)) != nrow(Pdata)){
-    Pdata[, "FISH_WEIGHT"] <- getweight(
-      weight = Pdata[["FISH_WEIGHT"]],
-      unit.in = Pdata[["FISH_WEIGHT_UNITS"]],
-      unit.out = "kg")
-  }
+  Pdata[, "weightkg"] <- getweight(
+    length = NULL,
+    weight = Pdata[["FISH_WEIGHT"]],
+    unit.in = Pdata[["FISH_WEIGHT_UNITS"]],
+    unit.out = "kg"
+    )
 
   #### Bad samples
   # Remove bad OR samples
@@ -230,10 +227,6 @@ cleanPacFIN <- function(
     Pdata[Pdata[["SAMPLE_QUALITY"]] == 63, "SAMPLE_TYPE"] <- "S"
   }
 
-  # Remove lengths and ages for gears we don't want
-  Pdata[!Pdata[, "geargroup"] %in% keep_gears, "length"] <- NA
-  Pdata[!Pdata[, "geargroup"] %in% keep_gears, "age"] <- NA
-
   #### Summary and return
   # bad records: keep TRUEs
   bad <- Pdata[, 1:2]
@@ -242,10 +235,9 @@ cleanPacFIN <- function(
   bad[, "goodsmeth"] <- Pdata$SAMPLE_METHOD %in% keep_sample_method
   bad[, "goodsno"] <- !is.na(Pdata$SAMPLE_NO)
   bad[, "goodstate"] <- Pdata[, "state"] %in% keep_states
+  bad[, "goodgear"] <- Pdata[, "geargroup"] %in% keep_gears
+  bad[, "goodEXP_WT"] <- !(is.na(Pdata[["EXP_WT"]]) & Pdata[["state"]] == "OR")
   bad[, "keep"] <- apply(bad[, grep("^good", colnames(bad))], 1, all)
-  # Move this check to after the keep to only report based on kept records
-  ORsw <- is.na(Pdata[bad$keep, "EXP_WT"]) & Pdata[bad$keep, "state"] == "OR"
-  CAsw <- is.na(Pdata[bad$keep, "SPECIES_WGT"]) & Pdata[bad$keep, "state"] == "CA"
 
   # Report removals
   if (verbose) {
@@ -255,19 +247,18 @@ cleanPacFIN <- function(
       sum(Pdata$SAMPLE_NO %in% paste0("OR", badORnums)))
     message("N not in keep_sample_type (SAMPLE_TYPE): ",
       sum(!bad[, "goodstype"]))
+    message("N with SAMPLE_TYPE of NA: ", sum(is.na(Pdata[["SAMPLE_TYPE"]])))
     message("N not in keep_sample_method (SAMPLE_METHOD): ",
       sum(!bad[, "goodsmeth"]))
     message("N with SAMPLE_NO of NA: ",
       sum(!bad[, "goodsno"]))
     message("N without length: ", sum(is.na(Pdata$length)))
-    message("N without age: ", sum(is.na(Pdata$age)))
-    message("N without length and age: ", sum(is.na(Pdata$length) | is.na(Pdata$age)))
+    message("N without Age: ", sum(is.na(Pdata$Age)))
+    message("N without length and Age: ", sum(is.na(Pdata$length) | is.na(Pdata$Age)))
+    message("N sample weights not available for OR: ", sum(!bad[, "goodEXP_WT"]))
     message("N records: ", NROW(Pdata))
     message("N remaining if CLEAN: ", sum(bad[, "keep"]))
-    message("N records will be removed if CLEAN: ", NROW(Pdata) - sum(bad[, "keep"]))
-    message("The following are not removed with CLEAN ...")
-    message("N sample weights not available for OR: ", sum(ORsw))
-    message("N sample weights not available for CA: ", sum(CAsw))
+    message("N removed if CLEAN: ", NROW(Pdata) - sum(bad[, "keep"]))
   }
 
   if (!missing(savedir)) {
@@ -292,4 +283,4 @@ cleanPacFIN <- function(
   }
 
   return(Pdata)
-} # End cleanPacFIN
+}

@@ -8,7 +8,7 @@ cleanPacFIN(
   Pdata,
   keep_INPFC = lifecycle::deprecated(),
   keep_gears,
-  keep_sample_type = c("", "M"),
+  keep_sample_type = c("M"),
   keep_sample_method = "R",
   keep_length_type,
   keep_age_method = NULL,
@@ -50,9 +50,11 @@ Other gear identification codes and their definitions include
 \code{TLS} which is trolling gear.}
 
 \item{keep_sample_type}{A vector of character values specifying the types of
-samples you want to keep. The default is to keep \code{c("", "M")}. Available
+samples you want to keep. The default is to keep \code{c("M")}. Available
 types include market (M), research (R), special request (S), and
-commercial on-board (C).}
+commercial on-board (C). There are additional samples without a \code{SAMPLE_TYPE},
+but they are only kept if you include \code{NA} in your call.
+All sample types from California are assigned to \code{M}.}
 
 \item{keep_sample_method}{A vector of character values specifying the types of
 sampling methods you want to keep. The default is to keep \code{"R"}, which
@@ -125,7 +127,8 @@ specified, with added columns
 \item state: initialized from SOURCE_AGID.  Change using \link{getState}
 \item length: length in mm, where \code{NA} indicates length is not available
 \item lengthcm: floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH
-\item geargroup: the gear group associated with each GRID, from http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr.
+\item geargroup: the gear group associated with each \href{http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr}{GRID}
+\item weightkg: fish weight in kg from FISH_WEIGHT and FISH_WEIGHT_UNITS
 }
 }
 \description{
@@ -142,12 +145,7 @@ with the exception of
 \itemize{
 \item \code{SEX}: modified using \link{getSex} and upon return will only include
 character values such that fish with an unidentified sex are now \code{"U"}.
-\item age: the best ages to use going forward rather than just the first age read.
-}
-
-\subsection{Workflow}{
-If there are CalCOM samples to be integrated with PacFIN data, run \code{combineCalCOM}
-first, otherwise run to \code{cleanPacFIN} as the first function in the workflow.
+\item Age: the best ages to use going forward rather than just the first age read.
 }
 
 \subsection{Furthermore}{

@@ -21,7 +21,7 @@ arguments: towstrat, type, towid, and weightid}
 names for which you want compositions for.}
 
 \item{type}{A character value specifying which category to
-summarize by, i.e., \code{"length"} or \code{"age"}.}
+summarize by, i.e., \code{"length"} or \code{"Age"}.}
 
 \item{towid}{A vector of character values providing the column
 names that generate a unique id for each sample.}

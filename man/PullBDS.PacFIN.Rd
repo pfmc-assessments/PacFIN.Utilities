@@ -43,22 +43,23 @@ This is standard practice for packages in the nwfsc-assess organization.}
 An RData object is saved to the disk and the pulled data
 are returned as a data frame.
 The saved data can be read back in using \link{load}, but note that
-the object is named inside of the \code{.RData} file, and thus,
-the object will retain the name of \code{bds.pacfin} within your work space.
+the object is named \code{bds.pacfin} inside of the \code{.RData} file, and thus,
+the object will retain this name within your work space.
 In February of 2021, the returned object was renamed from \code{out}
 to \code{bds.pacfin} in an attempt to be more clear.
 
-Be aware that the data are changed from a long table to a wide table
-using the combination of unique \code{FISH_IDs} in a given year and \code{AGE_SEQUENCE_NUMBER}.
-Users are warned if there are non-unique \code{FISH_IDs} in a given year as these data
-are automatically removed from the data frame. So, it is good to have \code{verbose = TRUE}.
+Upon download, the data are changed from a long table to a wide table
+using the combination of unique \code{FISH_ID} and \code{AGE_SEQUENCE_NUMBER}.
+Users are warned if \code{verbose = TRUE} when there are non-unique \code{FISH_IDs} and these data
+are automatically removed from the data frame.
 This change from long to wide allows for rows equating to a single fish with columns
 containing information about all measurements for that fish. Multiple age reads and
 information about those reads such as age reader will be in the columns.
-So, if your data had at most three duplicate reads, then you will see numbers up
-to \code{3} pasted onto the end of relevant column names. This is to help you match duplicate
-reads to the relevant information. All information from age reader #1 will be in
-a column with no tag, i.e., \code{age} instead of \code{age2}.
+So, if your data had at most three duplicate reads,
+then you will see numbers up to \code{3} pasted onto the end of relevant column names.
+This is to help you match duplicate reads to other relevant information.
+Not all double reads are currently available within PacFIN and
+users should contact the ageing labs if they wish to inform ageing-error matrices.
 
 \code{AGE_COUNT} is a somewhat cryptic column name and does not always make sense
 when compared to \code{AGE_SEQUENCE_NUMBER}. It was determined that the former is
@@ -70,12 +71,15 @@ Sometimes, not all \code{AGE_SEQUENCE_NUMBER}s are present and they can skip
 numbers for a given \code{FISH_ID}, and in this case, \code{AGE_COUNT} will be the
 maximum \code{AGE_SEQUENCE_NUMBER} for a given \code{FISH_ID}.
 
-Some column names have been renamed, these pertain to the reading of ages.
-For example \code{AGE_IN_YEARS} is now \code{age}, which can be followed by a number if the age
-was a second, third, fourth, ... read. Numeric values signify columns like \code{age}
-where the information was gleaned from another row with the same unique FISH_ID
-in a given year. Having this information of double reads by FISH_ID will facilitate
-the estimation of ageing error.
+\code{FINAL_FISH_AGE_IN_YEARS} is known as the best age for a given fish.
+This will not always match an age reader or be a number determinable
+from the individual age reads in \code{AGE_IN_YEARS}. Patrick explained to me
+that when age reads do not agree, particularly for younger fish, then
+the senior reader will work together with the junior reader to determine
+an agreed-upon age. Other times, the senior reader's value will always
+be used, or it could be that together they determine that they were both
+wrong and a new age is proposed as the \verb{resolved age}. Nevertheless,
+it can be quite messy and there is no way to predict the best age.
 }
 \description{
 Pull biological data from the

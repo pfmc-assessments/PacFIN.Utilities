@@ -51,6 +51,17 @@ getweight <- function(
   unit.in) {
 
   if (!missing(weight)) {
+    if (all(is.na(weight))) {
+      return(weight)
+    }
+    if (is.null(unit.in)) {
+      warning(call. = FALSE, "Guessing unit.in for getweight; please input a non-null vector.")
+      if (all(weight > 300)) {
+        unit.in <- rep("G", length(weight))
+      } else {
+        stop("Not sure of units, please input a unit.in vector.")
+      }
+    }
     transformweight <- weight * mapply(switch, unit.in,
         MoreArgs = list(
           G = 0.00220462,
