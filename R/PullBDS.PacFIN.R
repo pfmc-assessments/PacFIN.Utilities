@@ -34,9 +34,6 @@
 #' reads to the relevant information. All information from age reader #1 will be in
 #' a column with no tag, i.e., `age` instead of `age2`.
 #'
-#' The data frame is fairly raw with only one column,
-#' `all_cluster_sum` -- the weight of all clusters sampled for a given sample number,
-#' being calculated and added.
 #' Some column names have been renamed, these pertain to the reading of ages.
 #' For example `AGE_IN_YEARS` is now `age`, which can be followed by a number if the age
 #' was a second, third, fourth, ... read. Numeric values signify columns like `age`
@@ -89,21 +86,25 @@ PullBDS.PacFIN <- function(pacfin_species_code,
     "F"
     )
 
-  bds.pacfin <- tidyr::pivot_wider(
-    rawdata[subset, ] %>%
-      dplyr::rename(age = dplyr::matches("^AGE_IN_YEARS")) %>%
-      dplyr::rename(agedby = dplyr::matches("PERSON_WHO_AGED")) %>%
-      dplyr::rename(AGE_METHOD = dplyr::matches("AGE_METHOD_CODE")) %>%
-      dplyr::mutate(AGE_SEQUENCE_NUMBER = tidyr::replace_na(.data[["AGE_SEQUENCE_NUMBER"]], 1)),
-    names_from = .data[["AGE_SEQUENCE_NUMBER"]],
-    values_from = dplyr::matches(
-      match = "^age[dby]*$|^age_|_AGED|TURE_CODE|BDS_ID|AGE_ID|DATE_AGE|AGENCY_SAMPLE_NUMBER",
-      ignore.case = TRUE),
-    values_fill = NA,
-    names_glue = "{.value}{AGE_SEQUENCE_NUMBER}") %>%
-    dplyr::rename_with(.fn = ~gsub("1$", "", .x)) %>%
-    data.frame
+  bds.pacfin <- rawdata[subset, ] %>%
+    dplyr::rename(age = dplyr::matches("^AGE_IN_YEARS")) %>%
+    dplyr::rename(agedby = dplyr::matches("PERSON_WHO_AGED")) %>%
+    dplyr::rename(AGE_METHOD = dplyr::matches("AGE_METHOD_CODE")) %>%
+    dplyr::mutate(AGE_SEQUENCE_NUMBER = tidyr::replace_na(.data[["AGE_SEQUENCE_NUMBER"]], 1))
 
+  if (any(bds.pacfin[["AGE_SEQUENCE_NUMBER"]] > 1, na.rm = TRUE)) {
+    bds.pacfin <- tidyr::pivot_wider(
+      bds.pacfin,
+      names_from = .data[["AGE_SEQUENCE_NUMBER"]],
+      values_from = dplyr::matches(
+        match = "^age[dby]*$|^age_|_AGED|TURE_CODE|BDS_ID|AGE_ID|DATE_AGE|AGENCY_SAMPLE_NUMBER",
+        ignore.case = TRUE),
+      values_fill = NA,
+      names_glue = "{.value}{AGE_SEQUENCE_NUMBER}") %>%
+      dplyr::rename_with(.fn = ~gsub("1$", "", .x)) %>%
+      data.frame
+      unique(bds.pacfin$age)
+  }
 
   #### Save appropriate summaries
   savefn <- file.path(savedir,
