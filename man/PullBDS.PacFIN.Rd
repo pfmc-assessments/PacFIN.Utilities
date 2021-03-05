@@ -60,9 +60,16 @@ to \code{3} pasted onto the end of relevant column names. This is to help you ma
 reads to the relevant information. All information from age reader #1 will be in
 a column with no tag, i.e., \code{age} instead of \code{age2}.
 
-The data frame is fairly raw with only one column,
-\code{all_cluster_sum} -- the weight of all clusters sampled for a given sample number,
-being calculated and added.
+\code{AGE_COUNT} is a somewhat cryptic column name and does not always make sense
+when compared to \code{AGE_SEQUENCE_NUMBER}. It was determined that the former is
+useful to identify how many potential agers were exposed to this fish.
+For example, if \code{AGE_SEQUENCE_NUMBER} has a maximum value of three for a
+given \code{FISH_ID}, then you can expect \code{AGE_COUNT} to be three for all three
+rows in the PACFIN database for that fish. This is not always true though.
+Sometimes, not all \code{AGE_SEQUENCE_NUMBER}s are present and they can skip
+numbers for a given \code{FISH_ID}, and in this case, \code{AGE_COUNT} will be the
+maximum \code{AGE_SEQUENCE_NUMBER} for a given \code{FISH_ID}.
+
 Some column names have been renamed, these pertain to the reading of ages.
 For example \code{AGE_IN_YEARS} is now \code{age}, which can be followed by a number if the age
 was a second, third, fourth, ... read. Numeric values signify columns like \code{age}

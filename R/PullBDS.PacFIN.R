@@ -33,6 +33,16 @@
 #' to `3` pasted onto the end of relevant column names. This is to help you match duplicate
 #' reads to the relevant information. All information from age reader #1 will be in
 #' a column with no tag, i.e., `age` instead of `age2`.
+#' 
+#' `AGE_COUNT` is a somewhat cryptic column name and does not always make sense
+#' when compared to `AGE_SEQUENCE_NUMBER`. It was determined that the former is
+#' useful to identify how many potential agers were exposed to this fish.
+#' For example, if `AGE_SEQUENCE_NUMBER` has a maximum value of three for a
+#' given `FISH_ID`, then you can expect `AGE_COUNT` to be three for all three
+#' rows in the PACFIN database for that fish. This is not always true though.
+#' Sometimes, not all `AGE_SEQUENCE_NUMBER`s are present and they can skip
+#' numbers for a given `FISH_ID`, and in this case, `AGE_COUNT` will be the
+#' maximum `AGE_SEQUENCE_NUMBER` for a given `FISH_ID`.
 #'
 #' Some column names have been renamed, these pertain to the reading of ages.
 #' For example `AGE_IN_YEARS` is now `age`, which can be followed by a number if the age
@@ -61,7 +71,8 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   rawdata <- getDB(sql.bds(pacfin_species_code),
     username = username, password = password)
 
-  #### Check if SAMPLE_AGENCY has values and remove
+  #### Check data and print warnings to the screen
+  # Check if SAMPLE_AGENCY has values and remove
   sample_agency <- unique(rawdata[, "SAMPLE_AGENCY"])
   if (!is.na(sample_agency[1])) {
     warning("SAMPLE_AGENCY includes non-NULL values and should be extracted.\n",
@@ -70,6 +81,22 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   }
   rm(sample_agency)
   rawdata <- rawdata[, -match("SAMPLE_AGENCY", colnames(rawdata))]
+
+  # Check OBSERVED_FREQUENCY > 1
+  freq <- unique(rawdata[, "OBSERVED_FREQUENCY"])
+  if (any(freq > 1)) {
+    warning("Check OBSERVED_FREQUENCY b/c records are not unique to a single fish.")
+  }
+  rm(freq)
+
+  # Check for NULL FISH_ID
+  FISH_ID <- is.na(rawdata[["FISH_ID"]])
+  if (sum(FISH_ID) > 0) {
+    warning("FISH_ID is NULL for ", sum(FISH_ID), ", records will be removed (see below).")
+    print(rawdata[FISH_ID, c("SAMPLE_YEAR", "SAMPLE_NUMBER", "BDS_ID")])
+    rawdata <- rawdata[!FISH_ID, ]
+  }
+  rm(FISH_ID)
 
   #### Manipulate rawdata columns
   subset <- !(duplicated(rawdata$FISH_ID) & is.na(rawdata$AGE_SEQUENCE_NUMBER))
@@ -80,30 +107,35 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   }
 
   # Fix FISH_LENGTH_TYPE_CODE if changed to a logical because only entry is fork length (F)
+  # todo: check if this is needed now that R changed to stringsAsFactors = FALSE as the default
   rawdata[, "FISH_LENGTH_TYPE_CODE"] <- ifelse(
     rawdata[, "FISH_LENGTH_TYPE_CODE"] != FALSE,
     as.character(rawdata[, "FISH_LENGTH_TYPE_CODE"]),
     "F"
     )
 
-  bds.pacfin <- rawdata[subset, ] %>%
+  # Long to wide to facilitate estimating ageing error
+  # Multiple BDS_IDs can pertain to a single FISH_ID, where each BDS_ID is an age read
+  # todo: think about not changing column names
+  # identical across rows: SAMPLE_ID, SAMPLE_NO, FISH_ID
+  # unique across rows: BDS_ID, AGE_ID, AGE_SEQUENCE_NUMBER
+  bds.pacfin <- rawdata %>%
     dplyr::rename(age = dplyr::matches("^AGE_IN_YEARS")) %>%
     dplyr::rename(agedby = dplyr::matches("PERSON_WHO_AGED")) %>%
     dplyr::rename(AGE_METHOD = dplyr::matches("AGE_METHOD_CODE")) %>%
-    dplyr::mutate(AGE_SEQUENCE_NUMBER = tidyr::replace_na(.data[["AGE_SEQUENCE_NUMBER"]], 1))
-
-  if (any(bds.pacfin[["AGE_SEQUENCE_NUMBER"]] > 1, na.rm = TRUE)) {
-    bds.pacfin <- tidyr::pivot_wider(
-      bds.pacfin,
-      names_from = .data[["AGE_SEQUENCE_NUMBER"]],
-      values_from = dplyr::matches(
-        match = "^age[dby]*$|^age_|_AGED|TURE_CODE|BDS_ID|AGE_ID|DATE_AGE|AGENCY_SAMPLE_NUMBER",
-        ignore.case = TRUE),
-      values_fill = NA,
-      names_glue = "{.value}{AGE_SEQUENCE_NUMBER}") %>%
-      dplyr::rename_with(.fn = ~gsub("1$", "", .x)) %>%
-      data.frame
-      unique(bds.pacfin$age)
+    dplyr::mutate(AGE_SEQUENCE_NUMBER = tidyr::replace_na(.data[["AGE_SEQUENCE_NUMBER"]], 1)) %>%
+    tidyr::pivot_wider(
+      id_cols = !dplyr::matches("BDS_ID"),
+      names_from = dplyr::matches("AGE_SEQUENCE_NUMBER"),
+      values_from = c(dplyr::matches("AGE_ID"), AGE_METHOD:AGENCY_AGE_STRUCTURE_CODE),
+      names_glue = "{.value}{AGE_SEQUENCE_NUMBER}",
+      values_fill = NA) %>%
+    dplyr::rename_with(.fn = ~gsub("1$", "", .x))
+  # Short check b/c pivot_wider can make lists
+  if (!class(bds.pacfin[["age"]]) %in% c("integer", "logical")) {
+    stop("pivot_wider goofed up!")
+  } else {
+    bds.pacfin <- data.frame(bds.pacfin)
   }
 
   #### Save appropriate summaries
