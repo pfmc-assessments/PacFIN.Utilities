@@ -9,7 +9,7 @@ getcomps_long(
   towstrat,
   type,
   towid = "SAMPLE_NO",
-  weightid = "Final_Sample_Size",
+  weightid = "Final_Sample_Size_L",
   dropmissing = TRUE
 )
 }
