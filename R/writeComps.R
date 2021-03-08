@@ -126,6 +126,12 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     #  "all unsexed fish disappear at this point.\n\n"))
     flush.console()
   }
+
+  dir.create(
+    path = dirname(normalizePath(fname, mustWork = FALSE)),
+    recursive = TRUE,
+    showWarnings = FALSE
+    )
   # check for existence of the file before writing anything
   if(file.exists(fname)){
     if(overwrite){
