@@ -120,11 +120,15 @@ getLength <- function(Pdata, verbose = FALSE, keep) {
   if (verbose) {
     message("\nThe following length types were kept in the data:")
     capture.output(type = "message",
-      table(Pdata[, grep("LENGTH_TYPE", colnames(Pdata))])
+      table(output = Pdata[
+        !is.na(Pdata[["length"]]),
+        grep("LENGTH_TYPE", colnames(Pdata))
+        ])
       )
     message(
-      "Lengths (mm) ranged from ",
-      paste(collapse = " to ", range(Pdata[["FISH_LENGTH"]], na.rm = TRUE))
+      "Lengths range from ",
+      paste(collapse = " to ", range(Pdata[["length"]], na.rm = TRUE)),
+      " (mm)."
       )
   }
   return(Pdata[["length"]])

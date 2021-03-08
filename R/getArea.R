@@ -70,14 +70,14 @@ getArea <- function(Pdata, verbose = FALSE) {
   out[grepl("3[DN]", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "CAN (VNCVR)"
   out[grepl("5[a-z]", Pdata[, PSMFCcol], ignore.case = TRUE)] <- "CAN"
 
-  if (verbose) {
+  if (verbose & sum(!is.na(out)) != 0) {
     message("\nThe table below summarizes the number of records that are outside of\n",
       "the area that should be included for US West Coast stock assessments\n",
       "by PSMFC area, or some derivative thereof.")
     outtable <- table("PSMFC" = Pdata[, PSMFCcol], description = out)
     capture.output(
       type = "message",
-      outtable[apply(outtable, 1, function(x) !all(x == 0)), ]
+      outtable[apply(outtable, 1, function(x) !all(x == 0)), ,drop = FALSE]
       )
   }
 
