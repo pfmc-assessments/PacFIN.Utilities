@@ -95,7 +95,7 @@ cleanColumns.bds <- function(data) {
   # TOTAL_WGT for CA and RWT_LBS for WA.
   data$RWT_LBS <- data$TOTAL_WGT
   data <- data %>%
-    dplyr::select(-dplyr::matches("VESSEL|AGE_[CISR]|^NUM|LOAD|COMMON|_ID|agedby"))
+    dplyr::select(-dplyr::matches("VESSEL|AGE_[SR]|^NUM|LOAD|COMMON|_ID|agedby"))
 
   return(data)
 }
@@ -115,7 +115,7 @@ cleanColumns.catch <- function(data) {
 
   #### REMOVE columns that are redundant and make things cluttered
   data <- data %>%
-    dplyr::select(dplyr::matches("LANDING|AGENCY|GEAR|AREA|_MT|_LBS|PORT"))
+    dplyr::select(dplyr::matches("LANDING|AGENCY|GEAR|AREA|_MT|_LBS|PORT|^[RCF].+_CODE"))
 
   return(data)
 
