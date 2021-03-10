@@ -94,7 +94,8 @@ PullCatch.PacFIN <- function(pacfin_species_code,
     "PacFIN", inputcode, "CompFT",
     format(Sys.Date(), "%d.%b.%Y"),
     "RData"))
-  save(data, file = savefn)
+  catch.pacfin <- data
+  save(catch.pacfin, file = savefn)
 
   return(data)
 }
