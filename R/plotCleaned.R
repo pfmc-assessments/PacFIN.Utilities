@@ -107,13 +107,13 @@ plotCleaned <- function (Pdata, savedir = getwd()) {
   #### ggplots
   nn <- grDevices::rainbow(length(unique(Pdata[["state"]])))
   gg <- ggplot2::ggplot(data = Pdata,
-    ggplot2::aes(x = .data[["INPFC_AREA"]],
+    ggplot2::aes(x = .data[["PSMFC_ARID"]],
     fill = factor(.data[["state"]]))) +
     ggplot2::geom_bar() + ggplot2::theme_bw() +
-    ggplot2::labs(fill = "State", x = "INPFC area", y = "Count") +
+    ggplot2::labs(fill = "State", x = "PSMFC area", y = "Count") +
     ggplot2::scale_fill_manual(values = nn)
   ggplot2::ggsave(gg,
-    file = file.path(savedir, "PacFIN_comp_INPFC.png"),
+    file = file.path(savedir, "PacFIN_comp_PSMFC.png"),
     width = 6, height = 6, dpi = 500)
   gg <- ggplot2::ggplot(data = Pdata,
     ggplot2::aes(x = .data[["lengthcm"]],
