@@ -88,11 +88,6 @@ parameters estimated when outliers are removed from the data set.
 Outliers are determined using standard deviations
 (i.e., \code{sdFactor} input parameter).
 }
-\examples{
-example(cleanPacFIN)
-test <-  checkLenAge(Pdata)
-head(test)
-}
 \author{
 Chantel Wetzel, Vlada Gertseva, James Thorson
 }

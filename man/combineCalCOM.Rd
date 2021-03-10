@@ -15,21 +15,9 @@ combineCalCOM(Pdata, CalCOM)
 Returns a combined dataset in PacFIN format.
 }
 \description{
-\code{combineCalCOM} adds required PacFIN columns to CalCOM data, initializing them
+Adds required PacFIN columns to CalCOM data, initializing them
 to meaningful values as appropriate, translating from the CalCOM values when
 they exist in a different format.
-}
-\details{
-\subsection{Workflow}{
-Intended to be run before \code{\link{cleanPacFIN}}.
-}
-
-Date formats and genders are translated to PacFIN format, PSMFC_AREAs are derived
-from CalCOM "PORT"s.
-
-Other data that aren't reported in CalCOM datasets (e.g., SAMPLE_TYPE and
-SAMPLE_METHOD) are initialized so that the CalCOM data aren't rejected by
-\code{cleanPacFIN}.
 }
 \author{
 Melissa Haltuch, Andi Stephens

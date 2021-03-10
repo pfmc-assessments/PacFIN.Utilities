@@ -72,15 +72,12 @@ please contact the package maintainer.
 }
 }
 \examples{
-data(XMPL.BDS)
-invisible(getState(XMPL.BDS,
-  source = grep("AGENCY_CODE|SOURCE_AGID", colnames(XMPL.BDS), value = TRUE)[1],
-  verbose = FALSE))
-testthat::expect_equivalent(
-  table(getState(XMPL.BDS,
-  source = grep("AGENCY_CODE|SOURCE_AGID", colnames(XMPL.BDS), value = TRUE)[1],
-  verbose = FALSE)[, "state"])[3],
-  17292)
+data <- data.frame(
+  AGENCY_CODE = rep(c("W", "O", "C"), each = 2),
+  info = 1:6)
+testthat::expect_true(
+all(getState(data)[["state"]] == rep(c("WA", "OR", "CA"), each = 2))
+)
 
 }
 \seealso{

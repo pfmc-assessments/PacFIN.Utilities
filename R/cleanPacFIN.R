@@ -107,15 +107,6 @@
 #' @seealso [getState], [getSeason]
 #'
 #' @author Andi Stephens
-#' @examples
-#' data(XMPL.BDS)
-#' XMPL.BDS[["FISH_WEIGHT_UNITS"]] <- "KG"
-#' Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]))
-#' NROW(XMPL.BDS) - NROW(Pdata)
-#' # This time don't clean it
-#' Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
-#'   CLEAN = FALSE)
-#' NROW(XMPL.BDS) - NROW(Pdata)
 
 cleanPacFIN <- function(
   Pdata,

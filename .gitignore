@@ -1,7 +1,6 @@
 .Rhistory
-#.RData
 inst/extdata/*
-Petrale_Transcript.txt
+PacFIN.*RData
 .Rproj.user
 data-raw/*
 password.txt

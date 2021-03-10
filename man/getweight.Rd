@@ -42,22 +42,6 @@ Weights are in the same units used to calculate things, i.e., kg.
 Estimate fish weights from potentially sex-specific weight-length
 relationship parameters returned from \link{getWLpars}.
 }
-\examples{
-data(XMPL.BDS)
-XMPL.BDS[["FISH_WEIGHT_UNITS"]] <- "KG"
-lfish <- 1:100; sfish <- rep("U", length(lfish))
-ans <- getweight(length = lfish, sex = sfish,
-  pars = getWLpars(cleanPacFIN(XMPL.BDS, CLEAN = FALSE,
-  keep_length_type = "F")))
-testthat::expect_equivalent(ans[1], 3.625679e-08)
-\dontrun{
-plotWL(length = lfish, sex = sfish,
-weight = mapply(rnorm, mean = ans, MoreArgs = list(n = 1, sd = 0.001)),
-weight.calc = ans
-)
-}
-
-}
 \author{
 Kelli Faye Johnson
 }

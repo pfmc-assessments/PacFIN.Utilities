@@ -158,16 +158,6 @@ The \code{fleet}, \code{fishery}, and \code{state} columns are meant for use in
 stratifying the data according to the particulars of an assessment.
 }
 }
-\examples{
-data(XMPL.BDS)
-XMPL.BDS[["FISH_WEIGHT_UNITS"]] <- "KG"
-Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]))
-NROW(XMPL.BDS) - NROW(Pdata)
-# This time don't clean it
-Pdata <- cleanPacFIN(XMPL.BDS, keep_length_type = unique(XMPL.BDS[, "FISH_LENGTH_TYPE"]),
-  CLEAN = FALSE)
-NROW(XMPL.BDS) - NROW(Pdata)
-}
 \seealso{
 \link{getState}, \link{getSeason}
 }

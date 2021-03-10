@@ -45,10 +45,6 @@
 #' 
 #' @export
 #' @author Chantel Wetzel, Vlada Gertseva, James Thorson
-#' @examples
-#' example(cleanPacFIN)
-#' test <-  checkLenAge(Pdata)
-#' head(test)
 
 checkLenAge <- function(Pdata,
   Par = list(K = 0.13, Linf = 55, L0 = 15, CV0 = 0.10, CV1 = 0.10),
