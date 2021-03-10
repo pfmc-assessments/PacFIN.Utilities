@@ -26,6 +26,7 @@
 #' in lbs. The conversion factor from landed weight to round weight is
 #' weight_of_catch * NVL(conversion_factor,1) and 1 mt equals 2,204.62 lbs.
 #' This is not case specific.
+#' @importFrom magrittr %>%
 #'
 #' @export
 #' @author Kelli F. Johnson
@@ -51,7 +52,7 @@ formatCatch <- function(catch, strat,
   out <- catch %>% tidyr::pivot_wider(
     values_fn = sum, values_fill = 0,
     id_cols = dplyr::matches(match = yearname, ignore.case = TRUE),
-    names_from = dplyr::matches(strat), names_sep = ".",
+    names_from = strat, names_sep = ".",
     values_from = dplyr::matches(match = valuename, ignore.case = TRUE)
     ) %>% data.frame()
 
