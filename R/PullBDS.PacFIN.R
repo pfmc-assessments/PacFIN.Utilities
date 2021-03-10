@@ -112,9 +112,11 @@ PullBDS.PacFIN <- function(
 
   #### Manipulate rawdata columns
   subset <- !(duplicated(rawdata$FISH_ID) & is.na(rawdata$AGE_SEQUENCE_NUMBER))
-  if (sum(!subset) > 0 & verbose) {
-    message("Duplicated FISH_ID & AGE_SEQUENCE_NUMBER were removed.")
-    print(rawdata[!subset, c("SAMPLE_YEAR", "SAMPLE_NUMBER")])
+  if (sum(!subset) > 0) {
+    if (verbose) {
+      message("Duplicated FISH_ID & AGE_SEQUENCE_NUMBER were removed.")
+      print(rawdata[!subset, c("SAMPLE_YEAR", "SAMPLE_NUMBER")])
+    }
     rawdata <- rawdata[subset, ]
   }
 
