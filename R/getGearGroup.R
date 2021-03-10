@@ -57,6 +57,15 @@ getGearGroup = function (Pdata, spp = NULL, verbose = TRUE) {
         GearTable[, "GROUP"][GearTable$GRID == "JIG"] <- "MSC"
       }
     } # end if spp == sablefish
+    if (any(grepl("dogfish|dsrk", spp, ignore.case = TRUE))) {
+      if (verbose) {
+        message("Dogfish uses a mid-water trawl (MID), TWL (including shrimp), and HKL fleets\n",
+          "everything else is assigned to MSC.")
+      }
+      GearTable[grepl("MIDWATER", GearTable[["DESCRIPTION"]]), "GROUP"] <- "MID"
+      GearTable[grepl("DRG|NET|NTW|POT|TLS", GearTable[["GROUP"]]), "GROUP"] <- "MSC"
+      GearTable[grepl("TWS", GearTable[["GROUP"]]), "GROUP"] <- "TWL"
+    } # end if spp == dogfish
   }
 
   #### Create geargroup
