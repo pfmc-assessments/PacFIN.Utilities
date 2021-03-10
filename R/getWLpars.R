@@ -77,8 +77,10 @@ getWLpars <- function(
   col.length <- tolower(col.length)
   col.weight <- tolower(col.weight)
   colnames(data) <- tolower(colnames(data))
-  colnames(data) <- gsub("fish_weight", "weight", colnames(data))
-  colnames(data) <- gsub("lengthcm", "length_cm", colnames(data))
+  colnames(data) <- gsub(col.weight, "weight", colnames(data))
+  colnames(data) <- gsub(col.length, "length_cm", colnames(data))
+  col.length <- "length_cm"
+  col.weight <- "weight"
   stopifnotcolumn(data = data, string = col.length)
   stopifnotcolumn(data = data, string = col.weight)
   stopifnotcolumn(data = data, string = "sex")
