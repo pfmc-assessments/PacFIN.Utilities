@@ -143,7 +143,7 @@ PullBDS.PacFIN <- function(
       names_glue = "{.value}{AGE_SEQUENCE_NUMBER}",
       values_fill = NA)
   # Short check b/c pivot_wider can make lists
-  if (!class(bds.pacfin[["age"]]) %in% c("integer", "logical")) {
+  if (!class(bds.pacfin[["age1"]]) %in% c("integer", "logical")) {
     stop("pivot_wider goofed up!")
   } else {
     bds.pacfin <- data.frame(bds.pacfin)
