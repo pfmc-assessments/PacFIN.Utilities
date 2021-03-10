@@ -4,77 +4,58 @@
 #' 
 #' @param data A data frame
 #' @param dir The directory you want to print the plots
-#' @param ylimperc The percent of the maximum value in the data 
-#' set that you want displayed on the y axis.
 #' @param npages The number of pages you want the plots split over.
-#' @param dolbins The length bins
+#' @param col.fleet Fleet column name.
+#' @param col.area Area column name.
+#' @param col.age Age column name.
+#' @param col.length Length column name.
+#' @param height Figure height.
+#' @param width Figure width.
 #' 
 #' @import ggplot2
-plotStrat <- function(data, dir, ylimperc = 0.65, npages = 11, dolbins) {
+plotStrat <- function(
+  data,
+  dir = getwd(),
+  npages = 5,
+  col.fleet = "fleet",
+  col.area = "state",
+  col.age = "Age",
+  col.length = "lengthcm",
+  height = 10, width = 10
+  ) {
 
-for (ii_f in c("fleet", "fleet + state")) 
-{
-  withage <- data.frame(writeComps(doSexRatio(getComps(
-    data[!is.na(data$lengthcm) & !is.na(data$Age), ],
-    strat = switch(ii_f, fleet = NULL, c("state")),
-    Comps = "LEN"), Rvector = 0.50), 
-    fname = file.path(dir, "ignoreme.csv"), sum1 = TRUE,
-    lbins = dolbins, returns = "Uout", partition = 2), "wo" = "only aged")
-
-  plotme <- data.frame(writeComps(doSexRatio(getComps(data[!is.na(data$lengthcm), ],
-    strat = switch(ii_f, fleet = NULL, c("state")), 
-    Comps = "LEN"), Rvector = 0.50), 
-    fname = file.path(dir, "ignoreme.csv"), sum1 = TRUE,
-    lbins = dolbins, returns = "Uout", partition = 2), "wo" = "all")
-
-  plotme <- rbind(plotme, withage)
-
-  colnames(plotme) <- ifelse(duplicated(gsub("\\.1", "", colnames(plotme))),
-    gsub("L", "M", gsub("\\.1", "", colnames(plotme))), gsub("L", "F", colnames(plotme)))
-
-  plotme <- stats::reshape(plotme, direction = "long", sep = "", 
-    varying = grep("^[LAFM][0-9]+", colnames(plotme), value = TRUE),
-    idvar = grepl("^[^LAFM]", colnames(plotme)))
-
-  row.names(plotme) <- NULL
-  plotme[, "fleet"] <- factor(plotme[, "fleet"], labels = unique(data$fleet))
-
-  splits <- split(unique(plotme$fishyr)[order(unique(plotme$fishyr))], 
-    ggplot2::cut_number(unique(plotme$fishyr)[order(unique(plotme$fishyr))], npages))
-
-  for (ii_g in c(formula("state ~ fishyr"), formula("fishyr ~ state"))) 
-  {
-    pdf(file = file.path(dir, paste0("lengthedages_", 
-      gsub("\\s+\\+\\s+", "X", ii_f), "_", gsub("~", "", paste(ii_g, collapse = "")), ".pdf")))
-
+  splits <- split(unique(data$year)[order(unique(data$year))], 
+    ggplot2::cut_number(unique(data$year)[order(unique(data$year))], npages))
+  data[["fleet"]] <- factor(data[[col.fleet]])
+  data[["area"]] <- factor(data[[col.area]])
+  data[["Age"]] <- as.factor(is.na(data[[col.age]]))
+  for (ii_g in c(formula("area ~ fleet"), formula("fleet ~ area"))) {
+    grDevices::pdf(file = file.path(dir, paste0("lengthedages_", 
+      gsub("~", "", paste(ii_g, collapse = "")), ".pdf")),
+      height = height, width = width)
     for(ii in seq_along(splits)) {
-      plotmea <- plotme[plotme$fishyr %in% splits[[ii]], , drop = TRUE]
-
-      if ("state" %in% colnames(plotmea)) {
-        plotmea[, "state"] <- factor(plotmea[, "state"], levels = c("CA", "OR", "WA"))
-      }
-
+      plotmea <- data[data$year %in% splits[[ii]], , drop = FALSE]
       if (nrow(plotmea) == 0) next
-      plotmea <- aggregate(formula(paste("F ~ time + fishyr + wo +", ii_f)), 
-      data = plotmea, sum, na.rm = TRUE)
-
-      if (!"state" %in% colnames(plotmea)) plotmea[, "state"] <- "all"
-      
-      g <- ggplot(data = plotmea,
-        aes(x = time, y = F, linetype = .data[["wo"]],
-          col = interaction(.data[["state"]], .data[["fleet"]], sep = "-", lex.order = TRUE))) +
-        geom_line(lwd = 0.7) +
-        facet_grid(ii_g, drop = FALSE) +
-        guides(col= guide_legend(title = "Fleet"), linetype = guide_legend(title = "")) +
-        ylab("") + 
-        coord_cartesian(ylim=c(0, max(plotme$F)*ylimperc)) +
-        theme_bw() +
-        theme(strip.background = element_rect(colour="black", fill="white"))
-      print(g)
+    gg <- ggplot(plotmea,
+      aes(
+        x = .data[[col.length]],
+        y = year,
+        group = interaction(year,Age),
+        fill = Age
+        )
+      ) +
+      ggridges::geom_density_ridges2(scale = 5, alpha = 0.7) +
+      facet_grid(ii_g) +
+      theme_bw() +
+      guides(fill = guide_legend(title = "Aged")) +
+      theme(
+        strip.background = element_rect(colour = "black", fill = "white"),
+        legend.position = "top"
+        )
+      print(gg)
     }
 
     dev.off()
   }
-}
-unlink(file.path(dir, "ignoreme.csv"))
+  return(invisible(gg))
 }

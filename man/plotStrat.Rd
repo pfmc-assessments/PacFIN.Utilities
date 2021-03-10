@@ -4,19 +4,36 @@
 \alias{plotStrat}
 \title{Plot Length Distributions with Aged and All Fish}
 \usage{
-plotStrat(data, dir, ylimperc = 0.65, npages = 11, dolbins)
+plotStrat(
+  data,
+  dir = getwd(),
+  npages = 5,
+  col.fleet = "fleet",
+  col.area = "state",
+  col.age = "Age",
+  col.length = "lengthcm",
+  height = 10,
+  width = 10
+)
 }
 \arguments{
 \item{data}{A data frame}
 
 \item{dir}{The directory you want to print the plots}
 
-\item{ylimperc}{The percent of the maximum value in the data
-set that you want displayed on the y axis.}
-
 \item{npages}{The number of pages you want the plots split over.}
 
-\item{dolbins}{The length bins}
+\item{col.fleet}{Fleet column name.}
+
+\item{col.area}{Area column name.}
+
+\item{col.age}{Age column name.}
+
+\item{col.length}{Length column name.}
+
+\item{height}{Figure height.}
+
+\item{width}{Figure width.}
 }
 \description{
 todo: document

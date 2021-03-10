@@ -25,6 +25,7 @@ LazyData: true
 Imports:
     dplyr,
     ggplot2,
+    ggridges,
     graphics,
     grDevices,
     lifecycle,
@@ -35,6 +36,7 @@ Imports:
     purrr,
     RODBC,
     stats,
+    tibble,
     tidyr,
     utils
 Suggests:
