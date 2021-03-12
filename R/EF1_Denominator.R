@@ -195,7 +195,7 @@ EF1_Denominator = function(Pdata,
         args.legend = list(x = "topleft", bty = "n"))
     }
     gg <- plotWL(Pdata[,"lengthcm"], Pdata[, "SEX"], Pdata[, "weightkg"],
-      Pdata[, "LW_Calc_Wt"])
+      Pdata[, "LW_Calc_Wt"] * 0.453592)
     ggplot2::ggsave(gg, file = plot2,
       width = 6, height = 6, units = "in")
   }
