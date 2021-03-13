@@ -34,6 +34,8 @@
 #' commercial on-board (C). There are additional samples without a `SAMPLE_TYPE`,
 #' but they are only kept if you include `NA` in your call.
 #' All sample types from California are assigned to `M`.
+#' Including commercial on-board samples is not recommended because
+#' they might also be in WCGOP data and would lead to double counting.
 #' @param keep_sample_method A vector of character values specifying the types of
 #' sampling methods you want to keep. The default is to keep \code{"R"}, which
 #' refers to samples that were sampled randomly. Available types include

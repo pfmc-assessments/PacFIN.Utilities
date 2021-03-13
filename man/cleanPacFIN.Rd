@@ -54,7 +54,9 @@ samples you want to keep. The default is to keep \code{c("M")}. Available
 types include market (M), research (R), special request (S), and
 commercial on-board (C). There are additional samples without a \code{SAMPLE_TYPE},
 but they are only kept if you include \code{NA} in your call.
-All sample types from California are assigned to \code{M}.}
+All sample types from California are assigned to \code{M}.
+Including commercial on-board samples is not recommended because
+they might also be in WCGOP data and would lead to double counting.}
 
 \item{keep_sample_method}{A vector of character values specifying the types of
 sampling methods you want to keep. The default is to keep \code{"R"}, which
