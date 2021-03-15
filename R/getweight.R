@@ -36,6 +36,9 @@ getweight <- function(
   weight,
   unit.in) {
 
+  unit.out <- match.arg(unit.out, several.ok = FALSE)
+
+  #### Option # 1 ... Change units of weight
   if (!missing(weight)) {
     if (all(is.na(weight))) {
       return(weight)
@@ -66,11 +69,8 @@ getweight <- function(
     return(transformweight)
   }
 
-  #### Original equation
-  # a * (length / 10)^b * 2.20462 [length = cm; weight = kg]
-
+  #### Option # 2 ... a * (length / 10)^b * 2.20462 [length = cm; weight = kg]
   #### Checks
-  unit.out <- match.arg(unit.out, several.ok = FALSE)
   stopifnot(all(sex %in% c(NA, "U", "F", "M", "H")))
   if (length(length) != length(sex)) stop("The vectors, length and",
     " sex, must be equal in length.")
