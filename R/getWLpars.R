@@ -64,7 +64,7 @@ getWLpars <- function(
     male = . %>% dplyr::filter(sex == "M"),
     all = . %>% dplyr::filter(sex %in% c(NA, "F", "M", "U", "H"))
     ) %>%
-  purrr::map_dfr(~ tidyr::nest(.x(data)), .id = "group") %>%
+  purrr::map_dfr(~ tidyr::nest(.x(data), data = everything()), .id = "group") %>%
   dplyr::mutate(
     fits = purrr::map(data, ~ stats::lm(log(weight) ~ log(length_cm), data = .x))
     )
