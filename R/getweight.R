@@ -51,7 +51,7 @@ getweight <- function(
         stop("Not sure of units, please input a unit.in vector.")
       }
     }
-    if (any(unit.in == "H")) {
+    if (any(unit.in == "H", na.rm = TRUE)) {
       message("FISH_WEIGHT units of H are changed to G for ",
         sum(unit.in == "H", na.rm = TRUE), " fish.")
       unit.in[unit.in == "H"] <- "G"
