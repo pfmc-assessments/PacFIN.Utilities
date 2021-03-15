@@ -105,6 +105,10 @@ getLength <- function(Pdata, verbose = FALSE, keep) {
     NA)
 
   # Assign all fish of length zero to NA
+  if (verbose & any(Pdata[["length"]] == 0, na.rm = TRUE)) {
+    message(sum(Pdata[["length"]] == 0),
+      " fish had a length equal to 0 (mm) and were assigned a length of NA.")
+  }
   Pdata$length[Pdata$length == 0] <- NA
 
   # Ensure everything is in mm
