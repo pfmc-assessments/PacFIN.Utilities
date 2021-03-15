@@ -23,6 +23,30 @@ getLength <- function(Pdata, verbose = FALSE, keep) {
       "\nPlease contact the package maintainer to add additional types.")
   }
 
+  # Find columns
+  col.spid <- grep("SPID|PACFIN_SPECIES_CODE", colnames(Pdata), value = TRUE)[1]
+  if (length(col.spid) != 1) {
+    stop("Species ID column not found in Pdata.")
+  }
+  col.state <- grep("SOURCE_AGID|AGENCY_CODE", colnames(Pdata), value = TRUE)[1]
+  if (length(col.state) != 1) {
+    stop("State ID column not found in Pdata.")
+  }
+
+  # Check for "F" FISH_LENGTH_TYPE from California for spiny dogfish, a hack that
+  # will eventually be removed (todo).
+  check.calt <- which(
+    Pdata[[col.spid]] == "DSRK" &
+    Pdata[[col.state]] == "C" &
+    Pdata[["FISH_LENGTH_TYPE"]] == "F"
+    )
+  if (length(check.calt) > 0) {
+    message("Changing ", length(check.calt), " CA FISH_LENGTH_TYPE == 'F' to 'T'.",
+      " Vlada is working on getting these entries fixed in PacFIN.")
+    Pdata[check.calt, "FISH_LENGTH_TYPE"] <- "T"
+  }
+  rm(check.calt)
+
   # Move FISH_LENGTH to FORK_LENGTH if FORK_LENGTH is NA and type is F
   # for downstream code to work
   Pdata[, "FORK_LENGTH"] <- ifelse(
@@ -31,8 +55,19 @@ getLength <- function(Pdata, verbose = FALSE, keep) {
     Pdata[, "FORK_LENGTH"]
     )
 
+  #### Species-specific code
   # Convert FISH_LENGTH from disk width to length
   width2length <- convertlength_skate(Pdata, returntype = "estimated")
+
+  # Spiny dogfish (Squalus suckleyi; DSRK)
+  check.dogfish <- Pdata[[col.spid]] == "DSRK" & !is.na(Pdata[["FORK_LENGTH"]])
+  if (sum(check.dogfish) > 0 & verbose) {
+    message(sum(check.dogfish), " fork lengths were converted to total lengths using\n",
+      "Tribuzio and Kruse (2012).")
+  }
+  Pdata[check.dogfish, "FORK_LENGTH"] <-
+    ifelse(Pdata[check.dogfish, "FISH_LENGTH_UNITS"] == "MM", 12.2, 1.22) +
+    1.07 * Pdata[check.dogfish, "FORK_LENGTH"]
 
   # Fix incorrect FISH_LENGTH_UNITS for hake
   if (length(grep("PWHT", Pdata[["SPID"]])) > 0) {
