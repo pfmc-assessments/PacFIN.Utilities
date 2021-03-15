@@ -48,6 +48,11 @@ getweight <- function(
         stop("Not sure of units, please input a unit.in vector.")
       }
     }
+    if (any(unit.in == "H")) {
+      message("FISH_WEIGHT units of H are changed to G for ",
+        sum(unit.in == "H", na.rm = TRUE), " fish.")
+      unit.in[unit.in == "H"] <- "G"
+    }
     transformweight <- weight * mapply(switch, unit.in,
         MoreArgs = list(
           G = 0.00220462,
