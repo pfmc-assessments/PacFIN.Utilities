@@ -53,7 +53,7 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
 
   if (is.character(plot)) {
     plot.denom <- ifelse(grepl("png", tools::file_ext(plot)),
-      plot, dirname(plot))
+       dirname(plot), plot)
   } else {
     if (plot == TRUE) {
       plot.denom <- TRUE
