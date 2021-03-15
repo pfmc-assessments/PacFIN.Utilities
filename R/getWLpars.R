@@ -38,42 +38,6 @@ getWLpars <- function(
   verbose = FALSE
   ) {
 
-  getline <- function(model){
-    # function to get row of table of weight-length values
-    if (is.null(model)) {
-      return(c(median_intercept = NA, SD = NA, A = NA, B = NA))
-    }
-    Amed <- exp(model$coefficients[1])
-    B <- model$coefficients[2]
-    sdres <- sd(model$residuals)
-    Amean <- Amed*exp(0.5*sdres^2)
-    out <- utils::type.convert(as.is = TRUE, c(
-      "median_intercept" = Amed,
-      "SD" = sdres,
-      "A" = Amean,
-      "B" = B))
-    names(out) <- c("median_intercept", "SD", "A", "B")
-    return(out)
-  }
-
-  lmgrowth <- function(sex, thedata = data, verbose = verbose) {
-    data.model <- thedata[thedata$sex %in% sex, ]
-    out <- tryCatch(
-      {
-        stats::lm(log(weight) ~ log(length_cm),
-          data = data.model)
-      },
-      error = function(cond) {
-        if (verbose) {
-          message("Too few data points for sex = ",
-            "c(", paste0("'", sex, "'", collapse = ", "), ")")
-        }
-        return(NULL)
-      }
-    )
-    return(out)
-  }
-
   col.length <- tolower(col.length)
   col.weight <- tolower(col.weight)
   colnames(data) <- tolower(colnames(data))
@@ -95,16 +59,27 @@ getWLpars <- function(
       " fish did not have empirical weights and lengths.")
   }
 
-  mresults <- lapply(list(
-    females = "F",
-    males = "M",
-    all = unique(data[, "sex"])),
-    FUN = lmgrowth)
+  mresults <- tibble::lst(
+    female = . %>% dplyr::filter(sex == "F"),
+    male = . %>% dplyr::filter(sex == "M"),
+    all = . %>% dplyr::filter(sex %in% c(NA, "F", "M", "U", "H"))
+    ) %>%
+  purrr::map_dfr(~ tidyr::nest(.x(data)), .id = "group") %>%
+  dplyr::mutate(
+    fits = purrr::map(data, ~ stats::lm(log(weight) ~ log(length_cm), data = .x))
+    )
+  WLresults <- mresults %>% dplyr::summarize(
+    group = group,
+    median_intercept = purrr::map_dbl(fits, ~ exp(.x$coefficients[1])),
+    SD = purrr::map_dbl(fits, ~ sd(.x$residuals)),
+    A = purrr::map_dbl(fits, ~ exp(.x$coefficients[1])*exp(0.5*sd(.x$residuals)^2)),
+    B = purrr::map_dbl(fits, ~ .x$coefficients[2])
+    ) %>% data.frame
+
   if (verbose) {
     message("Weight-Length model results by SEX:")
-    utils::capture.output(lapply(mresults, summary), type = "message")
+    utils::capture.output(lapply(mresults[["fits"]], summary), type = "message")
   }
-  WLresults <- t(vapply(mresults, FUN.VALUE = numeric(4), getline))
 
   return(WLresults)
 }
