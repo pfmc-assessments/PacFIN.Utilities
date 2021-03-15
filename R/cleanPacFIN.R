@@ -28,6 +28,8 @@
 #' `NET` which is all non-trawl net gear,
 #' `NTW` which is non-trawl gear, and
 #' `TLS` which is trolling gear.
+#' As a special case, `MID` is available for spiny dogfish to extract
+#' mid-water trawl data as a separate fleet.
 #' @param keep_sample_type A vector of character values specifying the types of
 #' samples you want to keep. The default is to keep `c("M")`. Available
 #' types include market (M), research (R), special request (S), and

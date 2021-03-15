@@ -47,7 +47,9 @@ Other gear identification codes and their definitions include
 \code{MSC} which is all other miscellaneous gear such as diving or river trawls,
 \code{NET} which is all non-trawl net gear,
 \code{NTW} which is non-trawl gear, and
-\code{TLS} which is trolling gear.}
+\code{TLS} which is trolling gear.
+As a special case, \code{MID} is available for spiny dogfish to extract
+mid-water trawl data as a separate fleet.}
 
 \item{keep_sample_type}{A vector of character values specifying the types of
 samples you want to keep. The default is to keep \code{c("M")}. Available
