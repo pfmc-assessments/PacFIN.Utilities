@@ -28,7 +28,7 @@ plotStrat <- function(
     ggplot2::cut_number(unique(data$year)[order(unique(data$year))], npages))
   data[["fleet"]] <- factor(data[[col.fleet]])
   data[["area"]] <- factor(data[[col.area]])
-  data[["Age"]] <- as.factor(is.na(data[[col.age]]))
+  data[["Age"]] <- as.factor(!is.na(data[[col.age]]))
   for (ii_g in c(formula("area ~ fleet"), formula("fleet ~ area"))) {
     grDevices::pdf(file = file.path(dir, paste0("lengthedages_", 
       gsub("~", "", paste(ii_g, collapse = "")), ".pdf")),
