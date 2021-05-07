@@ -98,6 +98,22 @@
 #' character values such that fish with an unidentified sex are now `"U"`.
 #' * Age: the best ages to use going forward rather than just the first age read.
 #'
+#' \subsection{CLEAN}{
+#' The data are put through various tests before they are returned
+#' and the results of these tests are stored in the \code{CLEAN} column.
+#' Thus, sometimes it is informative to run \code{cleanPacFIN(CLEAN = FALSE)}
+#' and use frequency tables to inspect which groups of data will be removed
+#' from the data set when you change the code to be \code{CLEAN = FALSE}.
+#' For example, many early length compositions do not have information on
+#' the weight of fish that were sampled, and thus, there is no way to infer
+#' how much the entire sample weighed or how much the tow/trip weighed.
+#' Therefore, these data cannot be expanded and are removed using
+#' \code{CLEAN = TRUE}. Some stock assessment authors or even previous
+#' versions of this very code attempted to use adjacent years to inform
+#' weights. The number of assumptions for this was great and state
+#' representatives discouraged inferring data that did not exist.
+#' }
+#'
 #' \subsection{Furthermore}{
 #' The values created as new columns are for use by other functions in this package.
 #' In particular, `fishyr` and `season` are useful if there are multiple
