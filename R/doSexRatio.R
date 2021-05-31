@@ -22,7 +22,13 @@
 #' @template savedir
 #'
 #' @details
-#' Sex ratios may be assigned in one of four different ways.
+#' Sex ratios may be assigned in one of four different ways:
+#' 1. fish below \code{maxsizeU} will have the \code{ratioU} applied
+#' 2. fish above \code{GTsizeU} are assumed to be female
+#' 3. fish between \code{maxsizeU} and \code{GTsizeU} will have the observed
+#' sex ratio of the known-sex fish applied
+#' 4. when there are fewer than three known-sex fish in the length bin
+#' observations from adjacent bins will be used
 #'  
 #' @return
 #' 
@@ -101,7 +107,7 @@ doSexRatio = function( CompData, ratioU, maxsizeU, GTsizeU, savedir ) {
 
   # Now let's check small fish if user has pre-specified ratio to be applied
   if(!missing(maxsizeU)){
-    ind <- which(CompData[, 'usamps'] > 0 & CompData[, 'lengthcm'] < maxSizeU) 
+    ind <- which(CompData[, 'usamps'] > 0 & CompData[, 'lengthcm'] < maxsizeU) 
     if (length(ind) > 0){
       calcRatio[ind] <- ratioU
     }

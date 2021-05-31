@@ -37,7 +37,15 @@ fish will be discarded.}
 }
 }
 \details{
-Sex ratios may be assigned in one of four different ways.
+Sex ratios may be assigned in one of four different ways:
+\enumerate{
+\item fish below \code{maxsizeU} will have the \code{ratioU} applied
+\item fish above \code{GTsizeU} are assumed to be female
+\item fish between \code{maxsizeU} and \code{GTsizeU} will have the observed
+sex ratio of the known-sex fish applied
+\item when there are fewer than three known-sex fish in the length bin
+observations from adjacent bins will be used
+}
 }
 \seealso{
 \code{\link{getComps}}, \code{\link{writeComps}}
