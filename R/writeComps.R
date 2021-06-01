@@ -534,4 +534,9 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   #options("warn" = oldwarn[[1]])
   #invisible(eval(parse(text = returns)))
 
+  # return tables
+  invisible(list(FthenM = FthenM,
+                 Fout = Fout,
+                 Mout = Mout,
+                 Uout = Uout))
 } # End function writeComps
