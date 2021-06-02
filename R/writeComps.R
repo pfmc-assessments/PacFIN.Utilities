@@ -117,7 +117,8 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   if(is.null(fname)){
     if(length(LEN) > 0) { fname = "PacFIN_lengths.out"}
-    if(length(AGE) >0 ) { fname = "PacFIN_ages.out" }
+    if(length(AGE) > 0) { fname = "PacFIN_ages.out" }
+    if(length(AGE) > 0 & length(LEN) > 0) { fname = "PacFIN_CAAL.out"}
   }
 
   if (verbose){
@@ -147,7 +148,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   # Adding columns in case a sex is not represented in inComps
   if(length(inComps$male) == 0) {
-    inComps$male <- inComps$msamps <- inComps$mtows <- 0 
+    inComps$male <- inComps$msamps <- inComps$mtows <- 0
   }
   if(length(inComps$female) == 0) {
     inComps$female <- inComps$fsamps <- inComps$ftows <- 0
@@ -258,9 +259,17 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   } # End if-else
 
   # Rename columns to be used below
-  names(inComps)[which(names(inComps) == "female")] <- "f"
-  names(inComps)[which(names(inComps) == "male")]   <- "m"
-  names(inComps)[which(names(inComps) == "unsexed")]<- "u"
+  if(!AAL){
+    names(inComps)[which(names(inComps) == "female")] <- "f"
+    names(inComps)[which(names(inComps) == "male")]   <- "m"
+    names(inComps)[which(names(inComps) == "unsexed")]<- "u"
+  } else {
+    # Overwrite the expansion value to match sample sizes for AAL
+    # This should really be done in the getComps function
+    inComps$f <- inComps$fsamps
+    inComps$m <- inComps$msamps
+    inComps$u <- inComps$usamps
+  } 
 
   # We'll work key by key
   uKeys <- inComps$key[!duplicated(inComps$key)]
@@ -326,7 +335,9 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
     if ( AAL ) {
       output$LbinLo <- LbinLo[output$lbin]
-      output$LbinHi <- LbinHi[output$lbin]
+      # The low and high lbin on AAL typically are the same and match
+      # the lower lbin
+      output$LbinHi <- LbinLo[output$lbin] #LbinHi[output$lbin]
     } # End if
 
     # assign to a name like 'mComps' or 'fComps'
@@ -360,6 +371,12 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   uStrat$sex <- NA
   uStrat$partition <- partition
 
+  if ( length(AGE) > 0 ) {
+    uStrat$ageErr <- ageErr
+    uStrat$LbinLo <- -1
+    uStrat$LbinHi <- -1
+  }
+
   if ( AAL ) {
     # Note that until empty rows are removed, the LbinLo and LbinHi columns
     # are the same in each dataset
@@ -368,22 +385,16 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     uStrat$LbinHi <- fComps$LbinHi
   }
 
-  if ( length(AGE) > 0 ) {
-    uStrat$ageErr <- ageErr
-    uStrat$LbinLo <- -1
-    uStrat$LbinHi <- -1
-  }
-
   Ninput_b <- round(ifelse( 
                       bothComps$Nsamps / bothComps$Ntows < 44,
                       bothComps$Ntows + 0.138 * bothComps$Nsamps,
                       7.06 * bothComps$Ntows), 0 )
-  Ninput_b[is.na(Ninput_b)] = 0
+  Ninput_b[is.na(Ninput_b)] <- 0
   Ninput_f <- round(ifelse( 
                       fComps$Nsamps / fComps$Ntows < 44,
                       fComps$Ntows + 0.138 * fComps$Nsamps,
                       7.06 * fComps$Ntows), 0 )
-  Ninput_f[is.na(Ninput_f)] = 0
+  Ninput_f[is.na(Ninput_f)] <- 0
   Ninput_m <- round(ifelse( 
                       mComps$Nsamps / mComps$Ntows < 44,
                       mComps$Ntows + 0.138 * mComps$Nsamps,
@@ -393,7 +404,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
                       uComps$Nsamps / uComps$Ntows < 44,
                       uComps$Ntows + 0.138 * uComps$Nsamps,
                       7.06 * uComps$Ntows), 0 )
-  Ninput_u[is.na(Ninput_u)] = 0
+  Ninput_u[is.na(Ninput_u)] <- 0
 
   if(!AAL){
     FthenM <- cbind(uStrat, round(bothComps$Ntows, 0), round(bothComps$Nsamps, 0), Ninput_b,
@@ -405,23 +416,27 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     Uout  <- cbind(uStrat, round(uComps$Ntows, 0), round(uComps$Nsamps, 0), Ninput_u,
                      uComps[,1:NCOLS], uComps[,1:NCOLS])
   } else {
-    Fout <- cbind(uStrat, round(fComps$Ntows, 0), Nsamps_f, fComps[,1:NCOLS], fComps[,1:NCOLS])
-    Mout <- cbind(uStrat, round(mComps$Ntows, 0), Nsamps_m, mComps[,1:NCOLS], mComps[,1:NCOLS])
-    Uout <- cbind(uStrat, round(bothComps$Ntows, 0), Nsamps_u, uComps[,1:NCOLS], uComps[,1:NCOLS])
+    # AAL
+    Fout <- cbind(uStrat, fComps$Nsamps, fComps[,1:NCOLS], fComps[,1:NCOLS])
+    Mout <- cbind(uStrat, mComps$Nsamps, mComps[,1:NCOLS], mComps[,1:NCOLS])
+    Uout <- cbind(uStrat, uComps$Nsamps, uComps[,1:NCOLS], uComps[,1:NCOLS])
     FthenM <- NULL
   }
 
   # Make it pretty
-  index <- which(names(Fout) == "round(fComps$Ntows, 0)")
-  names(Mout)[index]   <- "Ntows"
-  names(Fout)[index]   <- "Ntows"
-  names(Uout)[index]   <- "Ntows"
-  if(!AAL) { names(FthenM)[index] <- "Ntows" }
+  if(!AAL) { 
+    index <- grep("Ntows", names(Fout))
+    names(Mout)[index]   <- "Ntows"
+    names(Fout)[index]   <- "Ntows"
+    names(Uout)[index]   <- "Ntows"
+    names(FthenM)[index] <- "Ntows" 
+  }
 
-  names(Mout)[index + 1]   <- "Nsamps"
-  names(Fout)[index + 1]   <- "Nsamps"
-  names(Uout)[index + 1]   <- "Nsamps"
-  if(!AAL) { names(FthenM)[index + 1] <- "Nsamps" }
+  index <- grep("Nsamp", names(Fout))
+  names(Mout)[index]   <- "Nsamps"
+  names(Fout)[index]   <- "Nsamps"
+  names(Uout)[index]   <- "Nsamps"
+  if(!AAL) { names(FthenM)[index] <- "Nsamps" }
 
   if(!AAL){
     names(Mout)[index + 2]   <- "InputN"
@@ -439,7 +454,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   if(dim(Uout)[1] != 0)   { Uout$sex <- 0}
   if(dim(Fout)[1] != 0)   { Fout$sex <- 1}
   if(dim(Mout)[1] != 0)   { Mout$sex <- 2}
-  if(dim(FthenM)[1] != 0) { FthenM$sex <- 3 }
+  if(!AAL) { if(dim(FthenM)[1] != 0) { FthenM$sex <- 3 } }
 
   # function to rescale comps to sum to 1
   # IGT(2019-04-25): I tried using an apply function but kept messing up,
@@ -465,15 +480,16 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   # optionally rescale to sum to 1
   # this needs to happen after combining FthenM rather than to
   # the sex-specific parts
-  if(sum1){
+  if(sum1 & !AAL){
     if(verbose){
       message("rescaling comps to sum to 1")
     }
     if( dim(Uout)[1] != 0)   { Uout   <- rescale.comps(Uout) }
     if( dim(Fout)[1] != 0)   { Fout   <- rescale.comps(Fout) }
     if( dim(Mout)[1] != 0)   { Mout   <- rescale.comps(Mout) }
-    if( dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) }
+    if (!AAL) { if( dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) } }
   }
+
   # optionally round off to chosen value
   if(!missing(digits)){
     if(verbose){
@@ -482,7 +498,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     if( dim(Uout)[1] != 0)   { Uout   <- round.comps(Uout, digits = digits) }
     if( dim(Fout)[1] != 0)   { Fout   <- round.comps(Fout, digits = digits) }
     if( dim(Mout)[1] != 0)   { Mout   <- round.comps(Mout, digits = digits) }
-    if( dim(FthenM)[1] != 0) { FthenM <- round.comps(FthenM, digits = digits) }
+    if (!AAL) { if( dim(FthenM)[1] != 0) { FthenM <- round.comps(FthenM, digits = digits) } }
   }
   
   # Print the whole shebang out to a file.

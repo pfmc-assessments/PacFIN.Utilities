@@ -68,7 +68,7 @@ getComps = function( Pdata, strat = NULL,
   TowStrat <- c(strat, switch(Comps,
     LEN = usualSuspects,
     AGE = usualSuspects,
-    c(usualSuspects, "Age")))
+    c(usualSuspects, 'lengthcm', "Age")))
   usualSuspects <- switch(Comps,
     LEN = c(usualSuspects, "lengthcm"),
     AGE = c(usualSuspects, "Age"),
