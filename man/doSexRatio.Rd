@@ -2,41 +2,49 @@
 % Please edit documentation in R/doSexRatio.R
 \name{doSexRatio}
 \alias{doSexRatio}
-\title{Assign gender for unsexed fish in compiled Comp data.}
+\title{Assign gender for unsexed fish}
 \usage{
 doSexRatio(CompData, ratioU, maxsizeU, GTsizeU, savedir)
 }
 \arguments{
-\item{CompData}{data that have already been aggregated by \code{getComps}.}
+\item{CompData}{A data frame of composition data returned by \link{getComps}.}
 
-\item{ratioU}{the ratio to apply to fish less than maxsizeU}
+\item{ratioU}{A numerical value providing the sex ratio to apply to fish
+less than \code{maxsizeU}.
+A value of 0.5 assumes an equal ratio of males to females.
+Values larger than 0.5 assume there are more females compared to males.}
 
-\item{maxsizeU}{the size below which the sex ratio is assumed ratioU.}
+\item{maxsizeU}{A numerical value specifying the length of fish below which
+the sex ratio is assumed to be equal to \code{ratioU} for unsexed fish.}
 
-\item{GTsizeU}{the size above which the ratio is assumed to be 1.0 (big mamas).}
+\item{GTsizeU}{A numerical value specifying the size of fish above which
+the sex ratio is assumed to be 1.0 and all fish are assumed to be female,
+i.e., big mamas.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.
 The path can be relative or absolute.}
 }
 \value{
-Returns Comp data with unsexed fish now assigned sexes (the values for males and
-females in the comps have increased), however the original columns
-for unsexed fish remain unchanged.  The function that writes out the comps
-\code{\link{writeComps}} sets these to zero.
+Returns \code{CompData} with unsexed fish now assigned to a sex, where
+the values for males and females in the comps have increased).
+The original columns for unsexed fish remain unchanged.
+\link{writeComps} will set the observations of unsexed fish to zero.
 }
 \description{
-doSexRatio determines gender for unsexed fish in Age or Length comps.
-
-\subsection{Workflow}{
-Sex ratios are assigned after the data is stratified by \code{\link{getComps}}
-and before running \code{\link{writeComps}}.
-
-\strong{If \code{\link{writeComps}} is run without running \code{doSexRatio}, all unsexed
-fish will be discarded.}
-}
+Assign sex to unsexed fish based on a pre-determined sex ratio in
+age- or length-composition data.
 }
 \details{
+Workflow:
+Sex ratios are assigned after the data is stratified by \link{getComps}
+and before running \link{writeComps}.
+
+Note:
+If \link{writeComps} is run without performing \link{doSexRatio}, then
+all unsexed fish will be discarded from the composition information.
+
+Applied sex ratios:
 Sex ratios may be assigned in one of four different ways:
 \enumerate{
 \item fish below \code{maxsizeU} will have the \code{ratioU} applied
@@ -48,8 +56,8 @@ observations from adjacent bins will be used
 }
 }
 \seealso{
-\code{\link{getComps}}, \code{\link{writeComps}}
+\link{getComps}, \link{writeComps}
 }
 \author{
-Andi Stephens, Kelli Johnson, and Chantel Wetzel
+Andi Stephens, Kelli F. Johnson, and Chantel Wetzel
 }
