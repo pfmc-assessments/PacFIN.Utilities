@@ -19,7 +19,7 @@
 #' page changes between plots. The default is \code{FALSE} and it will also
 #' be \code{FALSE} if plots are saved to the disk.
 #' 
-#' @details 
+#' @details
 #' Output on figures include K-S p-value, which is the p-value output from 
 #' \code{\link{ks.test}} and is colored red if <.05 and green if >=.05, and 
 #' \code{expression(hat(b))}, which is the bhattacharyya coefficient calculated 
@@ -51,7 +51,7 @@ age_representativeness_plot <- function(
   wait2plot = FALSE
 ) {
   if (!is.null(file)) {
-    on.exit(dev.off(), add = TRUE)
+    on.exit(grDevices::dev.off(), add = TRUE)
   }
   if (!is.null(file)) wait2plot <- FALSE
 
@@ -72,26 +72,26 @@ age_representativeness_plot <- function(
   }
   years <- sort(unique(bio$Year))
 
-  colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5))
+  colvec <- c(grDevices::rgb(1, 0, 0, alpha = 0.8), grDevices::rgb(0, 0, 1, alpha = 0.5))
 
   pc <- 1 # plot counter
   for (y in years) {
     mod <- (y - years[1]) %% (prod(plot_panels)) # modulus to determine if plot if filled
     if (!is.null(file) && mod == 0) {
-      if (pc != 1) dev.off()
+      if (pc != 1) grDevices::dev.off()
       file_name <- strsplit(file, "[.]")[[1]][1]
       file_ext <- strsplit(file, "[.]")[[1]][2]
-      png(filename = paste0(file_name, "_", pc, ".", file_ext), width = 7, height = 7, units = "in", res = 300)
+      grDevices::png(filename = paste0(file_name, "_", pc, ".", file_ext), width = 7, height = 7, units = "in", res = 300)
       pc <- pc + 1
 
       # make multi-panel plot comparing length samples to the subset with ages
-      par(
+      graphics::par(
         mfcol = plot_panels,
         mar = c(0.2, 0.2, 0.2, 0.2),
         oma = c(4, 4, 1, 1)
       )
     }
-    if (is.null(file)) par(oma = c(1, 1, 1, 1), ask = wait2plot)
+    if (is.null(file)) graphics::par(oma = c(1, 1, 1, 1), ask = wait2plot)
 
     # make empty plot (note: xlim and ylim were set by trial and error)
     plot(0,
@@ -102,24 +102,24 @@ age_representativeness_plot <- function(
       yaxs = "i", ylab = "",
       axes = FALSE
     )
-    grid()
-    if (par()$mfg[2] == 1) {
-      axis(2, las = 1)
+    graphics::grid()
+    if (graphics::par()$mfg[2] == 1) {
+      graphics::axis(2, las = 1)
     }
-    if (par()$mfg[1] == par()$mfg[3] | y == max(years)) {
-      axis(1)
+    if (graphics::par()$mfg[1] == graphics::par()$mfg[3] | y == max(years)) {
+      graphics::axis(1)
     }
     lengths.y <- bio$Length_cm[bio$Year == y]
     ages.y <- bio$Length_cm[bio$Year == y &
       !is.na(bio$Age)]
-    lhist <- hist(lengths.y,
+    lhist <- graphics::hist(lengths.y,
       breaks = seq(0, max_break, 5),
       freq = FALSE,
       col = colvec[1],
       add = TRUE
     )
     if (length(ages.y > 0)) {
-      ahist <- hist(ages.y,
+      ahist <- graphics::hist(ages.y,
         breaks = seq(0, max_break, 5),
         freq = FALSE,
         col = colvec[2],
@@ -132,15 +132,15 @@ age_representativeness_plot <- function(
     if (length(lengths.y) > 0 & length(ages.y) > 0) {
       p.value <- suppressWarnings(
         classes = "warning",
-        ks.test(x = lengths.y, y = ages.y)$p.value
+        stats::ks.test(x = lengths.y, y = ages.y)$p.value
       )
       p.color <- ifelse(p.value > 0.05, "green3", "red")
       bhat <- sum(sqrt(lhist$counts / sum(lhist$counts) * ahist$counts / sum(ahist$counts)))
     }
-    legend("topleft", legend = NA, bty = "n", title = y, cex = 1.5)
+    graphics::legend("topleft", legend = NA, bty = "n", title = y, cex = 1.5)
     myinset <- ifelse(is.null(file), 0, -0.25)
     myinset2 <- ifelse(is.null(file), -0.02, -0.35)
-    legend("bottomright",
+    graphics::legend("bottomright",
       legend = "\n\n", bty = "n", inset = c(0, myinset),
       title = paste0(
         length(lengths.y), " lengths\n",
@@ -150,7 +150,7 @@ age_representativeness_plot <- function(
       ),
       cex = 1.0
     )
-    legend("bottomright",
+    graphics::legend("bottomright",
       legend = "\n", bty = "n", inset = c(0, myinset),
       title = paste0(
         "K-S p-value = ",
@@ -158,26 +158,26 @@ age_representativeness_plot <- function(
       ),
       cex = 1.0, title.col = p.color
     )
-    legend("bottomright",
+    graphics::legend("bottomright",
       legend = NA, bty = "n", inset = c(0, myinset2),
       title = as.expression(bquote(atop(phantom(), hat(b) == .(sprintf("%.3f", bhat))))),
       cex = 1.0, title.col = "black"
     )
-    if ((par()$mfg[1] == plot_panels[1] & par()$mfg[2] == plot_panels[2]) |
+    if ((graphics::par()$mfg[1] == plot_panels[1] & graphics::par()$mfg[2] == plot_panels[2]) |
       is.null(file) | y == max(years)) {
       # empty plot for legend
-      par.old <- par(no.readonly = TRUE)
-      par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+      par.old <- graphics::par(no.readonly = TRUE)
+      graphics::par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
       plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-      legend("bottomright",
+      graphics::legend("bottomright",
         xpd = TRUE, inset = c(0, -0.01), horiz = FALSE,
         bty = "n",
         fill = colvec,
         cex = 1.0,
         legend = c("All lengths", "Lengths with ages")
       )
-      mtext("Length (cm)", side = 1, line = -1.0, outer = FALSE)
-      par(par.old)
+      graphics::mtext("Length (cm)", side = 1, line = -1.0, outer = FALSE)
+      graphics::par(par.old)
     }
   }
 }

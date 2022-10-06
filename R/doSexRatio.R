@@ -85,7 +85,7 @@ doSexRatio <- function(
   # Check to see if some years are only unsexed
   CompData$percent_unsexed <- CompData$usamps / 
    (CompData$usamps + CompData$fsamps + CompData$msamps)
-  check <- aggregate(percent_unsexed~fishyr, CompData, function(x) sum(x == 1) / sum(x) )
+  check <- stats::aggregate(percent_unsexed~fishyr, CompData, function(x) sum(x == 1) / sum(x) )
   yrs <- check[,'percent_unsexed'] == 1 & is.finite(check[, 'percent_unsexed'])
   n   <- sum(yrs, na.rm = TRUE)
   if(n > 0 ) {
@@ -143,8 +143,8 @@ doSexRatio <- function(
 
   if (!missing(savedir)) {
     find = which(CompData$usamps > 0 )
-    png(file.path(savedir, "Applied_Sex_Ratio_to_Unsexed_Fish.png"))
-      on.exit(dev.off(), add = TRUE)
+    grDevices::png(file.path(savedir, "Applied_Sex_Ratio_to_Unsexed_Fish.png"))
+      on.exit(grDevices::dev.off(), add = TRUE)
       plot(CompData[find,'lengthcm'], CompData[find, 'sexRatio'],
         xlab = "Length (cm)", ylab = "Sex Ratio",
         main = paste0("Sex Ratio Applied to Unsexed Fish (N = ", sum(CompData$usamps), ")" )

@@ -34,7 +34,6 @@
 #' rbind(x, y, z)  
 #'
 #' @author Andi Stephens
-#' @import stats
 #' 
 ###########################################################################
 
@@ -47,7 +46,7 @@ capValues = function( DataCol, maxVal=0.95 ) {
 
   } else {
 
-    max.val = quantile(DataCol, maxVal, na.rm=T)
+    max.val = stats::quantile(DataCol, maxVal, na.rm=T)
     cat("\nMaximum expansion capped at", maxVal, "quantile:", max.val, "\n\n")
 
   } # End if-else

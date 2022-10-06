@@ -197,8 +197,8 @@ cleanPacFIN <- function(
   Pdata$fishyr <- Pdata$SAMPLE_YEAR
   Pdata$year <- Pdata$SAMPLE_YEAR
   if (!missing(savedir)) {
-    png(filename = file.path(savedir, "PacFIN_comp_season.png"))
-    on.exit(dev.off(), add = TRUE)
+    grDevices::png(filename = file.path(savedir, "PacFIN_comp_season.png"))
+    on.exit(grDevices::dev.off(), add = TRUE)
   }
   Pdata <- getSeason(Pdata, verbose = verbose,
     plotResults = !missing(savedir))

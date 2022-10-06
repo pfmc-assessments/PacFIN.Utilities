@@ -135,30 +135,30 @@ plotRawData = function( rawData, fname=NULL ) {
 
   # Set up device for pdf
 
-  graphics.off()
+  grDevices::graphics.off()
 
-  pdf(pdffile)
+  grDevices::pdf(pdffile)
 
-  par(mfrow=c(2,2))
+  graphics::par(mfrow=c(2,2))
 
-  hist(len$len,nclass=30, xlab="", main="FISH_LENGTH")
+  graphics::hist(len$len,nclass=30, xlab="", main="FISH_LENGTH")
 
-  barplot(table(10*round(len$FISH_LENGTH/10-floor(len$FISH_LENGTH/10),1)),
+  graphics::barplot(table(10*round(len$FISH_LENGTH/10-floor(len$FISH_LENGTH/10),1)),
           xlab="Difference in rounded and floored lengths")
 
   plot(len$FISH_LENGTH,len$FORK_LENGTH,pch=16, xlab="FISH_LENGTH", ylab="FORK_LENGTH")
 
   plot(len$DEPTH_AVG,len$depth_mid,xlim=c(0,400),ylim=c(0,400), xlab="DEPTH_AVG", ylab="Depth_mid")
-  abline(a=0,b=1)
+  graphics::abline(a=0,b=1)
 
-  hist(ltows$DEPTH_AVG, xlab="", main="DEPTH_AVG")
+  graphics::hist(ltows$DEPTH_AVG, xlab="", main="DEPTH_AVG")
 
-  hist(age$Age,nclass=30, xlab="", main="Age")
+  graphics::hist(age$Age,nclass=30, xlab="", main="Age")
 
-  par(mfrow=c(2,1))
-  boxplot(as.list(as.data.frame(meanLen)),varwidth=T,main="Mean length")
-  boxplot(as.list(as.data.frame(meanAge)),varwidth=T,main="Mean age")
+  graphics::par(mfrow=c(2,1))
+  graphics::boxplot(as.list(as.data.frame(meanLen)),varwidth=T,main="Mean length")
+  graphics::boxplot(as.list(as.data.frame(meanAge)),varwidth=T,main="Mean age")
 
-  dev.off()
+  grDevices::dev.off()
 
 } # End plotRawData

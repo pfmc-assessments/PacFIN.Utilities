@@ -28,7 +28,6 @@
 #' @template weightlengthparams
 #' @template verbose
 #' @template plot
-#' @importFrom magrittr %>%
 #'
 #' @return A \code{data.frame} where all of the original columns in
 #' \code{Pdata} remain unaltered but additional columns are added.
@@ -115,7 +114,7 @@ getExpansion_1 <- function(Pdata, maxExp = 0.95,
   if (plot != FALSE){
 
     if (is.character(plot)) {
-      png(file.path(ifelse(!grepl("png", tools::file_ext(plot)),
+      grDevices::png(file.path(ifelse(!grepl("png", tools::file_ext(plot)),
         plot, dirname(plot)), "PacFIN_exp1.png"))
     } else {
       grDevices::dev.new()

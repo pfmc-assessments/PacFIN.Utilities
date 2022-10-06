@@ -49,6 +49,6 @@ tableSample <- function(Pdata,
 	}
 	colnames(samples) = names	
 
-  write.csv(samples, file = fname, row.names=FALSE)
+  utils::write.csv(samples, file = fname, row.names=FALSE)
   return(invisible(samples))
 }

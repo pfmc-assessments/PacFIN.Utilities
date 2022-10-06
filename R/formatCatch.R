@@ -26,7 +26,6 @@
 #' in lbs. The conversion factor from landed weight to round weight is
 #' weight_of_catch * NVL(conversion_factor,1) and 1 mt equals 2,204.62 lbs.
 #' This is not case specific.
-#' @importFrom magrittr %>%
 #'
 #' @export
 #' @author Kelli F. Johnson

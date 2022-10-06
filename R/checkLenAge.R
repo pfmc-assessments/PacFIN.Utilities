@@ -72,7 +72,7 @@ checkLenAge <- function(Pdata,
     rm(new)
   }
   if (length(Par[[1]]) > 1) {
-    if (var(unlist(lapply(Par, length))) != 0) {
+    if (stats::var(unlist(lapply(Par, length))) != 0) {
       stop("Must be one named entry in each vector element of the list Par\n",
         "for each unique sex type in the data, e.g.,\n",
         paste(sex_vec, collapse = ", "))
@@ -108,7 +108,7 @@ checkLenAge <- function(Pdata,
     }
 
     if (Optim) {
-      ests <- optim(fn = nwfscAgeingError::estgrowth.vb,
+      ests <- stats::optim(fn = nwfscAgeingError::estgrowth.vb,
                   par = log(pars_in),
                   hessian = FALSE,
                   Ages = Pdata[use_data, age_col],
@@ -146,7 +146,7 @@ checkLenAge <- function(Pdata,
       !is.na(Pdata[, age_col]), ]
     estsall <- data.frame(Sex = sex_vec,
       do.call("rbind", tapply(seq(NROW(tempdata)), tempdata[, sex_col],
-      function(x) exp(optim(fn = nwfscAgeingError::estgrowth.vb,
+      function(x) exp(stats::optim(fn = nwfscAgeingError::estgrowth.vb,
                   par = log(pars_in),
                   hessian = FALSE,
                   Ages = tempdata[x, age_col],

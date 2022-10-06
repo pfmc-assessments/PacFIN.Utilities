@@ -31,10 +31,6 @@
 #' @template Pdata
 #' @template verbose
 #' @template plot
-#' @import grDevices
-#' @import graphics
-#' @import stats
-#' @import utils
 #' @author Andi Stephens
 
 EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
@@ -49,23 +45,23 @@ EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
 
   if (plot != FALSE) {
     numstate <- length(unique(Pdata$state))
-    if (is.character(plot)) png(plot)
-    par(mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
+    if (is.character(plot)) grDevices::png(plot)
+    graphics::par(mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
       oma = c(4, 5, 3, 0.5))
     for (st in unique(Pdata$state)) {
       plotdata <- Pdata[Pdata[, "state"] == st & !is.na(Pdata[["Trip_Sampled_Lbs"]]), ]
       if (all(is.na(plotdata$Trip_Sampled_Lbs))) next
-      boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
+      graphics::boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
         ylab = "", xlab = "", xaxt = "n",
         at = unique(plotdata$fishyr), xlim = range(Pdata$fishyr))
-      legend("topleft", legend = st, bty = "n")
+      graphics::legend("topleft", legend = st, bty = "n")
     }
-    axis(1)
-    mtext(side = 1, "Year", outer = TRUE, line = 2)
-    mtext(side = 3, "Expansion factor 1 numerator", outer = TRUE, line = 1)
-    mtext(side = 2, "Sample weight per trip (lbs)", outer = TRUE, line = 2)
+    graphics::axis(1)
+    graphics::mtext(side = 1, "Year", outer = TRUE, line = 2)
+    graphics::mtext(side = 3, "Expansion factor 1 numerator", outer = TRUE, line = 1)
+    graphics::mtext(side = 2, "Sample weight per trip (lbs)", outer = TRUE, line = 2)
 
-    if (is.character(plot)) dev.off()
+    if (is.character(plot)) grDevices::dev.off()
   }
 
   return(Pdata)

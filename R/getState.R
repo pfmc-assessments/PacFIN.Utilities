@@ -86,7 +86,7 @@ getState <- function (Pdata,
     message("\nThere are ", nostate,
       " records for which the state (i.e., 'CA', 'OR', 'WA')",
       "\ncould not be assigned and were labeled as 'UNK'.")
-    capture.output(type = "message", table(Pdata[, "state"]))
+    utils::capture.output(type = "message", table(Pdata[, "state"]))
   } # End if verbose
 
   return(Pdata)

@@ -75,7 +75,7 @@ getGearGroup = function (Pdata, spp = NULL, verbose = TRUE) {
 
   if (verbose) {
     message("GRID was assigned to geargroup with the following names:")
-    capture.output(type = "message", table(Pdata[, "geargroup"]))
+    utils::capture.output(type = "message", table(Pdata[, "geargroup"]))
   }
 
   return(Pdata)

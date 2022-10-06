@@ -68,10 +68,6 @@
 #'
 #' @author Andi Stephens
 #' @seealso [EF1_Numerator], [getExpansion_1], [getExpansion_2]
-#' @import grDevices
-#' @import graphics
-#' @import stats
-#' @import utils
 #'
 EF1_Denominator = function(Pdata,
   fa = 2e-06, fb = 3.5,
@@ -158,8 +154,10 @@ EF1_Denominator = function(Pdata,
 
   #### Summary and boxplot
   # todo: revamp the summary and plots
-  printemp = data.frame(cbind(Pdata$Wt_Sampled_1_L, Pdata$Wt_Sampled_2_L,
-                              Pdata$Wt_Sampled_3_L, Pdata$Wt_Sampled_L))
+  printemp <- data.frame(cbind(
+    Pdata$Wt_Sampled_1_L, Pdata$Wt_Sampled_2_L,
+    Pdata$Wt_Sampled_3_L, Pdata$Wt_Sampled_L
+  ))
 
   names(printemp) = c("M+F+U","Cluster","L-W","Final Wt_Sampled")
 
@@ -180,19 +178,24 @@ EF1_Denominator = function(Pdata,
       }
       plot <- file.path(savedir, "PacFIN_exp1_denom.png")
       plot2 <- file.path(savedir, "PacFIN_WL.png")
-      png(plot)
-      on.exit(dev.off(), add = TRUE)
+      grDevices::png(plot)
+      on.exit(grDevices::dev.off(), add = TRUE)
     }
-    par(mfrow = c(1, ifelse(nNA > 0, 2, 1)), mgp = c(2.5, 0.5, 0))
-    boxplot(as.data.frame(printemp),
+    graphics::par(mfrow = c(1, ifelse(nNA > 0, 2, 1)), mgp = c(2.5, 0.5, 0))
+    graphics::boxplot(
+      as.data.frame(printemp),
       names = names(printemp),
-      ylab = "Sample weight (lbs)", xlab = "First-stage expansion denominator")
+      ylab = "Sample weight (lbs)",
+      xlab = "First-stage expansion denominator"
+    )
     if (nNA > 0) {
-      barplot(xtabs(NA_Wt_Sampled$FREQ ~ NA_Wt_Sampled$state + NA_Wt_Sampled$fishyr),
-        col = rainbow(length(unique(NA_Wt_Sampled$state))),
+      graphics::barplot(
+        stats::xtabs(NA_Wt_Sampled$FREQ ~ NA_Wt_Sampled$state + NA_Wt_Sampled$fishyr),
+        col = grDevices::rainbow(length(unique(NA_Wt_Sampled$state))),
         legend.text = TRUE, xlab = "Year",
         ylab = "N samples w/ first-stage expansion denominator = NA",
-        args.legend = list(x = "topleft", bty = "n"))
+        args.legend = list(x = "topleft", bty = "n")
+      )
     }
     gg <- plotWL(Pdata[,"lengthcm"], Pdata[, "SEX"], Pdata[, "weightkg"],
       Pdata[, "LW_Calc_Wt"] * 0.453592)

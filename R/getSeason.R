@@ -51,7 +51,7 @@ getSeason <- function(Pdata, season_type = -1,
       message("Assigning season from SAMPLE_MONTH.")
     }
 
-    Pdata[, "season"] <- type.convert(as.is = TRUE, Pdata$SAMPLE_MONTH)
+    Pdata[, "season"] <- utils::type.convert(as.is = TRUE, Pdata$SAMPLE_MONTH)
 
   } # End if
 
@@ -90,7 +90,7 @@ getSeason <- function(Pdata, season_type = -1,
 
   if (plotResults) {
     tmp <- table(Pdata[, c("season", "SAMPLE_YEAR")])
-    barplot(tmp, col = grDevices::rainbow(NROW(tmp)),
+    graphics::barplot(tmp, col = grDevices::rainbow(NROW(tmp)),
       legend.text = paste("Season", rownames(tmp)),
       main = unique(Pdata$SPID), xlab = "Year", ylab = "Count",
       bty = "n")

@@ -159,7 +159,7 @@ getExpansion_2 <- function(Pdata, Catch,
 
   # Find which trips don't have catch values associated with them
   if (sum(is.na(tows[, "catch"])) != 0){
-    NoCatch <- aggregate(Sum_Sampled_Lbs ~ fishyr + stratification,
+    NoCatch <- stats::aggregate(Sum_Sampled_Lbs ~ fishyr + stratification,
       data = tows[is.na(tows[, "catch"]), ], length)
     colnames(NoCatch)[3] <- "N"
     if (length(NoCatch) > 0 & verbose) {
@@ -200,8 +200,8 @@ getExpansion_2 <- function(Pdata, Catch,
   if (nNA > 0) {
     NA_EF2[, "FREQ"] <- 1
     if (!missing(savedir)) {
-      png(file.path(savedir, "PacFIN_exp2_NAreplace.png"))
-      on.exit(dev.off(), add = TRUE)
+      grDevices::png(file.path(savedir, "PacFIN_exp2_NAreplace.png"))
+      on.exit(grDevices::dev.off(), add = TRUE)
       graphics::barplot(
         stats::xtabs(NA_EF2$FREQ ~ NA_EF2$state + NA_EF2$fishyr),
         col = grDevices::rainbow(3),
@@ -213,9 +213,9 @@ getExpansion_2 <- function(Pdata, Catch,
   } # End if
 
   if (!missing(savedir)) {
-    png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
-    on.exit(dev.off(), add = TRUE)
-    boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,
+    grDevices::png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
+    on.exit(grDevices::dev.off(), add = TRUE)
+    graphics::boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,
       main = "", xlab = "Year", ylab = "Second-stage expansion factor")
   }
 

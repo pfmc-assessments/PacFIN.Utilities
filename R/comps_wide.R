@@ -54,8 +54,8 @@ comps_wide <- function(data, breaks,
     returnclass = "numeric"
     )
 
-  outformula <- formula(paste(col_proportions, "~ ."))
-  out <- reshape(direction = "wide", aggregate(outformula, data = data, sum),
+  outformula <- stats::formula(paste(col_proportions, "~ ."))
+  out <- stats::reshape(direction = "wide", stats::aggregate(outformula, data = data, sum),
     idvar = colnames(data)[1:(NCOL(data)-2)],
     timevar = colnames(data)[NCOL(data)-1])
   out[is.na(out)] <- 0

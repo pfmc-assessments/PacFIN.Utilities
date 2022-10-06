@@ -94,10 +94,6 @@
 #'   
 #' @author Andi Stephens
 #' @seealso \code{\link{getComps}}, \code{\link{doSexRatio}}
-#' @import grDevices
-#' @import graphics
-#' @import stats
-#' @import utils
 #'
 ##############################################################################
 writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
@@ -125,7 +121,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     cat(paste("Writing comps to file", fname, "\n"))
     #cat(paste("\nNote that if you didn't run doSexRatio,",
     #  "all unsexed fish disappear at this point.\n\n"))
-    flush.console()
+    utils::flush.console()
   }
 
   dir.create(
@@ -143,7 +139,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     }else{
       stop("The file ", fname, "\n  exists and overwrite = FALSE.")
     }
-    flush.console()
+    utils::flush.console()
   }
 
   # Adding columns in case a sex is not represented in inComps
@@ -189,7 +185,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
       # if people want to look at this separately and add back later
       # The Inf bin will work better than 999 b/c you theoretically
       # can have a fish with length larger than 999, but not Inf.
-      lbins <- c(lbins, max(lbins) + diff(tail(lbins, 2)), Inf)
+      lbins <- c(lbins, max(lbins) + diff(utils::tail(lbins, 2)), Inf)
     } else {
       lbins <- c(lbins, Inf)
       LbinLo <- c(0, lbins[-1])
@@ -214,7 +210,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
       if (min(abins) > 0) {
         abins = c(0, abins)
       }      
-      abins <- c(abins, max(abins) + diff(tail(abins, 2)), Inf)
+      abins <- c(abins, max(abins) + diff(utils::tail(abins, 2)), Inf)
     } else {      
       abins <- c(abins, Inf)
     } # End if-else dummybins
@@ -281,7 +277,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     cat(length(uKeys), "unique keys for", nrow(inComps), "records\n\n")
     #head(inComps)
     cat("\n\n")
-    flush.console()
+    utils::flush.console()
   }
 
   # For each sex in turn
@@ -290,7 +286,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     #if (myname == "u") { myname <- "b" }
     if (verbose) {
       cat(paste("Assembling, sex is:", myname, "\n"))
-      flush.console()
+      utils::flush.console()
     }
     tows  <- which(names(inComps) == paste(g, "tows", sep = ""))
     samps <- which(names(inComps) == paste(g, "samps", sep = ""))
@@ -480,27 +476,37 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   # optionally rescale to sum to 1
   # this needs to happen after combining FthenM rather than to
   # the sex-specific parts
-  if(sum1 & !AAL){
-    if(verbose){
+  if (sum1 & !AAL) {
+    if (verbose) {
       message("rescaling comps to sum to 1")
     }
-    if( dim(Uout)[1] != 0)   { Uout   <- rescale.comps(Uout) }
-    if( dim(Fout)[1] != 0)   { Fout   <- rescale.comps(Fout) }
-    if( dim(Mout)[1] != 0)   { Mout   <- rescale.comps(Mout) }
-    if (!AAL) { if( dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) } }
+    if (dim(Uout)[1] != 0)   { Uout   <- rescale.comps(Uout) }
+    if (dim(Fout)[1] != 0)   { Fout   <- rescale.comps(Fout) }
+    if (dim(Mout)[1] != 0)   { Mout   <- rescale.comps(Mout) }
+    if (!AAL) { if (dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) } }
   }
 
   # optionally round off to chosen value
-  if(!missing(digits)){
-    if(verbose){
+  if (!missing(digits)) {
+    if (verbose){
       message("rounding values to ", digits, " digits")
     }
-    if( dim(Uout)[1] != 0)   { Uout   <- round.comps(Uout, digits = digits) }
-    if( dim(Fout)[1] != 0)   { Fout   <- round.comps(Fout, digits = digits) }
-    if( dim(Mout)[1] != 0)   { Mout   <- round.comps(Mout, digits = digits) }
-    if (!AAL) { if( dim(FthenM)[1] != 0) { FthenM <- round.comps(FthenM, digits = digits) } }
+    if (dim(Uout)[1] != 0) {
+      Uout <- round.comps(Uout, digits = digits)
+    }
+    if (dim(Fout)[1] != 0) {
+      Fout <- round.comps(Fout, digits = digits)
+    }
+    if (dim(Mout)[1] != 0) {
+      Mout <- round.comps(Mout, digits = digits)
+    }
+    if (!AAL) {
+      if (dim(FthenM)[1] != 0) {
+        FthenM <- round.comps(FthenM, digits = digits)
+      }
+    }
   }
-  
+
   # Print the whole shebang out to a file.
   ## # Turn off warnings about "appending column names to file"
   oldwarn = options("warn")
@@ -511,7 +517,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   }
   IDstring = paste("\n\n", "Females then males")
   cat(file = fname, IDstring, "\n", append = FALSE)  
-  write.table(file = fname, FthenM, sep = ",", col.names = TRUE,
+  utils::write.table(file = fname, FthenM, sep = ",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
 
   if (verbose) {
@@ -519,7 +525,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   }
   IDstring = paste("\n\n", "Females only")
   cat(file = fname, IDstring, "\n", append = TRUE)  
-  write.table(file = fname, Fout, sep = ",", col.names = TRUE,
+  utils::write.table(file = fname, Fout, sep = ",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
   
   if (verbose) {
@@ -527,7 +533,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   }  
   IDstring = paste("\n\n",  "Males only")
   cat(file = fname, IDstring, "\n", append = TRUE)
-  write.table(file = fname, Mout, sep =",", col.names = TRUE,
+  utils::write.table(file = fname, Mout, sep =",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
 
   if (verbose) {
@@ -543,7 +549,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   IDstring = u_message
   cat(file = fname, IDstring, "\n", append = TRUE)
-  write.table(file = fname, Uout, sep = ",", col.names = TRUE,
+  utils::write.table(file = fname, Uout, sep = ",", col.names = TRUE,
     row.names = FALSE, append = TRUE)
  
   # Reset warnings

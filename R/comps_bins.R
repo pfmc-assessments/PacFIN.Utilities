@@ -36,6 +36,6 @@ comps_bins <- function(vector, breaks,
     )
   out <- switch(returnclass,
     character = out,
-    numeric = type.convert(out, as.is = TRUE))
+    numeric = utils::type.convert(out, as.is = TRUE))
   return(out)
 }

@@ -158,7 +158,7 @@ getLength <- function(Pdata, verbose = FALSE, keep) {
 
   if (verbose) {
     message("\nThe following length types were kept in the data:")
-    capture.output(type = "message",
+    utils::capture.output(type = "message",
       table(output = Pdata[
         !is.na(Pdata[["length"]]),
         grep("LENGTH_TYPE", colnames(Pdata))

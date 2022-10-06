@@ -35,10 +35,6 @@
 #' @return A dataframe with composition data specific to the type specified
 #'   in `Comps` for males, females, and unsexed records.
 #' @author Andi Stephens, Kelli Faye Johnson
-#' @import grDevices
-#' @import graphics
-#' @import stats
-#' @import utils
 #' 
 ############################################################################
 
@@ -76,11 +72,11 @@ getComps = function( Pdata, strat = NULL,
 
   if (verbose) {
     cat("\nAggregating, stratification is by", paste(c(strat, usualSuspects), collapse=", "), "\n\n")
-    flush.console()
+    utils::flush.console()
   }
 
   ageComps <- getcomps_long(data = Pdata,
-    towstrat = TowStrat, type = tail(usualSuspects, 1), ...)
+    towstrat = TowStrat, type = utils::tail(usualSuspects, 1), ...)
   invisible(ageComps)
 
 } # End function getComps
@@ -197,7 +193,7 @@ getcomps_long <- function(data, towstrat, type,
 getunsexedsamps <- function(identifier, sex, good = "U") {
   if (class(sex) == "factor") sex <- as.character(sex)
   ff <- function(x) paste(unique(x), collapse = "")
-  keep <- ave(sex, identifier, FUN = ff)
+  keep <- stats::ave(sex, identifier, FUN = ff)
   return(ifelse(keep == good, identifier, NA))
 }
 

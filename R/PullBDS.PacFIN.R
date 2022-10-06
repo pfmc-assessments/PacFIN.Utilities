@@ -11,7 +11,6 @@
 #' @template password
 #' @template savedir
 #' @template verbose
-#' @importFrom magrittr %>%
 #' @export
 #' @author John R. Wallace, Kelli Faye Johnson
 #' @return An RData object is saved to the disk and the pulled data

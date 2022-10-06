@@ -11,8 +11,6 @@
 #' @param col.length Length column name.
 #' @param height Figure height.
 #' @param width Figure width.
-#' 
-#' @import ggplot2
 plotStrat <- function(
   data,
   dir = getwd(),
@@ -29,15 +27,15 @@ plotStrat <- function(
   data[["fleet"]] <- factor(data[[col.fleet]])
   data[["area"]] <- factor(data[[col.area]])
   data[["Age"]] <- as.factor(!is.na(data[[col.age]]))
-  for (ii_g in c(formula("area ~ fleet"), formula("fleet ~ area"))) {
+  for (ii_g in c(stats::formula("area ~ fleet"), stats::formula("fleet ~ area"))) {
     grDevices::pdf(file = file.path(dir, paste0("lengthedages_", 
       gsub("~", "", paste(ii_g, collapse = "")), ".pdf")),
       height = height, width = width)
     for(ii in seq_along(splits)) {
       plotmea <- data[data$year %in% splits[[ii]], , drop = FALSE]
       if (nrow(plotmea) == 0) next
-    gg <- ggplot(plotmea,
-      aes(
+    gg <- ggplot2::ggplot(plotmea,
+      ggplot2::aes(
         x = .data[[col.length]],
         y = year,
         group = interaction(year,Age),
@@ -45,17 +43,17 @@ plotStrat <- function(
         )
       ) +
       ggridges::geom_density_ridges2(scale = 5, alpha = 0.7) +
-      facet_grid(ii_g) +
-      theme_bw() +
-      guides(fill = guide_legend(title = "Aged")) +
-      theme(
+      ggplot2::facet_grid(ii_g) +
+      ggplot2::theme_bw() +
+      ggplot2::guides(fill = guide_legend(title = "Aged")) +
+      ggplot2::theme(
         strip.background = element_rect(colour = "black", fill = "white"),
         legend.position = "top"
         )
       print(gg)
     }
 
-    dev.off()
+    grDevices::dev.off()
   }
   return(invisible(gg))
 }

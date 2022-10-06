@@ -75,7 +75,7 @@ getArea <- function(Pdata, verbose = FALSE) {
       "the area that should be included for US West Coast stock assessments\n",
       "by PSMFC area, or some derivative thereof.")
     outtable <- table("PSMFC" = Pdata[, PSMFCcol], description = out)
-    capture.output(
+    utils::capture.output(
       type = "message",
       outtable[apply(outtable, 1, function(x) !all(x == 0)), ,drop = FALSE]
       )

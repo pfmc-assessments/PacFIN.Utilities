@@ -50,7 +50,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
       pacfin_species_code = pacfin_species_code,
       username = username,
       password = password)
-    pacfin_species_code <- c(pacfin_species_code, na.omit(thenominal))
+    pacfin_species_code <- c(pacfin_species_code, stats::na.omit(thenominal))
     if (verbose) {
       message("The following nominal species codes were added: ",
         knitr::combine_words(thenominal)

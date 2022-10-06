@@ -7,7 +7,6 @@
 #' @template pacfin_species_code
 #' @template username
 #' @template password
-#' @importFrom magrittr %>%
 #' @return A vector of character values, where each value is a
 #' PACFIN_SPECIES_CODE that pertains to the input `pacfin_species_code`.
 #' `NA` is returned if no values are found.

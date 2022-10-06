@@ -58,7 +58,6 @@
 #' @param col.bestage A character value noting the column name that contains the best age
 #' to use going forward for a given fish. Over time, this has been
 #' `FISH_AGE_YEARS_FINAL` and `FINAL_FISH_AGE_IN_YEARS` for PacFIN.
-#' @importFrom magrittr %>%
 #'
 #' @export
 #' @return A vector of ages in years with a length the same as the number
@@ -150,7 +149,7 @@ getAge <- function(
     no = apply(Pdata[, grep("age[0-9]*$", colnames(Pdata)), drop = FALSE], 1,
       FUN = function(x) {
         if (all(is.na(x))) return(NA)
-        return(ceiling(mean(na.omit(x), na.rm = FALSE)))
+        return(ceiling(mean(stats::na.omit(x), na.rm = FALSE)))
     })
     )
 
@@ -198,7 +197,6 @@ getAge <- function(
 #'
 #' @template Pdata
 #' @template verbose
-#' @importFrom magrittr %>%
 #'
 #' @return A data frame of counts for each age method.
 #' If `verbose`, then text explaining the summary is also printed to the

@@ -7,7 +7,6 @@
 #' pull request.
 #'
 #' @template data
-#' @importFrom magrittr %>%
 #'
 #' @export
 #' @author Kelli Faye Johnson
@@ -35,7 +34,6 @@ cleanColumns <- function(data) {
 #' new name coming from PacFIN. Columns not used in the code are removed.
 #'
 #' @template data
-#' @importFrom magrittr %>%
 #' @return A data frame with fewer columns and some column names changed.
 #'
 cleanColumns.bds <- function(data) {
@@ -108,7 +106,6 @@ cleanColumns.bds <- function(data) {
 #' the call to [dplyr::select] are kept.
 #'
 #' @template data
-#' @importFrom magrittr %>%
 #' @return A data frame with fewer columns.
 #'
 cleanColumns.catch <- function(data) {
