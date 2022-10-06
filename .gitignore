@@ -4,3 +4,4 @@ PacFIN.*RData
 .Rproj.user
 data-raw/*
 password.txt
+.history/

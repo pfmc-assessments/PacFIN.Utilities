@@ -1,4 +1,10 @@
+^\.Rapp\.history$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\data-raw\*
 ^data-raw$
+^\.history/*
+^\.git/*
+^\.github$
+\.gitattributes$
+\.gitignore$
