@@ -2,21 +2,27 @@ Package: PacFIN.Utilities
 Title: Generate fishery composition data from PacFIN data for the NWFSC
 Version: 0.2.3
 Authors@R: c(
-    person(given = c("Kelli", "F."),
+    person(
+      given = c("Kelli", "F."),
       family = "Johnson",
       role = c("aut", "cre"),
       email = "kelli.johnson@noaa.gov",
-      comment = c(ORCID = "0000-0002-5149-451X")),
-    person(given = "Andi",
+      comment = c(ORCID = "0000-0002-5149-451X")
+    ),
+    person(
+      given = "Andi",
       family = "Stephens",
       role = "aut",
-      email = "andi.stephens@noaa.gov"),
-    person(given = c("Chantel", "R."),
+      email = "andi.stephens@noaa.gov"
+    ),
+    person(
+      given = c("Chantel", "R."),
       family = "Wetzel",
       role = "ctb",
       email = "chantel.wetzel@noaa.gov",
-      comment = c(ORCID = "0000-0002-7573-8240"))
-      )
+      comment = c(ORCID = "0000-0002-7573-8240")
+    )
+    )
 Description: Manipulates data from the PacFIN database for stock synthesis.
 Depends:
     R (>= 3.5)
