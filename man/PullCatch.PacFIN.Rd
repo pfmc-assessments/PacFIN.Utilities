@@ -73,5 +73,5 @@ in the PacFIN database.
 \link{PullNominal.PacFIN} for how nominal species codes are determined.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

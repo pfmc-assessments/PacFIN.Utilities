@@ -21,7 +21,7 @@
 #' @template verbose
 #'
 #' @export
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @seealso [PullNominal.PacFIN] for how nominal species codes are determined.
 #' @return RData frames are saved to the disk and the pulled data
 #' are returned as a data frame.

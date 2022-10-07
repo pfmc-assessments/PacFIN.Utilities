@@ -62,5 +62,5 @@ print(comps)
 
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

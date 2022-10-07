@@ -20,5 +20,5 @@ todo: document what checkGrade returns.
 Ensure that each sample number has only one grade of fish in it.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

@@ -11,7 +11,7 @@
 #' as in \code{\link[utils]{read.table}}.
 #'
 #' @export
-#' @author John R. Wallace, Kelli Faye Johnson
+#' @author John R. Wallace, Kelli F. Johnson
 #' @return A data frame resulting from querying the database or an
 #' error message because the main call is wrapped in
 #' \code{\link[base]{tryCatch}}.

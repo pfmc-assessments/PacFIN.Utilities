@@ -10,7 +10,7 @@
 #' @param weight.calc A vector of estimated weights output from [getweight].
 #' @template lab-axes
 #'
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @export
 #' @seealso
 #' [getWLpars] to calculate parameters of the weight-length relationship;

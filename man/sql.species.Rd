@@ -14,5 +14,5 @@ Write SQL text as a single character string that will result in
 getting the species data from the PacFIN database.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

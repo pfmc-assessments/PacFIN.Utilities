@@ -16,7 +16,7 @@
 #' frame.}
 #' }
 #' @export
-#' @author Kelli Faye Johnson and Vladlena Gertseva
+#' @author Kelli F. Johnson and Vladlena Gertseva
 #' @return A vector of lengths. 
 #' See \code{returntype} for detailed information on what can be returned.
 #' 

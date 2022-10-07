@@ -20,5 +20,5 @@ A helper function that returns the number of unique
 entries in a vector. Usefull for apply functions.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

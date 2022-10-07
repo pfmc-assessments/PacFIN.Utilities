@@ -24,7 +24,7 @@
 #' be altered such that sample sizes are correct or added if missing from
 #' the stratification levels.
 #' @export
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @examples
 #' temp <- data.frame(
 #'   state = rep(c("WA", "OR"), length.out = 30),

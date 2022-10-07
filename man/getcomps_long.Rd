@@ -45,5 +45,5 @@ is assumed all are unsexed and will be returned as such.
 Create a Long Database to Prepare Compositions
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

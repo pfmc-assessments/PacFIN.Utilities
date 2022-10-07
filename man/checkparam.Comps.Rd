@@ -23,5 +23,5 @@ Check and select the appropriate input value for the Comps
 parameter used in multiple functions within \pkg{PacFIN.Utilities}.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

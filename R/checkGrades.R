@@ -4,7 +4,7 @@
 #' 
 #' @template Pdata
 #' 
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return todo: document what checkGrade returns.
 #' 
 checkGrade <- function(Pdata) {

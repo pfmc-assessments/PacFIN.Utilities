@@ -10,7 +10,7 @@
 #' @template returnclass
 #' 
 #' @export
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @examples
 #' comps_bins(1:8, breaks = c(-Inf, 3:5))
 #' comps_bins(1:8, breaks = c(3:5), includeplusgroup = FALSE)

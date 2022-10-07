@@ -25,5 +25,5 @@ Identifiers that have female and male samples will be returned
 as NA and only identifiers that had unsexed fish will be provided.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

@@ -34,5 +34,5 @@ Conversion parameters were derived from
 West Coast Groundfish Bottom Trawl Survey data.
 }
 \author{
-Kelli Faye Johnson and Vladlena Gertseva
+Kelli F. Johnson and Vladlena Gertseva
 }

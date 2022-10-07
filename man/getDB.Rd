@@ -38,5 +38,5 @@ Get a connection established to a database and return the information desired
 in the specific query.
 }
 \author{
-John R. Wallace, Kelli Faye Johnson
+John R. Wallace, Kelli F. Johnson
 }

@@ -9,7 +9,7 @@
 #' @template data
 #'
 #' @export
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return A data frame with fewer columns and some names changed.
 #'
 cleanColumns <- function(data) {

@@ -15,7 +15,7 @@
 #'   * PacFIN_comp_geargroup.png
 #'   * PacFIN_comp_INPFC.png
 #'   * PacFIN_comp_lengthvage.png
-#' @author Andi Stephens, Kelli Faye Johnson
+#' @author Andi Stephens, Kelli F. Johnson
 #' 
 #' @export
 #'

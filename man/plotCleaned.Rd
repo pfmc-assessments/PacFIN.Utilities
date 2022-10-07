@@ -40,5 +40,5 @@ This function is called by \link{cleanPacFIN} and heavily
 relies on \link{getGearGroup} to create gear categories.
 }
 \author{
-Andi Stephens, Kelli Faye Johnson
+Andi Stephens, Kelli F. Johnson
 }

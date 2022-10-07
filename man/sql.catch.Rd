@@ -21,5 +21,5 @@ Write SQL text as a single character string that will result in
 getting the catch data from the PacFIN database.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

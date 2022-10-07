@@ -4,7 +4,7 @@
 #' getting the species data from the PacFIN database.
 #'
 #' @template returnsql
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #'
 sql.species <- function() {
   sqlcall <- "SELECT

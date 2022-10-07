@@ -5,7 +5,7 @@
 #'
 #' @template pacfin_species_code
 #' @template returnsql
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #'
 sql.catch <- function(pacfin_species_code) {
   spid <- paste0("('", paste(pacfin_species_code, collapse = "','"), "')")

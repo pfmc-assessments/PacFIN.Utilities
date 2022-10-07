@@ -4,7 +4,7 @@
 #' getting the area data from the PacFIN database.
 #'
 #' @template returnsql
-#' @author John R. Wallace, Kelli Faye Johnson
+#' @author John R. Wallace, Kelli F. Johnson
 #'
 sql.area <- function() {
   sqlcall <- "Select * from PACFIN.BDS_ar"

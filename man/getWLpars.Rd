@@ -55,5 +55,5 @@ Estimate parameters of the weight-length relationship for each
 sex and all sexes combined, where the latter includes unsexed fish.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

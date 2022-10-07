@@ -14,5 +14,5 @@ Write SQL text as a single character string that will result in
 getting the area data from the PacFIN database.
 }
 \author{
-John R. Wallace, Kelli Faye Johnson
+John R. Wallace, Kelli F. Johnson
 }

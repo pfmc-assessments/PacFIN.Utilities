@@ -5,7 +5,7 @@
 #'
 #' @template datasourcename
 #' @export
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return A single character value to use as input in functions
 #' calling for \code{username = }.
 #' @examples

@@ -43,5 +43,5 @@ Estimate fish weights from potentially sex-specific weight-length
 relationship parameters returned from \link{getWLpars}.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

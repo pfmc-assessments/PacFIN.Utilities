@@ -12,7 +12,7 @@
 #' @template savedir
 #' @template verbose
 #' @export
-#' @author John R. Wallace, Kelli Faye Johnson
+#' @author John R. Wallace, Kelli F. Johnson
 #' @return An RData object is saved to the disk and the pulled data
 #' are returned as a data frame.
 #' The saved data can be read back in using [load], but note that

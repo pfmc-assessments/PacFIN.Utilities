@@ -20,7 +20,7 @@
 #' as such.
 #'
 #' @export
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return A vector of measurements in the unit specified using
 #' `unit.out`. If weights were provided, then the weights are also
 #' the output. If lengths were provided, then they are converted

@@ -5,7 +5,7 @@
 #'
 #' @template pacfin_species_code
 #' @template returnsql
-#' @author John R. Wallace, Kelli Faye Johnson
+#' @author John R. Wallace, Kelli F. Johnson
 #'
 sql.bds <- function(pacfin_species_code) {
   spid <- paste0("('", paste(pacfin_species_code, collapse = "','"), "')")

@@ -78,5 +78,5 @@ Columns \code{lengthcm}, \code{Age} or both are added
 depending on the \code{Comps} argument.
 }
 \author{
-Andi Stephens, Kelli Faye Johnson
+Andi Stephens, Kelli F. Johnson
 }

@@ -34,7 +34,7 @@
 #' `dropmissing = TRUE`
 #' @return A dataframe with composition data specific to the type specified
 #'   in `Comps` for males, females, and unsexed records.
-#' @author Andi Stephens, Kelli Faye Johnson
+#' @author Andi Stephens, Kelli F. Johnson
 #' 
 ############################################################################
 
@@ -96,7 +96,7 @@ getComps = function( Pdata, strat = NULL,
 #' \code{drop} argument in \code{stats::aggregate}
 #' that specifies whether or not to keep all levels in the data
 #' even if there are no values to report for summaries. 
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return A data frame in long form with a weight for each
 #' category included in the lengths or ages of interest by
 #' stratification. Stratifications are normally year and fishery
@@ -185,7 +185,7 @@ getcomps_long <- function(data, towstrat, type,
 #' @param good A character value supplying the \code{sex} value you
 #' want to keep.
 #'
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return A vector of identifiers that only had the sex given in
 #' the \code{good} argument. The returned vector will be of the same
 #' length as the supplied vectors.
@@ -201,6 +201,6 @@ getunsexedsamps <- function(identifier, sex, good = "U") {
 #' A helper function that returns the number of unique
 #' entries in a vector. Usefull for apply functions.
 #' @param x A vector of character or numeric values.
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return An integer value specifying the number of unique entries.
 lenique <- function(x) { return(length(unique(x))) }

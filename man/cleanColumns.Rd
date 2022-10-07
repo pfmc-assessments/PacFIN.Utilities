@@ -20,5 +20,5 @@ post an issue on github, email the package maintainer, or submit a
 pull request.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

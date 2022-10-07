@@ -39,5 +39,5 @@ will be plotted.
 \link{getweight} to predict weights from empirical lengths
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

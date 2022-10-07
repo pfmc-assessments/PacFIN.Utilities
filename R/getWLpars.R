@@ -20,7 +20,7 @@
 #' you wish to have more standard parameter estimates.
 #' @template verbose
 #'
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @export
 #' @return A data frame of weight-length parameters by sex.
 #' Parameters A and B are in the appropriate units to input

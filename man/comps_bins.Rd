@@ -45,5 +45,5 @@ comps_bins(1:8, breaks = c(-Inf, 3:5), includeplusgroup = TRUE)
 
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

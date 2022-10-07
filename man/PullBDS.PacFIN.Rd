@@ -103,5 +103,5 @@ pd <- PullBDS.PacFIN(pacfin_species_code = "POP", password = mypw)
 }
 }
 \author{
-John R. Wallace, Kelli Faye Johnson
+John R. Wallace, Kelli F. Johnson
 }

@@ -4,7 +4,7 @@
 #' parameter used in multiple functions within \pkg{PacFIN.Utilities}.
 #'
 #' @template Comps
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return A single character value.
 #'
 checkparam.Comps <- function(Comps = c("LEN", "AGE", "AAL", "NA")) {
