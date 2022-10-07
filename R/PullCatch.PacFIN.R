@@ -26,7 +26,7 @@
 #' @return RData frames are saved to the disk and the pulled data
 #' are returned as a data frame.
 #'   * CompFT - pulled data
-#'   * Research.Tribal.Catch - summary by year, state, and fleet; 
+#'   * Research.Tribal.Catch - summary by year, state, and fleet;
 #'     fleets are as follows:
 #'     limited entry (LE), open access (OA), treaty indian (TI),
 #'     research (R), and unknown (XX)
@@ -34,8 +34,11 @@
 #'   * Catch.PSMFC - catch by PSMFC area
 #'
 PullCatch.PacFIN <- function(pacfin_species_code,
-  username = getUserName("PacFIN"), password, savedir = getwd(),
-  addnominal = TRUE, verbose = FALSE) {
+                             username = getUserName("PacFIN"),
+                             password,
+                             savedir = getwd(),
+                             addnominal = TRUE,
+                             verbose = FALSE) {
 
   inputcode <- pacfin_species_code
 
@@ -49,51 +52,63 @@ PullCatch.PacFIN <- function(pacfin_species_code,
     thenominal <- PullNominal.PacFIN(
       pacfin_species_code = pacfin_species_code,
       username = username,
-      password = password)
+      password = password
+    )
     pacfin_species_code <- c(pacfin_species_code, stats::na.omit(thenominal))
     if (verbose) {
-      message("The following nominal species codes were added: ",
+      message(
+        "The following nominal species codes were added: ",
         knitr::combine_words(thenominal)
-        )
+      )
     }
   } else { # Add the nominal code passed by the user unless FALSE
     if (addnominal[1] != FALSE) {
       pacfin_species_code <- c(pacfin_species_code, addnominal)
     }
   }
-  data <- getDB(sql.catch(pacfin_species_code),
-    username = username, password = password)
+  data <- getDB(
+    sql.catch(pacfin_species_code),
+    username = username,
+    password = password
+  )
 
   #### Create summaries
-  data.fleet <- stats::aggregate(
+  data_fleet <- stats::aggregate(
     list(
       ROUND_WEIGHT_LBS = data[["ROUND_WEIGHT_LBS"]],
       ROUND_WEIGHT_MTONS = data[["ROUND_WEIGHT_MTONS"]]),
     data[, c("LANDING_YEAR", "FLEET_CODE", "AGENCY_CODE")],
     sum, na.rm = TRUE)
-  data.woR <- data[data[["FLEET_CODE"]] != "R", ]
-  data.inpfc <- stats::aggregate(
+  data_woR <- data[data[["FLEET_CODE"]] != "R", ]
+  data_inpfc <- stats::aggregate(
     list(
-      ROUND_WEIGHT_LBS = data.woR[["ROUND_WEIGHT_LBS"]],
-      ROUND_WEIGHT_MTONS = data.woR[["ROUND_WEIGHT_MTONS"]]),
-    data.woR[, c("COUNCIL_CODE", "DAHL_GROUNDFISH_CODE", "PACFIN_SPECIES_CODE",
+      ROUND_WEIGHT_LBS = data_woR[["ROUND_WEIGHT_LBS"]],
+      ROUND_WEIGHT_MTONS = data_woR[["ROUND_WEIGHT_MTONS"]]),
+    data_woR[, c("COUNCIL_CODE", "DAHL_GROUNDFISH_CODE", "PACFIN_SPECIES_CODE",
       "PACFIN_GROUP_GEAR_CODE", "PACFIN_PORT_CODE", "PACFIN_GEAR_CODE",
       "INPFC_AREA_TYPE_CODE", "LANDING_MONTH", "LANDING_YEAR", "AGENCY_CODE")],
     sum, na.rm = TRUE)
-  data.psmfc <- stats::aggregate(
+  data_psmfc <- stats::aggregate(
     list(
-      ROUND_WEIGHT_LBS = data.woR[["ROUND_WEIGHT_LBS"]],
-      ROUND_WEIGHT_MTONS = data.woR[["ROUND_WEIGHT_MTONS"]]),
-    data.woR[, c("COUNCIL_CODE", "DAHL_GROUNDFISH_CODE", "PACFIN_SPECIES_CODE",
+      ROUND_WEIGHT_LBS = data_woR[["ROUND_WEIGHT_LBS"]],
+      ROUND_WEIGHT_MTONS = data_woR[["ROUND_WEIGHT_MTONS"]]
+    ),
+    data_woR[, c("COUNCIL_CODE", "DAHL_GROUNDFISH_CODE", "PACFIN_SPECIES_CODE",
       "PACFIN_GROUP_GEAR_CODE", "PACFIN_PORT_CODE", "PACFIN_GEAR_CODE",
-      "PACFIN_CATCH_AREA_CODE", "LANDING_MONTH", "LANDING_YEAR", "AGENCY_CODE")],
-    sum, na.rm = TRUE)
+      "PACFIN_CATCH_AREA_CODE", "LANDING_MONTH", "LANDING_YEAR",
+      "AGENCY_CODE")],
+    FUN = sum,
+    na.rm = TRUE
+  )
 
   #### Save appropriate summaries
-  savefn <- file.path(savedir, paste(sep = ".",
-    "PacFIN", inputcode, "CompFT",
-    format(Sys.Date(), "%d.%b.%Y"),
-    "RData"))
+  savefn <- file.path(
+    savedir,
+    paste(
+      "PacFIN", inputcode, "CompFT", format(Sys.Date(), "%d.%b.%Y"), "RData",
+      sep = "."
+    )
+  )
   catch.pacfin <- data
   save(catch.pacfin, file = savefn)
 
