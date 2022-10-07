@@ -1,0 +1,38 @@
+name: Data request
+description: Request catch, biological, or perhaps even log book data.
+title: "Data request for species [replace with your species]"
+labels: ["type: request"]
+assignees:
+  - kellijohnson-NOAA
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out the PacFIN request form.
+  - type: textarea
+    id: species
+    attributes:
+      label: Identify the common name(s) or PacFIN species code(s)
+      description: Please be as specific as possible regarding the species that you are interested in. For example, do you know the nominal species codes? If yes, please add them.
+  - type: dropdown
+    id: data
+    attributes:
+      label: Type of data needed
+      multiple: true
+      options:
+        - catch
+        - biological data
+        - log book (not yet available)
+  - type: textarea
+    id: info
+    attributes:
+      label: Additional information
+      description: Please provide any additional information that could be relevant to your data pull.
+  - type: checkboxes
+    id: clearance
+    attributes:
+      label: Do you you have clearance to access these data?
+      description: By submitting this issue you agree that you have access to confidential data from PacFIN and will not share these data with those that do not have the same clearance.
+      options:
+        - label: I agree that I have clearance
+          required: true
