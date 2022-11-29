@@ -37,7 +37,6 @@ Imports:
     lifecycle,
     magrittr,
     measurements,
-    nwfscAgeingError,
     nwfscSurvey,
     purrr,
     RODBC,

@@ -104,11 +104,16 @@ checkLenAge <- function(Pdata,
           Par[[4]][sex_vec[s]],
           Par[[5]][sex_vec[s]])
     } else {
-        pars_in <- c(Par[[1]][1], Par[[2]][1]*mult, Par[[3]][1]*mult, Par[[4]][1], Par[[5]][1])
+        pars_in <- c(
+          Par[[1]][1], 
+          Par[[2]][1] * mult, 
+          Par[[3]][1] * mult, 
+          Par[[4]][1], 
+          Par[[5]][1])
     }
 
     if (Optim) {
-      ests <- stats::optim(fn = nwfscAgeingError::estgrowth.vb,
+      ests <- stats::optim(fn = nwfscSurvey::fit_vbgrowth,
                   par = log(pars_in),
                   hessian = FALSE,
                   Ages = Pdata[use_data, age_col],
@@ -117,7 +122,7 @@ checkLenAge <- function(Pdata,
         ests <- pars_in
     }
 
-    Pred <- nwfscAgeingError::estgrowth.vb(
+    Pred <- nwfscSurvey::fit_vbgrowth(
       Par = ests,
       ReturnType = "Pred",
       sdFactor = sdFactor,
@@ -173,6 +178,7 @@ checkLenAge <- function(Pdata,
    colnames(tempdata) <- c("Length_cm", "Age", "Sex")
    pars <- unlist(estsall[1, c(3, 4, 2, 5, 6), drop = TRUE])
    names(pars) <- NULL
+
    latage <- nwfscSurvey::PlotVarLengthAtAge.fn(
      dat = tempdata, parStart = pars,
      dir = dir, main = "PacFIN", ageBin = 1,
