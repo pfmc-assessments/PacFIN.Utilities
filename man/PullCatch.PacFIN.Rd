@@ -18,7 +18,9 @@ PullCatch.PacFIN(
 species code that you desire to pull data for. Known also as
 \code{"SPID"} in the PacFIN database if using legacy sql scripts.
 An example for sablefish would be
-\code{pacfin_species_code = "SABL"}.}
+\code{pacfin_species_code = "SABL"}.
+A list of pacfin_species_code
+can be found online: https://pacfin.psmfc.org/pacfin_pub/marketcat.php}
 
 \item{username}{The username you would like to use to access data from
 \code{datasourcename}. The default is to generate \code{username}
@@ -68,6 +70,17 @@ research (R), and unknown (XX)
 \description{
 Pull Catch Data from the Comprehensive Fish Ticket table
 in the PacFIN database.
+}
+\details{
+Species with special considerations:
+URCK: There is an rockfish (URCK) category that consists on unassigned rockfish
+landings. The majority of the catch is prior to 2001. Currently, there is no agreed upon
+methodology to parsed these landing out to specific rockfish species. At present, landings
+in this category are not included in species-specific rockfish catch pulls.
+POP: In PacFIN there are four species code that can be associated with Pacific ocean perch.
+These are POP, POP1, POP2, UPOP. The POP1 is general shelf/slope rockfish and not Pacific
+ocean perch specific landings. These records occur only in Oregon. As of the 2017 assessment,
+these records should be removed from the catch file.
 }
 \seealso{
 \link{PullNominal.PacFIN} for how nominal species codes are determined.
