@@ -20,8 +20,9 @@ Query the user name of your local machine to generate
 a suspected user name for the \code{datasourcename}.
 }
 \examples{
+\dontrun{
 getUserName()
-
+}
 }
 \author{
 Kelli F. Johnson

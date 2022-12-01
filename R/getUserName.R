@@ -9,8 +9,9 @@
 #' @return A single character value to use as input in functions
 #' calling for \code{username = }.
 #' @examples
+#' \dontrun{
 #' getUserName()
-#'
+#' }
 getUserName <- function(datasourcename = c("PacFIN")) {
 
   #### Get username (un) info from computer
