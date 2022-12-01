@@ -216,8 +216,9 @@ specified, with added columns</p><ul><li><p>year: initialized from SAMPLE_YEAR<b
     <div id="details">
     <h2>Details</h2>
     <p>The original fields in the returned data are left untouched,
-with the exception of</p><ul><li><p><code>SEX</code>: modified using <a href="getSex.html">getSex</a> and upon return will only include
-character values such that fish with an unidentified sex are now <code>"U"</code>.</p></li>
+with the exception of</p><ul><li><p><code>SEX</code>: modified using <code><a href="https://rdrr.io/pkg/nwfscSurvey/man/codify_sex.html" class="external-link">nwfscSurvey::codify_sex()</a></code> and upon return will
+only include character values such that fish with an unidentified sex are
+now <code>"U"</code>.</p></li>
 <li><p>Age: the best ages to use going forward rather than just the first age read.</p></li>
 </ul><div class="section">
 <h3 id="clean">CLEAN<a class="anchor" aria-label="anchor" href="#clean"></a></h3>
