@@ -187,13 +187,9 @@ cleanPacFIN <- function(
   }
 
   #### Column names
-  for (i in c("fishery", "UNK_WT")) {
-    if (!i %in% colnames(Pdata)) {
-      Pdata[, i] <- switch(i,
-        fishery = 1,
-        UNK_WT = NA)
-    } # End if
-  } # End for
+  if (!"fishery" %in% colnames(Pdata)) {
+    Pdata[, "fishery"] <- 1
+  }
   Pdata$fishyr <- Pdata$SAMPLE_YEAR
   Pdata$year <- Pdata$SAMPLE_YEAR
   if (!missing(savedir)) {
