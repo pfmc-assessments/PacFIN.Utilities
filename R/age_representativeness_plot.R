@@ -31,25 +31,14 @@
 #'
 #' @export
 #' @author Ian Taylor, Kathryn Doering, Brian Langseth, Kelli Johnson
-#' @examples
-#' data(XMPL.BDS, package = "PacFIN.Utilities")
-#' state_codes <- c("W", "O", "C")
-#' names(state_codes) <- c("WA", "OR", "CA") # just for clarity
-#' for (i in state_codes) {
-#'   age_representativeness_plot(XMPL.BDS[XMPL.BDS$SOURCE_AGID == i, ],
-#'     file = paste0("agelength_bds_", i, ".png"),
-#'     ylim = c(0, 0.1)
-#'   ) # trial and error for now to figure out
-#' }
-age_representativeness_plot <- function(
-  bio,
-  xlim = c(0, max_break),
-  ylim = c(0, 0.049),
-  max_break = 155,
-  file = NULL,
-  plot_panels = c(10, 2),
-  wait2plot = FALSE
-) {
+age_representativeness_plot <- function(bio,
+                                        xlim = c(0, max_break),
+                                        ylim = c(0, 0.049),
+                                        max_break = 155,
+                                        file = NULL,
+                                        plot_panels = c(10, 2),
+                                        wait2plot = FALSE
+                                      ) {
   if (!is.null(file)) {
     on.exit(grDevices::dev.off(), add = TRUE)
   }

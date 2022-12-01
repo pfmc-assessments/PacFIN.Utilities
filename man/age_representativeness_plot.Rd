@@ -53,17 +53,6 @@ Output on figures include K-S p-value, which is the p-value output from
 as \code{sum(sqrt(pi1*pi2))} where pi1 and pi2 are the proportion of data in
 bin i for each of the two distributions.
 }
-\examples{
-data(XMPL.BDS, package = "PacFIN.Utilities")
-state_codes <- c("W", "O", "C")
-names(state_codes) <- c("WA", "OR", "CA") # just for clarity
-for (i in state_codes) {
-  age_representativeness_plot(XMPL.BDS[XMPL.BDS$SOURCE_AGID == i, ],
-    file = paste0("agelength_bds_", i, ".png"),
-    ylim = c(0, 0.1)
-  ) # trial and error for now to figure out
-}
-}
 \author{
 Ian Taylor, Kathryn Doering, Brian Langseth, Kelli Johnson
 }
