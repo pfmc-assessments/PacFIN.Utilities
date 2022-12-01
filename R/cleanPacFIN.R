@@ -94,8 +94,9 @@
 #' @details
 #' The original fields in the returned data are left untouched,
 #' with the exception of
-#' * `SEX`: modified using [getSex] and upon return will only include
-#' character values such that fish with an unidentified sex are now `"U"`.
+#' * `SEX`: modified using [nwfscSurvey::codify_sex()] and upon return will
+#' only include character values such that fish with an unidentified sex are
+#' now `"U"`.
 #' * Age: the best ages to use going forward rather than just the first age read.
 #'
 #' \subsection{CLEAN}{
@@ -210,7 +211,7 @@ cleanPacFIN <- function(
   Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
 
   #### Sex
-  Pdata[, "SEX"] <- getSex(data.vector = Pdata[, "SEX"], verbose = verbose)
+  Pdata[, "SEX"] <- nwfscSurvey::codify_sex(data.vector = Pdata[, "SEX"])
 
   #### Lengths
   Pdata[, "length"] <- getLength(Pdata, verbose = verbose,

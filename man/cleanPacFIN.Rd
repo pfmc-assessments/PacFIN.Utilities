@@ -147,8 +147,9 @@ US West Coast stock assessments.
 The original fields in the returned data are left untouched,
 with the exception of
 \itemize{
-\item \code{SEX}: modified using \link{getSex} and upon return will only include
-character values such that fish with an unidentified sex are now \code{"U"}.
+\item \code{SEX}: modified using \code{\link[nwfscSurvey:codify_sex]{nwfscSurvey::codify_sex()}} and upon return will
+only include character values such that fish with an unidentified sex are
+now \code{"U"}.
 \item Age: the best ages to use going forward rather than just the first age read.
 }
 
