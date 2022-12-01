@@ -151,7 +151,7 @@ checkLenAge <- function(Pdata,
       !is.na(Pdata[, age_col]), ]
     estsall <- data.frame(Sex = sex_vec,
       do.call("rbind", tapply(seq(NROW(tempdata)), tempdata[, sex_col],
-      function(x) exp(stats::optim(fn = nwfscAgeingError::estgrowth.vb,
+      function(x) exp(stats::optim(fn = nwfscSurvey::fit_vbgrowth,
                   par = log(pars_in),
                   hessian = FALSE,
                   Ages = tempdata[x, age_col],

@@ -50,8 +50,7 @@ Suggests:
     testthat,
     usethis
 Remotes:
-  github::nwfsc-assess/nwfscSurvey,
-  github::nwfsc-assess/nwfscAgeingError
+  github::nwfsc-assess/nwfscSurvey
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
