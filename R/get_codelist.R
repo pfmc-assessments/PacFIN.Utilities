@@ -7,7 +7,7 @@
 #' @details S3:
 #' This is an S3 class object, of which I am not very familiar with.
 #' Thus, feel free to provide comments on the code or submit an
-#' [issue](https://github.com/nwfsc-assess/PacFIN.Utilities/issues) if
+#' [issue](https://github.com/pfmc-assessments/PacFIN.Utilities/issues) if
 #' you have ideas or corrections.
 #'
 #' @details source:
