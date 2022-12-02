@@ -50,7 +50,7 @@ Suggests:
     testthat,
     usethis
 Remotes:
-  github::nwfsc-assess/nwfscSurvey
+  github::pfmc-assessments/nwfscSurvey
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
