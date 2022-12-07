@@ -8,20 +8,18 @@
 #' @author Kelli F. Johnson
 #'
 sql.bds <- function(pacfin_species_code) {
-  spid <- glue::glue("('{{{ pacfin_species_code }}}')")
   # Consider changing 
   # * VESSEL_NUM to VESSEL_ID b/c less NULL
   # * TOTAL_WGT, might be spp weight
   # * WGTMAX, i don't think this one matters
   # * WGTMIN, i don't think this one matters
   # * all_cluster_sum, done with ave
-  sqlcall <- paste0(
-    "Select s.*",
-   "from
-          pacfin_marts.COMPREHENSIVE_BDS_COMM s
-   where
-          s.PACFIN_SPECIES_CODE = any ", spid
+  sqlcall <- glue::glue("
+   SELECT *
+   FROM PACFIN_MARTS.COMPREHENSIVE_BDS_COMM
+   WHERE PACFIN_SPECIES_CODE = any('{pacfin_species_code}')
+   "
   )
-  sqlcall <- gsub("\\n", "", sqlcall)
+  sqlcall <- gsub("\\n", " ", sqlcall)
   return(sqlcall)
 }
