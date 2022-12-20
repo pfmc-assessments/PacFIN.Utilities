@@ -106,6 +106,9 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   fComps <- NULL
   uComps <- NULL
 
+  lbins_in <- lbins 
+  abins_in <- abins 
+
   # Which comps are we doing?
   Names = names(inComps)
   AGE = which(Names == "Age")
@@ -128,7 +131,8 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     path = dirname(normalizePath(fname, mustWork = FALSE)),
     recursive = TRUE,
     showWarnings = FALSE
-    )
+  )
+
   # check for existence of the file before writing anything
   if(file.exists(fname)){
     if(overwrite){
@@ -153,11 +157,12 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     inComps$unsexed <- inComps$usamps <- inComps$utows <- 0
   }
 
-  # Unsexed fish should have been assigned sex with doSexRatio.  
-  # Re-using those columns to represent males + females
+  # Create a column that combines males and females
   inComps$both   <- inComps$male + inComps$female
   inComps$bothsamps <- inComps$msamps + inComps$fsamps
-  inComps$bothtows  <- inComps$alltows
+  # All tows is all unique tows - unsure whether the line
+  # below should be ftows + mtows instead
+  inComps$bothtows  <- inComps$mtows + inComps$ftows #inComps$alltows
 
   # Fix length bins
   if ( !is.null(inComps$lengthcm) ) {
@@ -229,18 +234,18 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     # matrix will be Ages, Ntows, Nsamps.
     # it gets re-ordered later.
     NCOLS <- 2 + length(abins)
-    OutNames <- c(paste("A",abins, sep=""), "Ntows","Nsamps")
+    OutNames <- c(paste("A", abins, sep=""), "Ntows","Nsamps")
 
     if ( length(LEN) > 0 ) {
       AAL <- TRUE
-      STRAT <- AGE-2
+      STRAT <- AGE - 2
       KeyNames <- c(Names[1:STRAT], "lbin")
       inComps$key <- apply(inComps[,KeyNames, drop = FALSE], 1, paste, collapse = " ")
 
       # matrix will be Ages, LbinLo, LbinHi, Ntows, Nsamps.
       # it gets re-ordered later.
       NCOLS <-  4 + length(abins)
-      OutNames <- c(paste("A",abins,sep=""), "lbin","Ntows","Nsamps")
+      OutNames <- c(paste("A", abins, sep = ""), "lbin","Ntows","Nsamps")
     } # End if
   } else {
     target <- "lbin"
@@ -283,7 +288,6 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   # For each sex in turn
   for ( g in c("m","f","u","both")) {
     myname <- g
-    #if (myname == "u") { myname <- "b" }
     if (verbose) {
       cat(paste("Assembling, sex is:", myname, "\n"))
       utils::flush.console()
@@ -310,17 +314,6 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
       for ( s in 1:length(slice[,target]) ) {
           index <- slice[s, target]
-
-          #KFJ(2015-05-01) TODO:
-          # BUG ... If there is more than one row for a given index or bin
-          # then the value will overwrite the previous value instead of summing
-
-          # It would actually be a bug if there were more than one row for a given
-          # index or bin!  The output from getComps shouldn't have any way of producing
-          # an extra.  And we have no way here of detecting that, since we're accessing
-          # the target vector sequentially, without checking the corresponding length/age.
-
-          # But summing the bin doesn't hurt anything.
           output[k, index] <- slice[s, g] + output[k, index]
       } # End for s
 
@@ -343,13 +336,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   # Now assemble everything and write to a file
   # Note that we are stripping the last, dummy bin.
-
   NCOLS <- ifelse(AAL, NCOLS - 5, NCOLS - 3)
-  # KFJ(2015-06-16): Can also use the following b/c
-  # with Inf as the last dummy column it will not be
-  # selected as a number, and if other columns are later
-  # added for some reason then the code will not break.
-  # NCOLS <- max(grep("[A-Z]{1}[0-9]+", colnames(output)))
 
   # CRW: I think this is creating a matrix of a specific size (mComps)
   # which is then being erased (blanks[,] <- 0)
@@ -361,7 +348,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   uStrat <- data.frame(uStrat[, "fishyr"], 
                        month = 1,
                        uStrat[, 'fleet'])
-  colnames(uStrat) <-  c("fishyr", "month", "fleet")
+  colnames(uStrat) <-  c("year", "month", "fleet")
 
   # Fill the rest of the values
   uStrat$sex <- NA
@@ -403,14 +390,30 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   Ninput_u[is.na(Ninput_u)] <- 0
 
   if(!AAL){
+    if(is.null(lbins_in)) {
+      bins <- abins_in
+    } else {
+      bins <- lbins_in
+    }
     FthenM <- cbind(uStrat, round(bothComps$Ntows, 0), round(bothComps$Nsamps, 0), Ninput_b,
                     fComps[,1:NCOLS], mComps[,1:NCOLS])
+    index <- grep("Ninput", names(FthenM))
+    names(FthenM)[(index + 1):ncol(FthenM)] <- c(paste0('F', bins), paste0("M", bins))
+    
     Fout  <- cbind(uStrat, round(fComps$Ntows, 0), round(fComps$Nsamps, 0), Ninput_f,
                     fComps[,1:NCOLS], fComps[,1:NCOLS])
+    index <- grep("Ninput", names(Fout))
+    colnames(Fout)[(index + 1):ncol(Fout)] <- c(paste0('F', bins), paste0("F.", bins))
+    
     Mout  <- cbind(uStrat, round(mComps$Ntows, 0), round(mComps$Nsamps, 0), Ninput_m,
                     mComps[,1:NCOLS], mComps[,1:NCOLS])
+    index <- grep("Ninput", names(Mout))
+    colnames(Mout)[(index + 1):ncol(Mout)] <- c(paste0('M', bins), paste0("M.", bins))
+    
     Uout  <- cbind(uStrat, round(uComps$Ntows, 0), round(uComps$Nsamps, 0), Ninput_u,
                      uComps[,1:NCOLS], uComps[,1:NCOLS])
+    index <- grep("Ninput", names(Uout))
+    colnames(Uout)[(index + 1):ncol(Uout)] <- c(paste0('U', bins), paste0("U.", bins))
   } else {
     # AAL
     Fout <- cbind(uStrat, fComps$Nsamps, fComps[,1:NCOLS], fComps[,1:NCOLS])
@@ -435,10 +438,11 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   if(!AAL) { names(FthenM)[index] <- "Nsamps" }
 
   if(!AAL){
-    names(Mout)[index + 2]   <- "InputN"
-    names(Fout)[index + 2]   <- "InputN"
-    names(Uout)[index + 2]   <- "InputN"
-    names(FthenM)[index + 2] <- "InputN"
+    index <- grep("Ninput", names(Fout))
+    names(Mout)[index]   <- "InputN"
+    names(Fout)[index]   <- "InputN"
+    names(Uout)[index]   <- "InputN"
+    names(FthenM)[index] <- "InputN"
   }
 
   # Remove empty rows
@@ -456,20 +460,34 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   # IGT(2019-04-25): I tried using an apply function but kept messing up,
   # so fell back on a simple loop over the rows
   rescale.comps <- function(out){
-    value.names <- grep("^[alfmALFM][0-9]+", colnames(out), value = TRUE)
+    value.names <- grep("^[alfmuALFMU][0-9]+", colnames(out), value = TRUE)
     for(irow in 1:nrow(out)){
       out[irow, names(out) %in% value.names] <-
         out[irow, names(out) %in% value.names] /
           sum(out[irow, names(out) %in% value.names])
+    }
+    # Code to apply the rescaled comps to the second matrix
+    # for Mout, Fout, or Uout composition data.
+    if (length(value.names) < (dim(out)[2] - 8)){
+      find <- which(names(out) == value.names[1])
+      ind <- (find + length(value.names)):dim(out)[2]        
+      out[, ind] <- out[, names(out) %in% value.names]
     }
     return(out)
   }
 
   # function to round comps
   round.comps <- function(out, digits){
-    value.names <- grep("^[alfmALFM][0-9]+", colnames(out), value = TRUE)
-    out[,names(out) %in% value.names] <-
-      round(out[,names(out) %in% value.names], digits = digits)
+    value.names <- grep("^[alfmuALFMU][0-9]+", colnames(out), value = TRUE)
+    out[, names(out) %in% value.names] <-
+      round(out[, names(out) %in% value.names], digits = digits)
+
+    if (length(value.names) < (dim(out)[2] - 8)){
+      find <- which(names(out) == value.names[1])
+      ind <- (length(value.names) + find):dim(out)[2]
+      out[, ind] <- 
+        round(out[, names(out) %in% value.names], digits = digits)
+    }
     return(out)
   }
   
@@ -480,10 +498,14 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     if (verbose) {
       message("rescaling comps to sum to 1")
     }
-    if (dim(Uout)[1] != 0)   { Uout   <- rescale.comps(Uout) }
-    if (dim(Fout)[1] != 0)   { Fout   <- rescale.comps(Fout) }
-    if (dim(Mout)[1] != 0)   { Mout   <- rescale.comps(Mout) }
-    if (!AAL) { if (dim(FthenM)[1] != 0) { FthenM <- rescale.comps(FthenM) } }
+    if (dim(Uout)[1] != 0) { Uout <- rescale.comps(Uout) }
+    if (dim(Fout)[1] != 0) { Fout <- rescale.comps(Fout) }
+    if (dim(Mout)[1] != 0) { Mout <- rescale.comps(Mout) }
+    if (!AAL) { 
+      if (dim(FthenM)[1] != 0) { 
+        FthenM <- rescale.comps(FthenM) 
+      } 
+    }
   }
 
   # optionally round off to chosen value
