@@ -1,4 +1,4 @@
-#' Get a Connection to a Database and Return a Query
+#' Get a connection to a database and return a query
 #'
 #' Get a connection established to a database and return the information desired
 #' in the specific query.
@@ -16,23 +16,30 @@
 #' error message because the main call is wrapped in
 #' \code{\link[base]{tryCatch}}.
 #'
-getDB <- function(sql, datasourcename = "PacFIN",
-  username = getUserName(datasourcename), password,
-  asis = FALSE) {
+getDB <- function(sql,
+                  datasourcename = "PacFIN",
+                  username = getUserName(datasourcename),
+                  password,
+                  asis = FALSE) {
+  # Check that suggested package is available
+  stopifnot(requireNamespace("RODBC", quietly = TRUE))
 
-  #### Get password and username
+  # Get password and username
   if (missing(password)) {
     password <- readline(prompt = "Enter PacFIN password without quotes\n")
   }
 
-  #### Pull from database
+  # Pull from database
   database <- RODBC::odbcConnect(
     dsn = datasourcename,
-    uid = username, pw = password)
+    uid = username,
+    pw = password
+  )
   on.exit(RODBC::odbcClose(database))
-  out <- tryCatch(RODBC::sqlQuery(database, sql, as.is = asis),
-    error = function(e) e)
+  out <- tryCatch(
+    RODBC::sqlQuery(database, sql, as.is = asis),
+    error = function(e) e
+  )
 
   return(out)
-
 }
