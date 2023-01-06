@@ -40,7 +40,6 @@ Imports:
     measurements,
     nwfscSurvey,
     purrr,
-    RODBC,
     stats,
     tibble,
     tidyr,
@@ -48,6 +47,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
+    RODBC,
     testthat,
     usethis
 Remotes:
