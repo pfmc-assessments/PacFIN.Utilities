@@ -115,7 +115,7 @@ EF1_Denominator = function(Pdata,
       mean(bestweight),
       bestweight)
     ) %>%
-  # Calculate WA sample weights and weight of unsexed fish per SAMPLE_NO
+  # Calculate sample weights and weight of unsexed fish per SAMPLE_NO
   dplyr::mutate(
     Wt_Sampled_3_L = sum(na.rm = TRUE,
       ifelse(is.na(length), NA, bestweight)),

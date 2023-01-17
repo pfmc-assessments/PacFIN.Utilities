@@ -32,6 +32,7 @@ Imports:
     dplyr,
     ggplot2,
     ggridges,
+    glue,
     graphics,
     grDevices,
     lifecycle,
