@@ -207,7 +207,7 @@ cleanPacFIN <- function(
   Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
 
   #### Sex
-  Pdata[, "SEX"] <- nwfscSurvey::codify_sex(data.vector = Pdata[, "SEX"])
+  Pdata[, "SEX"] <- nwfscSurvey::codify_sex(Pdata[, "SEX"])
 
   #### Lengths
   Pdata[, "length"] <- getLength(Pdata, verbose = verbose,
