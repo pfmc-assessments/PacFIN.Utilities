@@ -88,7 +88,7 @@
 #' * state: initialized from SOURCE_AGID.  Change using [getState]
 #' * length: length in mm, where `NA` indicates length is not available
 #' * lengthcm: floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH
-#' * geargroup: the gear group associated with each [GRID](http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr)
+#' * geargroup: the gear group associated with each [GRID](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
 #' * weightkg: fish weight in kg from FISH_WEIGHT and FISH_WEIGHT_UNITS
 #'
 #' @details
