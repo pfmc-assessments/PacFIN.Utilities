@@ -88,7 +88,7 @@
 #' * state: initialized from SOURCE_AGID.  Change using [getState]
 #' * length: length in mm, where `NA` indicates length is not available
 #' * lengthcm: floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH
-#' * geargroup: the gear group associated with each [GRID](http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr)
+#' * geargroup: the gear group associated with each [GRID](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
 #' * weightkg: fish weight in kg from FISH_WEIGHT and FISH_WEIGHT_UNITS
 #'
 #' @details
@@ -188,13 +188,9 @@ cleanPacFIN <- function(
   }
 
   #### Column names
-  for (i in c("fishery", "UNK_WT")) {
-    if (!i %in% colnames(Pdata)) {
-      Pdata[, i] <- switch(i,
-        fishery = 1,
-        UNK_WT = NA)
-    } # End if
-  } # End for
+  if (!"fishery" %in% colnames(Pdata)) {
+    Pdata[, "fishery"] <- 1
+  }
   Pdata$fishyr <- Pdata$SAMPLE_YEAR
   Pdata$year <- Pdata$SAMPLE_YEAR
   if (!missing(savedir)) {
@@ -211,7 +207,7 @@ cleanPacFIN <- function(
   Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
 
   #### Sex
-  Pdata[, "SEX"] <- nwfscSurvey::codify_sex(data.vector = Pdata[, "SEX"])
+  Pdata[, "SEX"] <- nwfscSurvey::codify_sex(Pdata[, "SEX"])
 
   #### Lengths
   Pdata[, "length"] <- getLength(Pdata, verbose = verbose,
