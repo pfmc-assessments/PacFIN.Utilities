@@ -227,7 +227,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   AAL = FALSE
   if ( length(AGE) > 0 ) {
     target <- "abin"
-    STRAT  <- AGE-1
+    STRAT  <- AGE - 1
     KeyNames <- c(Names[1:STRAT])
     inComps$key <- apply(inComps[,KeyNames, drop = FALSE], 1, paste, collapse = " ")
 
@@ -468,7 +468,12 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     }
     # Code to apply the rescaled comps to the second matrix
     # for Mout, Fout, or Uout composition data.
-    if (length(value.names) < (dim(out)[2] - 8)){
+    if ("ageErr" %in% colnames(out)){
+      adj <- 11
+    } else {
+      adj <- 8
+    }
+    if (length(value.names) < (dim(out)[2] - adj)){
       find <- which(names(out) == value.names[1])
       ind <- (find + length(value.names)):dim(out)[2]        
       out[, ind] <- out[, names(out) %in% value.names]
@@ -482,7 +487,13 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     out[, names(out) %in% value.names] <-
       round(out[, names(out) %in% value.names], digits = digits)
 
-    if (length(value.names) < (dim(out)[2] - 8)){
+    if ("ageErr" %in% colnames(out)){
+      adj <- 11
+    } else {
+      adj <- 8
+    }
+
+    if (length(value.names) < (dim(out)[2] - adj)){
       find <- which(names(out) == value.names[1])
       ind <- (length(value.names) + find):dim(out)[2]
       out[, ind] <- 
