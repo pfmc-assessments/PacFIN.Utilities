@@ -92,7 +92,7 @@
 #'   Conditionally returns a dataframe if the \code{out} argument
 #'   specifies the type of composition to return.
 #'   
-#' @author Andi Stephens
+#' @author Andi Stephens, Chantel Wetzel, Kelli Johnson, Ian Taylor
 #' @seealso \code{\link{getComps}}, \code{\link{doSexRatio}}
 #'
 ##############################################################################
@@ -338,7 +338,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   # Note that we are stripping the last, dummy bin.
   NCOLS <- ifelse(AAL, NCOLS - 5, NCOLS - 3)
 
-  # CRW: I think this is creating a matrix of a specific size (mComps)
+  # Creating a matrix of a specific size (mComps)
   # which is then being erased (blanks[,] <- 0)
   blanks <- mComps[1:NCOLS]
   blanks[,] <- 0
@@ -466,13 +466,18 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
         out[irow, names(out) %in% value.names] /
           sum(out[irow, names(out) %in% value.names])
     }
-    # Code to apply the rescaled comps to the second matrix
-    # for Mout, Fout, or Uout composition data.
+    # Code to apply the rescaled comps to the matrices
+    # for Mout, Fout, or Uout composition data. The adj
+    # value is based on the number of informational columns
+    # prior (year, fleet, partition) to the composition data. 
     if ("ageErr" %in% colnames(out)){
       adj <- 11
     } else {
       adj <- 8
     }
+    # Only enter this if statement for the Mout, Fout, or
+    # Uout composition data. This allows the rounding to be
+    # applied to that second copy print of the composition data.
     if (length(value.names) < (dim(out)[2] - adj)){
       find <- which(names(out) == value.names[1])
       ind <- (find + length(value.names)):dim(out)[2]        
