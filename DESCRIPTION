@@ -51,7 +51,7 @@ Authors@R: c(
     )
 Description: Manipulates data from the PacFIN database for stock synthesis.
 Depends:
-    R (>= 3.5)
+    R (>= 4.2)
 License: MIT + file LICENSE
 LazyData: true
 Imports:
