@@ -27,8 +27,9 @@ Authors@R: c(
       given = c("Brian", "J."),
       family = "Langseth",
       role = "ctb",
-      email = "brian.langseth@noaa.gov"
-    )
+      email = "brian.langseth@noaa.gov",
+      comment = c(ORCID = "0000-0002-9901-6146")
+    ),
     person(
       given = "Andi",
       family = "Stephens",
