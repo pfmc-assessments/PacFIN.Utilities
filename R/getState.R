@@ -56,8 +56,8 @@
 #' )
 #'
 getState <- function (Pdata,
-  source = c("AGENCY_CODE", "SOURCE_AGID"),
-  verbose = FALSE) {
+                      source = c("AGENCY_CODE", "SOURCE_AGID"),
+                      verbose = TRUE) {
 
   if (any(source %in% c("PSMFC_CATCH_AREA_CODE", "PSMFC_ARID"))) {
     stop("'PSMFC_CATCH_AREA_CODE' and 'PSMFC_ARID' are no longer supported ",

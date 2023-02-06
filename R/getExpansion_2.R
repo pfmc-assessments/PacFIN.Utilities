@@ -1,16 +1,15 @@
 #' Expand PacFIN trip samples to catches
 #'
-#' The second-stage expansion calculates the
-#' per-year and stratification (e.g., gear group) total catch
-#' divided by the sampled catch and appends it to the input data as
-#' \code{Expansion_Factor_2}.
+#' The second-stage expansion calculates the per-year and stratification (e.g.,
+#' gear group) total catch divided by the sampled catch and appends it to the
+#' input data as \code{Expansion_Factor_2}.
 #'
 #' @export
 #'
 #' @author Andi Stephens
 #'
 #' @template Pdata
-#' @param Catch A dataframe of catch data, in pounds or in metric tonnes.
+#' @param Catch A data frame of catch data, in pounds or in metric tonnes.
 #' @param Units The units of the \code{Catch} data frame, see
 #' \code{measurements::conv_unit_options[["mass"]]}
 #' for options. Typical units are metric tonnes (e.g., \code{"metric_ton"})
@@ -58,10 +57,14 @@
 #' for a given year or row). Catches are converted to pounds prior to dividing.
 #' Thus, per-stratum Expansion_Factor_2 is the catch / sampled catch.
 #'
-getExpansion_2 <- function(Pdata, Catch,
-  Units = c("MT", "LB"), Convert = NULL, maxExp = 0.95,
-  stratification.cols,
-  verbose = TRUE, savedir) {
+getExpansion_2 <- function(Pdata,
+                           Catch,
+                           Units = c("MT", "LB"),
+                           Convert = NULL,
+                           maxExp = 0.95,
+                           stratification.cols,
+                           verbose = TRUE,
+                           savedir) {
 
   #### Set up
   # Check Unit input

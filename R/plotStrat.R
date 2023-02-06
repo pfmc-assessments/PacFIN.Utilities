@@ -11,16 +11,15 @@
 #' @param col.length Length column name.
 #' @param height Figure height.
 #' @param width Figure width.
-plotStrat <- function(
-  data,
-  dir = getwd(),
-  npages = 5,
-  col.fleet = "fleet",
-  col.area = "state",
-  col.age = "Age",
-  col.length = "lengthcm",
-  height = 10, width = 10
-  ) {
+plotStrat <- function(data,
+                      dir = getwd(),
+                      npages = 5,
+                      col.fleet = "fleet",
+                      col.area = "state",
+                      col.age = "Age",
+                      col.length = "lengthcm",
+                      height = 10,
+                      width = 10) {
 
   splits <- split(unique(data$year)[order(unique(data$year))], 
     ggplot2::cut_number(unique(data$year)[order(unique(data$year))], npages))

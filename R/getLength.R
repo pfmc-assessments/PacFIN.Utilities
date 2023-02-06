@@ -12,7 +12,9 @@
 #' @return A vector of lengths in millimeters. Values of `NA` indicate that
 #' the length should not be used in down-stream calculations.
 #'
-getLength <- function(Pdata, verbose = TRUE, keep) {
+getLength <- function(Pdata,
+                      verbose = TRUE,
+                      keep) {
 
   # Initial checks
   # Early return

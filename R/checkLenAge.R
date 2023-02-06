@@ -47,10 +47,23 @@
 #' @author Chantel Wetzel, Vlada Gertseva, James Thorson
 
 checkLenAge <- function(Pdata,
-  Par = list(K = 0.13, Linf = 55, L0 = 15, CV0 = 0.10, CV1 = 0.10),
-  len_col = "lengthcm", age_col = "Age", sex_col = "SEX",
-  mult = 1, keepAll = TRUE, sdFactor = 4, Optim = TRUE,
-  precision = 1, verbose = FALSE, dir = NULL) {
+                        Par = list(
+                          K = 0.13,
+                          Linf = 55,
+                          L0 = 15,
+                          CV0 = 0.10,
+                          CV1 = 0.10
+                        ),
+                        len_col = "lengthcm",
+                        age_col = "Age",
+                        sex_col = "SEX",
+                        mult = 1,
+                        keepAll = TRUE,
+                        sdFactor = 4,
+                        Optim = TRUE,
+                        precision = 1,
+                        verbose = TRUE,
+                        dir = NULL) {
 
   #### Initialize the three new columns
   Pdata$Lhat_pred <- NA

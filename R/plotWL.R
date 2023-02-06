@@ -16,8 +16,12 @@
 #' [getWLpars] to calculate parameters of the weight-length relationship;
 #' [getweight] to predict weights from empirical lengths
 #'
-plotWL <- function(length, sex, weight, weight.calc,
-  xlab = "Length (cm)", ylab = "Weight (kg)") {
+plotWL <- function(length,
+                   sex,
+                   weight,
+                   weight.calc,
+                   xlab = "Length (cm)",
+                   ylab = "Weight (kg)") {
   if (missing(sex)) {
     sex <- rep("all", length = length(length))
   }

@@ -19,8 +19,10 @@
 #' comps_bins(1:8, breaks = c(-Inf, 3:5), includeplusgroup = TRUE)
 #' )
 #'
-comps_bins <- function(vector, breaks,
-  includeplusgroup = TRUE, returnclass = c("character", "numeric")) {
+comps_bins <- function(vector,
+                       breaks,
+                       includeplusgroup = TRUE,
+                       returnclass = c("character", "numeric")) {
   returnclass <- match.arg(returnclass)
   breaks <- sort(utils::type.convert(breaks, as.is = TRUE))
   if (includeplusgroup && utils::tail(breaks, 1) != Inf) {

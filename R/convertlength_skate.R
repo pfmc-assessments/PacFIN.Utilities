@@ -20,7 +20,8 @@
 #' @return A vector of lengths. 
 #' See \code{returntype} for detailed information on what can be returned.
 #' 
-convertlength_skate <- function(Pdata, returntype = c("all", "estimated")) {
+convertlength_skate <- function(Pdata,
+                                returntype = c("all", "estimated")) {
   matchcol <- function(data) {
     var_sex <- grep("SEX", colnames(data), value = TRUE)[1]
     var_fish_length_type <- grep(

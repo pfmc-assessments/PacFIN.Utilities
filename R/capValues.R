@@ -37,7 +37,8 @@
 #' 
 ###########################################################################
 
-capValues = function( DataCol, maxVal=0.95 ) {
+capValues <- function(DataCol,
+                      maxVal = 0.95) {
 
   if ( maxVal > 1 ) {
 

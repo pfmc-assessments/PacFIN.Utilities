@@ -17,11 +17,16 @@
 #'   in the process.
 #' @author Andi Stephens
 #' @examples
-#' ex <- getGearGroup(data.frame(GRID = c("PRT", "BMT", "FPT")), verbose = FALSE)
+#' ex <- getGearGroup(
+#'   data.frame(GRID = c("PRT", "BMT", "FPT")),
+#'   verbose = FALSE
+#' )
 #' table(ex)
 #' testthat::expect_equal(ex[ex[, "geargroup"] == "POT", "GRID"], "FPT")
 #'
-getGearGroup = function (Pdata, spp = NULL, verbose = TRUE) {
+getGearGroup <- function (Pdata,
+                          spp = NULL,
+                          verbose = TRUE) {
 
   #### Checks
   if (verbose) {

@@ -20,7 +20,8 @@
 #' 
 ##############################################################################
 
-plotRawData = function( rawData, fname=NULL ) {
+plotRawData <- function(rawData,
+                        fname = NULL) {
 
   cat( "\nRunning diagnostics\n\n" )
 

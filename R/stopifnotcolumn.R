@@ -9,7 +9,8 @@
 #' @return `TRUE` is invisibly returned if the column name is found and
 #' an informative [stop] call is initiated if the column is not present.
 #'
-stopifnotcolumn <- function(data, string) {
+stopifnotcolumn <- function(data,
+                            string) {
   if (is.na(match(string, colnames(data)))) {
     stop(string, " was not found in your data frame.")
   }

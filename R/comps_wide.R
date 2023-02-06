@@ -37,10 +37,11 @@
 #' print(comps)
 #' }
 #'
-comps_wide <- function(data, breaks,
-  col_bins = "Age",
-  col_proportions = "lf",
-  includeplusgroup = TRUE) {
+comps_wide <- function(data,
+                       breaks,
+                       col_bins = "Age",
+                       col_proportions = "lf",
+                       includeplusgroup = TRUE) {
 
   col_proportions.num <- which(colnames(data) == col_proportions)
   col_bins.num <- which(colnames(data) == col_bins)

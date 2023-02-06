@@ -64,12 +64,10 @@
 #' of rows present in the input data frame `Pdata`.
 #' If all ages are `NA`, then a vector of `NA` values is quickly returned.
 #'
-getAge <- function(
-  Pdata,
-  verbose = FALSE,
-  keep,
-  col.bestage = "FISH_AGE_YEARS_FINAL"
-  ) {
+getAge <- function(Pdata,
+                   verbose = TRUE,
+                   keep,
+                   col.bestage = "FISH_AGE_YEARS_FINAL") {
 
   if (!col.bestage %in% colnames(Pdata)) {
     Pdata[[col.bestage]] <- NA
@@ -196,7 +194,7 @@ getAge <- function(
 
 #' Summary of available age methods
 #'
-#' Use [dplyr::count] to summarize the available age types.
+#' Use [dplyr::count()] to summarize the available age types.
 #'
 #' @template Pdata
 #' @template verbose
@@ -205,7 +203,8 @@ getAge <- function(
 #' If `verbose`, then text explaining the summary is also printed to the
 #' screen prior to returning the table.
 #'
-summaryAgeMethod <- function(Pdata, verbose = FALSE) {
+summaryAgeMethod <- function(Pdata,
+                             verbose = TRUE) {
   if (verbose) {
     message("The table below includes the number of samples (n) per ageing method.\n",
       "Each age sequence number, the PacFIN delineation for age read, has its own column.\n",

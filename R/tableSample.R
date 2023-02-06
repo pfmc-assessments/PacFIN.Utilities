@@ -20,9 +20,9 @@
 #' @export
 
 tableSample <- function(Pdata,
-  fname = paste0("fishery_", comps, "_samples.csv"),
-  strat = "SOURCE_AGID",
-  comps = c("LEN", "AGE"), remove_yrs = NULL) {
+                        fname = paste0("fishery_", comps, "_samples.csv"),
+                        strat = "SOURCE_AGID",
+                        comps = c("LEN", "AGE"), remove_yrs = NULL) {
 
   Pdata$strat <- apply(Pdata[, strat, drop = FALSE], 1, paste0, collapse = ".")
   comps <- match.arg(comps, several.ok = FALSE)

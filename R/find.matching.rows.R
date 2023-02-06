@@ -32,7 +32,12 @@
 #
 #############################################################################
 
-find.matching.rows <- function(file, table, findex = 1, tindex = 1, tcol = 2, round. = T) {
+find.matching.rows <- function(file,
+                               table,
+                               findex = 1,
+                               tindex = 1,
+                               tcol = 2,
+                               round. = TRUE) {
 
   # Coerce a vector argument into a matrix
 

@@ -37,14 +37,13 @@ age_representativeness_plot <- function(bio,
                                         max_break = 155,
                                         file = NULL,
                                         plot_panels = c(10, 2),
-                                        wait2plot = FALSE
-                                      ) {
+                                        wait2plot = FALSE) {
   if (!is.null(file)) {
     on.exit(grDevices::dev.off(), add = TRUE)
   }
   if (!is.null(file)) wait2plot <- FALSE
 
-  bio <- changecol_pacfin(bio)
+  bio <- changecol_pacfin(bio, verbose = FALSE)
   bio <- bio[!(is.na(bio$Age) && is.na(bio$Length_cm)), ]
   if (nrow(bio) == 0) {
     stop("Your data does not have any length or age data.")
@@ -178,13 +177,12 @@ age_representativeness_plot <- function(bio,
 #' extracted from the survey-data warehouse.
 #'
 #' @param data A data frame with names matching those from PacFIN.
-#' @param verbose A logical value specifying if you want messages printed to
-#' the screen or not. The default is \code{FALSE}, which does not print them.
+#' @template verbose
 #' @return A data frame with names similar to those exported by the survey-data
 #' warehouse. No column are actually removed, columns are only added.
 #' @export
 
-changecol_pacfin <- function(data, verbose = FALSE) {
+changecol_pacfin <- function(data, verbose = TRUE) {
   if (!"SAMPLE_YEAR" %in% colnames(data)) {
     if (verbose) {
       message("Returning original data because SAMPLE_YEAR wasn't a column.")

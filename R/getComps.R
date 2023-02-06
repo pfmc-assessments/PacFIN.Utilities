@@ -39,9 +39,12 @@
 ############################################################################
 
 
-getComps = function( Pdata, strat = NULL,
-  Comps = c("AAL", "LEN", "AGE"),
-  defaults = c("fleet", "fishyr", "season"), verbose = FALSE, ...) {
+getComps <- function(Pdata,
+                     strat = NULL,
+                     Comps = c("AAL", "LEN", "AGE"),
+                     defaults = c("fleet", "fishyr", "season"),
+                     verbose = TRUE,
+                     ...) {
 
   # Check for expansion factor
 

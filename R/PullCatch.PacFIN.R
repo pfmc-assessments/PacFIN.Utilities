@@ -76,7 +76,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
                              password = ask_password(),
                              savedir = getwd(),
                              addnominal = TRUE,
-                             verbose = FALSE) {
+                             verbose = TRUE) {
   # todo:
   # * change input arguments to snake_case
   # * get rid of addnominal call and show users how to add it in pacfin_species_code

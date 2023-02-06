@@ -22,7 +22,8 @@
 #' @seealso This function is called by [cleanPacFIN] and heavily
 #' relies on [getGearGroup] to create gear categories.
 #'
-plotCleaned <- function (Pdata, savedir = getwd()) {
+plotCleaned <- function (Pdata,
+                         savedir = getwd()) {
 
   #### Checks
   SPID <- sort(unique(Pdata$SPID))

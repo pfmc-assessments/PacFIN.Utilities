@@ -38,9 +38,12 @@
 #' test <- getSeason(Pdata = test, season_type = 1, yearUp = 12)
 #' testthat::expect_equivalent(test[test[, "fishyr"] == 3, "season"], 1)
 #'
-getSeason <- function(Pdata, season_type = -1,
-  yearUp = NULL, yearDown = NULL, plotResults = FALSE,
-  verbose = FALSE) {
+getSeason <- function(Pdata,
+                      season_type = -1,
+                      yearUp = NULL,
+                      yearDown = NULL,
+                      plotResults = FALSE,
+                      verbose = TRUE) {
 
   if (season_type < 0) {
     Pdata$season <- 1

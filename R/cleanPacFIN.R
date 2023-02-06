@@ -140,7 +140,7 @@ cleanPacFIN <- function(Pdata,
                         keep_states = c("WA", "OR", "CA"),
                         CLEAN = TRUE,
                         spp = NULL,
-                        verbose = FALSE,
+                        verbose = TRUE,
                         savedir) {
 
   #### Deprecate old input arguments

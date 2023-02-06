@@ -69,13 +69,16 @@
 #' @author Andi Stephens
 #' @seealso [EF1_Numerator], [getExpansion_1], [getExpansion_2]
 #'
-EF1_Denominator = function(Pdata,
-  fa = 2e-06, fb = 3.5,
-  ma = 2e-06, mb = 3.5,
-  ua = 2e-06, ub = 3.5,
-  verbose = FALSE,
-  plot = FALSE,
-  col.weight = "weightkg") {
+EF1_Denominator <- function(Pdata,
+                            fa = 2e-06,
+                            fb = 3.5,
+                            ma = 2e-06,
+                            mb = 3.5,
+                            ua = 2e-06,
+                            ub = 3.5,
+                            verbose = TRUE,
+                            plot = FALSE,
+                            col.weight = "weightkg") {
 
   if (verbose) {
     cat("\nIndividual weights will be generated from the following values:\n\n")

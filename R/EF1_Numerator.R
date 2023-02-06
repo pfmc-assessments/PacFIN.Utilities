@@ -33,7 +33,9 @@
 #' @template plot
 #' @author Andi Stephens
 
-EF1_Numerator = function(Pdata, verbose = FALSE, plot = FALSE) {
+EF1_Numerator = function(Pdata,
+                         verbose = TRUE,
+                         plot = FALSE) {
 
   Pdata$Trip_Sampled_Lbs <- dplyr::coalesce(
     Pdata[["EXP_WT"]], Pdata[["RWT_LBS"]])

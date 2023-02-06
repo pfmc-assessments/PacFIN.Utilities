@@ -101,10 +101,19 @@
 #' @seealso \code{\link{getComps}}, \code{\link{doSexRatio}}
 #'
 ##############################################################################
-writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
-                      maxAge = Inf, month = 7, partition = 2, ageErr = 0,
-                      dummybins = FALSE, sum1 = FALSE, digits = 4,
-                      overwrite = TRUE, verbose = FALSE) {
+writeComps <- function(inComps,
+                       fname = NULL,
+                       abins = NULL,
+                       lbins = NULL,
+                       maxAge = Inf,
+                       month = 7,
+                       partition = 2,
+                       ageErr = 0,
+                       dummybins = FALSE,
+                       sum1 = FALSE,
+                       digits = 4,
+                       overwrite = TRUE,
+                       verbose = FALSE) {
 
   # Check month input vs seasons in data
   if("season" %in% names(inComps) && max(inComps[["season"]]) != length(month)) {

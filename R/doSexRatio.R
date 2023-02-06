@@ -49,13 +49,11 @@
 #' [getComps], [writeComps]
 #'
 
-doSexRatio <- function(
-  CompData,
-  ratioU,
-  maxsizeU,
-  GTsizeU,
-  savedir
-) {
+doSexRatio <- function(CompData,
+                       ratioU,
+                       maxsizeU,
+                       GTsizeU,
+                       savedir) {
 
   # If AGE comps, Bins are ages, not lengths.  Rename "age" to "lengthcm", then put
   # it back at the end!

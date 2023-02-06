@@ -34,14 +34,21 @@
 #' In particular columns starting with
 #' Expansion_Factor_1 are available for setting the Final_Expansion_Factor.
 #'
-getExpansion_1 <- function(Pdata, maxExp = 0.95,
-  Exp_WA = TRUE,
-  fa = NA, fb = NA, ma = NA, mb = NA, ua = NA, ub = NA,
-  verbose = FALSE, plot = FALSE) {
+getExpansion_1 <- function(Pdata,
+                           maxExp = 0.95,
+                           Exp_WA = TRUE,
+                           fa = NA,
+                           fb = NA,
+                           ma = NA,
+                           mb = NA,
+                           ua = NA,
+                           ub = NA,
+                           verbose = TRUE,
+                           plot = FALSE) {
 
   # Calculate length-weight relationship
   if (all(mapply(is.na, c(fa, ma, ua)))) {
-    pars <- getWLpars(data = Pdata, verbose = FALSE)
+    pars <- getWLpars(data = Pdata, verbose = verbose)
     fa <- ifelse(is.na(fa), pars["females", "A"], fa)
     fb <- ifelse(is.na(fb), pars["females", "B"], fb)
     ma <- ifelse(is.na(ma), pars["males", "A"], ma)

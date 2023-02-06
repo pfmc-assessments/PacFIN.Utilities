@@ -31,12 +31,10 @@
 #' This will happen when there are no females in your data set,
 #' for example.
 #'
-getWLpars <- function(
-  data,
-  col.length = "lengthcm",
-  col.weight = "weightkg",
-  verbose = FALSE
-  ) {
+getWLpars <- function(data,
+                      col.length = "lengthcm",
+                      col.weight = "weightkg",
+                      verbose = TRUE) {
 
   col.length <- tolower(col.length)
   col.weight <- tolower(col.weight)

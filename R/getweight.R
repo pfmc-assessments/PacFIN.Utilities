@@ -28,13 +28,12 @@
 #' parameters input to the function.
 #' Weights are in the same units used to calculate things, i.e., kg.
 #'
-getweight <- function(
-  length,
-  sex,
-  pars,
-  unit.out = c("lb", "kg"),
-  weight,
-  unit.in) {
+getweight <- function(length,
+                      sex,
+                      pars,
+                      unit.out = c("lb", "kg"),
+                      weight,
+                      unit.in) {
 
   unit.out <- match.arg(unit.out, several.ok = FALSE)
 
