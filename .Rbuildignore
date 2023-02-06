@@ -1,4 +1,5 @@
 ^\.Rapp\.history$
+^.lintr
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\data-raw\*
