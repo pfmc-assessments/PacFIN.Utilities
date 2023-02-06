@@ -21,3 +21,9 @@ checkINPFC <- function(...) {
 ls_INPFC <- function(...) {
   lifecycle::deprecate_stop(when = "0.0.1.0005", what = "ls_INPFC")
 }
+#' @section cleanAges:
+#' `cleanAges` was moved to [cleanPacFIN()]
+#' @rdname PacFIN.Utilities-deprecated
+cleanAges <- function(...) {
+  lifecycle::deprecate_stop(when = "0.2.3", what = "cleanAges")
+}
