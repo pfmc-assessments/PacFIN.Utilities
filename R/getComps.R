@@ -123,8 +123,7 @@ getcomps_long <- function(data, towstrat, type,
     warning("SEX was missing from the data and set to 'U' for unsexed fish")
   }
   if (is.character(data[, sexn])) {
-    data$SEX[data$SEX %in% c("M", "F")] <- "B"
-    data[, sexn] <- factor(data[, sexn], levels = c("B", "U"))
+    data[, sexn] <- factor(data[, sexn], levels = c("F", "M", "U"))
   }
 
   # FREQ... stores the number of fish that sum to the weightid
@@ -147,7 +146,6 @@ getcomps_long <- function(data, towstrat, type,
       list("tows" = data[, towid], "ONLY_U_TOWS" = data[, c("Uonly")]),
       by = data[, tstratwsex, drop = FALSE],
       lenique, drop = dropmissing))
-
   comp <- merge(
     stats::reshape(comp, timevar = "SEX", idvar = Cstrat, direction = "wide"),
     stats::aggregate(
@@ -156,28 +154,23 @@ getcomps_long <- function(data, towstrat, type,
       lenique, drop = dropmissing),
     by = towstrat, all.x = TRUE)
 
-
-  #if(length(grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))) > 0){
-  #  comp <- comp[, -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))]
-  #}
-  if(length(grep("ONLY_U_TOWS.B", colnames(comp))) > 0){
-    comp <- comp[, -grep("ONLY_U_TOWS.B", colnames(comp))]
+  if(length(grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))) > 0){
+    comp <- comp[, -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M", colnames(comp))]
   }
   colnames(comp) <- gsub("(.+)\\.([A-Z])", "\\L\\2\\1", colnames(comp),
     perl = TRUE)
-  colnames(comp) <- gsub("b", "mf", colnames(comp))
   colnames(comp) <- gsub("freq|freq.+", "samps", colnames(comp),
     ignore.case = TRUE)
   colnames(comp) <- gsub("uonl.+", "ONLY_U_TOWS", colnames(comp),
     ignore.case = TRUE)
   colnames(comp) <- gsub(paste0("([a-z])", weightid), "\\1", colnames(comp),
     ignore.case = TRUE)
-  colnames(comp) <- gsub("^mf$", "female.male", colnames(comp))
-  #colnames(comp) <- gsub("^m$", "male", colnames(comp))
+  colnames(comp) <- gsub("^f$", "female", colnames(comp))
+  colnames(comp) <- gsub("^m$", "male", colnames(comp))
   colnames(comp) <- gsub("^u$", "unsexed", colnames(comp))
   # todo: remove legacy code of needing fishyr
-  #colnames(comp) <- gsub("^YEAR$", "fishyr", colnames(comp),
-  #  ignore.case = TRUE)
+  colnames(comp) <- gsub("^YEAR$", "fishyr", colnames(comp),
+    ignore.case = TRUE)
   comp[is.na(comp)] <- 0
   return(comp)
 }
