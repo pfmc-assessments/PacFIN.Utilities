@@ -29,13 +29,14 @@
 #'   fish are binned according to user specified bins irregardless of \code{maxAge}.
 #'   
 #' @param month Month for all observations. Defaults to 7. If input has multiple 
-#' seasons, this must be a vector of equal length to the number of seasons.
+#' seasons, this must be a vector of equal length to the maximum seasons.
 #' 
 #' @param partition  Used by Stock Synthesis for length- or age-composition data
 #' where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
 #' The default is to assume that these fish are retained only.
 #' The default was changed in 2020 from a value of 0,
 #' and code should be updated accordingly if you really want 0.
+#' 
 #' @param ageErr     Defaults to 1.
 #' 
 #' @param dummybins A logical value specifying whether data outside of the
@@ -105,7 +106,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
                       overwrite = TRUE, verbose = FALSE) {
 
   # Check month input vs seasons in data
-  if(max(inComps[["season"]]) != length(month)) {
+  if("season" %in% names(inComps) && max(inComps[["season"]]) != length(month)) {
     stop("Input 'month' should have length equal to the maximum season:",
     "\nmonth: ", month,
     "\nseasons: ", paste(sort(unique(inComps[["season"]])), collapse = " "))
@@ -356,7 +357,9 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   if (!"fishyr" %in% colnames(uStrat)) stop("fishyr should be a column")
   if (!"fleet"  %in% colnames(uStrat)) stop("fleet should be a column")
   uStrat <- data.frame(uStrat[, "fishyr"], 
-                       month = month[uStrat[, "season"]],
+                       month = ifelse("season" %in% names(inComps), 
+                                      month[uStrat[, "season"]],
+                                      month),
                        uStrat[, 'fleet'])
   colnames(uStrat) <-  c("year", "month", "fleet")
 
