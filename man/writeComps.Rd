@@ -10,6 +10,7 @@ writeComps(
   abins = NULL,
   lbins = NULL,
   maxAge = Inf,
+  month = 7,
   partition = 2,
   ageErr = 0,
   dummybins = FALSE,
@@ -41,6 +42,9 @@ then those fish will be included in a plus group which you can investigate
 later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
 fish are binned according to user specified bins irregardless of \code{maxAge}.}
 
+\item{month}{Month for all observations. Defaults to 7. If input has multiple
+seasons, this must be a vector of equal length to the number of seasons.}
+
 \item{partition}{Used by Stock Synthesis for length- or age-composition data
 where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
 The default is to assume that these fish are retained only.
@@ -49,7 +53,7 @@ and code should be updated accordingly if you really want 0.}
 
 \item{ageErr}{Defaults to 1.}
 
-\item{dummybins}{A logcial value specifying whether data outside of the
+\item{dummybins}{A logical value specifying whether data outside of the
 lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
 or be placed in the specified bins. Default is \code{TRUE}.  Dummy
 bins are useful for determining whether the current bin structure
@@ -72,7 +76,7 @@ printing makes it easier to see if the data has errors and what was
 done to rectify them in the given function.
 Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the nwfsc-assess organization.}
+This is standard practice for packages in the pfmc-assessments organization.}
 }
 \value{
 Appends data to the file given in \code{fname}.
@@ -130,5 +134,5 @@ were used in stratifying the data.
 \code{\link{getComps}}, \code{\link{doSexRatio}}
 }
 \author{
-Andi Stephens
+Andi Stephens, Chantel Wetzel, Kelli Johnson, Ian Taylor
 }
