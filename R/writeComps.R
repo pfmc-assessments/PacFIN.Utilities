@@ -153,16 +153,12 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   if(length(inComps$female) == 0) {
     inComps$female <- inComps$fsamps <- inComps$ftows <- 0
   }
+  if(length(inComps$both) == 0) {
+    inComps$both <- inComps$both <- inComps$both <- 0
+  }
   if(length(inComps$unsexed) == 0){
     inComps$unsexed <- inComps$usamps <- inComps$utows <- 0
   }
-
-  # Create a column that combines males and females
-  inComps$both   <- inComps$male + inComps$female
-  inComps$bothsamps <- inComps$msamps + inComps$fsamps
-  # All tows is all unique tows - unsure whether the line
-  # below should be ftows + mtows instead
-  inComps$bothtows  <- inComps$mtows + inComps$ftows #inComps$alltows
 
   # Fix length bins
   if ( !is.null(inComps$lengthcm) ) {
@@ -201,7 +197,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   } # End if for lbins
 
   # Fix age bins
-  if ( !is.null(inComps$Age) ) {
+  if (!is.null(inComps$Age)) {
     if ( is.null(abins) ) {
       if (verbose){
         cat("\nNo age bins provided, using data as-is\n\n")
@@ -261,6 +257,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   # Rename columns to be used below
   if(!AAL){
+    names(inComps)[which(names(inComps) == "both")] <- "b"
     names(inComps)[which(names(inComps) == "female")] <- "f"
     names(inComps)[which(names(inComps) == "male")]   <- "m"
     names(inComps)[which(names(inComps) == "unsexed")]<- "u"
@@ -286,7 +283,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   }
 
   # For each sex in turn
-  for ( g in c("m","f","u","both")) {
+  for ( g in c("m","f","u","b")) {
     myname <- g
     if (verbose) {
       cat(paste("Assembling, sex is:", myname, "\n"))
@@ -369,9 +366,9 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   }
 
   Ninput_b <- round(ifelse( 
-                      bothComps$Nsamps / bothComps$Ntows < 44,
-                      bothComps$Ntows + 0.138 * bothComps$Nsamps,
-                      7.06 * bothComps$Ntows), 0 )
+                      bComps$Nsamps / bComps$Ntows < 44,
+                      bComps$Ntows + 0.138 * bComps$Nsamps,
+                      7.06 * bComps$Ntows), 0 )
   Ninput_b[is.na(Ninput_b)] <- 0
   Ninput_f <- round(ifelse( 
                       fComps$Nsamps / fComps$Ntows < 44,
@@ -395,7 +392,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
     } else {
       bins <- lbins_in
     }
-    FthenM <- cbind(uStrat, round(bothComps$Ntows, 0), round(bothComps$Nsamps, 0), Ninput_b,
+    FthenM <- cbind(uStrat, round(bComps$Ntows, 0), round(bComps$Nsamps, 0), Ninput_b,
                     fComps[,1:NCOLS], mComps[,1:NCOLS])
     index <- grep("Ninput", names(FthenM))
     names(FthenM)[(index + 1):ncol(FthenM)] <- c(paste0('F', bins), paste0("M", bins))
