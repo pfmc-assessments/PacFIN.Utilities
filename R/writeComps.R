@@ -10,8 +10,7 @@
 #' then sexes should be assigned as males and females by \code{\link{doSexRatio}}
 #' before using \code{writeComps}.
 #' 
-#' \strong{Failure to use \code{\link{doSexRatio}} will result in all unsexed fish being discarded.}
-#' }
+#' 
 #' 
 #' @export
 #'   
@@ -28,14 +27,21 @@
 #'   later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
 #'   fish are binned according to user specified bins irregardless of \code{maxAge}.
 #'   
+#' @param month Month for all observations. Defaults to 7. If input has multiple 
+#' seasons, this must be a vector of equal length to the maximum seasons where
+#' the order of months in the vector will be assigned to season in ascending order.
+#' For example, if there  are two seasons and the month = c(1, 7) season 1 will be 
+#' assigned to month 1 and season 2 to month 7.
+#' 
 #' @param partition  Used by Stock Synthesis for length- or age-composition data
 #' where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
 #' The default is to assume that these fish are retained only.
 #' The default was changed in 2020 from a value of 0,
 #' and code should be updated accordingly if you really want 0.
+#' 
 #' @param ageErr     Defaults to 1.
 #' 
-#' @param dummybins A logcial value specifying whether data outside of the
+#' @param dummybins A logical value specifying whether data outside of the
 #'   lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
 #'   or be placed in the specified bins. Default is \code{TRUE}.  Dummy
 #'   bins are useful for determining whether the current bin structure
@@ -97,9 +103,16 @@
 #'
 ##############################################################################
 writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
-                      maxAge = Inf, partition = 2, ageErr = 0, 
+                      maxAge = Inf, month = 7, partition = 2, ageErr = 0,
                       dummybins = FALSE, sum1 = FALSE, digits = 4,
                       overwrite = TRUE, verbose = FALSE) {
+
+  # Check month input vs seasons in data
+  if("season" %in% names(inComps) && max(inComps[["season"]]) != length(month)) {
+    stop("Input 'month' should have length equal to the maximum season:",
+    "\nmonth: ", month,
+    "\nseasons: ", paste(sort(unique(inComps[["season"]])), collapse = " "))
+  }
 
   # To stop warning of no visible binding b/c assign is used
   mComps <- NULL
@@ -345,8 +358,15 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   if (!"fishyr" %in% colnames(uStrat)) stop("fishyr should be a column")
   if (!"fleet"  %in% colnames(uStrat)) stop("fleet should be a column")
+  
+  if("season" %in% names(inComps)){
+    use_month <- month[uStrat[, "season"]]
+  } else {
+    use_month <- month
+  }
+                                      
   uStrat <- data.frame(uStrat[, "fishyr"], 
-                       month = 1,
+                       month = use_month,
                        uStrat[, 'fleet'])
   colnames(uStrat) <-  c("year", "month", "fleet")
 
