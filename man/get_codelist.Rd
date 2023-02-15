@@ -39,7 +39,7 @@ function name \code{get_codelist} helps explain what we are getting.
 S3:
 This is an S3 class object, of which I am not very familiar with.
 Thus, feel free to provide comments on the code or submit an
-\href{https://github.com/nwfsc-assess/PacFIN.Utilities/issues}{issue} if
+\href{https://github.com/pfmc-assessments/PacFIN.Utilities/issues}{issue} if
 you have ideas or corrections.
 
 source:

@@ -114,7 +114,7 @@ printing makes it easier to see if the data has errors and what was
 done to rectify them in the given function.
 Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the nwfsc-assess organization.}
+This is standard practice for packages in the pfmc-assessments organization.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.
@@ -131,7 +131,7 @@ specified, with added columns
 \item state: initialized from SOURCE_AGID.  Change using \link{getState}
 \item length: length in mm, where \code{NA} indicates length is not available
 \item lengthcm: floored cm from FORK_LENGTH when available, otherwise FISH_LENGTH
-\item geargroup: the gear group associated with each \href{http://pacfin.psmfs.org/pacfin_pub/data_rpts_pub/code_lists/gr}{GRID}
+\item geargroup: the gear group associated with each \href{http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt}{GRID}
 \item weightkg: fish weight in kg from FISH_WEIGHT and FISH_WEIGHT_UNITS
 }
 }

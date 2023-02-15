@@ -54,5 +54,5 @@ Remotes:
   github::pfmc-assessments/nwfscSurvey
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Encoding: UTF-8

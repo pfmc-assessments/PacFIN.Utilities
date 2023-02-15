@@ -73,7 +73,7 @@ printing makes it easier to see if the data has errors and what was
 done to rectify them in the given function.
 Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the nwfsc-assess organization.}
+This is standard practice for packages in the pfmc-assessments organization.}
 
 \item{dir}{A file path to a directory where you want information saved to
 a file, or multiple files. If \code{NULL}, which is the default, then

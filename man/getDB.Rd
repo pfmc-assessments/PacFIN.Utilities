@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDB.R
 \name{getDB}
 \alias{getDB}
-\title{Get a Connection to a Database and Return a Query}
+\title{Get a connection to a database and return a query}
 \usage{
 getDB(
   sql,

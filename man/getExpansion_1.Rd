@@ -52,7 +52,7 @@ printing makes it easier to see if the data has errors and what was
 done to rectify them in the given function.
 Sorry, but the default is to always print to the screen,
 i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the nwfsc-assess organization.}
+This is standard practice for packages in the pfmc-assessments organization.}
 
 \item{plot}{Argument takes either a logical or character value specifying the file
 name if you want to write the plots to a disk rather than printing them

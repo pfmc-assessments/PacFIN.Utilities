@@ -7,9 +7,8 @@
 #' 
 #' \subsection{Workflow}{
 #' PacFIN data should first be stratified using \code{\link{getComps}},
-#' then sexes should be assigned as males and females by \code{\link{doSexRatio}}
 #' before using \code{writeComps}.
-#' 
+#' }
 #' 
 #' 
 #' @export

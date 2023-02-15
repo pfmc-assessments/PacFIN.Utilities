@@ -2,7 +2,7 @@
 % Please edit documentation in R/sql.bds.R
 \name{sql.bds}
 \alias{sql.bds}
-\title{Write SQL Text for Composition Data}
+\title{Write SQL text for composition data}
 \usage{
 sql.bds(pacfin_species_code)
 }
@@ -23,5 +23,5 @@ Write SQL text as a single character string that will result in
 getting the composition data from the PacFIN database.
 }
 \author{
-John R. Wallace, Kelli F. Johnson
+Kelli F. Johnson
 }

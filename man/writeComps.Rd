@@ -43,7 +43,10 @@ later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
 fish are binned according to user specified bins irregardless of \code{maxAge}.}
 
 \item{month}{Month for all observations. Defaults to 7. If input has multiple
-seasons, this must be a vector of equal length to the number of seasons.}
+seasons, this must be a vector of equal length to the maximum seasons where
+the order of months in the vector will be assigned to season in ascending order.
+For example, if there  are two seasons and the month = c(1, 7) season 1 will be
+assigned to month 1 and season 2 to month 7.}
 
 \item{partition}{Used by Stock Synthesis for length- or age-composition data
 where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
@@ -89,10 +92,7 @@ Write out composition data to a file, binning the data as specified.
 
 \subsection{Workflow}{
 PacFIN data should first be stratified using \code{\link{getComps}},
-then sexes should be assigned as males and females by \code{\link{doSexRatio}}
 before using \code{writeComps}.
-
-\strong{Failure to use \code{\link{doSexRatio}} will result in all unsexed fish being discarded.}
 }
 }
 \details{
