@@ -10,8 +10,7 @@
 #' then sexes should be assigned as males and females by \code{\link{doSexRatio}}
 #' before using \code{writeComps}.
 #' 
-#' \strong{Failure to use \code{\link{doSexRatio}} will result in all unsexed fish being discarded.}
-#' }
+#' 
 #' 
 #' @export
 #'   
@@ -29,7 +28,10 @@
 #'   fish are binned according to user specified bins irregardless of \code{maxAge}.
 #'   
 #' @param month Month for all observations. Defaults to 7. If input has multiple 
-#' seasons, this must be a vector of equal length to the maximum seasons.
+#' seasons, this must be a vector of equal length to the maximum seasons where
+#' the order of months in the vector will be assigned to season in ascending order.
+#' For example, if there  are two seasons and the month = c(1, 7) season 1 will be 
+#' assigned to month 1 and season 2 to month 7.
 #' 
 #' @param partition  Used by Stock Synthesis for length- or age-composition data
 #' where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
@@ -356,10 +358,15 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
 
   if (!"fishyr" %in% colnames(uStrat)) stop("fishyr should be a column")
   if (!"fleet"  %in% colnames(uStrat)) stop("fleet should be a column")
+  
+  if("season" %in% names(inComps)){
+    use_month <- month[uStrat[, "season"]]
+  } else {
+    use_month <- month
+  }
+                                      
   uStrat <- data.frame(uStrat[, "fishyr"], 
-                       month = ifelse("season" %in% names(inComps), 
-                                      month[uStrat[, "season"]],
-                                      month),
+                       month = use_month,
                        uStrat[, 'fleet'])
   colnames(uStrat) <-  c("year", "month", "fleet")
 
