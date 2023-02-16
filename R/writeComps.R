@@ -276,6 +276,7 @@ writeComps = function(inComps, fname = NULL, abins = NULL, lbins = NULL,
   } else {
     # Overwrite the expansion value to match sample sizes for AAL
     # This should really be done in the getComps function
+    inComps$b <- inComps$bsamps
     inComps$f <- inComps$fsamps
     inComps$m <- inComps$msamps
     inComps$u <- inComps$usamps
