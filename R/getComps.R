@@ -117,6 +117,10 @@ getcomps_long <- function(data, towstrat, type,
   towid <- "uniqueid"
   # Find which column contains the sex data or create unsexed
   sexn <- grep("sex", colnames(data), ignore.case = TRUE, value = TRUE)
+  if (length(sexn) > 1) {
+    warnings("Multiple columns match 'sex' (ignoring case), taking the first one")
+    sexn <- sexn[1]
+  }
   if (length(sexn) == 0) {
     sexn <- "SEX"
     data[, sexn] <- "U"
@@ -173,6 +177,7 @@ getcomps_long <- function(data, towstrat, type,
     by = towstrat, all.x = TRUE)
 
   comp <- dplyr::left_join(comp, comp_2)
+
   comp <- comp[, colnames(comp) != "sexed"]
   colnames(comp)[colnames(comp) == "FREQ"] <- "FREQ.B"
   colnames(comp)[colnames(comp) == "Final_Sample_Size_L"] <- "Final_Sample_Size_L.B"
