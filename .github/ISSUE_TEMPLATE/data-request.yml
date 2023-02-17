@@ -1,7 +1,6 @@
 name: Data request
 description: >
-  Request a type of data available for download from the
-  <a href="https://pacfin.psmfc.org/" target="_blank">PacFIN data warehouse</a>.
+  Request a type of data available for download from the PacFIN data warehouse.
 title: "Data request for species [replace with your species]"
 labels: ["type: request"]
 assignees:
