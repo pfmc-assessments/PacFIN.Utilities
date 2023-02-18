@@ -47,7 +47,8 @@ Authors@R: c(
       given = c("John", "R."),
       family = "Wallace",
       role = "ctb",
-      email = "john.wallace@noaa.gov"
+      email = "john.wallace@noaa.gov",
+      comment = c(ORCID = "0000-0002-2333-1262")
     )
     )
 Description: Manipulates data from the PacFIN database for stock synthesis.
