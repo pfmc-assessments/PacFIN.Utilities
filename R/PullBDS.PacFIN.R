@@ -64,13 +64,11 @@
 #' pd <- PullBDS.PacFIN(pacfin_species_code = "POP", password = mypw)
 #' }
 #'
-PullBDS.PacFIN <- function(
-  pacfin_species_code,
-  username = getUserName("PacFIN"),
-  password,
-  savedir = getwd(),
-  verbose = TRUE
-  ) {
+PullBDS.PacFIN <- function(pacfin_species_code,
+                           username = getUserName("PacFIN"),
+                           password = ask_password(),
+                           savedir = getwd(),
+                           verbose = TRUE) {
 
   #### Pull from PacFIN
   if (missing(password)) {
