@@ -68,7 +68,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
     is.logical(verbose) &&
     length(verbose) == 1
   )
-  inputcode <- pacfin_species_code
+  file_species_code <- paste(pacfin_species_code, collapse = "--")
 
   # Find nominal codes if they exist beyond those provided in
   # pacfin_species_code
@@ -99,7 +99,11 @@ PullCatch.PacFIN <- function(pacfin_species_code,
   savefn <- file.path(
     savedir,
     paste(
-      "PacFIN", inputcode, "CompFT", format(Sys.Date(), "%d.%b.%Y"), "RData",
+      "PacFIN",
+      file_species_code,
+      "CompFT",
+      format(Sys.Date(), "%d.%b.%Y"),
+      "RData",
       sep = "."
     )
   )

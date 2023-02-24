@@ -69,7 +69,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
                            password = ask_password(),
                            savedir = getwd(),
                            verbose = TRUE) {
-
+  file_species_code <- paste(pacfin_species_code, collapse = "--")
   #### Pull from PacFIN
   rawdata <- getDB(sql.bds(pacfin_species_code),
     username = username, password = password)
@@ -150,10 +150,15 @@ PullBDS.PacFIN <- function(pacfin_species_code,
 
   #### Save appropriate summaries
   savefn <- file.path(savedir,
-    paste(sep = ".",
-      "PacFIN", pacfin_species_code[1], "bds",
-      format(Sys.Date(), "%d.%b.%Y"), "RData")
+    paste(
+      sep = ".",
+      "PacFIN",
+      file_species_code,
+      "bds",
+      format(Sys.Date(), "%d.%b.%Y"),
+      "RData"
     )
+  )
   save(bds.pacfin, file = savefn)
 
   return(bds.pacfin)
