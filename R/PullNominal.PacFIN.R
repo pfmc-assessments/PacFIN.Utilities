@@ -1,17 +1,20 @@
-#' Pull the species information table and return nominal code
+#' Pull the species information table and return nominal code(s)
 #'
-#' Pull the species information table with PACFIN_SPECIES_CODE and
-#' PACFIN_COMMON_NAME from PacFIN to determine the nominal code for
-#' a given species code.
+#' Pull the species information table and attempt to determine which
+#' nominal codes pertain to the desired species codes.
 #'
 #' @template pacfin_species_code
 #' @template username
 #' @template password
-#' @return A vector of character values, where each value is a
-#' PACFIN_SPECIES_CODE that pertains to the input `pacfin_species_code`.
-#' `NA` is returned if no values are found.
+#' @return
+#' A unique vector of character entries, where entries are valid
+#' `PACFIN_SPECIES_CODE`s. The length of the returned vector may not be the same
+#' length as the supplied `pacfin_species_code` argument because duplicates are
+#' removed. `NA` is returned if no values are found.
 #'
-PullNominal.PacFIN <- function(pacfin_species_code, username, password) {
+PullNominal.PacFIN <- function(pacfin_species_code,
+                               username = getUserName("PacFIN"),
+                               password = ask_password()) {
 
   spp <- getDB(
     sql.species(),
@@ -21,7 +24,7 @@ PullNominal.PacFIN <- function(pacfin_species_code, username, password) {
 
   nom <- spp[grepl("NOM\\.", spp[,2]), ]
 
-  thenominal <- tibble::tibble(spp) %>%
+  out <- tibble::tibble(spp) %>%
     dplyr::mutate(searchname = gsub(
       "BLACK AND YELLOW",
       "BLACK-AND-YELLOW",
@@ -48,10 +51,15 @@ PullNominal.PacFIN <- function(pacfin_species_code, username, password) {
       if (.x[1] == "") return(NA)
       return(nom[grep(.x, nom[, 2]), 1])
     })) %>%
-    dplyr::filter(PACFIN_SPECIES_CODE == pacfin_species_code) %>%
+    dplyr::filter(PACFIN_SPECIES_CODE %in% pacfin_species_code) %>%
     dplyr::pull(code) %>%
-    unlist()
+    unlist() %>%
+    unique()
 
-  return(thenominal)
+  if (length(out) > 1) {
+    out <- c(stats::na.omit(out))
+  }
+
+  return(out)
 
 }

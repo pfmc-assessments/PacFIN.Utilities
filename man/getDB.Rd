@@ -19,11 +19,18 @@ getDB(
 computer. The default is \code{"PacFIN"} which will pull data from
 the Pacific Fisheries Information Network.}
 
-\item{username}{The username you would like to use to access data from
-\code{datasourcename}. The default is to generate \code{username}
-from your computer name.}
+\item{username}{The username you would like to use to access the database.
+The default is to generate \code{username} from your computer name where
+there are rules for each supported database. Sometimes this fails because
+of legacy rules that are unknown to the development team. Please email the
+maintainer of this package if you need more behind-the-scenes
+functionality here.}
 
-\item{password}{Your password for the \code{datasourcename}.}
+\item{password}{Your password for the database of interest. For some
+functions, it may be okay to leave this argument missing because
+you will be prompted for your password but not all. Please do not share
+this password with anyone or push any code to a repository that has your
+password saved.}
 
 \item{asis}{A logical, specifying whether or not to convert columns,
 as in \code{\link[utils]{read.table}}.}

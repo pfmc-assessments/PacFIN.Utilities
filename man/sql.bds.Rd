@@ -7,13 +7,19 @@
 sql.bds(pacfin_species_code)
 }
 \arguments{
-\item{pacfin_species_code}{A character string for the PacFIN
-species code that you desire to pull data for. Known also as
-\code{"SPID"} in the PacFIN database if using legacy sql scripts.
-An example for sablefish would be
-\code{pacfin_species_code = "SABL"}.
-A list of pacfin_species_code
-can be found online: https://pacfin.psmfc.org/pacfin_pub/marketcat.php}
+\item{pacfin_species_code}{A vector of strings specifying the PacFIN species
+code(s) you are interested in. This has sometimes been referred to as
+\code{"SPID"} in legacy sql scripts. An example for sablefish would be
+\code{pacfin_species_code = "SABL"}. Lists of species codes in \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/sp_tree.txt}{hierarchical order},
+by
+\href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes.txt}{organization},
+and \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes_spid.txt}{alphabetically organized}
+can be found on the PacFIN website](https://pacfin.psmfc.org). Often you
+will want to include nominal species categories. Where, nominal (i.e.,
+\href{https://www.google.com/search?q=NOMINAL&rlz=1C1GCEJ_enUS866US866&sourceid=chrome&ie=UTF-8}{existing in name only})
+means information for a given species that is \verb{derived' from non-species specific information, e.g., species complexes that are split out by species compositions like }nominal aurora rockfish' which would be \code{ARR1}. For some
+functions, these nominal categories can automatically be added, see the
+argument \code{addnominal}.}
 }
 \value{
 A single character string formatted as an sql call.

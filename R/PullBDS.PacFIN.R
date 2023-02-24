@@ -71,9 +71,6 @@ PullBDS.PacFIN <- function(pacfin_species_code,
                            verbose = TRUE) {
 
   #### Pull from PacFIN
-  if (missing(password)) {
-    password <- readline(prompt = "Enter PacFIN password without quotes and hit return\n")
-  }
   rawdata <- getDB(sql.bds(pacfin_species_code),
     username = username, password = password)
 
@@ -81,9 +78,12 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   # Check if SAMPLE_AGENCY has values and remove
   sample_agency <- unique(rawdata[, "SAMPLE_AGENCY"])
   if (!is.na(sample_agency[1])) {
-    warning("SAMPLE_AGENCY includes non-NULL values and should be extracted.\n",
-      "Contact the package maintainer to request this and note the following:\n",
-      "SAMPLE_AGENCY == ", knitr::combine_words(sample_agency))
+    warning(
+      "SAMPLE_AGENCY includes non-NULL values and should be extracted.\n",
+      "Contact the package maintainer and note the following:\n",
+      "SAMPLE_AGENCY == ",
+      glue::glue_collapse(sample_agency, sep = ", ", last = " and ")
+    )
   }
   rm(sample_agency)
   rawdata <- rawdata[, -match("SAMPLE_AGENCY", colnames(rawdata))]

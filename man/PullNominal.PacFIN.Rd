@@ -2,32 +2,49 @@
 % Please edit documentation in R/PullNominal.PacFIN.R
 \name{PullNominal.PacFIN}
 \alias{PullNominal.PacFIN}
-\title{Pull the species information table and return nominal code}
+\title{Pull the species information table and return nominal code(s)}
 \usage{
-PullNominal.PacFIN(pacfin_species_code, username, password)
+PullNominal.PacFIN(
+  pacfin_species_code,
+  username = getUserName("PacFIN"),
+  password = ask_password()
+)
 }
 \arguments{
-\item{pacfin_species_code}{A character string for the PacFIN
-species code that you desire to pull data for. Known also as
-\code{"SPID"} in the PacFIN database if using legacy sql scripts.
-An example for sablefish would be
-\code{pacfin_species_code = "SABL"}.
-A list of pacfin_species_code
-can be found online: https://pacfin.psmfc.org/pacfin_pub/marketcat.php}
+\item{pacfin_species_code}{A vector of strings specifying the PacFIN species
+code(s) you are interested in. This has sometimes been referred to as
+\code{"SPID"} in legacy sql scripts. An example for sablefish would be
+\code{pacfin_species_code = "SABL"}. Lists of species codes in \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/sp_tree.txt}{hierarchical order},
+by
+\href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes.txt}{organization},
+and \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes_spid.txt}{alphabetically organized}
+can be found on the PacFIN website](https://pacfin.psmfc.org). Often you
+will want to include nominal species categories. Where, nominal (i.e.,
+\href{https://www.google.com/search?q=NOMINAL&rlz=1C1GCEJ_enUS866US866&sourceid=chrome&ie=UTF-8}{existing in name only})
+means information for a given species that is \verb{derived' from non-species specific information, e.g., species complexes that are split out by species compositions like }nominal aurora rockfish' which would be \code{ARR1}. For some
+functions, these nominal categories can automatically be added, see the
+argument \code{addnominal}.}
 
-\item{username}{The username you would like to use to access data from
-\code{datasourcename}. The default is to generate \code{username}
-from your computer name.}
+\item{username}{The username you would like to use to access the database.
+The default is to generate \code{username} from your computer name where
+there are rules for each supported database. Sometimes this fails because
+of legacy rules that are unknown to the development team. Please email the
+maintainer of this package if you need more behind-the-scenes
+functionality here.}
 
-\item{password}{Your password for the \code{datasourcename}.}
+\item{password}{Your password for the database of interest. For some
+functions, it may be okay to leave this argument missing because
+you will be prompted for your password but not all. Please do not share
+this password with anyone or push any code to a repository that has your
+password saved.}
 }
 \value{
-A vector of character values, where each value is a
-PACFIN_SPECIES_CODE that pertains to the input \code{pacfin_species_code}.
-\code{NA} is returned if no values are found.
+A unique vector of character entries, where entries are valid
+\code{PACFIN_SPECIES_CODE}s. The length of the returned vector may not be the same
+length as the supplied \code{pacfin_species_code} argument because duplicates are
+removed. \code{NA} is returned if no values are found.
 }
 \description{
-Pull the species information table with PACFIN_SPECIES_CODE and
-PACFIN_COMMON_NAME from PacFIN to determine the nominal code for
-a given species code.
+Pull the species information table and attempt to determine which
+nominal codes pertain to the desired species codes.
 }

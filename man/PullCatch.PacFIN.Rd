@@ -2,46 +2,59 @@
 % Please edit documentation in R/PullCatch.PacFIN.R
 \name{PullCatch.PacFIN}
 \alias{PullCatch.PacFIN}
-\title{Pull Catch Data from PacFIN Database}
+\title{Pull catch data from PacFIN}
 \usage{
 PullCatch.PacFIN(
   pacfin_species_code,
   username = getUserName("PacFIN"),
-  password,
+  password = ask_password(),
   savedir = getwd(),
   addnominal = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{pacfin_species_code}{A character string for the PacFIN
-species code that you desire to pull data for. Known also as
-\code{"SPID"} in the PacFIN database if using legacy sql scripts.
-An example for sablefish would be
-\code{pacfin_species_code = "SABL"}.
-A list of pacfin_species_code
-can be found online: https://pacfin.psmfc.org/pacfin_pub/marketcat.php}
+\item{pacfin_species_code}{A vector of strings specifying the PacFIN species
+code(s) you are interested in. This has sometimes been referred to as
+\code{"SPID"} in legacy sql scripts. An example for sablefish would be
+\code{pacfin_species_code = "SABL"}. Lists of species codes in \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/sp_tree.txt}{hierarchical order},
+by
+\href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes.txt}{organization},
+and \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes_spid.txt}{alphabetically organized}
+can be found on the PacFIN website](https://pacfin.psmfc.org). Often you
+will want to include nominal species categories. Where, nominal (i.e.,
+\href{https://www.google.com/search?q=NOMINAL&rlz=1C1GCEJ_enUS866US866&sourceid=chrome&ie=UTF-8}{existing in name only})
+means information for a given species that is \verb{derived' from non-species specific information, e.g., species complexes that are split out by species compositions like }nominal aurora rockfish' which would be \code{ARR1}. For some
+functions, these nominal categories can automatically be added, see the
+argument \code{addnominal}.}
 
-\item{username}{The username you would like to use to access data from
-\code{datasourcename}. The default is to generate \code{username}
-from your computer name.}
+\item{username}{The username you would like to use to access the database.
+The default is to generate \code{username} from your computer name where
+there are rules for each supported database. Sometimes this fails because
+of legacy rules that are unknown to the development team. Please email the
+maintainer of this package if you need more behind-the-scenes
+functionality here.}
 
-\item{password}{Your password for the \code{datasourcename}.}
+\item{password}{Your password for the database of interest. For some
+functions, it may be okay to leave this argument missing because
+you will be prompted for your password but not all. Please do not share
+this password with anyone or push any code to a repository that has your
+password saved.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.
 The path can be relative or absolute.}
 
-\item{addnominal}{A logical, the default \code{TRUE} adds the nominal
-PacFIN species code to the list of those searched for. \code{FALSE}
-leaves \code{pacfin_species_code} as input by the user which will miss
+\item{addnominal}{A logical, where the default, \code{TRUE}, adds nominal
+PacFIN species code to \code{pacfin_species_code}. \code{FALSE}
+leaves \code{pacfin_species_code} as input by the user, which will miss
 catch for species such as dover sole that have more than one species
 code within PacFIN, e.g., \code{pacfin_species_code = c("DOVR", "DVR1")}.
 Users can also input a vector to pacfin_species_code if you want to
 specify the species and the nominal species code without searching for
 it. This is helpful for when you are getting data for two species and
 you only want nominal catch for one or if you only wanted nominal catch.
-Nominal species code will be searched for using \link{PullNominal.PacFIN} if
+Nominal species code will be searched for using \code{\link[=PullNominal.PacFIN]{PullNominal.PacFIN()}} if
 the input value for \code{addnominal} is \code{TRUE}.}
 
 \item{verbose}{A logical value specifying if output should be written
@@ -68,22 +81,32 @@ research (R), and unknown (XX)
 }
 }
 \description{
-Pull Catch Data from the Comprehensive Fish Ticket table
-in the PacFIN database.
+Pull catch data from the Comprehensive Fish Ticket table in PacFIN.
 }
 \details{
-Species with special considerations:
-URCK: There is an rockfish (URCK) category that consists on unassigned rockfish
-landings. The majority of the catch is prior to 2001. Currently, there is no agreed upon
-methodology to parsed these landing out to specific rockfish species. At present, landings
-in this category are not included in species-specific rockfish catch pulls.
-POP: In PacFIN there are four species code that can be associated with Pacific ocean perch.
-These are POP, POP1, POP2, UPOP. The POP1 is general shelf/slope rockfish and not Pacific
-ocean perch specific landings. These records occur only in Oregon. As of the 2017 assessment,
-these records should be removed from the catch file.
+\subsection{Species with special considerations}{
+\subsection{URCK}{
+
+There is a rockfish (URCK) category that consists of unassigned rockfish
+landings. The majority of the catch is prior to 2001. Currently, there is no
+agreed upon methodology to parsed these landing out to specific rockfish
+species. At present, landings in this category are not included in
+species-specific rockfish catch pulls.
+}
+
+\subsection{POP}{
+
+In PacFIN there are four species code that can be associated with Pacific
+ocean perch. These are POP, POP1, POP2, UPOP. The POP1 is general shelf/slope
+rockfish and not Pacific ocean perch specific landings. These records occur
+only in Oregon. As of the 2017 assessment, these records should be removed
+from the catch file.
+}
+
+}
 }
 \seealso{
-\link{PullNominal.PacFIN} for how nominal species codes are determined.
+See \code{\link[=PullNominal.PacFIN]{PullNominal.PacFIN()}} for how nominal species codes are determined.
 }
 \author{
 Kelli F. Johnson
