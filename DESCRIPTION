@@ -48,7 +48,7 @@ Suggests:
     knitr,
     rmarkdown,
     RODBC,
-    testthat,
+    testthat (>= 3.0.0),
     usethis
 Remotes:
   github::pfmc-assessments/nwfscSurvey
@@ -56,3 +56,4 @@ VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Encoding: UTF-8
+Config/testthat/edition: 3
