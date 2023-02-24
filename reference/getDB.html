@@ -68,13 +68,20 @@ the Pacific Fisheries Information Network.</p></dd>
 
 
 <dt>username</dt>
-<dd><p>The username you would like to use to access data from
-<code>datasourcename</code>. The default is to generate <code>username</code>
-from your computer name.</p></dd>
+<dd><p>The username you would like to use to access the database.
+The default is to generate <code>username</code> from your computer name where
+there are rules for each supported database. Sometimes this fails because
+of legacy rules that are unknown to the development team. Please email the
+maintainer of this package if you need more behind-the-scenes
+functionality here.</p></dd>
 
 
 <dt>password</dt>
-<dd><p>Your password for the <code>datasourcename</code>.</p></dd>
+<dd><p>Your password for the database of interest. For some
+functions, it may be okay to leave this argument missing because
+you will be prompted for your password but not all. Please do not share
+this password with anyone or push any code to a repository that has your
+password saved.</p></dd>
 
 
 <dt>asis</dt>

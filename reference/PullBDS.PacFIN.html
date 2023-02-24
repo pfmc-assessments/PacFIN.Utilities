@@ -55,7 +55,7 @@ using <a href="cleanPacFIN.html">cleanPacFIN</a>.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PullBDS.PacFIN</span><span class="op">(</span></span>
 <span>  <span class="va">pacfin_species_code</span>,</span>
 <span>  username <span class="op">=</span> <span class="fu"><a href="getUserName.html">getUserName</a></span><span class="op">(</span><span class="st">"PacFIN"</span><span class="op">)</span>,</span>
-<span>  <span class="va">password</span>,</span>
+<span>  password <span class="op">=</span> <span class="fu"><a href="ask_password.html">ask_password</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  savedir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -64,23 +64,36 @@ using <a href="cleanPacFIN.html">cleanPacFIN</a>.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>pacfin_species_code</dt>
-<dd><p>A character string for the PacFIN
-species code that you desire to pull data for. Known also as
-<code>"SPID"</code> in the PacFIN database if using legacy sql scripts.
-An example for sablefish would be
-<code>pacfin_species_code = "SABL"</code>.
-A list of pacfin_species_code
-can be found online: https://pacfin.psmfc.org/pacfin_pub/marketcat.php</p></dd>
+<dd><p>A vector of strings specifying the PacFIN species
+code(s) you are interested in. This has sometimes been referred to as
+<code>"SPID"</code> in legacy sql scripts. An example for sablefish would be
+<code>pacfin_species_code = "SABL"</code>. Lists of species codes in <a href="https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/sp_tree.txt" class="external-link">hierarchical order</a>,
+by
+<a href="https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes.txt" class="external-link">organization</a>,
+and <a href="https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes_spid.txt" class="external-link">alphabetically organized</a>
+can be found on the PacFIN website](https://pacfin.psmfc.org). Often you
+will want to include nominal species categories. Where, nominal (i.e.,
+<a href="https://www.google.com/search?q=NOMINAL&amp;rlz=1C1GCEJ_enUS866US866&amp;sourceid=chrome&amp;ie=UTF-8" class="external-link">existing in name only</a>)
+means information for a given species that is <code>derived' from non-species specific information, e.g., species complexes that are split out by species compositions like </code>nominal aurora rockfish' which would be <code>ARR1</code>. For some
+functions, these nominal categories can automatically be added, see the
+argument <code>addnominal</code>.</p></dd>
 
 
 <dt>username</dt>
-<dd><p>The username you would like to use to access data from
-<code>datasourcename</code>. The default is to generate <code>username</code>
-from your computer name.</p></dd>
+<dd><p>The username you would like to use to access the database.
+The default is to generate <code>username</code> from your computer name where
+there are rules for each supported database. Sometimes this fails because
+of legacy rules that are unknown to the development team. Please email the
+maintainer of this package if you need more behind-the-scenes
+functionality here.</p></dd>
 
 
 <dt>password</dt>
-<dd><p>Your password for the <code>datasourcename</code>.</p></dd>
+<dd><p>Your password for the database of interest. For some
+functions, it may be okay to leave this argument missing because
+you will be prompted for your password but not all. Please do not share
+this password with anyone or push any code to a repository that has your
+password saved.</p></dd>
 
 
 <dt>savedir</dt>
