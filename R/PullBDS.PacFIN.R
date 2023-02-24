@@ -70,11 +70,17 @@ PullBDS.PacFIN <- function(pacfin_species_code,
                            savedir = getwd(),
                            verbose = TRUE) {
   file_species_code <- paste(pacfin_species_code, collapse = "--")
-  #### Pull from PacFIN
-  rawdata <- getDB(sql.bds(pacfin_species_code),
-    username = username, password = password)
 
-  #### Check data and print warnings to the screen
+  # Pull from PacFIN
+  rawdata <- getDB(
+    sql = sql.bds(pacfin_species_code),
+    username = username,
+    password = password
+  )
+
+  stopifnot(NROW(rawdata) > 0)
+
+  # Check data and print warnings to the screen
   # Check if SAMPLE_AGENCY has values and remove
   sample_agency <- unique(rawdata[, "SAMPLE_AGENCY"])
   if (!is.na(sample_agency[1])) {
@@ -107,7 +113,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   }
   rm(FISH_ID)
 
-  #### Manipulate rawdata columns
+  # Manipulate rawdata columns
   subset <- !(duplicated(rawdata$FISH_ID) & is.na(rawdata$AGE_SEQUENCE_NUMBER))
   if (sum(!subset) > 0) {
     if (verbose) {
@@ -148,7 +154,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
     bds.pacfin <- data.frame(bds.pacfin)
   }
 
-  #### Save appropriate summaries
+  # Save appropriate summaries
   savefn <- file.path(savedir,
     paste(
       sep = ".",

@@ -9,11 +9,13 @@
 #'
 sql.catch <- function(pacfin_species_code) {
   spid <- paste0("('", paste(pacfin_species_code, collapse = "','"), "')")
-  sqlcall <- paste0(
-  "Select *
-   from pacfin_marts.Comprehensive_FT
-   where PACFIN_SPECIES_CODE = any ", spid, " 
-          and COUNCIL_CODE = 'P'")
-  sqlcall <- gsub("\\n", "", sqlcall)
+  sqlcall <- glue::glue("
+    Select *
+    from pacfin_marts.Comprehensive_FT
+    where PACFIN_SPECIES_CODE = any {spid} 
+     and COUNCIL_CODE = 'P'
+    "
+  )
+  sqlcall <- gsub("\\n", " ", sqlcall)
    return(sqlcall)
 }

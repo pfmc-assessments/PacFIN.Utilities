@@ -14,10 +14,11 @@ sql.bds <- function(pacfin_species_code) {
   # * WGTMAX, i don't think this one matters
   # * WGTMIN, i don't think this one matters
   # * all_cluster_sum, done with ave
+  spid <- paste0("('", paste(pacfin_species_code, collapse = "','"), "')")
   sqlcall <- glue::glue("
    SELECT *
    FROM PACFIN_MARTS.COMPREHENSIVE_BDS_COMM
-   WHERE PACFIN_SPECIES_CODE = any('{pacfin_species_code}')
+   WHERE PACFIN_SPECIES_CODE = any {spid}
    "
   )
   sqlcall <- gsub("\\n", " ", sqlcall)
