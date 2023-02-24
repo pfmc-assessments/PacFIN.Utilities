@@ -13,9 +13,11 @@
 #'
 PullNominal.PacFIN <- function(pacfin_species_code, username, password) {
 
-  spp <- getDB(sql.species(),
-    username = username, password = password
-    )
+  spp <- getDB(
+    sql.species(),
+    username = username,
+    password = password
+  )
 
   nom <- spp[grepl("NOM\\.", spp[,2]), ]
 
