@@ -94,13 +94,6 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   rm(sample_agency)
   rawdata <- rawdata[, -match("SAMPLE_AGENCY", colnames(rawdata))]
 
-  # Check OBSERVED_FREQUENCY > 1
-  freq <- unique(rawdata[, "OBSERVED_FREQUENCY"])
-  if (any(freq > 1)) {
-    warning("Check OBSERVED_FREQUENCY b/c records are not unique to a single fish.")
-  }
-  rm(freq)
-
   # Check for NULL FISH_ID
   FISH_ID <- is.na(rawdata[["FISH_ID"]])
   if (sum(FISH_ID) > 0) {
