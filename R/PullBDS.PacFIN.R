@@ -79,6 +79,12 @@ PullBDS.PacFIN <- function(pacfin_species_code,
                            password = ask_password(),
                            savedir = getwd(),
                            verbose = TRUE) {
+  # Input checks
+  stopifnot(
+    "`verbose` must be a logical." =
+    is.logical(verbose) &&
+    length(verbose) == 1
+  )
   file_species_code <- paste(pacfin_species_code, collapse = "--")
 
   # Pull from PacFIN

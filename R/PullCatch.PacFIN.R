@@ -114,12 +114,28 @@ PullCatch.PacFIN <- function(pacfin_species_code,
     }
   }
 
-  # Save pulled data
   catch.pacfin <- getDB(
     sql_catch(pacfin_species_code, council_code),
     username = username,
     password = password
   )
+
+  # message calls
+  if (verbose) {
+    message(
+      "\nThe following PACFIN_SPECIES_CODE(s) were found:\n",
+      paste0(
+        utils::capture.output(
+          dplyr::count(catch.pacfin, PACFIN_SPECIES_CODE) %>%
+            dplyr::mutate(PACFIN_SPECIES_CODE = sQuote(PACFIN_SPECIES_CODE))
+        ),
+        collapse = "\n"
+      ),
+      "\n"
+    )
+  }
+
+  # Save pulled data
   savefn <- file.path(
     savedir,
     paste(
