@@ -46,6 +46,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PullCatch.PacFIN</span><span class="op">(</span></span>
 <span>  <span class="va">pacfin_species_code</span>,</span>
+<span>  council_code <span class="op">=</span> <span class="st">"P"</span>,</span>
 <span>  username <span class="op">=</span> <span class="fu"><a href="getUserName.html">getUserName</a></span><span class="op">(</span><span class="st">"PacFIN"</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu"><a href="ask_password.html">ask_password</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  savedir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -64,12 +65,21 @@ code(s) you are interested in. This has sometimes been referred to as
 by
 <a href="https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes.txt" class="external-link">organization</a>,
 and <a href="https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes_spid.txt" class="external-link">alphabetically organized</a>
-can be found on the PacFIN website](https://pacfin.psmfc.org). Often you
+can be found on the <a href="https://pacfin.psmfc.org" class="external-link">PacFIN website</a>. Often you
 will want to include nominal species categories. Where, nominal (i.e.,
 <a href="https://www.google.com/search?q=NOMINAL&amp;rlz=1C1GCEJ_enUS866US866&amp;sourceid=chrome&amp;ie=UTF-8" class="external-link">existing in name only</a>)
-means information for a given species that is <code>derived' from non-species specific information, e.g., species complexes that are split out by species compositions like </code>nominal aurora rockfish' which would be <code>ARR1</code>. For some
+means information for a given species that is "derived" from non-species
+specific information, e.g., species complexes that are split out by species
+compositions like "nominal aurora rockfish" which would be <code>ARR1</code>. For some
 functions, these nominal categories can automatically be added, see the
 argument <code>addnominal</code>.</p></dd>
+
+
+<dt>council_code</dt>
+<dd><p>A vector of character strings specifying the council code
+that you wish to retain data for. The default <code>"P"</code> means data will only be
+returned for the Pacific Fisheries Management Council. Other accepted
+values are <code>"N"</code> or <code>"*"</code>.</p></dd>
 
 
 <dt>username</dt>
@@ -82,11 +92,10 @@ functionality here.</p></dd>
 
 
 <dt>password</dt>
-<dd><p>Your password for the database of interest. For some
-functions, it may be okay to leave this argument missing because
-you will be prompted for your password but not all. Please do not share
-this password with anyone or push any code to a repository that has your
-password saved.</p></dd>
+<dd><p>Your password for the database of interest. Use
+<code><a href="ask_password.html">ask_password()</a></code> to be prompted for your password. Please do not share this
+password with anyone or push code to a repository that has your password
+saved in it.</p></dd>
 
 
 <dt>savedir</dt>
@@ -125,15 +134,9 @@ This is standard practice for packages in the pfmc-assessments organization.</p>
     <h2>Value</h2>
     
 
-<p>RData frames are saved to the disk and the pulled data
-are returned as a data frame.</p><ul><li><p>CompFT - pulled data</p></li>
-<li><p>Research.Tribal.Catch - summary by year, state, and fleet;
-fleets are as follows:
-limited entry (LE), open access (OA), treaty indian (TI),
-research (R), and unknown (XX)</p></li>
-<li><p>Catch.INPFC - catch by INPFC area</p></li>
-<li><p>Catch.PSMFC - catch by PSMFC area</p></li>
-</ul></div>
+<p>A <code>.RData</code> file is saved with the object inside the file stored as
+<code>catch.pacfin</code>. This same data frame is also returned invisibly.</p>
+    </div>
     <div id="details">
     <h2>Details</h2>
     
@@ -165,16 +168,49 @@ from the catch file.</p>
 
 </div>
 
+<div class="section">
+<h3 id="searching-for-species">Searching for species<a class="anchor" aria-label="anchor" href="#searching-for-species"></a></h3>
+
+
+<p>Values passed to <code>pacfin_species_code</code> are searched for in their exact form.
+That is, there are no regular expression searches so mistakes such as
+<code>" POP"</code> will not be found. In my experiences these mistakes in the species
+codes are more common for PacFIN species codes that are three letters rather
+than the standard four letters.</p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>See <code><a href="PullNominal.PacFIN.html">PullNominal.PacFIN()</a></code> for how nominal species codes are determined.</p></div>
+    <div class="dont-index">
+<ul><li><p><code><a href="PullNominal.PacFIN.html">PullNominal.PacFIN()</a></code> determines the nominal species codes</p></li>
+<li><p><code><a href="sql.html">sql_catch()</a></code> writes the sql code to pull the data</p></li>
+</ul></div>
     </div>
     <div id="author">
     <h2>Author</h2>
     <p>Kelli F. Johnson</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">catch.pacfin</span> <span class="op">&lt;-</span> <span class="fu">PullCatch.PacFIN</span><span class="op">(</span><span class="st">"PTRL"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Check for confidentiality by year</span></span></span>
+<span class="r-in"><span><span class="co"># though you would also want to do this by your gear types</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">catch.pacfin</span>, <span class="va">LANDING_YEAR</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>count <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">VESSEL_ID</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">count</span> <span class="op">&lt;</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># look for foreign landings</span></span></span>
+<span class="r-in"><span><span class="va">catch.pacfin</span> <span class="op">&lt;-</span> <span class="fu">PullCatch.PacFIN</span><span class="op">(</span><span class="st">"PTRL"</span>, council_code <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"*"</span>, <span class="st">"N"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Counts of NROW() by area code(s)</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">catch.pacfin</span>, <span class="va">ORIG_PACFIN_CATCH_AREA_CODE</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
