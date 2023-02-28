@@ -6,6 +6,7 @@
 \usage{
 PullCatch.PacFIN(
   pacfin_species_code,
+  council_code = "P",
   username = getUserName("PacFIN"),
   password = ask_password(),
   savedir = getwd(),
@@ -21,12 +22,19 @@ code(s) you are interested in. This has sometimes been referred to as
 by
 \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes.txt}{organization},
 and \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes_spid.txt}{alphabetically organized}
-can be found on the PacFIN website](https://pacfin.psmfc.org). Often you
+can be found on the \href{https://pacfin.psmfc.org}{PacFIN website}. Often you
 will want to include nominal species categories. Where, nominal (i.e.,
 \href{https://www.google.com/search?q=NOMINAL&rlz=1C1GCEJ_enUS866US866&sourceid=chrome&ie=UTF-8}{existing in name only})
-means information for a given species that is \verb{derived' from non-species specific information, e.g., species complexes that are split out by species compositions like }nominal aurora rockfish' which would be \code{ARR1}. For some
+means information for a given species that is "derived" from non-species
+specific information, e.g., species complexes that are split out by species
+compositions like "nominal aurora rockfish" which would be \code{ARR1}. For some
 functions, these nominal categories can automatically be added, see the
 argument \code{addnominal}.}
+
+\item{council_code}{A vector of character strings specifying the council code
+that you wish to retain data for. The default \code{"P"} means data will only be
+returned for the Pacific Fisheries Management Council. Other accepted
+values are \code{"N"} or \code{"*"}.}
 
 \item{username}{The username you would like to use to access the database.
 The default is to generate \code{username} from your computer name where
@@ -35,11 +43,10 @@ of legacy rules that are unknown to the development team. Please email the
 maintainer of this package if you need more behind-the-scenes
 functionality here.}
 
-\item{password}{Your password for the database of interest. For some
-functions, it may be okay to leave this argument missing because
-you will be prompted for your password but not all. Please do not share
-this password with anyone or push any code to a repository that has your
-password saved.}
+\item{password}{Your password for the database of interest. Use
+\code{\link[=ask_password]{ask_password()}} to be prompted for your password. Please do not share this
+password with anyone or push code to a repository that has your password
+saved in it.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.
@@ -68,17 +75,8 @@ i.e., \code{verbose = TRUE}, so you do not miss out on anything.
 This is standard practice for packages in the pfmc-assessments organization.}
 }
 \value{
-RData frames are saved to the disk and the pulled data
-are returned as a data frame.
-\itemize{
-\item CompFT - pulled data
-\item Research.Tribal.Catch - summary by year, state, and fleet;
-fleets are as follows:
-limited entry (LE), open access (OA), treaty indian (TI),
-research (R), and unknown (XX)
-\item Catch.INPFC - catch by INPFC area
-\item Catch.PSMFC - catch by PSMFC area
-}
+A \code{.RData} file is saved with the object inside the file stored as
+\code{catch.pacfin}. This same data frame is also returned invisibly.
 }
 \description{
 Pull catch data from the Comprehensive Fish Ticket table in PacFIN.
@@ -104,9 +102,38 @@ from the catch file.
 }
 
 }
+
+\subsection{Searching for species}{
+
+Values passed to \code{pacfin_species_code} are searched for in their exact form.
+That is, there are no regular expression searches so mistakes such as
+\code{" POP"} will not be found. In my experiences these mistakes in the species
+codes are more common for PacFIN species codes that are three letters rather
+than the standard four letters.
+}
+}
+\examples{
+\dontrun{
+catch.pacfin <- PullCatch.PacFIN("PTRL")
+# Check for confidentiality by year
+# though you would also want to do this by your gear types
+dplyr::group_by(catch.pacfin, LANDING_YEAR) \%>\%
+  dplyr::summarize(count = dplyr::n_distinct(VESSEL_ID)) \%>\%
+  dplyr::filter(count < 4)
+
+# look for foreign landings
+catch.pacfin <- PullCatch.PacFIN("PTRL", council_code = c("*", "N"))
+# Counts of NROW() by area code(s)
+dplyr::group_by(catch.pacfin, ORIG_PACFIN_CATCH_AREA_CODE) \%>\%
+  dplyr::count()
+}
+
 }
 \seealso{
-See \code{\link[=PullNominal.PacFIN]{PullNominal.PacFIN()}} for how nominal species codes are determined.
+\itemize{
+\item \code{\link[=PullNominal.PacFIN]{PullNominal.PacFIN()}} determines the nominal species codes
+\item \code{\link[=sql_catch]{sql_catch()}} writes the sql code to pull the data
+}
 }
 \author{
 Kelli F. Johnson

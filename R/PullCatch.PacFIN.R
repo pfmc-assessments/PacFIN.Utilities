@@ -2,22 +2,7 @@
 #'
 #' Pull catch data from the Comprehensive Fish Ticket table in PacFIN.
 #'
-#' @details
-#' ## Species with special considerations
-#' ### URCK
-#' There is a rockfish (URCK) category that consists of unassigned rockfish
-#' landings. The majority of the catch is prior to 2001. Currently, there is no
-#' agreed upon methodology to parsed these landing out to specific rockfish
-#' species. At present, landings in this category are not included in
-#' species-specific rockfish catch pulls.
-#' ### POP
-#' In PacFIN there are four species code that can be associated with Pacific
-#' ocean perch. These are POP, POP1, POP2, UPOP. The POP1 is general shelf/slope
-#' rockfish and not Pacific ocean perch specific landings. These records occur
-#' only in Oregon. As of the 2017 assessment, these records should be removed
-#' from the catch file.
-#'
-#' @template pacfin_species_code
+#' @inheritParams sql
 #' @template username
 #' @template password
 #' @template savedir
@@ -34,29 +19,68 @@
 #' the input value for `addnominal` is `TRUE`.
 #' @template verbose
 #'
+#' @return
+#' A `.RData` file is saved with the object inside the file stored as
+#' `catch.pacfin`. This same data frame is also returned invisibly.
+#'
+#' @details
+#' ## Species with special considerations
+#'
+#' ### URCK
+#' There is a rockfish (URCK) category that consists of unassigned rockfish
+#' landings. The majority of the catch is prior to 2001. Currently, there is no
+#' agreed upon methodology to parsed these landing out to specific rockfish
+#' species. At present, landings in this category are not included in
+#' species-specific rockfish catch pulls.
+#'
+#' ### POP
+#' In PacFIN there are four species code that can be associated with Pacific
+#' ocean perch. These are POP, POP1, POP2, UPOP. The POP1 is general shelf/slope
+#' rockfish and not Pacific ocean perch specific landings. These records occur
+#' only in Oregon. As of the 2017 assessment, these records should be removed
+#' from the catch file.
+#'
+#' ## Searching for species
+#' Values passed to `pacfin_species_code` are searched for in their exact form.
+#' That is, there are no regular expression searches so mistakes such as
+#' `" POP"` will not be found. In my experiences these mistakes in the species
+#' codes are more common for PacFIN species codes that are three letters rather
+#' than the standard four letters.
+#'
 #' @export
 #' @author Kelli F. Johnson
-#' @seealso
-#' See [PullNominal.PacFIN()] for how nominal species codes are determined.
-#' @return RData frames are saved to the disk and the pulled data
-#' are returned as a data frame.
-#'   * CompFT - pulled data
-#'   * Research.Tribal.Catch - summary by year, state, and fleet;
-#'     fleets are as follows:
-#'     limited entry (LE), open access (OA), treaty indian (TI),
-#'     research (R), and unknown (XX)
-#'   * Catch.INPFC - catch by INPFC area
-#'   * Catch.PSMFC - catch by PSMFC area
 #'
-#' 
-#' 
+#' @seealso
+#' * [PullNominal.PacFIN()] determines the nominal species codes
+#' * [sql_catch()] writes the sql code to pull the data
+#'
+#' @examples
+#' \dontrun{
+#' catch.pacfin <- PullCatch.PacFIN("PTRL")
+#' # Check for confidentiality by year
+#' # though you would also want to do this by your gear types
+#' dplyr::group_by(catch.pacfin, LANDING_YEAR) %>%
+#'   dplyr::summarize(count = dplyr::n_distinct(VESSEL_ID)) %>%
+#'   dplyr::filter(count < 4)
+#'
+#' # look for foreign landings
+#' catch.pacfin <- PullCatch.PacFIN("PTRL", council_code = c("*", "N"))
+#' # Counts of NROW() by area code(s)
+#' dplyr::group_by(catch.pacfin, ORIG_PACFIN_CATCH_AREA_CODE) %>%
+#'   dplyr::count()
+#' }
 #'
 PullCatch.PacFIN <- function(pacfin_species_code,
+                             council_code = "P",
                              username = getUserName("PacFIN"),
                              password = ask_password(),
                              savedir = getwd(),
                              addnominal = TRUE,
                              verbose = FALSE) {
+  # todo:
+  # * change input arguments to snake_case
+  # * get rid of addnominal call and show users how to add it in pacfin_species_code
+
   # Input checks
   stopifnot(
     "`addnominal` must be a logical." =
@@ -92,7 +116,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
 
   # Save pulled data
   catch.pacfin <- getDB(
-    sql.catch(pacfin_species_code),
+    sql_catch(pacfin_species_code, council_code),
     username = username,
     password = password
   )

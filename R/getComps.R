@@ -220,7 +220,7 @@ getcomps_long <- function(data, towstrat, type,
 #' length as the supplied vectors.
 #'
 getunsexedsamps <- function(identifier, sex, good = "U") {
-  if (class(sex) == "factor") sex <- as.character(sex)
+  if (inherits(sex, "factor")) sex <- as.character(sex)
   ff <- function(x) paste(unique(x), collapse = "")
   keep <- stats::ave(sex, identifier, FUN = ff)
   return(ifelse(keep == good, identifier, NA))

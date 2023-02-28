@@ -104,17 +104,20 @@ getAge <- function(
 
   # Standardize all columns that have AGE_METHOD, AGE_METHOD2, ...
   if (
-    class(Pdata[["FINAL_FISH_AGE_CODE"]]) == "character" |
-    class(Pdata[["FISH_AGE_CODE_FINAL"]]) == "character"
-    ) {
-    message("PacFIN was fixed and now supplies FINAL_FISH_AGE_CODE or FISH_AGE_CODE_FINAL,\n",
-      "and thus, the code in getAge should be updated to reflect this; look for todo.")
+    inherits(Pdata[["FINAL_FISH_AGE_CODE"]], "character") |
+    inherits(Pdata[["FISH_AGE_CODE_FINAL"]], "character")
+  ) {
+    message(
+      "PacFIN was fixed and now supplies FINAL_FISH_AGE_CODE or ",
+      "FISH_AGE_CODE_FINAL,\n and thus, the code in `getAge()` should be",
+      " updated to reflect this; look for todo."
+    )
   }
   Pdata <- Pdata %>%
   dplyr::mutate(dplyr::across(
     # dplyr::matches("AGE_CODE|AGE_M"),
-    # todo: uncomment above when FINAL_FISH_AGE_CODE has correct codes rather than
-    # duplicates of the final age
+    # todo: uncomment above when FINAL_FISH_AGE_CODE has correct
+    # codes rather than duplicates of the final age
     dplyr::matches("AGE_M"),
     ~ dplyr::case_when(
       .x %in% c("B", "BB", 1) ~ "B",

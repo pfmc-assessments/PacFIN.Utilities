@@ -20,10 +20,12 @@ code(s) you are interested in. This has sometimes been referred to as
 by
 \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes.txt}{organization},
 and \href{https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/agency_spcodes_spid.txt}{alphabetically organized}
-can be found on the PacFIN website](https://pacfin.psmfc.org). Often you
+can be found on the \href{https://pacfin.psmfc.org}{PacFIN website}. Often you
 will want to include nominal species categories. Where, nominal (i.e.,
 \href{https://www.google.com/search?q=NOMINAL&rlz=1C1GCEJ_enUS866US866&sourceid=chrome&ie=UTF-8}{existing in name only})
-means information for a given species that is \verb{derived' from non-species specific information, e.g., species complexes that are split out by species compositions like }nominal aurora rockfish' which would be \code{ARR1}. For some
+means information for a given species that is "derived" from non-species
+specific information, e.g., species complexes that are split out by species
+compositions like "nominal aurora rockfish" which would be \code{ARR1}. For some
 functions, these nominal categories can automatically be added, see the
 argument \code{addnominal}.}
 
@@ -34,11 +36,10 @@ of legacy rules that are unknown to the development team. Please email the
 maintainer of this package if you need more behind-the-scenes
 functionality here.}
 
-\item{password}{Your password for the database of interest. For some
-functions, it may be okay to leave this argument missing because
-you will be prompted for your password but not all. Please do not share
-this password with anyone or push any code to a repository that has your
-password saved.}
+\item{password}{Your password for the database of interest. Use
+\code{\link[=ask_password]{ask_password()}} to be prompted for your password. Please do not share this
+password with anyone or push code to a repository that has your password
+saved in it.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.
@@ -56,32 +57,38 @@ This is standard practice for packages in the pfmc-assessments organization.}
 }
 \value{
 An RData object is saved to the disk and the pulled data
-are returned as a data frame.
-The saved data can be read back in using \link{load}, but note that
-the object is named \code{bds.pacfin} inside of the \code{.RData} file, and thus,
+are returned as an \code{\link[=invisible]{invisible()}} data frame.
+The saved data can be read back in using \code{\link[=load]{load()}}, but note that
+upon loading, the object will be named \code{bds.pacfin}, which is its name
+inside of the \code{.RData} file, and thus,
 the object will retain this name within your work space.
-In February of 2021, the returned object was renamed from \code{out}
-to \code{bds.pacfin} in an attempt to be more clear.
+}
+\description{
+Pull biological data from the Comprehensive Biological Data
+(comprehensive_bds_comm) table in the PacFIN database (PACFIN_MARTS). Data
+are in their raw form and should be cleaned either by hand or using
+\code{\link[=cleanPacFIN]{cleanPacFIN()}}.
+}
+\details{
+\subsection{Data structure}{
 
-Upon download, the data are changed from a long table to a wide table
-using the combination of unique \code{FISH_ID} and \code{AGE_SEQUENCE_NUMBER}.
-Users are warned if \code{verbose = TRUE} when there are non-unique \code{FISH_IDs} and these data
-are automatically removed from the data frame.
-This change from long to wide allows for rows equating to a single fish with columns
-containing information about all measurements for that fish. Multiple age reads and
-information about those reads such as age reader will be in the columns.
-So, if your data had at most three duplicate reads,
-then you will see numbers up to \code{3} pasted onto the end of relevant column names.
-This is to help you match duplicate reads to other relevant information.
-Not all double reads are currently available within PacFIN and
-users should contact the ageing labs if they wish to inform ageing-error matrices.
+Upon downloading, the data are changed from a long table to a wide table
+using the combination of unique \code{FISH_ID} and \code{AGE_SEQUENCE_NUMBER}. This
+change from long to wide allows for rows equating to a single fish with
+columns containing information about all measurements for that fish. Multiple
+age reads and information about those reads such as age reader will be in the
+columns. The age read number, e.g., 1, 2, 3, 4, ..., is pasted onto the
+column name separated by an underscore. So, the maximum number you see is the
+maximum number of times an otolith was read in your data set. Not all double
+reads are currently available within PacFIN and users should contact the
+ageing labs if they wish to inform ageing-error matrices.
 
 \code{AGE_COUNT} is a somewhat cryptic column name and does not always make sense
 when compared to \code{AGE_SEQUENCE_NUMBER}. It was determined that the former is
 useful to identify how many potential agers were exposed to this fish.
 For example, if \code{AGE_SEQUENCE_NUMBER} has a maximum value of three for a
 given \code{FISH_ID}, then you can expect \code{AGE_COUNT} to be three for all three
-rows in the PACFIN database for that fish. This is not always true though.
+rows in the PacFIN database for that fish. This is not always true though.
 Sometimes, not all \code{AGE_SEQUENCE_NUMBER}s are present and they can skip
 numbers for a given \code{FISH_ID}, and in this case, \code{AGE_COUNT} will be the
 maximum \code{AGE_SEQUENCE_NUMBER} for a given \code{FISH_ID}.
@@ -96,27 +103,31 @@ be used, or it could be that together they determine that they were both
 wrong and a new age is proposed as the \verb{resolved age}. Nevertheless,
 it can be quite messy and there is no way to predict the best age.
 }
-\description{
-Pull biological data from the
-Comprehensive Biological Data (comprehensive_bds_comm) table
-in the PacFIN database (PACFIN_MARTS).
-Data are in their raw form and should be cleaned either by hand or
-using \link{cleanPacFIN}.
+
+\subsection{Searching for species}{
+
+Values passed to \code{pacfin_species_code} are searched for using regular
+expression matching, which is different than the exact matching that is done
+is \code{\link[=PullCatch.PacFIN]{PullCatch.PacFIN()}}. The use of pattern matching allows for species codes
+with mistakes like leading and trailing spaces to be found. This is doable in
+the biological data because data for nominal species codes are few. In my
+experiences these mistakes in the species codes are more common for PacFIN
+species codes that are three letters rather than the standard four letters.
+}
 }
 \examples{
 \dontrun{
-# Enter password in place of xxx below
-mypw <- "xxx"
-pd <- PullBDS.PacFIN(pacfin_species_code = "POP", password = mypw)
+# You will be asked for your password
+pd <- PullBDS.PacFIN(pacfin_species_code = "POP")
 }
 
 }
 \seealso{
 \itemize{
-\item \link{cleanColumns} to change to legacy column names
-\item \link{cleanPacFIN} to manipulate and subset the returned object
+\item \code{\link[=cleanColumns]{cleanColumns()}} to change to legacy column names
+\item \code{\link[=cleanPacFIN]{cleanPacFIN()}} to manipulate and subset the returned object
 }
 }
 \author{
-John R. Wallace, Kelli F. Johnson
+John R. Wallace and Kelli F. Johnson
 }

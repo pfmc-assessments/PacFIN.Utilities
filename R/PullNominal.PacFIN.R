@@ -3,7 +3,7 @@
 #' Pull the species information table and attempt to determine which
 #' nominal codes pertain to the desired species codes.
 #'
-#' @template pacfin_species_code
+#' @inheritParams sql
 #' @template username
 #' @template password
 #' @return
@@ -17,7 +17,7 @@ PullNominal.PacFIN <- function(pacfin_species_code,
                                password = ask_password()) {
 
   spp <- getDB(
-    sql.species(),
+    sql_species(),
     username = username,
     password = password
   )
