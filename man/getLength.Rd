@@ -4,7 +4,7 @@
 \alias{getLength}
 \title{Get length for PacFIN commercial samples}
 \usage{
-getLength(Pdata, verbose = FALSE, keep)
+getLength(Pdata, verbose = TRUE, keep)
 }
 \arguments{
 \item{Pdata}{A data frame of biological samples
