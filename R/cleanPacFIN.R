@@ -129,20 +129,19 @@
 #'
 #' @author Andi Stephens
 
-cleanPacFIN <- function(
-  Pdata,
-  keep_INPFC = lifecycle::deprecated(),
-  keep_gears,
-  keep_sample_type = c("M"),
-  keep_sample_method = "R",
-  keep_length_type,
-  keep_age_method = NULL,
-  keep_missing_lengths = lifecycle::deprecated(),
-  keep_states = c("WA", "OR", "CA"),
-  CLEAN = TRUE,
-  spp = NULL,
-  verbose = FALSE,
-  savedir) {
+cleanPacFIN <- function(Pdata,
+                        keep_INPFC = lifecycle::deprecated(),
+                        keep_gears,
+                        keep_sample_type = c("M"),
+                        keep_sample_method = "R",
+                        keep_length_type,
+                        keep_age_method = NULL,
+                        keep_missing_lengths = lifecycle::deprecated(),
+                        keep_states = c("WA", "OR", "CA"),
+                        CLEAN = TRUE,
+                        spp = NULL,
+                        verbose = FALSE,
+                        savedir) {
 
   #### Deprecate old input arguments
   if (lifecycle::is_present(keep_INPFC)) {
