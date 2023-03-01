@@ -22,8 +22,18 @@
 #' 
 convertlength_skate <- function(Pdata, returntype = c("all", "estimated")) {
   matchcol <- function(data) {
-    apply(data[, c("SEX", "FISH_LENGTH_TYPE")], MARGIN = 1, 
-      FUN = paste, collapse = "_")
+    var_sex <- grep("SEX", colnames(data), value = TRUE)[1]
+    var_fish_length_type <- grep(
+      "FISH_LENGTH_TYPE",
+      colnames(data),
+      value = TRUE
+    )[1]
+    apply(
+      data[, c(var_sex, var_fish_length_type)],
+      MARGIN = 1,
+      FUN = paste,
+      collapse = "_"
+    )
   }
   returntype <- match.arg(returntype, several.ok = FALSE)
   
