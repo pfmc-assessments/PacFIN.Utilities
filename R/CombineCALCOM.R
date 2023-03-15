@@ -91,10 +91,10 @@ combineCalCOM = function ( Pdata, CalCOM ) {
   # No sample type or method, no INPFC_AREA, so give them values that are
   # retained by cleanPacFIN.
 
-  Cal.dat$AGE_METHOD = "S"
+#  Cal.dat$AGE_METHOD = "S" # IGT: not present in PacFIN table 15 March 2023
   Cal.dat$SAMPLE_METHOD = "R"
   Cal.dat$SAMPLE_TYPE = "M"
-  Cal.dat$INPFC_AREA = "CalCOM"
+#  Cal.dat$INPFC_AREA = "CalCOM" # IGT: not present in PacFIN table 15 March 2023
 
   Cal.dat$GRID = "CalCOM"
 
@@ -104,7 +104,6 @@ combineCalCOM = function ( Pdata, CalCOM ) {
   Cal.dat$SEX[Cal.dat$SEX=="2"] = "F"
 
   # Done.
-
   cat( paste("Combined dataset:", nrow(rbind(Pdata, Cal.dat)), "\n\n" ) )
 
   return(rbind(Pdata,Cal.dat))
