@@ -6,7 +6,11 @@
 #' \code{combineCalCOM} adds required PacFIN columns to CalCOM data, initializing them
 #' to meaningful values as appropriate, translating from the CalCOM values when
 #' they exist in a different format.
-#' 
+#'
+#' This function was made defunct in March 2021 because CalCOM data were
+#' expected to be available in PacFIN, but at least for petrale sole, the CalCOM
+#' data used in 2019 was not available in PacFIN in 2023.
+#'
 #' \subsection{Workflow}{
 #' Intended to be run before \code{\link{cleanPacFIN}}.
 #' }
