@@ -82,16 +82,21 @@ combineCalCOM = function ( Pdata, CalCOM ) {
   Cal.dat$SOURCE_AGID  = "CalCOM"
   Cal.dat$PSMFC_ARID   = "CalCOM"
   Cal.dat$age1         = as.numeric(CalCOM$AGE)
-  Cal.dat$age2         = as.numeric(CalCOM$AGE)
-  Cal.dat$age3         = as.numeric(CalCOM$AGE)
   Cal.dat$FISH_AGE_YEARS_FINAL = as.numeric(CalCOM$AGE)
   Cal.dat$FREQ         = 1
   Cal.dat$FISH_LENGTH_TYPE = ""
+  # IGT: FISH_LENGTH_UNITS = "MM" were added outside this function for Petrale 
+  # in 2023, but I don't know if all CalCOM data are in MM
+  if ("FISH_LENGTH_UNITS" %in% names(CalCOM)) {
+    Cal.dat$FISH_LENGTH_UNITS = CalCOM$FISH_LENGTH_UNITS
+  }
 
   # No sample type or method, no INPFC_AREA, so give them values that are
   # retained by cleanPacFIN.
 
-#  Cal.dat$AGE_METHOD = "S" # IGT: not present in PacFIN table 15 March 2023
+  # IGT: assigning surface but 1985-1989 samples in 2019 Petrale 
+  # were assigned a combination of surface and break-and-burn
+  Cal.dat$AGE_METHOD1 = "S" 
   Cal.dat$SAMPLE_METHOD = "R"
   Cal.dat$SAMPLE_TYPE = "M"
 #  Cal.dat$INPFC_AREA = "CalCOM" # IGT: not present in PacFIN table 15 March 2023
