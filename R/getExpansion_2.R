@@ -158,13 +158,18 @@ getExpansion_2 <- function(Pdata, Catch,
   )
 
   # Find which trips don't have catch values associated with them
-  if (sum(is.na(tows[, "catch"])) != 0){
-    NoCatch <- stats::aggregate(Sum_Sampled_Lbs ~ fishyr + stratification,
-      data = tows[is.na(tows[, "catch"]), ], length)
-    colnames(NoCatch)[3] <- "N"
-    if (length(NoCatch) > 0 & verbose) {
-      message("No Catch was found for these rows in Pdata, where\n",
-        "N is the number of rows with missing Catch info:")
+  trips_without_catch <- dplyr::filter(tows, is.na(catch))
+  if (NROW(trips_without_catch) > 0) {
+    NoCatch <- dplyr::group_by(
+      .data = trips_without_catch,
+      fishyr, stratification
+    ) %>%
+      dplyr::count(Sum_Sampled_Lbs)
+    if (length(NoCatch) > 0 && verbose) {
+      message(
+        "No Catch was found for these rows in Pdata, where\n",
+        "n is the number of rows with missing Catch info:"
+      )
       print(NoCatch)
     } # End if
   }
