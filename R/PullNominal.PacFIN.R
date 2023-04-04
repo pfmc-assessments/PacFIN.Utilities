@@ -22,7 +22,14 @@ PullNominal.PacFIN <- function(pacfin_species_code,
     password = password
   )
 
-  nom <- spp[grepl("NOM\\.", spp[,2]), ]
+  nom <- spp[grepl("NOM\\.", spp[,2]), ] %>%
+    # Fix a known spelling mistake
+    dplyr::mutate(
+      PACFIN_SPECIES_COMMON_NAME = gsub(
+        "VERMILLION",
+        "VERMILION",
+        PACFIN_SPECIES_COMMON_NAME)
+    )
 
   out <- tibble::tibble(spp) %>%
     dplyr::mutate(searchname = gsub(
