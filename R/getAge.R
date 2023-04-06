@@ -65,17 +65,18 @@
 #' If all ages are `NA`, then a vector of `NA` values is quickly returned.
 #'
 getAge <- function(Pdata,
-                   verbose = TRUE,
+                   verbose = FALSE,
                    keep,
                    col.bestage = "FISH_AGE_YEARS_FINAL") {
-
   if (!col.bestage %in% colnames(Pdata)) {
     Pdata[[col.bestage]] <- NA
   }
   if (length(grep("^age[0-9]*$", colnames(Pdata))) == 0) {
     Pdata[["age"]] <- if (any(grepl("AGE_IN_YEARS", colnames(Pdata)))) {
-        Pdata[["AGE_IN_YEARS"]]
-      } else {NA}
+      Pdata[["AGE_IN_YEARS"]]
+    } else {
+      NA
+    }
   }
 
   #### Return if all ages are NA
@@ -103,7 +104,7 @@ getAge <- function(Pdata,
   # Standardize all columns that have AGE_METHOD, AGE_METHOD2, ...
   if (
     inherits(Pdata[["FINAL_FISH_AGE_CODE"]], "character") |
-    inherits(Pdata[["FISH_AGE_CODE_FINAL"]], "character")
+      inherits(Pdata[["FISH_AGE_CODE_FINAL"]], "character")
   ) {
     message(
       "PacFIN was fixed and now supplies FINAL_FISH_AGE_CODE or ",
@@ -112,18 +113,20 @@ getAge <- function(Pdata,
     )
   }
   Pdata <- Pdata %>%
-  dplyr::mutate(dplyr::across(
-    # dplyr::matches("AGE_CODE|AGE_M"),
-    # todo: uncomment above when FINAL_FISH_AGE_CODE has correct
-    # codes rather than duplicates of the final age
-    dplyr::matches("AGE_M"),
-    ~ dplyr::case_when(
-      .x %in% c("B", "BB", 1) ~ "B",
-      .x %in% c("S", "SR", 2) ~ "S",
-      .x %in% c("T", "TS", "X", 4) ~ "T",
-      .x %in% c("O", 5) ~ "O",
-      .x %in% c("L", 6) ~ "L",
-      TRUE ~ as.character(.x))))
+    dplyr::mutate(dplyr::across(
+      # dplyr::matches("AGE_CODE|AGE_M"),
+      # todo: uncomment above when FINAL_FISH_AGE_CODE has correct
+      # codes rather than duplicates of the final age
+      dplyr::matches("AGE_M"),
+      ~ dplyr::case_when(
+        .x %in% c("B", "BB", 1) ~ "B",
+        .x %in% c("S", "SR", 2) ~ "S",
+        .x %in% c("T", "TS", "X", 4) ~ "T",
+        .x %in% c("O", 5) ~ "O",
+        .x %in% c("L", 6) ~ "L",
+        TRUE ~ as.character(.x)
+      )
+    ))
 
   # Only keep ages in age column if it is an approved method
   for (iiname in grep("AGE_METHOD[0-9]*$", colnames(Pdata), value = TRUE)) {
@@ -132,27 +135,30 @@ getAge <- function(Pdata,
       test = Pdata[, paste0("AGE_METHOD", iinum)] %in% keep,
       yes = Pdata[, paste0("age", iinum)],
       no = NA
-      )
+    )
   }
 
   # Average all non-NA ages available if col.bestage is NA
   # Not sure why this is happening in PacFIN
   # 1 California sablefish
   # 8300 WA records of various spp emailed Theresa on 2021-03-06
-   Age <- ifelse(
+  Age <- ifelse(
     test = (
-      #todo
+      # todo
       # (Pdata[["FISH_AGE_CODE_FINAL"]] %in% keep) |
       # (Pdata[["FINAL_FISH_AGE_CODE"]] %in% keep) |
       !is.na(Pdata[[col.bestage]])
-      ),
+    ),
     yes = Pdata[[col.bestage]],
     no = apply(Pdata[, grep("age[0-9]*$", colnames(Pdata)), drop = FALSE], 1,
       FUN = function(x) {
-        if (all(is.na(x))) return(NA)
+        if (all(is.na(x))) {
+          return(NA)
+        }
         return(ceiling(mean(stats::na.omit(x), na.rm = FALSE)))
-    })
+      }
     )
+  )
 
   # Remove Age if none of the available age methods are in keep
   Age[
@@ -160,32 +166,43 @@ getAge <- function(Pdata,
       X = Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata)), drop = FALSE],
       MARGIN = 1,
       FUN = function(x) !any(x %in% keep)
-      )
-    ] <- NA
+    )
+  ] <- NA
 
   if (verbose) {
-    message("\nAges ranged from ", min(Age, na.rm = TRUE), " to ",
-      max(Age, na.rm = TRUE), " (years).")
+    message(
+      "\nAges ranged from ", min(Age, na.rm = TRUE), " to ",
+      max(Age, na.rm = TRUE), " (years)."
+    )
     print(summaryAgeMethod(Pdata, verbose = TRUE))
     badages <- Pdata[!is.na(Pdata[[col.bestage]]), ]
     agematch <- sapply(1:NROW(badages), FUN = function(x) {
-      match(badages[x, col.bestage], badages[x, grep("age[0-9]*$", colnames(badages))])
+      match(
+        badages[x, col.bestage],
+        badages[x, grep("age[0-9]*$", colnames(badages))]
+      )
     })
-    message("\n", col.bestage, " matches value(s) for agers 1, 2, ...;",
-      " NA means no exact match.")
+    message(
+      "\n", col.bestage, " matches value(s) for agers 1, 2, ...;",
+      " NA means no exact match."
+    )
     print(table(agematch, useNA = "always"))
     badages <- badages[which(is.na(agematch)), ]
     badages[["mean"]] <- ceiling(
-      apply(badages[, grep("age[0-9]*$", colnames(badages)), drop = FALSE], MARGIN = 1,
-        mean, na.rm = TRUE)
+      apply(badages[, grep("age[0-9]*$", colnames(badages)), drop = FALSE],
+        MARGIN = 1,
+        mean, na.rm = TRUE
       )
+    )
     if (length(which(badages[[col.bestage]] != badages[["mean"]])) > 0) {
-      message("Investigate the following SAMPLES for errors because\n",
-        col.bestage, " doesn't match the mean of all reads:")
+      message(
+        "Investigate the following SAMPLES for errors because\n",
+        col.bestage, " doesn't match the mean of all reads:"
+      )
       print(badages[
         which(badages[[col.bestage]] != badages[["mean"]]),
-        grep("FISH_ID|FINAL|age", colnames(badages))]
-        )
+        grep("FISH_ID|FINAL|age", colnames(badages))
+      ])
     }
   }
 
@@ -206,11 +223,14 @@ getAge <- function(Pdata,
 summaryAgeMethod <- function(Pdata,
                              verbose = TRUE) {
   if (verbose) {
-    message("The table below includes the number of samples (n) per ageing method.\n",
-      "Each age sequence number, the PacFIN delineation for age read, has its own column.\n",
-      "The number of columns depends on the maximum number of age reads available.\n",
-      "If ANY method for a given fish matches those in keep, then that age will be kept\n",
-      "even if PacFIN did not use the age to create the final fish age.")
+    message(
+      "The table below includes the number of samples (n) per ageing method.\n",
+      "Each age sequence number, the PacFIN delineation for age read, has its",
+      " own column.\nThe number of columns depends on the maximum number of",
+      " age reads available.\nIf ANY method for a given fish matches those",
+      " in keep, then that age will be kept\neven if PacFIN did not use the",
+      " age to create the final fish age."
+    )
   }
   Pdata %>%
     dplyr::select(dplyr::matches("AGE_METHOD")) %>%
