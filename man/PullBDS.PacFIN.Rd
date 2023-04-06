@@ -102,6 +102,16 @@ an agreed-upon age. Other times, the senior reader's value will always
 be used, or it could be that together they determine that they were both
 wrong and a new age is proposed as the \verb{resolved age}. Nevertheless,
 it can be quite messy and there is no way to predict the best age.
+
+\code{FISH_WEIGHT_GUTTED} is typically only available for a small subset of
+samples that were sampled "purposively" by Washington state. E.g., if a
+fish is weighed whole and then headed and gutted and weighed again, then
+there would be two rows with the same \code{FISH_ID} but different \code{FISH_WEIGHT}
+entries in the PacFIN BDS table. The downloaded data are reshaped such that
+this second gutted weight is placed in \code{FISH_WEIGHT_GUTTED} and the fish is
+represented in a single row. Granted, these purposive samples should not be
+used in an assessment of the population status but they are included in the
+download for completeness.
 }
 
 \subsection{Searching for species}{
