@@ -55,6 +55,16 @@
 #' wrong and a new age is proposed as the `resolved age`. Nevertheless,
 #' it can be quite messy and there is no way to predict the best age.
 #'
+#' `FISH_WEIGHT_GUTTED` is typically only available for a small subset of
+#' samples that were sampled "purposively" by Washington state. E.g., if a
+#' fish is weighed whole and then headed and gutted and weighed again, then
+#' there would be two rows with the same `FISH_ID` but different `FISH_WEIGHT`
+#' entries in the PacFIN BDS table. The downloaded data are reshaped such that
+#' this second gutted weight is placed in `FISH_WEIGHT_GUTTED` and the fish is
+#' represented in a single row. Granted, these purposive samples should not be
+#' used in an assessment of the population status but they are included in the
+#' download for completeness.
+#'
 #' ## Searching for species
 #' Values passed to `pacfin_species_code` are searched for using regular
 #' expression matching, which is different than the exact matching that is done
@@ -88,6 +98,9 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   file_species_code <- paste(pacfin_species_code, collapse = "--")
 
   # Pull from PacFIN
+  if (verbose) {
+    message("Pulling BDS data from PacFIN for ", pacfin_species_code)
+  }
   data_raw <- getDB(
     sql = sql_bds(pacfin_species_code),
     username = username,
@@ -144,27 +157,78 @@ PullBDS.PacFIN <- function(pacfin_species_code,
     )
   }
   rm(fish_id)
+  # Check that WA purposive samples only have duplicated information in
+  # FISH_WEIGHT (because they will be made wider later)
   fish_id <- duplicated(data_raw[, c("FISH_ID", "AGE_SEQUENCE_NUMBER")])
+  data_fish <- data_raw %>%
+    dplyr::filter(
+      AGENCY_CODE == "W",
+      SAMPLE_METHOD_CODE == "P",
+      FISH_ID %in% data_raw[fish_id, "FISH_ID"]
+    ) %>%
+    dplyr::group_by(FISH_ID)
+  if (NROW(data_fish)) {
+    check <- data_fish %>%
+      dplyr::select_if(~ !all(is.na(.))) %>%
+      dplyr::select(-BDS_ID, -FISH_WEIGHT) %>%
+      dplyr::group_map(
+        .f = ~ duplicated(.x)
+      ) %>%
+      do.call(what = "rbind")
+    if (!all(check[, 2])) {
+      stop(
+        call. = FALSE,
+        "There were records for Washington sampled purposively that contain\n",
+        "unique information, beyond `FISH_WEIGHT`, per row. Please contact\n",
+        "the package maintainer to accommodate these samples."
+      )
+    }
+  }
+  rm(fish_id, data_fish)
+  # Check for duplicated FISH_IDs
+  fish_id <- duplicated(data_raw[, c("FISH_ID", "AGE_SEQUENCE_NUMBER")]) &
+    (data_raw[["SAMPLE_METHOD_CODE"]] != "P" & data_raw[["AGENCY_CODE"]] != "W")
   if (verbose && sum(fish_id)) {
     warning(
       call. = FALSE,
       immediate. = TRUE,
-      "FISH_ID has duplicates in the following years and samples,\n",
-      "please contact the agency that provided the samples:\n"
+      noBreaks. = FALSE,
+      "The downloaded data contains duplicated entries that will be\n",
+      "removed prior to returning the data. Please notify the agency that\n",
+      "provided the following duplicated samples:"
     )
-    print(
-      data_raw[fish_id, ] %>%
-        dplyr::group_by(AGENCY_CODE, SAMPLE_YEAR, SAMPLE_NUMBER) %>%
-        dplyr::count()
-    )
+    data_raw[fish_id, ] %>%
+      dplyr::group_by(AGENCY_CODE, SAMPLE_YEAR, SAMPLE_NUMBER) %>%
+      dplyr::count() %>%
+      print(n = sum(fish_id))
   }
+  rm(fish_id)
 
   # todo: think about not changing column names
   data <- data_raw %>%
     # Fix the data
-    dplyr::select(-SAMPLE_AGENCY) %>%
     dplyr::filter(!is.na(FISH_ID)) %>%
-    dplyr::filter(!duplicated(FISH_ID, AGE_SEQUENCE_NUMBER)) %>%
+    # Move duplicated FISH_WEIGHT to FISH_WEIGHT_GUTTED from WA and remove
+    # FISH_IDs that are duplicated for CA
+    dplyr::group_by(FISH_ID) %>%
+    dplyr::mutate(
+      weight_type = ifelse(
+        test = FISH_WEIGHT == max(FISH_WEIGHT),
+        yes = "FISH_WEIGHT",
+        no = "FISH_WEIGHT_GUTTED"
+      )
+    ) %>%
+    tidyr::pivot_wider(
+      id_cols = !dplyr::matches("BDS_ID"),
+      names_from = "weight_type",
+      values_from = "FISH_WEIGHT",
+      values_fn = list(FISH_WEIGHT = unique)
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::relocate(FISH_WEIGHT, .after = FORK_LENGTH_IS_ESTIMATED) %>%
+    dplyr::select(-"NA") %>%
+    # Continue fixing the data
+    dplyr::select(-SAMPLE_AGENCY) %>%
     dplyr::mutate(
       FISH_LENGTH_TYPE_CODE = ifelse(
         test = FISH_LENGTH_TYPE_CODE != FALSE,
@@ -202,6 +266,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
       "pivot_wider failed to transform age reads to a wide data frame!"
     )
   } else {
+    # TODO: Think about returning a tibble rather than a data frame
     bds.pacfin <- data.frame(bds.pacfin)
   }
 
