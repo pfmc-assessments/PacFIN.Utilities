@@ -1,6 +1,6 @@
 Package: PacFIN.Utilities
-Title: Get fishery-dependent data from PacFIN
-Version: 0.2.5
+Title: Generate fishery composition data from PacFIN data for the NWFSC
+Version: 0.2.6
 Authors@R: c(
     person(
       given = c("Kelli", "F."),

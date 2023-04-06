@@ -106,3 +106,26 @@ sql_species <- function() {
   sqlcall <- gsub("\\n", " ", sqlcall)
   return(sqlcall)
 }
+#'
+#' @rdname sql
+#' @details
+#' `sql_check_FINAL_FISH_AGE_IN_YEARS()` results in a data frame of number of
+#' unique `FISH_ID`s present in PacFIN per `PACFIN_SPECIES_CODE` and
+#' `AGENCY_CODE`, i.e., species and state sampling agency, that have entries for
+#' `AGE_IN_YEARS` but have `NULL` values for `FINAL_FISH_AGE_IN_YEARS`. In
+#' theory, this table should have zero rows. But, there may be reasons why these
+#' entries do not have a final age value and potentially should not be used in
+#' assessments of population status. Thus, the result is used in an automated
+#' check and to create warning labels when downloading data.
+sql_check_FINAL_FISH_AGE_IN_YEARS <- function() {
+  sqlcall <- glue::glue("
+    SELECT PACFIN_SPECIES_CODE, AGENCY_CODE, count(distinct(FISH_ID)) AS N
+    FROM PACFIN_MARTS.COMPREHENSIVE_BDS_COMM
+    WHERE AGE_IN_YEARS is not null and FINAL_FISH_AGE_IN_YEARS is null
+    group by PACFIN_SPECIES_CODE, AGENCY_CODE
+    ORDER by PACFIN_SPECIES_CODE, AGENCY_CODE;
+    "
+  )
+  sqlcall <- gsub("\\n", " ", sqlcall)
+  return(sqlcall)
+}

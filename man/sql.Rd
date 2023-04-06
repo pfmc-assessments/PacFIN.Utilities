@@ -6,6 +6,7 @@
 \alias{sql_bds}
 \alias{sql_catch}
 \alias{sql_species}
+\alias{sql_check_FINAL_FISH_AGE_IN_YEARS}
 \title{Write SQL text}
 \usage{
 sql_area()
@@ -15,6 +16,8 @@ sql_bds(pacfin_species_code)
 sql_catch(pacfin_species_code, council_code = "P")
 
 sql_species()
+
+sql_check_FINAL_FISH_AGE_IN_YEARS()
 }
 \arguments{
 \item{pacfin_species_code}{A vector of strings specifying the PacFIN species
@@ -53,6 +56,15 @@ relevant data from the PacFIN database.
 \code{sql_bds()} results in catch data
 
 \code{sql_species()} results in data frame of species names
+
+\code{sql_check_FINAL_FISH_AGE_IN_YEARS()} results in a data frame of number of
+unique \code{FISH_ID}s present in PacFIN per \code{PACFIN_SPECIES_CODE} and
+\code{AGENCY_CODE}, i.e., species and state sampling agency, that have entries for
+\code{AGE_IN_YEARS} but have \code{NULL} values for \code{FINAL_FISH_AGE_IN_YEARS}. In
+theory, this table should have zero rows. But, there may be reasons why these
+entries do not have a final age value and potentially should not be used in
+assessments of population status. Thus, the result is used in an automated
+check and to create warning labels when downloading data.
 }
 \author{
 Kelli F. Johnson and John R. Wallace
