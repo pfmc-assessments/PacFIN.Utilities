@@ -215,8 +215,12 @@ cleanPacFIN <- function(Pdata,
 
   #### Age (originally in cleanAges)
   # Named to "Age" to match nwfscSurvey where Age is used.
-  Pdata[, "Age"] <- getAge(Pdata, verbose = verbose,
-    keep = keep_age_method)
+  Pdata[, "Age"] <- getAge(
+    Pdata,
+    verbose = verbose,
+    keep = keep_age_method
+  )
+  Pdata[, "age_method"] <- getAgeMethod(Pdata)
 
   #### Weight (random units in)
   Pdata[, "weightkg"] <- getweight(

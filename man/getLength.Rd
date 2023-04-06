@@ -19,10 +19,10 @@ off when output indicates information that you already know. The printing
 of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
-\item{keep}{A vector of values that represent what you want to keep.
-Values of \code{NA}, \code{""}, and numeric values are acceptable.
-Often, it is helpful to run `unique(, useNA = "always") on the relevant
-data prior to running the function to see what types are present.}
+\item{keep}{A vector of values that represent what you want to keep. Values
+of \code{NA}, \code{""}, and numeric values are acceptable. Often, it is helpful to
+run `unique(, useNA = "always") on the relevant data prior to running the
+function to see what types are present.}
 }
 \value{
 A vector of lengths in millimeters. Values of \code{NA} indicate that
