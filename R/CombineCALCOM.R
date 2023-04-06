@@ -8,8 +8,12 @@
 #' they exist in a different format.
 #'
 #' This function was made defunct in March 2021 because CalCOM data were
-#' expected to be available in PacFIN, but at least for petrale sole, the CalCOM
-#' data used in 2019 was not available in PacFIN in 2023.
+#' expected to be available in PacFIN, but restored in 2023 after discovering 
+#' that CalCOM data for flatfish prior to 1990 is not currently available in 
+#' PacFIN, as discussed in 
+#' https://github.com/pfmc-assessments/PacFIN.Utilities/issues/101:
+#' "it's in separate tables because they are bin samples (# of fish) rather than 
+#' cluster samples (weight based). PacFIN doesn't access those tables."
 #'
 #' \subsection{Workflow}{
 #' Intended to be run before \code{\link{cleanPacFIN}}.
