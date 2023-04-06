@@ -191,6 +191,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
         AGE_ID,
         AGE_METHOD:AGENCY_AGE_STRUCTURE_CODE
       ),
+      names_sort = TRUE,
       names_glue = "{.value}{AGE_SEQUENCE_NUMBER}",
       values_fill = NA
     )
