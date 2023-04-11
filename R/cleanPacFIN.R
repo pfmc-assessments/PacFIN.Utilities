@@ -270,11 +270,11 @@ cleanPacFIN <- function(Pdata,
     if (check_pacfin_species_code_calcom(Pdata$SPID)) {
       if (check_calcom) {
         cli::cli_alert_success(
-          "Data is from a flatfish and CalCOM data are present"
+          "Data are from a flatfish and CalCOM data are present"
         )
       } else {
         cli::cli_alert_danger(
-          "Data is from a flatfish but no CalCOM data are present, check with E.J."
+          "Data are from a flatfish but no CalCOM data are present, check with E.J."
         )
       }
     }
