@@ -166,7 +166,7 @@ cleanPacFIN <- function(Pdata,
   }
 
   #### CLEAN COLUMNS
-  if ("PACFIN_SPECIES_CODE" %in% colnames(Pdata)) {
+  if (check_columns_downloaded(Pdata)) {
     Pdata <- cleanColumns(Pdata)
   }
 

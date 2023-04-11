@@ -13,11 +13,9 @@ cleanColumns(data)
 A data frame with fewer columns and some names changed.
 }
 \description{
-Clean columns of a data frame from PacFIN.
-All description columns are removed.
-Should you want anything different, please feel free to
-post an issue on github, email the package maintainer, or submit a
-pull request.
+Clean columns of a data frame from PacFIN. All description columns are
+removed. Should you want anything different, please feel free to post an
+issue on GitHub, email the package maintainer, or submit a pull request.
 }
 \author{
 Kelli F. Johnson

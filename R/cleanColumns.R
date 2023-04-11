@@ -1,10 +1,8 @@
 #' Change Column Names to Vdrfd
 #'
-#' Clean columns of a data frame from PacFIN.
-#' All description columns are removed.
-#' Should you want anything different, please feel free to
-#' post an issue on github, email the package maintainer, or submit a
-#' pull request.
+#' Clean columns of a data frame from PacFIN. All description columns are
+#' removed. Should you want anything different, please feel free to post an
+#' issue on GitHub, email the package maintainer, or submit a pull request.
 #'
 #' @template data
 #'
@@ -116,4 +114,11 @@ cleanColumns.catch <- function(data) {
 
   return(data)
 
+}
+
+check_columns_downloaded <- function(x) {
+  if (inherits(x, "data.frame")) {
+    x <- colnames(x)
+  }
+  any(grepl("PACFIN_SPECIES_CODE", x, ignore.case = TRUE))
 }
