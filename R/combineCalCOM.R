@@ -84,8 +84,8 @@ combineCalCOM <- function(Pdata, CalCOM) {
       SPECIES_WEIGHT_LBS = CLUSTER_WEIGHT_LBS,
       SAMPLE_METHOD_CODE = "R",
       SAMPLE_TYPE = "M",
-      # TODO what gear is used for calCOM data
-      PACFIN_GEAR_CODE = ""
+      PACFIN_GEAR_CODE = "GFT",
+      AGENCY_GEAR_CODE = PACFIN_GEAR_CODE
     ) %>%
     dplyr::select(-SAMPLE_DATE, -AGE, -SEX, -SumOfTOTAL_CT)
 
