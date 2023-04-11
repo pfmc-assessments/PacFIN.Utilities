@@ -169,6 +169,7 @@ cleanPacFIN <- function(Pdata,
   if (check_columns_downloaded(Pdata)) {
     Pdata <- cleanColumns(Pdata)
   }
+  check_calcom <- any(Pdata[["SOURCE_AGID"]] == "CalCOM")
 
   #### Fill in missing input arguments
   Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
@@ -266,6 +267,17 @@ cleanPacFIN <- function(Pdata,
     message("N records: ", NROW(Pdata))
     message("N remaining if CLEAN: ", sum(bad[, "keep"]))
     message("N removed if CLEAN: ", NROW(Pdata) - sum(bad[, "keep"]))
+    if (check_pacfin_species_code_calcom(Pdata$SPID)) {
+      if (check_calcom) {
+        cli::cli_alert_success(
+          "Data is from a flatfish and CalCOM data are present"
+        )
+      } else {
+        cli::cli_alert_danger(
+          "Data is from a flatfish but no CalCOM data are present, check with E.J."
+        )
+      }
+    }
   }
 
   if (!missing(savedir)) {

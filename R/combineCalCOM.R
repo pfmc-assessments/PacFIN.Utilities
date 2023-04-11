@@ -102,3 +102,9 @@ combineCalCOM <- function(Pdata, CalCOM) {
   )
   return(out)
 }
+
+check_pacfin_species_code_calcom <- function(x) {
+  species_codes_in_calcom_bin <- c("DOVR", "EGLS", "PTRL", "REX")
+  purrr::map_lgl(species_codes_in_calcom_bin, .f = ~ .x %in% x) %>%
+    any()
+}
