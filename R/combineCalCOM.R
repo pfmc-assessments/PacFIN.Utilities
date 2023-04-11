@@ -117,6 +117,8 @@ combineCalCOM <- function(Pdata, CalCOM) {
     y = CalCOM,
     by = intersect(colnames(Pdata), colnames(CalCOM))
   )
+
+  cli::cli_alert("Users must set AGE_METHOD for CalCOM data manually.")
   return(out)
 }
 
