@@ -36,6 +36,23 @@
 #' * [cleanPacFIN()], which should be ran after this function
 
 combineCalCOM <- function(Pdata, CalCOM) {
+  calcom_columns_example <- c(
+    "SPECIES", "SAMPLE_NO", "SAMPLE_DATE", "AGE", "FISH_NO",
+    "TLENGTH", "SEX", "DEPTH", "SumOfWEIGHT", "SumOfTOTAL_CT",
+    "TOTAL_WGT", "PORT_COMPLEX"
+  )
+  check_column_names <- purrr::map_lgl(
+    colnames(CalCOM),
+    .f = ~ .x %in% calcom_columns_example
+  ) %>%
+    all()
+  if (!check_column_names) {
+    stop(
+      "There are columns in CalCOM that cannot currently be ",
+      "processed by combineCalCOM(), the following are viable options:\n",
+      paste(calcom_columns_example, collapse = "\n")
+    )
+  }
   # Break out Year, Month, Day from vector formatted "2/23/2012"
   trueDate <- as.Date(
     x = as.character(CalCOM$SAMPLE_DATE),
