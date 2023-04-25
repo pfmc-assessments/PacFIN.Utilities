@@ -39,7 +39,9 @@ combineCalCOM <- function(Pdata, CalCOM) {
   calcom_columns_example <- c(
     "SPECIES", "SAMPLE_NO", "SAMPLE_DATE", "AGE", "FISH_NO",
     "TLENGTH", "SEX", "DEPTH", "SumOfWEIGHT", "SumOfTOTAL_CT",
-    "TOTAL_WGT", "PORT_COMPLEX"
+    "TOTAL_WGT", "PORT_COMPLEX",
+    # Check if age method is present
+    if ("AGE_METHOD" %in% colnames(CalCOM)) "AGE_METHOD"
   )
   check_column_names <- purrr::map_lgl(
     colnames(CalCOM),
@@ -47,11 +49,23 @@ combineCalCOM <- function(Pdata, CalCOM) {
   ) %>%
     all()
   if (!check_column_names) {
-    stop(
+    message(
       "There are columns in CalCOM that cannot currently be ",
-      "processed by combineCalCOM(), the following are viable options:\n",
-      paste(calcom_columns_example, collapse = "\n")
+      "processed by combineCalCOM(), the following are viable options\n",
+      "and the remaining columns are removed:\n",
+      glue::glue_collapse(
+        glue::single_quote(calcom_columns_example),
+        sep = ", "
+      )
     )
+    CalCOM <- CalCOM[, calcom_columns_example]
+  }
+  if (!"AGE_METHOD" %in% colnames(CalCOM)) {
+    # TODO what age method are calCOM ages
+    CalCOM[, "AGE_METHOD"] <- ""
+    cli::cli_alert("Users must set AGE_METHOD for CalCOM data manually.")
+  } else {
+    CalCOM[, "AGE_METHOD"] <- as.character(CalCOM[, "AGE_METHOD"])
   }
   # Break out Year, Month, Day from vector formatted "2/23/2012"
   trueDate <- as.Date(
@@ -81,13 +95,12 @@ combineCalCOM <- function(Pdata, CalCOM) {
       # landed weight for this sample in pounds
       WEIGHT_OF_LANDING_LBS = "TOTAL_WGT",
       CLUSTER_WEIGHT_LBS = "SumOfWEIGHT",
+      AGE_METHOD1 = "AGE_METHOD"
     ) %>%
     dplyr::mutate(
       SEX_CODE = nwfscSurvey::codify_sex(SEX),
       AGENCY_CODE = "CalCOM",
       age1 = as.numeric(AGE),
-      # TODO what age method are calCOM ages
-      AGE_METHOD1 = "",
       FISH_LENGTH_TYPE_CODE = "T",
       FISH_LENGTH_UNITS = "MM",
       OBSERVED_FREQUENCY = 1,
@@ -118,7 +131,6 @@ combineCalCOM <- function(Pdata, CalCOM) {
     by = intersect(colnames(Pdata), colnames(CalCOM))
   )
 
-  cli::cli_alert("Users must set AGE_METHOD for CalCOM data manually.")
   return(out)
 }
 
