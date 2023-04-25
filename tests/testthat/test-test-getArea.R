@@ -22,7 +22,7 @@ test_that("'getArea()' returns message if `verbose = TRUE`", {
     catch_area_new = "aaa"
   )
   expect_message(getArea(test_data, verbose = TRUE))
-  expect_condition(getArea(test_data), regexp = NA)
+  expect_no_error(getArea(test_data))
   test_data <- data.frame(
     catch_area = paste0(4, letters),
     catch_area_new = "aaa"
