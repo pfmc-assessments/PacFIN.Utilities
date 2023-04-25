@@ -50,7 +50,7 @@ sex and all sexes combined, where the latter includes unsexed fish.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  col.length <span class="op">=</span> <span class="st">"lengthcm"</span>,</span>
 <span>  col.weight <span class="op">=</span> <span class="st">"weightkg"</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -81,15 +81,11 @@ you wish to have more standard parameter estimates.</p></dd>
 
 
 <dt>verbose</dt>
-<dd><p>A logical value specifying if output should be written
-to the screen or not. Good for testing and exploring your data but
-can be turned off when output indicates errors.
-The printing doesn't affect any of the returned objects, instead,
-printing makes it easier to see if the data has errors and what was
-done to rectify them in the given function.
-Sorry, but the default is to always print to the screen,
-i.e., <code>verbose = TRUE</code>, so you do not miss out on anything.
-This is standard practice for packages in the pfmc-assessments organization.</p></dd>
+<dd><p>A logical specifying if output should be written to the
+screen or not. Good for testing and exploring your data but can be turned
+off when output indicates information that you already know. The printing
+of output to the screen does not affect any of the returned objects. The
+default is to always print to the screen, i.e., <code>verbose = TRUE</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -118,7 +114,7 @@ for example.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Kelli F. Johnson, Andi Stephens.</p>
+  <p></p><p>Developed by Kelli F. Johnson, Chantel R. Wetzel.</p>
 </div>
 
 <div class="pkgdown">

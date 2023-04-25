@@ -61,7 +61,7 @@ Outliers are determined using standard deviations
 <span>  sdFactor <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  Optim <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  precision <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  dir <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -134,15 +134,11 @@ of digits the results will have after passing them through
 
 
 <dt>verbose</dt>
-<dd><p>A logical value specifying if output should be written
-to the screen or not. Good for testing and exploring your data but
-can be turned off when output indicates errors.
-The printing doesn't affect any of the returned objects, instead,
-printing makes it easier to see if the data has errors and what was
-done to rectify them in the given function.
-Sorry, but the default is to always print to the screen,
-i.e., <code>verbose = TRUE</code>, so you do not miss out on anything.
-This is standard practice for packages in the pfmc-assessments organization.</p></dd>
+<dd><p>A logical specifying if output should be written to the
+screen or not. Good for testing and exploring your data but can be turned
+off when output indicates information that you already know. The printing
+of output to the screen does not affect any of the returned objects. The
+default is to always print to the screen, i.e., <code>verbose = TRUE</code>.</p></dd>
 
 
 <dt>dir</dt>
@@ -159,7 +155,7 @@ nothing is saved.</p></dd>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p>Chantel Wetzel, Vlada Gertseva, James Thorson</p>
+    <p>Chantel R. Wetzel, Vlada Gertseva, James Thorson</p>
     </div>
 
   </div>
@@ -170,7 +166,7 @@ nothing is saved.</p></dd>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Kelli F. Johnson, Andi Stephens.</p>
+  <p></p><p>Developed by Kelli F. Johnson, Chantel R. Wetzel.</p>
 </div>
 
 <div class="pkgdown">

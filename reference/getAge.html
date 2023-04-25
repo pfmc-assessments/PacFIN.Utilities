@@ -50,7 +50,7 @@ cleanPacFIN, and is now compartmentalized here, but called in
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getAge</span><span class="op">(</span><span class="va">Pdata</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">keep</span>, col.bestage <span class="op">=</span> <span class="st">"FISH_AGE_YEARS_FINAL"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getAge</span><span class="op">(</span><span class="va">Pdata</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">keep</span>, col.bestage <span class="op">=</span> <span class="st">"FISH_AGE_YEARS_FINAL"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -64,15 +64,11 @@ which originated in 2014. Data are pulled using sql calls, see
 
 
 <dt>verbose</dt>
-<dd><p>A logical value specifying if output should be written
-to the screen or not. Good for testing and exploring your data but
-can be turned off when output indicates errors.
-The printing doesn't affect any of the returned objects, instead,
-printing makes it easier to see if the data has errors and what was
-done to rectify them in the given function.
-Sorry, but the default is to always print to the screen,
-i.e., <code>verbose = TRUE</code>, so you do not miss out on anything.
-This is standard practice for packages in the pfmc-assessments organization.</p></dd>
+<dd><p>A logical specifying if output should be written to the
+screen or not. Good for testing and exploring your data but can be turned
+off when output indicates information that you already know. The printing
+of output to the screen does not affect any of the returned objects. The
+default is to always print to the screen, i.e., <code>verbose = TRUE</code>.</p></dd>
 
 
 <dt>keep</dt>
@@ -149,7 +145,7 @@ the final value.</p></li>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Kelli F. Johnson, Andi Stephens.</p>
+  <p></p><p>Developed by Kelli F. Johnson, Chantel R. Wetzel.</p>
 </div>
 
 <div class="pkgdown">
