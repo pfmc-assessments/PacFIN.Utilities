@@ -30,7 +30,7 @@
 #' Several plots, potentially, are printed to the screen or saved to the disk
 #'
 #' @export
-#' @author Ian Taylor, Kathryn Doering, Brian Langseth, Kelli Johnson
+#' @author Ian G. Taylor, Kathryn L. Doering, Brian Langseth, Kelli F. Johnson
 age_representativeness_plot <- function(bio,
                                         xlim = c(0, max_break),
                                         ylim = c(0, 0.049),

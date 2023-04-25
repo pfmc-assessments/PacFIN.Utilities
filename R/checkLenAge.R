@@ -44,7 +44,7 @@
 #' @return Returns a combined dataset in PacFIN format.
 #' 
 #' @export
-#' @author Chantel Wetzel, Vlada Gertseva, James Thorson
+#' @author Chantel R. Wetzel, Vlada Gertseva, James Thorson
 
 checkLenAge <- function(Pdata,
                         Par = list(

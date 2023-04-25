@@ -97,7 +97,7 @@
 #'   Conditionally returns a dataframe if the \code{out} argument
 #'   specifies the type of composition to return.
 #'   
-#' @author Andi Stephens, Chantel Wetzel, Kelli Johnson, Ian Taylor
+#' @author Andi Stephens, Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 #' @seealso \code{\link{getComps}}, \code{\link{doSexRatio}}
 #'
 ##############################################################################

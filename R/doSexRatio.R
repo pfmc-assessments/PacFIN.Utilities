@@ -43,7 +43,7 @@
 #' 
 #' @author
 #' 
-#' Andi Stephens, Kelli F. Johnson, and Chantel Wetzel
+#' Andi Stephens, Kelli F. Johnson, and Chantel R. Wetzel
 #' 
 #' @seealso
 #' [getComps], [writeComps]

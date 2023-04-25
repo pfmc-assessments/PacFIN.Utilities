@@ -16,7 +16,7 @@
 #' A table is written to a csv file as specified in \code{fname} and the data frame
 #' is also returned as an object invisibly.
 
-#' @author Chantel Wetzel
+#' @author Chantel R. Wetzel
 #' @export
 
 tableSample <- function(Pdata,
