@@ -15,7 +15,7 @@ checkLenAge(
   sdFactor = 4,
   Optim = TRUE,
   precision = 1,
-  verbose = FALSE,
+  verbose = TRUE,
   dir = NULL
 )
 }
@@ -65,15 +65,11 @@ for predictions.}
 of digits the results will have after passing them through
 \code{\link{round}(x, digits = precision)}.}
 
-\item{verbose}{A logical value specifying if output should be written
-to the screen or not. Good for testing and exploring your data but
-can be turned off when output indicates errors.
-The printing doesn't affect any of the returned objects, instead,
-printing makes it easier to see if the data has errors and what was
-done to rectify them in the given function.
-Sorry, but the default is to always print to the screen,
-i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the pfmc-assessments organization.}
+\item{verbose}{A logical specifying if output should be written to the
+screen or not. Good for testing and exploring your data but can be turned
+off when output indicates information that you already know. The printing
+of output to the screen does not affect any of the returned objects. The
+default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
 \item{dir}{A file path to a directory where you want information saved to
 a file, or multiple files. If \code{NULL}, which is the default, then
@@ -89,5 +85,5 @@ Outliers are determined using standard deviations
 (i.e., \code{sdFactor} input parameter).
 }
 \author{
-Chantel Wetzel, Vlada Gertseva, James Thorson
+Chantel R. Wetzel, Vlada Gertseva, James Thorson
 }

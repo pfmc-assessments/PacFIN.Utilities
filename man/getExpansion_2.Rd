@@ -22,7 +22,7 @@ Pacific Fishieries Information Network (PacFIN) data warehouse,
 which originated in 2014. Data are pulled using sql calls, see
 \code{\link{PullBDS.PacFIN}()}.}
 
-\item{Catch}{A dataframe of catch data, in pounds or in metric tonnes.}
+\item{Catch}{A data frame of catch data, in pounds or in metric tonnes.}
 
 \item{Units}{The units of the \code{Catch} data frame, see
 \code{measurements::conv_unit_options[["mass"]]}
@@ -58,15 +58,11 @@ were needed between functions.
 You can use as many levels of stratification as you want except year because
 it is already included in the call to \link[stats:aggregate]{stats::aggregate}.}
 
-\item{verbose}{A logical value specifying if output should be written
-to the screen or not. Good for testing and exploring your data but
-can be turned off when output indicates errors.
-The printing doesn't affect any of the returned objects, instead,
-printing makes it easier to see if the data has errors and what was
-done to rectify them in the given function.
-Sorry, but the default is to always print to the screen,
-i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the pfmc-assessments organization.}
+\item{verbose}{A logical specifying if output should be written to the
+screen or not. Good for testing and exploring your data but can be turned
+off when output indicates information that you already know. The printing
+of output to the screen does not affect any of the returned objects. The
+default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.
@@ -76,10 +72,9 @@ The path can be relative or absolute.}
 The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
 }
 \description{
-The second-stage expansion calculates the
-per-year and stratification (e.g., gear group) total catch
-divided by the sampled catch and appends it to the input data as
-\code{Expansion_Factor_2}.
+The second-stage expansion calculates the per-year and stratification (e.g.,
+gear group) total catch divided by the sampled catch and appends it to the
+input data as \code{Expansion_Factor_2}.
 }
 \details{
 Find the catch for each year and grouping in \code{Catch} and divide by the

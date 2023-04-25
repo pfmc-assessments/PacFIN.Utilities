@@ -4,7 +4,14 @@
 \alias{find.matching.rows}
 \title{Function find.matching.rows}
 \usage{
-find.matching.rows(file, table, findex = 1, tindex = 1, tcol = 2, round. = T)
+find.matching.rows(
+  file,
+  table,
+  findex = 1,
+  tindex = 1,
+  tcol = 2,
+  round. = TRUE
+)
 }
 \arguments{
 \item{file}{Rows to be matched from \code{table}}

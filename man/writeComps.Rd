@@ -71,15 +71,11 @@ value to (value is passed to \code{round()}). NULL will skip rounding.}
 \item{overwrite}{A logical value specifying whether to overwrite an existing
 file if the file associated with the input \code{fname} already exists.}
 
-\item{verbose}{A logical value specifying if output should be written
-to the screen or not. Good for testing and exploring your data but
-can be turned off when output indicates errors.
-The printing doesn't affect any of the returned objects, instead,
-printing makes it easier to see if the data has errors and what was
-done to rectify them in the given function.
-Sorry, but the default is to always print to the screen,
-i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the pfmc-assessments organization.}
+\item{verbose}{A logical specifying if output should be written to the
+screen or not. Good for testing and exploring your data but can be turned
+off when output indicates information that you already know. The printing
+of output to the screen does not affect any of the returned objects. The
+default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 }
 \value{
 Appends data to the file given in \code{fname}.
@@ -134,5 +130,5 @@ were used in stratifying the data.
 \code{\link{getComps}}, \code{\link{doSexRatio}}
 }
 \author{
-Andi Stephens, Chantel Wetzel, Kelli Johnson, Ian Taylor
+Andi Stephens, Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 }

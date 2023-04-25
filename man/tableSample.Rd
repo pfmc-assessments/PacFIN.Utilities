@@ -51,5 +51,5 @@ Create a table of samples by fleet and year to
 be included in an assessment document.
 }
 \author{
-Chantel Wetzel
+Chantel R. Wetzel
 }

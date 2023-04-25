@@ -4,7 +4,7 @@
 \alias{getState}
 \title{Create a state column based on input column specified in \code{source}}
 \usage{
-getState(Pdata, source = c("AGENCY_CODE", "SOURCE_AGID"), verbose = FALSE)
+getState(Pdata, source = c("AGENCY_CODE", "SOURCE_AGID"), verbose = TRUE)
 }
 \arguments{
 \item{Pdata}{A data frame of biological samples
@@ -17,15 +17,11 @@ which originated in 2014. Data are pulled using sql calls, see
 \code{Pdata}. See the function call for options, where only the first
 value will be used.}
 
-\item{verbose}{A logical value specifying if output should be written
-to the screen or not. Good for testing and exploring your data but
-can be turned off when output indicates errors.
-The printing doesn't affect any of the returned objects, instead,
-printing makes it easier to see if the data has errors and what was
-done to rectify them in the given function.
-Sorry, but the default is to always print to the screen,
-i.e., \code{verbose = TRUE}, so you do not miss out on anything.
-This is standard practice for packages in the pfmc-assessments organization.}
+\item{verbose}{A logical specifying if output should be written to the
+screen or not. Good for testing and exploring your data but can be turned
+off when output indicates information that you already know. The printing
+of output to the screen does not affect any of the returned objects. The
+default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 }
 \value{
 The input data frame is returned with an additional column,

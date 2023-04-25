@@ -4,11 +4,14 @@
 \alias{PacFIN.Utilities-deprecated}
 \alias{checkINPFC}
 \alias{ls_INPFC}
+\alias{cleanAges}
 \title{Deprecated function in package \pkg{PacFIN.Utilities}}
 \usage{
 checkINPFC(...)
 
 ls_INPFC(...)
+
+cleanAges(...)
 }
 \description{
 The functions listed below are deprecated and
@@ -24,6 +27,11 @@ Functions related to INPFC areas have been deprecated in favor of PSMFC areas.
 \section{ls_INPFC}{
 
 Functions related to INPFC areas have been deprecated in favor of PSMFC areas.
+}
+
+\section{cleanAges}{
+
+\code{cleanAges} was moved to \code{\link[=cleanPacFIN]{cleanPacFIN()}}
 }
 
 \keyword{internal}

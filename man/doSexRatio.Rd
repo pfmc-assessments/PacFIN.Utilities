@@ -59,5 +59,5 @@ observations from adjacent bins will be used
 \link{getComps}, \link{writeComps}
 }
 \author{
-Andi Stephens, Kelli F. Johnson, and Chantel Wetzel
+Andi Stephens, Kelli F. Johnson, and Chantel R. Wetzel
 }
