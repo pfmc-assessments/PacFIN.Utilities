@@ -57,6 +57,7 @@ Depends:
 License: MIT + file LICENSE
 LazyData: true
 Imports:
+    cli,
     dplyr,
     ggplot2,
     ggridges,
@@ -66,8 +67,10 @@ Imports:
     lifecycle,
     magrittr,
     measurements,
+    methods,
     nwfscSurvey,
     purrr,
+    rlang,
     stats,
     tibble,
     tidyr,
