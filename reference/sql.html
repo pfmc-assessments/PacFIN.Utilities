@@ -18,7 +18,7 @@ relevant data from the PacFIN database."><!-- mathjax --><script src="https://cd
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PacFIN.Utilities</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.6</span>
       </span>
     </div>
 
@@ -52,7 +52,9 @@ relevant data from the PacFIN database.</p>
 <span></span>
 <span><span class="fu">sql_catch</span><span class="op">(</span><span class="va">pacfin_species_code</span>, council_code <span class="op">=</span> <span class="st">"P"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">sql_species</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">sql_species</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">sql_check_FINAL_FISH_AGE_IN_YEARS</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -94,6 +96,14 @@ values are <code>"N"</code> or <code>"*"</code>.</p></dd>
 <p><code>sql_bds()</code> results in biological data</p>
 <p><code>sql_bds()</code> results in catch data</p>
 <p><code>sql_species()</code> results in data frame of species names</p>
+<p><code>sql_check_FINAL_FISH_AGE_IN_YEARS()</code> results in a data frame of number of
+unique <code>FISH_ID</code>s present in PacFIN per <code>PACFIN_SPECIES_CODE</code> and
+<code>AGENCY_CODE</code>, i.e., species and state sampling agency, that have entries for
+<code>AGE_IN_YEARS</code> but have <code>NULL</code> values for <code>FINAL_FISH_AGE_IN_YEARS</code>. In
+theory, this table should have zero rows. But, there may be reasons why these
+entries do not have a final age value and potentially should not be used in
+assessments of population status. Thus, the result is used in an automated
+check and to create warning labels when downloading data.</p>
     </div>
     <div id="author">
     <h2>Author</h2>

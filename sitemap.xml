@@ -67,6 +67,9 @@
     <loc>/reference/cleanPacFIN.html</loc>
   </url>
   <url>
+    <loc>/reference/codify_age_method.html</loc>
+  </url>
+  <url>
     <loc>/reference/combineCalCOM.html</loc>
   </url>
   <url>
@@ -89,6 +92,9 @@
   </url>
   <url>
     <loc>/reference/getAge.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getAgeMethod.html</loc>
   </url>
   <url>
     <loc>/reference/getArea.html</loc>
@@ -134,6 +140,9 @@
   </url>
   <url>
     <loc>/reference/getweight.html</loc>
+  </url>
+  <url>
+    <loc>/reference/grep_final_age.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
