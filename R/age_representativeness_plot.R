@@ -220,6 +220,9 @@ changecol_pacfin <- function(data, verbose = TRUE) {
     if ("FISH_AGE_YEARS_FINAL" %in% colnames(data)) {
       data[, "Age"] <- data[, "FISH_AGE_YEARS_FINAL"]
     }
+    if (any("AGE" %in% colnames(data))) {
+      data <- dplyr::rename("Age" = "AGE")
+    }
     if (!"Age" %in% colnames(data)) {
       stop(
         "A fish-age column was not found in your data\n",
