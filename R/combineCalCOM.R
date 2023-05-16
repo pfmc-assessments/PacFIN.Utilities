@@ -36,6 +36,9 @@
 #' * [cleanPacFIN()], which should be ran after this function
 
 combineCalCOM <- function(Pdata, CalCOM) {
+  if (colnames(CalCOM)[1] == "X" && inherits(CalCOM[[1]], "integer")) {
+    CalCOM <- CalCOM[, -1]
+  }
   calcom_columns_example <- c(
     "SPECIES", "SAMPLE_NO", "SAMPLE_DATE", "AGE", "FISH_NO",
     "TLENGTH", "SEX", "DEPTH", "SumOfWEIGHT", "SumOfTOTAL_CT",
