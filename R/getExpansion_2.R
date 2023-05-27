@@ -143,11 +143,13 @@ getExpansion_2 <- function(Pdata,
 
   # Get the total lbs sampled by year and stratification
   strat <- c("fishyr", "stratification")
-  tows[, "Sum_Sampled_Lbs"] <- stats::ave(
-    x = tows$Trip_Sampled_Lbs,
+  tows <- tows %>%
     # ... are levels to aggregate over
-    tows[, "fishyr"], tows[, "stratification"],
-    FUN = sum, na.rm = TRUE)
+    dplyr::group_by(fishyr, stratification) %>%
+    dplyr::mutate(
+      Sum_Sampled_Lbs = sum(Trip_Sampled_Lbs, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup()
 
   # Convert Catch to lbs.
   Catch[, -1] <- measurements::conv_unit(to = "lbs",
