@@ -210,20 +210,21 @@ getcomps_long <- function(data, towstrat, type,
   return(comp)
 }
 
-#' Return Sample IDs That Did Not Sex Samples
+#' Return sample IDs that did not sex samples
 #'
-#' Identifiers that have female and male samples will be returned 
-#' as NA and only identifiers that had unsexed fish will be provided.
-#' @param identifier Unique IDs for the samples
-#' @param sex A vector of the same length as \code{identifier} providing
-#' the sex of the sampled fish.
-#' @param good A character value supplying the \code{sex} value you
-#' want to keep.
+#' Identifiers that have female and male samples will be returned as NA and
+#' only identifiers that had unsexed fish will be provided.
+#' @param identifier Unique IDs for the samples.
+#' @param sex A vector of the same length as `identifier` providing
+#'   the sex of the sampled fish.
+#' @param good A character value supplying the `sex` value you
+#'   want to keep.
 #'
 #' @author Kelli F. Johnson
-#' @return A vector of identifiers that only had the sex given in
-#' the \code{good} argument. The returned vector will be of the same
-#' length as the supplied vectors.
+#' @return
+#' A vector of identifiers that only had the sex given in the `good` argument.
+#' The returned vector will be of the same length as the supplied vectors.
+#' @noRd
 #'
 getunsexedsamps <- function(identifier, sex, good = "U") {
   if (inherits(sex, "factor")) sex <- as.character(sex)
@@ -232,10 +233,15 @@ getunsexedsamps <- function(identifier, sex, good = "U") {
   return(ifelse(keep == good, identifier, NA))
 }
 
-#' Number of Unique Entries
-#' A helper function that returns the number of unique
-#' entries in a vector. Usefull for apply functions.
+#' Number of unique entries
+#'
+#' A helper function that returns the number of unique entries in a vector.
+#' Useful for apply functions.
 #' @param x A vector of character or numeric values.
 #' @author Kelli F. Johnson
-#' @return An integer value specifying the number of unique entries.
-lenique <- function(x) { return(length(unique(x))) }
+#' @return
+#' An integer value specifying the number of unique entries.
+#' @noRd
+lenique <- function(x) {
+  return(length(unique(x)))
+}
