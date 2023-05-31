@@ -109,22 +109,34 @@ getComps <- function(Pdata,
 #' and sex will always be included. If no sex is provided then it
 #' is assumed all are unsexed and will be returned as such.
 #'
-getcomps_long <- function(data, towstrat, type,
-  towid = "SAMPLE_NO", weightid = "Final_Sample_Size_L",
-  dropmissing = TRUE) {
-
-  if (!all(towstrat %in% colnames(data))) stop("Not all towstrat are available.")
-  if (!type %in% colnames(data)) stop("'type' must be a column in data",
-    " i.e., 'lengthcm' or 'Age'")
+getcomps_long <- function(data,
+                          towstrat,
+                          type,
+                          towid = "SAMPLE_NO",
+                          weightid = "Final_Sample_Size_L",
+                          dropmissing = TRUE) {
+  if (!all(towstrat %in% colnames(data))) {
+    stop("Not all towstrat are available.")
+  }
+  if (!type %in% colnames(data)) {
+    stop(
+      "'type' must be a column in data",
+      " i.e., 'lengthcm' or 'Age'"
+    )
+  }
 
   # Create a unique id for each sample
   data[, "uniqueid"] <- apply(data[, towid, drop = FALSE],
-    1, paste, collapse = "_")
+    1, paste,
+    collapse = "_"
+  )
   towid <- "uniqueid"
   # Find which column contains the sex data or create unsexed
   sexn <- grep("sex", colnames(data), ignore.case = TRUE, value = TRUE)
   if (length(sexn) > 1) {
-    warnings("Multiple columns match 'sex' (ignoring case), taking the first one")
+    warnings(
+      "Multiple columns match 'sex' (ignoring case), taking the first one"
+    )
     sexn <- sexn[1]
   }
   if (length(sexn) == 0) {
@@ -136,7 +148,7 @@ getcomps_long <- function(data, towstrat, type,
     data$sexed <- data[, sexn]
     data$sexed[data$sexed %in% c("M", "F")] <- "B"
     data[, sexn] <- factor(data[, sexn], levels = c("F", "M", "U"))
-    data$sexed <- factor(data[,'sexed'], levels = "B")
+    data$sexed <- factor(data[, "sexed"], levels = "B")
   }
 
   # FREQ... stores the number of fish that sum to the weightid
@@ -147,65 +159,95 @@ getcomps_long <- function(data, towstrat, type,
   Cstrat <- c(towstrat, type)
   cstratwsex <- c(Cstrat, sexn)
 
-  tstratw_b <- c(towstrat, 'sexed')
-  cstratw_b <- c(Cstrat, 'sexed')
+  tstratw_b <- c(towstrat, "sexed")
+  cstratw_b <- c(Cstrat, "sexed")
 
   # Find which samples only have unsexed fish
   data[, "Uonly"] <- getunsexedsamps(data[, towid], data[, sexn])
-  data[, "Bonly"] <- getunsexedsamps(data[, towid], data[, 'sexed'], good = "B")
+  data[, "Bonly"] <- getunsexedsamps(data[, towid], data[, "sexed"], good = "B")
 
-  comp <- merge(by = tstratwsex, all = TRUE,
+  comp <- merge(
+    by = tstratwsex, all = TRUE,
     stats::aggregate(
       data[, c(weightid, freqn)],
       by = data[, cstratwsex, drop = FALSE],
-      sum, na.rm = TRUE, drop = dropmissing),
+      sum, na.rm = TRUE, drop = dropmissing
+    ),
     stats::aggregate(
       list("tows" = data[, towid], "ONLY_U_TOWS" = data[, c("Uonly")]),
       by = data[, tstratwsex, drop = FALSE],
-      lenique, drop = dropmissing))
+      lenique, drop = dropmissing
+    )
+  )
 
-  comp_2 <- merge(by = tstratw_b, all = TRUE,
+  comp_2 <- merge(
+    by = tstratw_b, all = TRUE,
     stats::aggregate(
       data[, c(weightid, freqn)],
       by = data[, cstratw_b, drop = FALSE],
-      sum, na.rm = TRUE, drop = dropmissing),
+      sum, na.rm = TRUE, drop = dropmissing
+    ),
     stats::aggregate(
       list("btows" = data[, towid], "ONLY_B_TOWS" = data[, c("Bonly")]),
       by = data[, tstratw_b, drop = FALSE],
-      lenique, drop = dropmissing))
+      lenique, drop = dropmissing
+    )
+  )
 
   comp <- merge(
     stats::reshape(comp, timevar = "SEX", idvar = Cstrat, direction = "wide"),
     stats::aggregate(
       list("alltows" = data[, towid]),
       by = data[, towstrat, drop = FALSE],
-      lenique, drop = dropmissing),
-    by = towstrat, all.x = TRUE)
+      lenique, drop = dropmissing
+    ),
+    by = towstrat, all.x = TRUE
+  )
 
   comp <- dplyr::left_join(comp, comp_2)
 
   comp <- comp[, colnames(comp) != "sexed"]
   colnames(comp)[colnames(comp) == "FREQ"] <- "FREQ.B"
-  colnames(comp)[colnames(comp) == "Final_Sample_Size_L"] <- "Final_Sample_Size_L.B"
+  colnames(comp)[
+    colnames(comp) == "Final_Sample_Size_L"
+  ] <- "Final_Sample_Size_L.B"
 
-  if(length(grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M|ONLY_B_TOWS", colnames(comp))) > 0){
-    comp <- comp[, -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M|ONLY_B_TOWS", colnames(comp))]
+  if (
+    length(grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M|ONLY_B_TOWS", colnames(comp))) >
+    0) {
+    comp <- comp[,
+      -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M|ONLY_B_TOWS", colnames(comp))
+    ]
   }
-  colnames(comp) <- gsub("(.+)\\.([A-Z])", "\\L\\2\\1", colnames(comp),
-    perl = TRUE)
-  colnames(comp) <- gsub("freq|freq.+", "samps", colnames(comp),
-    ignore.case = TRUE)
-  colnames(comp) <- gsub("uonl.+", "ONLY_U_TOWS", colnames(comp),
-    ignore.case = TRUE)
-  colnames(comp) <- gsub(paste0("([a-z])", weightid), "\\1", colnames(comp),
-    ignore.case = TRUE)
+  colnames(comp) <- gsub(
+    "(.+)\\.([A-Z])",
+    "\\L\\2\\1",
+    colnames(comp),
+    perl = TRUE
+  )
+  colnames(comp) <- gsub(
+    "freq|freq.+",
+    "samps",
+    colnames(comp),
+    ignore.case = TRUE
+  )
+  colnames(comp) <- gsub(
+    "uonl.+",
+    "ONLY_U_TOWS",
+    colnames(comp),
+    ignore.case = TRUE
+  )
+  colnames(comp) <- gsub(
+    paste0("([a-z])", weightid),
+    "\\1",
+    colnames(comp),
+    ignore.case = TRUE
+  )
   colnames(comp) <- gsub("^f$", "female", colnames(comp))
   colnames(comp) <- gsub("^m$", "male", colnames(comp))
   colnames(comp) <- gsub("^u$", "unsexed", colnames(comp))
   colnames(comp) <- gsub("^b$", "both", colnames(comp))
   # todo: remove legacy code of needing fishyr
-  #colnames(comp) <- gsub("^YEAR$", "fishyr", colnames(comp),
-  #  ignore.case = TRUE)
   comp[is.na(comp)] <- 0
   return(comp)
 }
