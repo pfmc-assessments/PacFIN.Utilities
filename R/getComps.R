@@ -63,7 +63,10 @@ getComps <- function(Pdata,
 
   # Avoid duplication
   strat = strat[!strat %in% usualSuspects]
-  Comps <- checkparam.Comps(Comps)
+  Comps <- match.arg(
+    toupper(substr(Comps, 1, 3)),
+    choices =  c("LEN", "AGE", "AAL", "NA")
+  )
   TowStrat <- c(strat, switch(Comps,
     LEN = usualSuspects,
     AGE = usualSuspects,
