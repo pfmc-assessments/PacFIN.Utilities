@@ -12,7 +12,7 @@
 #' a column for variable(s) specified in strat, and
 #' a column that holds the measured catches named 
 #' (e.g., ROUND_WEIGHT_LBS is the column name upon download from PacFIN).
-#' @template strat
+#' @inheritParams tableSample
 #' @param yearname A character string used to search for year in `catch`.
 #' Ensure that the string is unique enough that it will only return one value.
 #' Though, if you would like catch by year and month you can pass a single

@@ -49,7 +49,7 @@
 #' * For age-at-length comps, set Final_Expansion_Factor to 1.  Each fish represents only itself.
 #' 
 #' @section Composition functions:
-#' [getComps] uses the Final_Sample_Size and the user-specified
+#' [getComps] uses the column specified in `weightid` and the user-specified
 #' stratification to create comps.
 #'
 #' [doSexRatio] separates the unsexed fish into males and females
@@ -57,7 +57,7 @@
 #' [writeComps] formats the composition data for SS3 and writes it to a file.
 #'
 #' @section Infrequently used functions:
-#' You can run these manually to reset the inital values.
+#' You can run these manually to reset the initial values.
 #'
 #' [getState] Run by [cleanPacFIN] to initialized the `state` column.
 #'

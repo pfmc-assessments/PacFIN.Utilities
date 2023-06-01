@@ -2,7 +2,7 @@
 % Please edit documentation in R/getExpansion_2.R
 \name{getExpansion_2}
 \alias{getExpansion_2}
-\title{Expand PacFIN trip samples to catches}
+\title{Second-stage expansion of composition samples up to catch level}
 \usage{
 getExpansion_2(
   Pdata,
@@ -72,9 +72,9 @@ The path can be relative or absolute.}
 The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
 }
 \description{
-The second-stage expansion calculates the per-year and stratification (e.g.,
-gear group) total catch divided by the sampled catch and appends it to the
-input data as \code{Expansion_Factor_2}.
+The second-stage expansion calculates the expansion factor based on the
+ratio of total catch within a stratification (e.g., year, gear group) to the
+amount of that catch that was sampled.
 }
 \details{
 Find the catch for each year and grouping in \code{Catch} and divide by the

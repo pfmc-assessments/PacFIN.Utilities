@@ -1,60 +1,78 @@
-###########################################################################
-#
-#' Aggregate composition data by length, Age, or age-at-length according to the
-#' given stratification.
-#' 
-#' \subsection{Workflow}{
-#' \code{getComps} is run subsequently to \code{\link{getExpansion_2}}.
-#' }
-#' 
-#' @export
+#' Aggregate length, age, or age-at-length composition data by strata
 #'
-#' @details The aggregation is of the \code{Pdata$Final_Sample_Size} column value,
-#'   which should be set to the desired expansion:
-#'   
-#'   \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1} 
-#'   
-#'   or
-#'   
-#'   \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2}
-#'   
-#'   The default stratification is by fleet, fishyr, and season.
-#'   Columns `lengthcm`, `Age` or both are added
-#'   depending on the `Comps` argument.
-#'   
-#' @template Pdata
-#' @template strat
-#' @template Comps
-#' @param defaults The default stratification columns
-#'   which will typically be left at their default value of
-#'   \code{c('fleet', 'fishyr', 'season')}.
-#' @template verbose
-#' @param ... Pass additional arguments to `getcomps_long`, such as
-#' `dropmissing = FALSE` where the default behavior is
-#' `dropmissing = TRUE`
-#' @return A dataframe with composition data specific to the type specified
-#'   in `Comps` for males, females, and unsexed records.
+#' `getComps()` first sets up the local environment, then runs
+#' `getcomps_long()`, and finally returns the results of `getcomps_long()`,
+#' which calculates summaries by groupings. `getcomps_long()` was developed to
+#' make use of {tidyverse} but it still produces all of the old output. In the
+#' future, this function will be replaced by code that can summarize both
+#' survey data or commercial data. Until then, this is the best we can do and
+#' it mimics old output such that legacy code will not break. You can and
+#' should pass arguments to `getcomps_long()` using pass through arguments in
+#' your call to `getComps()`, i.e., `...`, especially when calculating
+#' composition data related to age. See the input arguments for more details.
+#'
+#' @details
+#' This function uses the expansions created in [getExpansion_1()] and
+#' [getExpansion_2()] using `"weightid"`. Thus, whatever column name is passed
+#' to `weightid` will be used as the weight for each group. See the
+#' documentation for the pass-through arguments, i.e., `...`
+#'
+#' @inheritParams tableSample
+#' @param Comps The type of composition data to create. See the function call
+#'   for the available options. The first option listed is the default, which
+#'   creates conditional age-at-length compositions by adding both `lengthcm`
+#'   and `Age` to the grouping structure.
+#' @param defaults The default stratification columns which will typically be
+#'   left at their default value of `c("fleet", "fishyr", "season")`.
+#' @param verbose Is deprecated as of version 0.2.8. No information is printed
+#'   to the screen from this function.
+#' @param ... Pass additional arguments to `getcomps_long()`, such as
+#'   `dropmissing = FALSE` where the default behavior is `dropmissing = TRUE`.
+#'   The most important argument to consider modifying is `getComps(weightid =
+#'   "Final_Sample_Size_L")`, which will only be applicable to length data.
+#'   Instead of the default, you might want to weight each stratification by
+#'    the final sample sizes found for age data, i.e., `getComps(weightid =
+#'   "Final_Sample_Size_A")`. You can pass `weightid` any column that exists in
+#'   `Pdata`. Legacy code required you to set `Final_Sample_Size` outside of a
+#'   function call with something like `Pdata$Final_Sample_Size =
+#'   Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2` and all weighting was
+#'   done on the column called `"Final_Sample_Size"` but this is no longer the
+#'   case.
+#' @return
+#' A long data frame of weights for each grouping structure. Columns
+#' identifying the grouping structures will come first, followed by columns
+#' with sample sizes per group by sex category. The documentation for these
+#' sample size columns is sparse because this function is set to be deprecated
+#' next cycle and replaced with a simplified path to writing composition data.
+#' But, information is present for males (sometimes abbreviated with an m),
+#' females (sometimes abbreviated with an f), unsexed (sometimes abbreviated
+#' with a u), and sexed (noted as both or b) records. If no sex is provided
+#' then it is assumed all are unsexed and will be returned as such.
+#' @export
 #' @author Andi Stephens, Kelli F. Johnson
-#' 
-############################################################################
-
-
+#' @seealso
+#' * [getExpansion_2()] should be run before this function.
+#' * [writeComps()] can be run on the output from this function.
+#'
 getComps <- function(Pdata,
                      strat = NULL,
                      Comps = c("AAL", "LEN", "AGE"),
                      defaults = c("fleet", "fishyr", "season"),
-                     verbose = TRUE,
+                     verbose = lifecycle::deprecated(),
                      ...) {
+  if (lifecycle::is_present(verbose)) {
+    # Signal the deprecation to the user
+    lifecycle::deprecate_warn("0.2.8", "getComps(verbose = )")
+  }
 
   # Check for expansion factor
-
   if (length(Pdata$Final_Sample_Size) == 0) {
-    
-    stop(paste("\ngetComps relies on the column labeled 'Final_Sample_Size'\n",
+    stop(paste(
+      "\ngetComps relies on the column labeled 'Final_Sample_Size'\n",
       "please make sure this column (the expansion factor) has a value.\n\n",
       "Example: Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1",
-      "* Pdata$Expansion_Factor_2\n"))
-    
+      "* Pdata$Expansion_Factor_2\n"
+    ))
   } # End if
 
   # Set up stratification
@@ -62,52 +80,48 @@ getComps <- function(Pdata,
   usualSuspects <- defaults
 
   # Avoid duplication
-  strat = strat[!strat %in% usualSuspects]
+  strat <- strat[!strat %in% usualSuspects]
   Comps <- match.arg(
     toupper(substr(Comps, 1, 3)),
-    choices =  c("LEN", "AGE", "AAL", "NA")
+    choices = c("LEN", "AGE", "AAL", "NA")
   )
   TowStrat <- c(strat, switch(Comps,
     LEN = usualSuspects,
     AGE = usualSuspects,
-    c(usualSuspects, 'lengthcm', "Age")))
+    c(usualSuspects, "lengthcm", "Age")
+  ))
   usualSuspects <- switch(Comps,
     LEN = c(usualSuspects, "lengthcm"),
     AGE = c(usualSuspects, "Age"),
-    c(usualSuspects, "lengthcm", "Age"))
+    c(usualSuspects, "lengthcm", "Age")
+  )
 
-  if (verbose) {
-    cat("\nAggregating, stratification is by", paste(c(strat, usualSuspects), collapse=", "), "\n\n")
-    utils::flush.console()
-  }
-
-  ageComps <- getcomps_long(data = Pdata,
-    towstrat = TowStrat, type = utils::tail(usualSuspects, 1), ...)
+  ageComps <- getcomps_long(
+    data = Pdata,
+    towstrat = TowStrat,
+    type = utils::tail(usualSuspects, 1),
+    ...
+  )
   invisible(ageComps)
+}
 
-} # End function getComps
-
-#' Create a Long Database to Prepare Compositions
-#' @param data A data frame with columns defined by the following
-#' arguments: towstrat, type, towid, and weightid
-#' @param towstrat A vector of character values providing the column
-#' names for which you want compositions for.
-#' @param type A character value specifying which category to
-#' summarize by, i.e., `"length"` or `"Age"`.
-#' @param towid A vector of character values providing the column
-#' names that generate a unique id for each sample.
-#' @param weightid A character value giving the column name that
-#' holds the value to be summed for each type and strata.
-#' @param dropmissing A logical value supplied to the
-#' \code{drop} argument in \code{stats::aggregate}
-#' that specifies whether or not to keep all levels in the data
-#' even if there are no values to report for summaries. 
-#' @author Kelli F. Johnson
-#' @return A data frame in long form with a weight for each
-#' category included in the lengths or ages of interest by
-#' stratification. Stratifications are normally year and fishery
-#' and sex will always be included. If no sex is provided then it
-#' is assumed all are unsexed and will be returned as such.
+#' Create a long data frame to prepare compositions for [writeComps()]
+#' @param data A data frame. The data frame must have the column names that
+#'   are specified for the next four input arguments, `towstrat`, `type`,
+#'   `towid`, and `weightid`.
+#' @param towstrat A vector of character values providing the column names for
+#'   which you want compositions for.
+#' @param type A character value specifying which category to summarize by,
+#'   i.e., `"length"` or `"Age"`.
+#' @param towid A vector of character values providing the column names that
+#'   generate a unique id for each sample.
+#' @param weightid A character value giving the column name that holds the
+#'   value to be summed for each type and strata.
+#' @param dropmissing A logical value supplied to the `drop` argument in
+#'   [stats::aggregate()] that specifies whether or not to keep all levels in
+#'   the data even if there are no values to report for summaries.
+#' @export
+#' @describeIn getComps The actual workhorse behind `getComps()`.
 #'
 getcomps_long <- function(data,
                           towstrat,
@@ -214,8 +228,9 @@ getcomps_long <- function(data,
 
   if (
     length(grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M|ONLY_B_TOWS", colnames(comp))) >
-    0) {
-    comp <- comp[,
+      0) {
+    comp <- comp[
+      ,
       -grep("ONLY_U_TOWS.F|ONLY_U_TOWS.M|ONLY_B_TOWS", colnames(comp))
     ]
   }

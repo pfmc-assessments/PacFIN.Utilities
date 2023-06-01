@@ -5,13 +5,16 @@
 #'
 #' @template Pdata
 #' @template fname
-#' @template strat
+#' @param strat A vector of column names to stratify the output over. For
+#'   example, if you wish to summarize by ageing method, then the argument
+#'   would look like `strat = "agemethod"` or, if you want to look at fleets
+#'   and gear, `strat = c("fleet", "usegear")`.
 #' @param comps Specify whether to calculate the length or Age samples.
 #' The default is to calculate the number of length samples.
 #' @param remove_yrs A vector of years to remove from the data before
 #' summarizing sample sizes. The default of \code{NULL} leads to no
 #' sub setting of the data.
-#' 
+#'
 #' @return
 #' A table is written to a csv file as specified in \code{fname} and the data frame
 #' is also returned as an object invisibly.

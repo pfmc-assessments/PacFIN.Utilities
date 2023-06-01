@@ -28,12 +28,10 @@ is, i.e., not redirected to a directory different than \code{getwd()}.
 Note that various functions within PacFIN.Utilities have different default
 values for this input argument.}
 
-\item{strat}{A vector of column names to stratify the output over.
-For example, if you wish to summarize by ageing method, then the argument
-would look like \code{strat = "agemethod"}.
-Or if you want to look at fleets and gear, then use
-\code{strat = c("fleet","usegear")}.
-todo: deprecate defaults}
+\item{strat}{A vector of column names to stratify the output over. For
+example, if you wish to summarize by ageing method, then the argument
+would look like \code{strat = "agemethod"} or, if you want to look at fleets
+and gear, \code{strat = c("fleet", "usegear")}.}
 
 \item{comps}{Specify whether to calculate the length or Age samples.
 The default is to calculate the number of length samples.}

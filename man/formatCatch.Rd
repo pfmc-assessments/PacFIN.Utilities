@@ -19,12 +19,10 @@ a column for variable(s) specified in strat, and
 a column that holds the measured catches named
 (e.g., ROUND_WEIGHT_LBS is the column name upon download from PacFIN).}
 
-\item{strat}{A vector of column names to stratify the output over.
-For example, if you wish to summarize by ageing method, then the argument
-would look like \code{strat = "agemethod"}.
-Or if you want to look at fleets and gear, then use
-\code{strat = c("fleet","usegear")}.
-todo: deprecate defaults}
+\item{strat}{A vector of column names to stratify the output over. For
+example, if you wish to summarize by ageing method, then the argument
+would look like \code{strat = "agemethod"} or, if you want to look at fleets
+and gear, \code{strat = c("fleet", "usegear")}.}
 
 \item{yearname}{A character string used to search for year in \code{catch}.
 Ensure that the string is unique enough that it will only return one value.
