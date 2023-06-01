@@ -1,8 +1,8 @@
-#' Expand PacFIN trip samples to catches
+#' Second-stage expansion of composition samples up to catch level
 #'
-#' The second-stage expansion calculates the per-year and stratification (e.g.,
-#' gear group) total catch divided by the sampled catch and appends it to the
-#' input data as \code{Expansion_Factor_2}.
+#' The second-stage expansion calculates the expansion factor based on the
+#' ratio of total catch within a stratification (e.g., year, gear group) to the
+#' amount of that catch that was sampled.
 #'
 #' @export
 #'
@@ -204,7 +204,6 @@ getExpansion_2 <- function(Pdata,
     message(nNA, " NA Expansion_Factor_2 values replaced by 1.")
     message("Summary of Expansion_Factor_2")
     print(summary(Pdata$Expansion_Factor_2))
-    message("Remember to set (or reset) Pdata$Final_Sample_Size")
   }
 
   if (nNA > 0) {

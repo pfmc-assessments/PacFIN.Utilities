@@ -70,7 +70,7 @@ Expansion_Factor_2 are available to use in manually setting the Final_Expansion_
 
 \section{Composition functions}{
 
-\link{getComps} uses the Final_Sample_Size and the user-specified
+\link{getComps} uses the column specified in \code{weightid} and the user-specified
 stratification to create comps.
 
 \link{doSexRatio} separates the unsexed fish into males and females
@@ -80,7 +80,7 @@ stratification to create comps.
 
 \section{Infrequently used functions}{
 
-You can run these manually to reset the inital values.
+You can run these manually to reset the initial values.
 
 \link{getState} Run by \link{cleanPacFIN} to initialized the \code{state} column.
 
