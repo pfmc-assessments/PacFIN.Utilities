@@ -52,9 +52,6 @@
     <loc>/reference/checkLenAge.html</loc>
   </url>
   <url>
-    <loc>/reference/checkparam.Comps.html</loc>
-  </url>
-  <url>
     <loc>/reference/cleanColumns.bds.html</loc>
   </url>
   <url>
@@ -133,12 +130,6 @@
     <loc>/reference/get_codelist.html</loc>
   </url>
   <url>
-    <loc>/reference/getcomps_long.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getunsexedsamps.html</loc>
-  </url>
-  <url>
     <loc>/reference/getweight.html</loc>
   </url>
   <url>
@@ -146,9 +137,6 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lenique.html</loc>
   </url>
   <url>
     <loc>/reference/pipe.html</loc>
