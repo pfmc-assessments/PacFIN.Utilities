@@ -6,8 +6,7 @@
 #' [cleanPacFIN()].
 #'
 #' @inheritParams sql
-#' @template username
-#' @template password
+#' @inheritParams getDB
 #' @template savedir
 #' @template verbose
 #'
