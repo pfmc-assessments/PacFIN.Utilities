@@ -3,8 +3,7 @@
 #' Pull catch data from the Comprehensive Fish Ticket table in PacFIN.
 #'
 #' @inheritParams sql
-#' @template username
-#' @template password
+#' @inheritParams getDB
 #' @template savedir
 #' @param addnominal A logical, where the default, `TRUE`, adds nominal
 #' PacFIN species code to `pacfin_species_code`. `FALSE`

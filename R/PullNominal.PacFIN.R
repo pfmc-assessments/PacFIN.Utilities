@@ -4,8 +4,7 @@
 #' nominal codes pertain to the desired species codes.
 #'
 #' @inheritParams sql
-#' @template username
-#' @template password
+#' @inheritParams getDB
 #' @return
 #' A unique vector of character entries, where entries are valid
 #' `PACFIN_SPECIES_CODE`s. The length of the returned vector may not be the same
