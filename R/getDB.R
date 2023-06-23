@@ -4,7 +4,12 @@
 #' in the specific query.
 #'
 #' @template sql
-#' @template datasourcename
+#' @param datasourcename Deprecated as of version 0.2.9. Please use the
+#'   `database` argument instead.
+#' @param database A string providing the name of the database that you wish to
+#'   connect to. This string must match the name that is used to configure the
+#'   database on your computer exactly. The default is `"PacFIN"` which will
+#'   lead to pulling data from the Pacific Fisheries Information Network.
 #' @param username Most often, this is a string containing your username for the
 #'   database of interest. You can use the function [getUserName()], which is
 #'   the default behavior, if you would prefer to not enter this argument and
@@ -27,10 +32,19 @@
 #' \code{\link[base]{tryCatch}}.
 #'
 getDB <- function(sql,
-                  datasourcename = "PacFIN",
+                  database = "PacFIN",
+                  datasourcename = lifecycle::deprecated(),
                   username = getUserName(datasourcename),
                   password,
                   asis = FALSE) {
+  if (lifecycle::is_present(datasourcename)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.9",
+      what = "getUserName(datasourcename)",
+      with = "getUserName(database)"
+    )
+    database <- datasourcename
+  }
   # Check that suggested package is available
   stopifnot(requireNamespace("RODBC", quietly = TRUE))
 
@@ -41,7 +55,7 @@ getDB <- function(sql,
 
   # Pull from database
   database <- RODBC::odbcConnect(
-    dsn = datasourcename,
+    dsn = database,
     uid = username,
     pw = password
   )
