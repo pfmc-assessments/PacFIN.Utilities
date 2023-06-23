@@ -11,19 +11,31 @@
 #'   database on your computer exactly. The default is `"PacFIN"` which will
 #'   lead to pulling data from the Pacific Fisheries Information Network.
 #' @param username Most often, this is a string containing your username for the
-#'   database of interest. You can use the function [getUserName()], which is
-#'   the default behavior, if you would prefer to not enter this argument and
-#'   assume the default search and/or rules for finding your username will work.
-#'   Sometimes this search will fail because of legacy rules, which are unknown
-#'   to the development team, that were used to create your username. Please
-#'   email the maintainer of this package if you need more functionality here.
+#'   database of interest. You can use [getUserName()] if you prefer to not
+#'   enter this argument and assume the default search and/or rules for finding
+#'   your username will work. This is the default behavior if you leave
+#'   `username` as a missing argument, i.e., `username <- getUserName(database =
+#'   database)`. Sometimes this search will fail because of legacy rules, which
+#'   are unknown to the development team, that were used to create your
+#'   username. Please email the maintainer of this package if you need more
+#'   functionality here.
 #' @param password Most often, this is a string containing your password for
 #'   the database of interest. You can use the function [ask_password()] if you
 #'   would prefer to be prompted for your password. Please do not share this
 #'   password with anyone or push code to a repository that has your password
 #'   saved in it.
-#' @param asis A logical, specifying whether or not to convert columns,
-#' as in \code{\link[utils]{read.table}}.
+#' @param asis A logical, specifying whether or not to leave columns as is
+#'   rather than convert them to factors, as defined in [RODBC::sqlGetResults()]
+#'   and [utils::read.table()]. This logical is first passed to
+#'   [RODBC::sqlQuery()], then to [RODBC::sqlGetResults()], and finally to
+#'   [utils::read.table()], where inside of [utils::read.table()], if the
+#'   logical is a single value, it is repeated for every column present, and
+#'   thus, you do not need to know how many columns the resulting data set is.
+#'   The default behavior within this package is `FALSE`, which does *NOT* leave
+#'   the columns as is. In fact, if you set `asis = TRUE` many functions within
+#'   this package will fail because it leads to all columns in the downloaded
+#'   data frame being of the character class causing downstream calculations
+#'   that assume numerical output to fail because they are characters.
 #'
 #' @export
 #' @author John R. Wallace, Kelli F. Johnson
@@ -34,7 +46,7 @@
 getDB <- function(sql,
                   database = "PacFIN",
                   datasourcename = lifecycle::deprecated(),
-                  username = getUserName(datasourcename),
+                  username,
                   password,
                   asis = FALSE) {
   if (lifecycle::is_present(datasourcename)) {
@@ -45,12 +57,17 @@ getDB <- function(sql,
     )
     database <- datasourcename
   }
+  if (missing(username)) {
+    username <- getUserName(database = database)
+  }
   # Check that suggested package is available
   stopifnot(requireNamespace("RODBC", quietly = TRUE))
 
   # Get password and username
   if (missing(password)) {
-    password <- readline(prompt = "Enter PacFIN password without quotes\n")
+    password <- readline(
+      prompt = paste0("Enter ", database, " password without quotes\n")
+    )
   }
 
   # Pull from database
