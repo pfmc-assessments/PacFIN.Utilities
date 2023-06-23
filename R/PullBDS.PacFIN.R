@@ -105,9 +105,11 @@ PullBDS.PacFIN <- function(pacfin_species_code,
     password = password
   )
 
-  # Checks on data_raw
-  # stop calls
+  # Checks on data_raw need to be for both finding if there are rows and
+  # if the class is a data frame because errors from getDB can also register
+  # as having rows
   stopifnot("No data found" = NROW(data_raw) > 0)
+  stopifnot("No data found" = inherits(data_raw, "data.frame"))
 
   # message calls
   if (verbose) {
