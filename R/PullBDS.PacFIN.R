@@ -1,9 +1,6 @@
-#' Pull biological data from the PacFIN database
+#' Pull biological data
 #'
-#' Pull biological data from the Comprehensive Biological Data
-#' (comprehensive_bds_comm) table in the PacFIN database (PACFIN_MARTS). Data
-#' are in their raw form and should be cleaned either by hand or using
-#' [cleanPacFIN()].
+#' Pull biological data from PacFIN (`PACFIN_MARTS.comprehensive_bds_comm`).
 #'
 #' @inheritParams sql
 #' @inheritParams getDB
@@ -11,12 +8,13 @@
 #' @template verbose
 #'
 #' @return
-#' An RData object is saved to the disk and the pulled data
-#' are returned as an [invisible()] data frame.
-#' The saved data can be read back in using [load()], but note that
-#' upon loading, the object will be named `bds.pacfin`, which is its name
-#' inside of the `.RData` file, and thus,
-#' the object will retain this name within your work space.
+#' An `RData` file is saved to the disk and the pulled data are returned as an
+#' [invisible()] data frame. The saved data can be read back in using [load()],
+#' but note that upon loading, the object will be named `bds.pacfin`, which is
+#' its name inside of the `.RData` file, and thus, the object will retain this
+#' name within your work space unless you rename it. The data are in their raw,
+#' form i.e., just as they were extracted from PacFIN, form and will need to be
+#' cleaned prior to their use in downstream functions using [cleanPacFIN()].
 #'
 #' @export
 #' @author John R. Wallace and Kelli F. Johnson
@@ -65,7 +63,7 @@
 #' download for completeness.
 #'
 #' ## Searching for species
-#' Values passed to `pacfin_species_code` are searched for using regular
+#' Values passed to `PACFIN_SPECIES_CODE` are searched for using regular
 #' expression matching, which is different than the exact matching that is done
 #' is [PullCatch.PacFIN()]. The use of pattern matching allows for species codes
 #' with mistakes like leading and trailing spaces to be found. This is doable in
@@ -75,7 +73,8 @@
 #'
 #' @seealso
 #' * [cleanColumns()] to change to legacy column names
-#' * [cleanPacFIN()] to manipulate and subset the returned object
+#' * [cleanPacFIN()] to subset the data frame to those records that should be
+#'   used within West Coast assessments of marine populations
 #'
 #' @examples
 #' \dontrun{
