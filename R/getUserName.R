@@ -1,22 +1,27 @@
-#' Get User Name Based On Computer User Name
+#' Get your username for the `database` of interest
 #'
-#' Query the user name of your local machine to generate a user name for the
-#' `database`.
+#' @details
+#' Use a system of rules to determine your username given the database of
+#' interest. As of 2023, only support for `PacFIN` is included but future
+#' versions of the codebase should support more databases such as `NORPAC`
+#' to facilitate pulling information regarding the Pacific Hake or whiting
+#' fishery.
 #'
 #' @param datasourcename Deprecated as of version 0.2.9, use `database`
 #'   instead.
 #' @inheritParams getDB
 #' @export
 #' @author Kelli F. Johnson
-#' @return A single character value to use as input in functions
-#' calling for \code{username = }.
+#' @seealso
+#' * `Sys.info()`
+#' @return
+#' A string that can be used for `username` argument needed in `Pull*()`.
 #' @examples
 #' \dontrun{
 #' getUserName()
 #' }
 getUserName <- function(database = c("PacFIN"),
                         datasourcename = lifecycle::deprecated()) {
-
   if (lifecycle::is_present(datasourcename)) {
     lifecycle::deprecate_soft(
       when = "0.2.9",
@@ -25,18 +30,19 @@ getUserName <- function(database = c("PacFIN"),
     )
     database <- datasourcename
   }
-  #### Get username (un) info from computer
-  un <- Sys.info()["user"]
-  un.split <- strsplit(un, "\\.")[[1]]
-  stopifnot(length(un.split) == 2)
 
-  #### Get desired type
+  un <- Sys.info()["user"]
+  un_split <- strsplit(un, "\\.")[[1]]
+  stopifnot(length(un_split) == 2)
+
   database <- match.arg(database)
   out <- switch(database,
-    "PacFIN" = tolower(paste0(substr(un.split[1], 1, 1), un.split[2])),
-    NA)
+    "PacFIN" = tolower(paste0(substr(un_split[1], 1, 1), un_split[2])),
+    NA
+  )
 
-  #### Checks for non-common user names
+  # Some users have usernames that were created before the current rules were
+  # adopted and require different usernames.
   if (un == "John.Wallace" && database == "PacFIN") {
     out <- "wallacej"
   }
