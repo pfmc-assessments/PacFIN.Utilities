@@ -55,7 +55,7 @@ sql_bds <- function(pacfin_species_code) {
 
   # Use a regular expression rather than any because regex allows for
   # spaces before and after
-  spid <- sQuote(paste(pacfin_species_code, collapse = "|"))
+  spid <- sQuote(paste(pacfin_species_code, collapse = "|"), q = FALSE)
   stopifnot(length(spid) == 1)
 
   sqlcall <- glue::glue("
@@ -71,14 +71,13 @@ sql_bds <- function(pacfin_species_code) {
 #' @rdname sql
 #' @details `sql_bds()` results in catch data
 sql_catch <- function(pacfin_species_code, council_code = "P") {
-  species <- paste(sQuote(pacfin_species_code), collapse = ", ")
+  species <- paste(sQuote(pacfin_species_code, q = FALSE), collapse = ", ")
   stopifnot(length(species) == 1)
   council <- paste(
-    sQuote(match.arg(
-      council_code,
-      choices = c("P", "N", "*"),
-      several.ok = TRUE
-    )),
+    sQuote(
+      match.arg(council_code, choices = c("P", "N", "*"), several.ok = TRUE),
+      q = FALSE
+    ),
     collapse = ", "
   )
   stopifnot(length(council) == 1)
