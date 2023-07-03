@@ -54,5 +54,5 @@ as \code{sum(sqrt(pi1*pi2))} where pi1 and pi2 are the proportion of data in
 bin i for each of the two distributions.
 }
 \author{
-Ian G. Taylor, Kathryn L. Doering, Brian J. Langseth, Kelli F. Johnson
+Ian G. Taylor, Kathryn L. Doering, Brian Langseth, Kelli F. Johnson
 }

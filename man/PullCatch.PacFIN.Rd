@@ -36,15 +36,18 @@ that you wish to retain data for. The default \code{"P"} means data will only be
 returned for the Pacific Fisheries Management Council. Other accepted
 values are \code{"N"} or \code{"*"}.}
 
-\item{username}{The username you would like to use to access the database.
-The default is to generate \code{username} from your computer name where
-there are rules for each supported database. Sometimes this fails because
-of legacy rules that are unknown to the development team. Please email the
-maintainer of this package if you need more behind-the-scenes
+\item{username}{Most often, this is a string containing your username for the
+database of interest. You can use \code{\link[=getUserName]{getUserName()}} if you prefer to not
+enter this argument and assume the default search and/or rules for finding
+your username will work. This is the default behavior if you leave
+\code{username} as a missing argument, i.e., \code{username <- getUserName(database = database)}. Sometimes this search will fail because of legacy rules, which
+are unknown to the development team, that were used to create your
+username. Please email the maintainer of this package if you need more
 functionality here.}
 
-\item{password}{Your password for the database of interest. Use
-\code{\link[=ask_password]{ask_password()}} to be prompted for your password. Please do not share this
+\item{password}{Most often, this is a string containing your password for
+the database of interest. You can use the function \code{\link[=ask_password]{ask_password()}} if you
+would prefer to be prompted for your password. Please do not share this
 password with anyone or push code to a repository that has your password
 saved in it.}
 

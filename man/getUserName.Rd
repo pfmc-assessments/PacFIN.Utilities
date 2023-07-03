@@ -2,26 +2,40 @@
 % Please edit documentation in R/getUserName.R
 \name{getUserName}
 \alias{getUserName}
-\title{Get User Name Based On Computer User Name}
+\title{Get your username for the \code{database} of interest}
 \usage{
-getUserName(datasourcename = c("PacFIN"))
+getUserName(database = c("PacFIN"), datasourcename = lifecycle::deprecated())
 }
 \arguments{
-\item{datasourcename}{The sql data base name that is stored on your
-computer. The default is \code{"PacFIN"} which will pull data from
-the Pacific Fisheries Information Network.}
+\item{database}{A string providing the name of the database that you wish to
+connect to. This string must match the name that is used to configure the
+database on your computer exactly. The default is \code{"PacFIN"} which will
+lead to pulling data from the Pacific Fisheries Information Network.}
+
+\item{datasourcename}{Deprecated as of version 0.2.9, use \code{database}
+instead.}
 }
 \value{
-A single character value to use as input in functions
-calling for \code{username = }.
+A string that can be used for \code{username} argument needed in \verb{Pull*()}.
 }
 \description{
-Query the user name of your local machine to generate
-a suspected user name for the \code{datasourcename}.
+Get your username for the \code{database} of interest
+}
+\details{
+Use a system of rules to determine your username given the database of
+interest. As of 2023, only support for \code{PacFIN} is included but future
+versions of the codebase should support more databases such as \code{NORPAC}
+to facilitate pulling information regarding the Pacific Hake or whiting
+fishery.
 }
 \examples{
 \dontrun{
 getUserName()
+}
+}
+\seealso{
+\itemize{
+\item \code{Sys.info()}
 }
 }
 \author{
