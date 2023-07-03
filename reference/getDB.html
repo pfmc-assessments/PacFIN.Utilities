@@ -18,7 +18,7 @@ in the specific query."><!-- mathjax --><script src="https://cdnjs.cloudflare.co
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PacFIN.Utilities</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.9</span>
       </span>
     </div>
 
@@ -48,8 +48,9 @@ in the specific query.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getDB</span><span class="op">(</span></span>
 <span>  <span class="va">sql</span>,</span>
-<span>  datasourcename <span class="op">=</span> <span class="st">"PacFIN"</span>,</span>
-<span>  username <span class="op">=</span> <span class="fu"><a href="getUserName.html">getUserName</a></span><span class="op">(</span><span class="va">datasourcename</span><span class="op">)</span>,</span>
+<span>  database <span class="op">=</span> <span class="st">"PacFIN"</span>,</span>
+<span>  datasourcename <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">username</span>,</span>
 <span>  <span class="va">password</span>,</span>
 <span>  asis <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -61,31 +62,50 @@ in the specific query.</p>
 <dd><p>A valid SQL statement.</p></dd>
 
 
+<dt>database</dt>
+<dd><p>A string providing the name of the database that you wish to
+connect to. This string must match the name that is used to configure the
+database on your computer exactly. The default is <code>"PacFIN"</code> which will
+lead to pulling data from the Pacific Fisheries Information Network.</p></dd>
+
+
 <dt>datasourcename</dt>
-<dd><p>The sql data base name that is stored on your
-computer. The default is <code>"PacFIN"</code> which will pull data from
-the Pacific Fisheries Information Network.</p></dd>
+<dd><p>Deprecated as of version 0.2.9. Please use the
+<code>database</code> argument instead.</p></dd>
 
 
 <dt>username</dt>
-<dd><p>The username you would like to use to access the database.
-The default is to generate <code>username</code> from your computer name where
-there are rules for each supported database. Sometimes this fails because
-of legacy rules that are unknown to the development team. Please email the
-maintainer of this package if you need more behind-the-scenes
+<dd><p>Most often, this is a string containing your username for the
+database of interest. You can use <code><a href="getUserName.html">getUserName()</a></code> if you prefer to not
+enter this argument and assume the default search and/or rules for finding
+your username will work. This is the default behavior if you leave
+<code>username</code> as a missing argument, i.e., <code>username &lt;- getUserName(database = database)</code>. Sometimes this search will fail because of legacy rules, which
+are unknown to the development team, that were used to create your
+username. Please email the maintainer of this package if you need more
 functionality here.</p></dd>
 
 
 <dt>password</dt>
-<dd><p>Your password for the database of interest. Use
-<code><a href="ask_password.html">ask_password()</a></code> to be prompted for your password. Please do not share this
+<dd><p>Most often, this is a string containing your password for
+the database of interest. You can use the function <code><a href="ask_password.html">ask_password()</a></code> if you
+would prefer to be prompted for your password. Please do not share this
 password with anyone or push code to a repository that has your password
 saved in it.</p></dd>
 
 
 <dt>asis</dt>
-<dd><p>A logical, specifying whether or not to convert columns,
-as in <code><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></code>.</p></dd>
+<dd><p>A logical, specifying whether or not to leave columns as is
+rather than convert them to factors, as defined in <code><a href="https://rdrr.io/pkg/RODBC/man/sqlQuery.html" class="external-link">RODBC::sqlGetResults()</a></code>
+and <code><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">utils::read.table()</a></code>. This logical is first passed to
+<code><a href="https://rdrr.io/pkg/RODBC/man/sqlQuery.html" class="external-link">RODBC::sqlQuery()</a></code>, then to <code><a href="https://rdrr.io/pkg/RODBC/man/sqlQuery.html" class="external-link">RODBC::sqlGetResults()</a></code>, and finally to
+<code><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">utils::read.table()</a></code>, where inside of <code><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">utils::read.table()</a></code>, if the
+logical is a single value, it is repeated for every column present, and
+thus, you do not need to know how many columns the resulting data set is.
+The default behavior within this package is <code>FALSE</code>, which does <em>NOT</em> leave
+the columns as is. In fact, if you set <code>asis = TRUE</code> many functions within
+this package will fail because it leads to all columns in the downloaded
+data frame being of the character class causing downstream calculations
+that assume numerical output to fail because they are characters.</p></dd>
 
 </dl></div>
     <div id="value">

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PacFIN.Utilities</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.9</span>
       </span>
     </div>
 
@@ -83,17 +83,20 @@ values are <code>"N"</code> or <code>"*"</code>.</p></dd>
 
 
 <dt>username</dt>
-<dd><p>The username you would like to use to access the database.
-The default is to generate <code>username</code> from your computer name where
-there are rules for each supported database. Sometimes this fails because
-of legacy rules that are unknown to the development team. Please email the
-maintainer of this package if you need more behind-the-scenes
+<dd><p>Most often, this is a string containing your username for the
+database of interest. You can use <code><a href="getUserName.html">getUserName()</a></code> if you prefer to not
+enter this argument and assume the default search and/or rules for finding
+your username will work. This is the default behavior if you leave
+<code>username</code> as a missing argument, i.e., <code>username &lt;- getUserName(database = database)</code>. Sometimes this search will fail because of legacy rules, which
+are unknown to the development team, that were used to create your
+username. Please email the maintainer of this package if you need more
 functionality here.</p></dd>
 
 
 <dt>password</dt>
-<dd><p>Your password for the database of interest. Use
-<code><a href="ask_password.html">ask_password()</a></code> to be prompted for your password. Please do not share this
+<dd><p>Most often, this is a string containing your password for
+the database of interest. You can use the function <code><a href="ask_password.html">ask_password()</a></code> if you
+would prefer to be prompted for your password. Please do not share this
 password with anyone or push code to a repository that has your password
 saved in it.</p></dd>
 
