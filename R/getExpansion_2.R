@@ -210,7 +210,7 @@ getExpansion_2 <- function(Pdata,
     NA_EF2[, "FREQ"] <- 1
     if (!missing(savedir)) {
       grDevices::png(file.path(savedir, "PacFIN_exp2_NAreplace.png"))
-      on.exit(grDevices::dev.off(), add = TRUE)
+      on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
       graphics::barplot(
         stats::xtabs(NA_EF2$FREQ ~ NA_EF2$state + NA_EF2$fishyr),
         col = grDevices::rainbow(3),
@@ -223,7 +223,7 @@ getExpansion_2 <- function(Pdata,
 
   if (!missing(savedir)) {
     grDevices::png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
-    on.exit(grDevices::dev.off(), add = TRUE)
+    on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,
       main = "", xlab = "Year", ylab = "Second-stage expansion factor")
   }

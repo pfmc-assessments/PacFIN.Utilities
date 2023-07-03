@@ -76,7 +76,7 @@ getDB <- function(sql,
     uid = username,
     pw = password
   )
-  on.exit(RODBC::odbcClose(database))
+  on.exit(RODBC::odbcClose(database), add = TRUE, after = FALSE)
   out <- tryCatch(
     RODBC::sqlQuery(database, sql, as.is = asis),
     error = function(e) e

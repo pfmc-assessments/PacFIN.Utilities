@@ -142,7 +142,7 @@ doSexRatio <- function(CompData,
   if (!missing(savedir)) {
     find = which(CompData$usamps > 0 )
     grDevices::png(file.path(savedir, "Applied_Sex_Ratio_to_Unsexed_Fish.png"))
-      on.exit(grDevices::dev.off(), add = TRUE)
+      on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
       plot(CompData[find,'lengthcm'], CompData[find, 'sexRatio'],
         xlab = "Length (cm)", ylab = "Sex Ratio",
         main = paste0("Sex Ratio Applied to Unsexed Fish (N = ", sum(CompData$usamps), ")" )

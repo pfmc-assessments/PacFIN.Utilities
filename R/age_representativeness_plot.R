@@ -39,7 +39,7 @@ age_representativeness_plot <- function(bio,
                                         plot_panels = c(10, 2),
                                         wait2plot = FALSE) {
   if (!is.null(file)) {
-    on.exit(grDevices::dev.off(), add = TRUE)
+    on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
   }
   if (!is.null(file)) wait2plot <- FALSE
 
