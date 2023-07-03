@@ -182,7 +182,7 @@ EF1_Denominator <- function(Pdata,
       plot <- file.path(savedir, "PacFIN_exp1_denom.png")
       plot2 <- file.path(savedir, "PacFIN_WL.png")
       grDevices::png(plot)
-      on.exit(grDevices::dev.off(), add = TRUE)
+      on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     }
     graphics::par(mfrow = c(1, ifelse(nNA > 0, 2, 1)), mgp = c(2.5, 0.5, 0))
     graphics::boxplot(

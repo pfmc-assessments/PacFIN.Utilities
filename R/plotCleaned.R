@@ -36,7 +36,7 @@ plotCleaned <- function (Pdata,
 
   #### Plot
   grDevices::png(file.path(savedir, "PacFIN_comp_Nbystate.png"))
-  on.exit(grDevices::dev.off(), add = TRUE)
+  on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
   graphics::par(mfrow = c(2, 1),
     oma = c(1, 1, 3, 0.25), mar = c(0.5, 3.25, 0, 0),
     mgp = c(1.5, 0.5, 0))
@@ -52,7 +52,7 @@ plotCleaned <- function (Pdata,
     args.legend = list(x = "topleft", bty = "n"))
   
   grDevices::png(file.path(savedir, "PacFIN_comp_distributions.png"))
-  on.exit(grDevices::dev.off(), add = TRUE)
+  on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
   graphics::par(mfrow = c(2, 1),
     oma = c(1, 1, 3, 0.25), mar = c(0.5, 3.25, 0, 0),
     mgp = c(1.5, 0.5, 0))
@@ -64,7 +64,7 @@ plotCleaned <- function (Pdata,
     frame.plot = TRUE, ylim = c(0, max(Pdata$Age, na.rm = TRUE)))
 
   grDevices::png(file.path(savedir, "PacFIN_comp_NbyGRID.png"))
-  on.exit(grDevices::dev.off(), add = TRUE)
+  on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
   graphics::par(mfrow = c(2, 1),
     oma = c(1, 1, 3, 0.25), mar = c(0.5, 3.25, 0, 0),
     mgp = c(1.5, 0.5, 0))
@@ -82,14 +82,14 @@ plotCleaned <- function (Pdata,
 
   if (!all(is.na(Pdata[, "DEPTH_AVG"]))) {
     grDevices::png(file.path(savedir, "PacFIN_comp_depth.png"))
-    on.exit(grDevices::dev.off(), add = TRUE)
+    on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::boxplot(Pdata$DEPTH_AVG ~ Pdata$fishyr, ylab = expression(bar(Depth)),
       frame.plot = FALSE, ylim = c(0, max(Pdata$DEPTH_AVG, na.rm = TRUE)))
   }
 
   if (geargroups) {
     grDevices::png(file.path(savedir, "PacFIN_comp_geargroup.png"))
-    on.exit(grDevices::dev.off(), add = TRUE)
+    on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::par(mfrow = c(2, 1),
       oma = c(1, 1, 3, 0.25), mar = c(0.5, 3.25, 0, 0),
       mgp = c(1.5, 0.5, 0))
