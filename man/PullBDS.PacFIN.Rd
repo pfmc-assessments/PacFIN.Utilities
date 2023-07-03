@@ -2,7 +2,7 @@
 % Please edit documentation in R/PullBDS.PacFIN.R
 \name{PullBDS.PacFIN}
 \alias{PullBDS.PacFIN}
-\title{Pull biological data from the PacFIN database}
+\title{Pull biological data}
 \usage{
 PullBDS.PacFIN(
   pacfin_species_code,
@@ -29,15 +29,18 @@ compositions like "nominal aurora rockfish" which would be \code{ARR1}. For some
 functions, these nominal categories can automatically be added, see the
 argument \code{addnominal}.}
 
-\item{username}{The username you would like to use to access the database.
-The default is to generate \code{username} from your computer name where
-there are rules for each supported database. Sometimes this fails because
-of legacy rules that are unknown to the development team. Please email the
-maintainer of this package if you need more behind-the-scenes
+\item{username}{Most often, this is a string containing your username for the
+database of interest. You can use \code{\link[=getUserName]{getUserName()}} if you prefer to not
+enter this argument and assume the default search and/or rules for finding
+your username will work. This is the default behavior if you leave
+\code{username} as a missing argument, i.e., \code{username <- getUserName(database = database)}. Sometimes this search will fail because of legacy rules, which
+are unknown to the development team, that were used to create your
+username. Please email the maintainer of this package if you need more
 functionality here.}
 
-\item{password}{Your password for the database of interest. Use
-\code{\link[=ask_password]{ask_password()}} to be prompted for your password. Please do not share this
+\item{password}{Most often, this is a string containing your password for
+the database of interest. You can use the function \code{\link[=ask_password]{ask_password()}} if you
+would prefer to be prompted for your password. Please do not share this
 password with anyone or push code to a repository that has your password
 saved in it.}
 
@@ -52,18 +55,16 @@ of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 }
 \value{
-An RData object is saved to the disk and the pulled data
-are returned as an \code{\link[=invisible]{invisible()}} data frame.
-The saved data can be read back in using \code{\link[=load]{load()}}, but note that
-upon loading, the object will be named \code{bds.pacfin}, which is its name
-inside of the \code{.RData} file, and thus,
-the object will retain this name within your work space.
+An \code{RData} file is saved to the disk and the pulled data are returned as an
+\code{\link[=invisible]{invisible()}} data frame. The saved data can be read back in using \code{\link[=load]{load()}},
+but note that upon loading, the object will be named \code{bds.pacfin}, which is
+its name inside of the \code{.RData} file, and thus, the object will retain this
+name within your work space unless you rename it. The data are in their raw,
+form i.e., just as they were extracted from PacFIN, form and will need to be
+cleaned prior to their use in downstream functions using \code{\link[=cleanPacFIN]{cleanPacFIN()}}.
 }
 \description{
-Pull biological data from the Comprehensive Biological Data
-(comprehensive_bds_comm) table in the PacFIN database (PACFIN_MARTS). Data
-are in their raw form and should be cleaned either by hand or using
-\code{\link[=cleanPacFIN]{cleanPacFIN()}}.
+Pull biological data from PacFIN (\code{PACFIN_MARTS.comprehensive_bds_comm}).
 }
 \details{
 \subsection{Data structure}{
@@ -112,7 +113,7 @@ download for completeness.
 
 \subsection{Searching for species}{
 
-Values passed to \code{pacfin_species_code} are searched for using regular
+Values passed to \code{PACFIN_SPECIES_CODE} are searched for using regular
 expression matching, which is different than the exact matching that is done
 is \code{\link[=PullCatch.PacFIN]{PullCatch.PacFIN()}}. The use of pattern matching allows for species codes
 with mistakes like leading and trailing spaces to be found. This is doable in
@@ -131,7 +132,8 @@ pd <- PullBDS.PacFIN(pacfin_species_code = "POP")
 \seealso{
 \itemize{
 \item \code{\link[=cleanColumns]{cleanColumns()}} to change to legacy column names
-\item \code{\link[=cleanPacFIN]{cleanPacFIN()}} to manipulate and subset the returned object
+\item \code{\link[=cleanPacFIN]{cleanPacFIN()}} to subset the data frame to those records that should be
+used within West Coast assessments of marine populations
 }
 }
 \author{
