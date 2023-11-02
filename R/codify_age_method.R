@@ -21,7 +21,8 @@
 #' * 4-thin section;
 #' * 5-optical scanner;
 #' * 6-length;
-#' * 9-unable
+#' * 9-unable;
+#' * 10-break and bake;
 #'
 #'  ## California Department of Fish and Wildlife
 #' * B-break and burn;
@@ -54,6 +55,7 @@ codify_age_method <- function(x) {
     x == 6 ~ "L",
     x == "L" ~ "L",
     x == "M" ~ "M",
+    x == 10 ~ "B",
     x %in% all_NA ~ NA_character_,
     is.na(x) ~ NA_character_,
     TRUE ~ NA_character_

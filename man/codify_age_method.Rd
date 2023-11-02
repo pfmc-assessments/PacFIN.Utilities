@@ -38,7 +38,8 @@ and burn can be "B", "BB", or 1.
 \item 4-thin section;
 \item 5-optical scanner;
 \item 6-length;
-\item 9-unable
+\item 9-unable;
+\item 10-break and bake;
 }
 }
 
