@@ -91,7 +91,7 @@ cleanColumns.bds <- function(data) {
   # TOTAL_WGT for CA and RWT_LBS for WA.
   data$RWT_LBS <- data$TOTAL_WGT
   data <- data %>%
-    dplyr::select(-dplyr::matches("VESSEL|AGE_[SR]|^NUM|LOAD|COMMON|_ID|agedby"))
+    dplyr::select(-dplyr::matches("VESSEL|AGE_[R]|^NUM|LOAD|COMMON|_ID|agedby"))
 
   return(data)
 }
