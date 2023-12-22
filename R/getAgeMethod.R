@@ -95,17 +95,35 @@ getAgeMethod <- function(Pdata, verbose = TRUE) {
   return(used_method)
 }
 
-#' Summary of available age methods
+#' The number of samples per combination of ageing methods
 #'
-#' Use [dplyr::count()] to summarize the available age types.
+#' Uses [dplyr::count()] to summarize the number of samples across the various
+#' ageing methods (i.e., `AGE_METHOD[0-9]+`) that were used in the passed data
+#' frame. Sometimes the ageing method will differ between double reads or
+#' between years.
 #'
-#' @template Pdata
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #'
+#' @author Kelli F. Johnson
 #' @return
-#' A data frame of counts for each age method. If `verbose`, then text
-#' explaining the summary is also printed to the screen prior to returning the
-#' table.
+#' A data frame of counts (`n`) for each age method with the following columns:
+#' * `AGE_METHOD[0-9]*`: where the number at the end of the column indicates
+#'   which age reader, e.g., first, second, third, etc., the method comes from.
+#'   This column contains a letter or number indicating the ageing method used.
+#'   There will be one column per number of reads available, i.e., if at least
+#'   one fish was read by four reader, then there will be four columns starting
+#'   with `AGE_METHOD`.
+#' * `Age method for best age`: provides data on all methods used across age
+#'   readers, for example if both break and burn and surface read information is
+#'   available for a given fish then this column will have `B--S` as an entry.
+#'   This information is important because sometimes the best age is based off
+#'   multiple methods and it is difficult to know which ageing error to assign
+#'   the entry to.
+#' * `n`: the number of samples available for the given methods listed in that
+#'   row.
+#'
+#' If `verbose`, then text explaining the summary is also printed to the screen
+#' prior to returning the table.
 #'
 summaryAgeMethod <- function(Pdata, verbose = FALSE) {
   if (verbose) {
@@ -116,8 +134,8 @@ summaryAgeMethod <- function(Pdata, verbose = FALSE) {
   old_column_name <- c(
     "Age method for best age" = "age_method"
   )
-  Pdata %>%
-    dplyr::select(dplyr::matches("AGE_METHOD", ignore.case = TRUE)) %>%
-    dplyr::count(dplyr::across(dplyr::everything())) %>%
+  Pdata |>
+    dplyr::select(dplyr::matches("AGE_METHOD", ignore.case = TRUE)) |>
+    dplyr::count(dplyr::across(dplyr::everything())) |>
     dplyr::rename(dplyr::any_of(old_column_name))
 }
