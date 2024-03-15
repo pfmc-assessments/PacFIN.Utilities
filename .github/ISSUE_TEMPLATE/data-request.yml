@@ -2,7 +2,7 @@ name: Data request
 description: >
   Request a type of data available for download from the PacFIN data warehouse.
 title: "Data request for species <replace with your species>"
-labels: ["type: request"]
+labels: ["type: request", "topic: database"]
 assignees:
   - kellijohnson-NOAA
   - chantelwetzel-NOAA
