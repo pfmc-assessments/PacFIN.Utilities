@@ -1,171 +1,59 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/EF1_Denominator.html</loc>
-  </url>
-  <url>
-    <loc>/reference/EF1_Numerator.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PacFIN.Utilities-deprecated.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PacFIN.Utilities.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PullBDS.PacFIN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PullCatch.PacFIN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PullNominal.PacFIN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/age_representativeness_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ask_password.html</loc>
-  </url>
-  <url>
-    <loc>/reference/capValues.html</loc>
-  </url>
-  <url>
-    <loc>/reference/changecol_pacfin.html</loc>
-  </url>
-  <url>
-    <loc>/reference/checkGrade.html</loc>
-  </url>
-  <url>
-    <loc>/reference/checkLenAge.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cleanColumns.bds.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cleanColumns.catch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cleanColumns.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cleanPacFIN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/codify_age_method.html</loc>
-  </url>
-  <url>
-    <loc>/reference/combineCalCOM.html</loc>
-  </url>
-  <url>
-    <loc>/reference/comps_bins.html</loc>
-  </url>
-  <url>
-    <loc>/reference/comps_wide.html</loc>
-  </url>
-  <url>
-    <loc>/reference/convertlength_skate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/doSexRatio.html</loc>
-  </url>
-  <url>
-    <loc>/reference/find.matching.rows.html</loc>
-  </url>
-  <url>
-    <loc>/reference/formatCatch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getAge.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getAgeMethod.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getArea.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getComps.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getDB.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getExpansion_1.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getExpansion_2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getGearGroup.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getLength.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getSeason.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getState.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getUserName.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getWLpars.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_codelist.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getweight.html</loc>
-  </url>
-  <url>
-    <loc>/reference/grep_final_age.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotCleaned.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotRawData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotStrat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotWL.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sql.html</loc>
-  </url>
-  <url>
-    <loc>/reference/stopifnotcolumn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summaryAgeMethod.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tableSample.html</loc>
-  </url>
-  <url>
-    <loc>/reference/writeComps.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/EF1_Denominator.html</loc></url>
+<url><loc>/reference/EF1_Numerator.html</loc></url>
+<url><loc>/reference/PacFIN.Utilities-deprecated.html</loc></url>
+<url><loc>/reference/PacFIN.Utilities.html</loc></url>
+<url><loc>/reference/PullBDS.PacFIN.html</loc></url>
+<url><loc>/reference/PullCatch.PacFIN.html</loc></url>
+<url><loc>/reference/PullNominal.PacFIN.html</loc></url>
+<url><loc>/reference/age_representativeness_plot.html</loc></url>
+<url><loc>/reference/ask_password.html</loc></url>
+<url><loc>/reference/capValues.html</loc></url>
+<url><loc>/reference/changecol_pacfin.html</loc></url>
+<url><loc>/reference/checkGrade.html</loc></url>
+<url><loc>/reference/checkLenAge.html</loc></url>
+<url><loc>/reference/cleanColumns.bds.html</loc></url>
+<url><loc>/reference/cleanColumns.catch.html</loc></url>
+<url><loc>/reference/cleanColumns.html</loc></url>
+<url><loc>/reference/cleanPacFIN.html</loc></url>
+<url><loc>/reference/codify_age_method.html</loc></url>
+<url><loc>/reference/combineCalCOM.html</loc></url>
+<url><loc>/reference/comps_bins.html</loc></url>
+<url><loc>/reference/comps_wide.html</loc></url>
+<url><loc>/reference/convertlength_skate.html</loc></url>
+<url><loc>/reference/doSexRatio.html</loc></url>
+<url><loc>/reference/find.matching.rows.html</loc></url>
+<url><loc>/reference/formatCatch.html</loc></url>
+<url><loc>/reference/getAge.html</loc></url>
+<url><loc>/reference/getAgeMethod.html</loc></url>
+<url><loc>/reference/getArea.html</loc></url>
+<url><loc>/reference/getComps.html</loc></url>
+<url><loc>/reference/getDB.html</loc></url>
+<url><loc>/reference/getExpansion_1.html</loc></url>
+<url><loc>/reference/getExpansion_2.html</loc></url>
+<url><loc>/reference/getGearGroup.html</loc></url>
+<url><loc>/reference/getLength.html</loc></url>
+<url><loc>/reference/getSeason.html</loc></url>
+<url><loc>/reference/getState.html</loc></url>
+<url><loc>/reference/getUserName.html</loc></url>
+<url><loc>/reference/getWLpars.html</loc></url>
+<url><loc>/reference/get_codelist.html</loc></url>
+<url><loc>/reference/getweight.html</loc></url>
+<url><loc>/reference/grep_final_age.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/pipe.html</loc></url>
+<url><loc>/reference/plotCleaned.html</loc></url>
+<url><loc>/reference/plotRawData.html</loc></url>
+<url><loc>/reference/plotStrat.html</loc></url>
+<url><loc>/reference/plotWL.html</loc></url>
+<url><loc>/reference/sql.html</loc></url>
+<url><loc>/reference/stopifnotcolumn.html</loc></url>
+<url><loc>/reference/summaryAgeMethod.html</loc></url>
+<url><loc>/reference/tableSample.html</loc></url>
+<url><loc>/reference/writeComps.html</loc></url>
 </urlset>
+
