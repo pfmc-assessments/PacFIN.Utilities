@@ -50,18 +50,20 @@
 #' @examples
 #' data <- data.frame(
 #'   AGENCY_CODE = rep(c("W", "O", "C"), each = 2),
-#'   info = 1:6)
+#'   info = 1:6
+#' )
 #' testthat::expect_true(
-#' all(getState(data)[["state"]] == rep(c("WA", "OR", "CA"), each = 2))
+#'   all(getState(data)[["state"]] == rep(c("WA", "OR", "CA"), each = 2))
 #' )
 #'
-getState <- function (Pdata,
-                      source = c("AGENCY_CODE", "SOURCE_AGID"),
-                      verbose = TRUE) {
-
+getState <- function(Pdata,
+                     source = c("AGENCY_CODE", "SOURCE_AGID"),
+                     verbose = TRUE) {
   if (any(source %in% c("PSMFC_CATCH_AREA_CODE", "PSMFC_ARID"))) {
-    stop("'PSMFC_CATCH_AREA_CODE' and 'PSMFC_ARID' are no longer supported ",
-      "inputs to getState(source = ).")
+    stop(
+      "'PSMFC_CATCH_AREA_CODE' and 'PSMFC_ARID' are no longer supported ",
+      "inputs to getState(source = )."
+    )
   }
   source <- match.arg(source, several.ok = FALSE)
   colid <- match(source, colnames(Pdata))
@@ -71,24 +73,27 @@ getState <- function (Pdata,
 
   Pdata$state <- as.character(Pdata[, source])
 
-  Pdata[, "state"] <- vapply(Pdata[, "state"], FUN = switch,
+  Pdata[, "state"] <- vapply(Pdata[, "state"],
+    FUN = switch,
     FUN.VALUE = "character",
     C = "CA", CalCOM = "CA", CALCOM = "CA",
     O = "OR",
     W = "WA",
-    "UNK")
+    "UNK"
+  )
 
   states <- c("OR", "CA", "WA")
 
   nostate <- sum(!Pdata[, "state"] %in% states)
 
   if (verbose) {
-    message("\nThere are ", nostate,
+    message(
+      "\nThere are ", nostate,
       " records for which the state (i.e., 'CA', 'OR', 'WA')",
-      "\ncould not be assigned and were labeled as 'UNK'.")
+      "\ncould not be assigned and were labeled as 'UNK'."
+    )
     utils::capture.output(type = "message", table(Pdata[, "state"]))
   } # End if verbose
 
   return(Pdata)
-
 }

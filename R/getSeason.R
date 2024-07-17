@@ -33,7 +33,8 @@
 #' @examples
 #' test <- getSeason(
 #'   data.frame(SAMPLE_MONTH = 1:12, fishyr = rep(1:2, each = 6)),
-#'   verbose = TRUE)
+#'   verbose = TRUE
+#' )
 #' testthat::expect_true(all(test[, "season"] == 1))
 #' test <- getSeason(Pdata = test, season_type = 1, yearUp = 12)
 #' testthat::expect_equivalent(test[test[, "fishyr"] == 3, "season"], 1)
@@ -44,61 +45,63 @@ getSeason <- function(Pdata,
                       yearDown = NULL,
                       plotResults = FALSE,
                       verbose = TRUE) {
-
   if (season_type < 0) {
     Pdata$season <- 1
   }
 
   if (season_type == 0) {
-    if (verbose){
+    if (verbose) {
       message("Assigning season from SAMPLE_MONTH.")
     }
 
     Pdata[, "season"] <- utils::type.convert(as.is = TRUE, Pdata$SAMPLE_MONTH)
-
   } # End if
 
   # Petrale seasons
 
   if (season_type == 1) {
-    if (verbose){
+    if (verbose) {
       message("Assigning seasons for Petrale; winter == 1, summer == 2.")
     }
 
     Pdata[, "season"] <- ifelse(Pdata[, "SAMPLE_MONTH"] %in% c(11:12, 1:2),
-      1, 2)
+      1, 2
+    )
   } # End if Petrale
 
   if (!is.null(yearUp)) {
     Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearUp] <-
       Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearUp] + 1
 
-    if (verbose){
-      message("Incremented fishyr for months ", 
-        paste(yearUp, collapse = ", "), "to the next year.")
+    if (verbose) {
+      message(
+        "Incremented fishyr for months ",
+        paste(yearUp, collapse = ", "), "to the next year."
+      )
     }
-
   } # End if yearUp
 
   if (!is.null(yearDown)) {
     Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearDown] <-
       Pdata$fishyr[Pdata$SAMPLE_MONTH %in% yearDown] - 1
 
-    if (verbose){
-      message("Decremented fishyr for months ", 
-        paste(yearDown, collapse = ", "), "to the previous year.")
+    if (verbose) {
+      message(
+        "Decremented fishyr for months ",
+        paste(yearDown, collapse = ", "), "to the previous year."
+      )
     }
-
   } # End if yearDown
 
   if (plotResults) {
     tmp <- table(Pdata[, c("season", "SAMPLE_YEAR")])
-    graphics::barplot(tmp, col = grDevices::rainbow(NROW(tmp)),
+    graphics::barplot(tmp,
+      col = grDevices::rainbow(NROW(tmp)),
       legend.text = paste("Season", rownames(tmp)),
       main = unique(Pdata$SPID), xlab = "Year", ylab = "Count",
-      bty = "n")
+      bty = "n"
+    )
   } # End if plotResults
 
   return(Pdata)
-
 }

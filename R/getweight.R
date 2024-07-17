@@ -34,7 +34,6 @@ getweight <- function(length,
                       unit.out = c("lb", "kg"),
                       weight,
                       unit.in) {
-
   unit.out <- match.arg(unit.out, several.ok = FALSE)
 
   #### Option # 1 ... Change units of weight
@@ -51,17 +50,20 @@ getweight <- function(length,
       }
     }
     if (any(unit.in == "H", na.rm = TRUE)) {
-      message("FISH_WEIGHT units of H are changed to G for ",
-        sum(unit.in == "H", na.rm = TRUE), " fish.")
+      message(
+        "FISH_WEIGHT units of H are changed to G for ",
+        sum(unit.in == "H", na.rm = TRUE), " fish."
+      )
       unit.in[unit.in == "H"] <- "G"
     }
     transformweight <- weight * mapply(switch, unit.in,
-        MoreArgs = list(
-          G = 0.00220462,
-          KG = 2.20462,
-          UNK = 0.00220462,
-          0.00220462)
-        )
+      MoreArgs = list(
+        G = 0.00220462,
+        KG = 2.20462,
+        UNK = 0.00220462,
+        0.00220462
+      )
+    )
     if (unit.out == "kg") {
       transformweight <- transformweight * 0.453592
     }
@@ -71,8 +73,12 @@ getweight <- function(length,
   #### Option # 2 ... a * (length / 10)^b * 2.20462 [length = cm; weight = kg]
   #### Checks
   stopifnot(all(sex %in% c(NA, "U", "F", "M", "H")))
-  if (length(length) != length(sex)) stop("The vectors, length and",
-    " sex, must be equal in length.")
+  if (length(length) != length(sex)) {
+    stop(
+      "The vectors, length and",
+      " sex, must be equal in length."
+    )
+  }
   if (is.matrix(pars)) pars <- data.frame(pars)
   if ((!"H" %in% row.names(pars)) & "H" %in% sex & "all" %in% row.names(pars)) {
     pars["H", ] <- pars["all", ]
@@ -95,4 +101,4 @@ getweight <- function(length,
 
   #### return
   return(calcweight)
-  }
+}

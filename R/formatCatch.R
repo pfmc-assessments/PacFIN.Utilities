@@ -1,16 +1,16 @@
 #' Format catches from long to wide
-#' 
+#'
 #' Transform a long data frame of catches to a wide data frame
 #' using [tidyr::pivot_wider].
 #' The column names of the wide data frame will be in the format
 #' needed for the stratification of stage-2 expansions of
 #' composition data, i.e., [getExpansion_2].
-#' 
+#'
 #' @param catch A data frame with at least a column specifying
 #' the year the catches took place
 #' (e.g., LANDING_YEAR is the column name upon download from PacFIN),
 #' a column for variable(s) specified in strat, and
-#' a column that holds the measured catches named 
+#' a column that holds the measured catches named
 #' (e.g., ROUND_WEIGHT_LBS is the column name upon download from PacFIN).
 #' @inheritParams tableSample
 #' @param yearname A character string used to search for year in `catch`.
@@ -40,7 +40,6 @@ formatCatch <- function(catch,
                         strat,
                         yearname = "^Year|^Yr|Landing_Y|Sample_Y",
                         valuename = "ROUND_WEIGHT_LBS") {
-
   if ("state" %in% strat & !"state" %in% colnames(catch)) {
     catch <- getState(catch, verbose = FALSE)
   }
@@ -49,13 +48,14 @@ formatCatch <- function(catch,
   }
 
   # Reshape the data into wide format and replace NA with zeros
-  out <- catch %>% tidyr::pivot_wider(
-    values_fn = sum, values_fill = 0,
-    id_cols = dplyr::matches(match = yearname, ignore.case = TRUE),
-    names_from = strat, names_sep = ".",
-    values_from = dplyr::matches(match = valuename, ignore.case = TRUE)
-    ) %>% data.frame()
+  out <- catch %>%
+    tidyr::pivot_wider(
+      values_fn = sum, values_fill = 0,
+      id_cols = dplyr::matches(match = yearname, ignore.case = TRUE),
+      names_from = strat, names_sep = ".",
+      values_from = dplyr::matches(match = valuename, ignore.case = TRUE)
+    ) %>%
+    data.frame()
 
   return(out)
-
 }

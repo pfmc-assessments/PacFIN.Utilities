@@ -1,5 +1,5 @@
 #' Calculate von Bertalanffy Growth Parameters
-#' 
+#'
 #' Calaculate the von Bertalanffy growth parameters and compare them to
 #' parameters estimated when outliers are removed from the data set.
 #' Outliers are determined using standard deviations
@@ -42,7 +42,7 @@
 #' nothing is saved.
 #'
 #' @return Returns a combined dataset in PacFIN format.
-#' 
+#'
 #' @export
 #' @author Chantel R. Wetzel, Vlada Gertseva, James Thorson
 
@@ -64,7 +64,6 @@ checkLenAge <- function(Pdata,
                         precision = 1,
                         verbose = TRUE,
                         dir = NULL) {
-
   #### Initialize the three new columns
   Pdata$Lhat_pred <- NA
   Pdata$Lhat_low <- NA
@@ -86,12 +85,15 @@ checkLenAge <- function(Pdata,
   }
   if (length(Par[[1]]) > 1) {
     if (stats::var(unlist(lapply(Par, length))) != 0) {
-      stop("Must be one named entry in each vector element of the list Par\n",
+      stop(
+        "Must be one named entry in each vector element of the list Par\n",
         "for each unique sex type in the data, e.g.,\n",
-        paste(sex_vec, collapse = ", "))
+        paste(sex_vec, collapse = ", ")
+      )
     }
     if (!all(sex_vec %in% names(Par[[1]]))) {
-      stop("The data contains the following values for sexes,\n",
+      stop(
+        "The data contains the following values for sexes,\n",
         paste(sex_vec, collapse = ", "), "\n",
         " which must match names of the parameter vectors in the list Par, e.g.,\n",
         paste(unique(unlist(lapply(Par, names))), collapse = ", ")
@@ -106,33 +108,37 @@ checkLenAge <- function(Pdata,
   #### For each sex
   for (s in seq_along(sex_vec)) {
     use_data <- !is.na(Pdata[, len_col]) &
-                !is.na(Pdata[, age_col]) &
-                Pdata[, sex_col] %in% sex_vec[s]
+      !is.na(Pdata[, age_col]) &
+      Pdata[, sex_col] %in% sex_vec[s]
 
     if (length(Par[[1]]) > 1) {
-        pars_in <- c(
-          Par[[1]][sex_vec[s]],
-          Par[[2]][sex_vec[s]] * mult,
-          Par[[3]][sex_vec[s]] * mult,
-          Par[[4]][sex_vec[s]],
-          Par[[5]][sex_vec[s]])
+      pars_in <- c(
+        Par[[1]][sex_vec[s]],
+        Par[[2]][sex_vec[s]] * mult,
+        Par[[3]][sex_vec[s]] * mult,
+        Par[[4]][sex_vec[s]],
+        Par[[5]][sex_vec[s]]
+      )
     } else {
-        pars_in <- c(
-          Par[[1]][1], 
-          Par[[2]][1] * mult, 
-          Par[[3]][1] * mult, 
-          Par[[4]][1], 
-          Par[[5]][1])
+      pars_in <- c(
+        Par[[1]][1],
+        Par[[2]][1] * mult,
+        Par[[3]][1] * mult,
+        Par[[4]][1],
+        Par[[5]][1]
+      )
     }
 
     if (Optim) {
-      ests <- stats::optim(fn = nwfscSurvey::fit_vbgrowth,
-                  par = log(pars_in),
-                  hessian = FALSE,
-                  Ages = Pdata[use_data, age_col],
-                  Lengths = Pdata[use_data, len_col])$par
+      ests <- stats::optim(
+        fn = nwfscSurvey::fit_vbgrowth,
+        par = log(pars_in),
+        hessian = FALSE,
+        Ages = Pdata[use_data, age_col],
+        Lengths = Pdata[use_data, len_col]
+      )$par
     } else {
-        ests <- pars_in
+      ests <- pars_in
     }
 
     Pred <- nwfscSurvey::fit_vbgrowth(
@@ -140,15 +146,17 @@ checkLenAge <- function(Pdata,
       ReturnType = "Pred",
       sdFactor = sdFactor,
       Ages = Pdata[use_data, age_col],
-      Lengths = Pdata[use_data, len_col])
+      Lengths = Pdata[use_data, len_col]
+    )
 
-    Pdata[use_data, c("Lhat_low","Lhat_pred", "Lhat_high")] <- round(Pred, precision)
+    Pdata[use_data, c("Lhat_low", "Lhat_pred", "Lhat_high")] <- round(Pred, precision)
   }
 
   if (!keepAll) {
     remove <- which(
       Pdata[, len_col] > Pdata[, "Lhat_high"] |
-      Pdata[, len_col] < Pdata[, "Lhat_low"])
+        Pdata[, len_col] < Pdata[, "Lhat_low"]
+    )
     all <- Pdata
     Pdata[remove, len_col] <- NA
   }
@@ -161,19 +169,28 @@ checkLenAge <- function(Pdata,
     # Estimate pars again b/c some data may be removed if !keepAll
     tempdata <- Pdata[
       !is.na(Pdata[, len_col]) &
-      !is.na(Pdata[, age_col]), ]
-    estsall <- data.frame(Sex = sex_vec,
-      do.call("rbind", tapply(seq(NROW(tempdata)), tempdata[, sex_col],
-      function(x) exp(stats::optim(fn = nwfscSurvey::fit_vbgrowth,
-                  par = log(pars_in),
-                  hessian = FALSE,
-                  Ages = tempdata[x, age_col],
-                  Lengths = tempdata[x, len_col])$par)
-    )))
+        !is.na(Pdata[, age_col]),
+    ]
+    estsall <- data.frame(
+      Sex = sex_vec,
+      do.call("rbind", tapply(
+        seq(NROW(tempdata)), tempdata[, sex_col],
+        function(x) {
+          exp(stats::optim(
+            fn = nwfscSurvey::fit_vbgrowth,
+            par = log(pars_in),
+            hessian = FALSE,
+            Ages = tempdata[x, age_col],
+            Lengths = tempdata[x, len_col]
+          )$par)
+        }
+      ))
+    )
     colnames(estsall)[-1] <- names(Par)
     estsall <- estsall[, c("Sex", "L0", "Linf", "K", "CV0", "CV1")]
     colnames(estsall) <- c("Sex", "$L_0$", "$L_{Inf}$", "$K$", "$CV_{young}$", "$CV_{old}$")
-    x <- knitr::kable(estsall, format = "latex",
+    x <- knitr::kable(estsall,
+      format = "latex",
       label = "PacFIN_vonBpars", escape = FALSE, booktabs = TRUE,
       caption = paste0(
         "Estimates of von Bertalanffy growth parameters in terms of ",
@@ -182,21 +199,25 @@ checkLenAge <- function(Pdata,
         ifelse(all(estsall[, "Sex"] == "A"), "", "are sex-specific (row) and "),
         "include $L_0$, length at maximum age ($L_{Inf}$), growth rate ($K$), and ",
         "coefficients of variation at young ($CV_{young}$) and old ages ($CV_{old}$).",
-        ifelse(keepAll, " Data used to fit the model included outliers.", ""))
+        ifelse(keepAll, " Data used to fit the model included outliers.", "")
+      )
     )
     writeLines(x, file.path(dir, "PacFIN_vonBpars.tex"))
-    utils::write.table(estsall, file = file.path(dir, "PacFIN_vonBpars.csv"),
-      sep = ",", row.names = FALSE)
-   tempdata <- tempdata[, c(len_col, age_col, sex_col)]
-   colnames(tempdata) <- c("Length_cm", "Age", "Sex")
-   pars <- unlist(estsall[1, c(3, 4, 2, 5, 6), drop = TRUE])
-   names(pars) <- NULL
+    utils::write.table(estsall,
+      file = file.path(dir, "PacFIN_vonBpars.csv"),
+      sep = ",", row.names = FALSE
+    )
+    tempdata <- tempdata[, c(len_col, age_col, sex_col)]
+    colnames(tempdata) <- c("Length_cm", "Age", "Sex")
+    pars <- unlist(estsall[1, c(3, 4, 2, 5, 6), drop = TRUE])
+    names(pars) <- NULL
 
-   latage <- nwfscSurvey::PlotVarLengthAtAge.fn(
-     dat = tempdata, parStart = pars,
-     dir = dir, main = "PacFIN", ageBin = 1,
-     bySex = !all(estsall[, "Sex"] == "A"),
-     estVB = TRUE, legX = "bottomleft", dopng = TRUE)
+    latage <- nwfscSurvey::PlotVarLengthAtAge.fn(
+      dat = tempdata, parStart = pars,
+      dir = dir, main = "PacFIN", ageBin = 1,
+      bySex = !all(estsall[, "Sex"] == "A"),
+      estVB = TRUE, legX = "bottomleft", dopng = TRUE
+    )
   }
 
   Pdata <- Pdata[, !grepl("ignore", colnames(Pdata))]

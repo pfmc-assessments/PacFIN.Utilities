@@ -142,7 +142,6 @@ cleanPacFIN <- function(Pdata,
                         spp = NULL,
                         verbose = TRUE,
                         savedir) {
-
   #### Deprecate old input arguments
   if (lifecycle::is_present(keep_INPFC)) {
     lifecycle::deprecate_stop(
@@ -151,8 +150,8 @@ cleanPacFIN <- function(Pdata,
       details = paste0(
         "It is thought that PSMFC areas can decipher much of what was\n",
         "previously determined with INPFC areas."
-        )
       )
+    )
   }
   if (lifecycle::is_present(keep_missing_lengths)) {
     lifecycle::deprecate_stop(
@@ -161,8 +160,8 @@ cleanPacFIN <- function(Pdata,
       details = paste0(
         "All down-stream functionality works without filtering,\n",
         "but Pdata[is.na(Pdata[['length']]), ] can be used to filter them out."
-        )
       )
+    )
   }
 
   #### CLEAN COLUMNS
@@ -178,13 +177,15 @@ cleanPacFIN <- function(Pdata,
   }
   Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
   if (missing(keep_length_type)) {
-    keep_length_type <- sort(unique(c(Pdata[, "FISH_LENGTH_TYPE"],
-      "", "A", "D", "F", "R", "S", "T", "U", NA)))
+    keep_length_type <- sort(unique(c(
+      Pdata[, "FISH_LENGTH_TYPE"],
+      "", "A", "D", "F", "R", "S", "T", "U", NA
+    )))
   }
   if (is.null(keep_age_method)) {
     keep_age_method <- unique(
       unlist(Pdata[, grep("AGE_METHOD[0-9]*$", colnames(Pdata))])
-      )
+    )
   }
 
   #### Column names
@@ -197,12 +198,16 @@ cleanPacFIN <- function(Pdata,
     grDevices::png(filename = file.path(savedir, "PacFIN_comp_season.png"))
     on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
   }
-  Pdata <- getSeason(Pdata, verbose = verbose,
-    plotResults = !missing(savedir))
+  Pdata <- getSeason(Pdata,
+    verbose = verbose,
+    plotResults = !missing(savedir)
+  )
 
   #### Areas
-  Pdata <- getState(Pdata, verbose = verbose,
-    source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID"))
+  Pdata <- getState(Pdata,
+    verbose = verbose,
+    source = ifelse("AGID" %in% colnames(Pdata), "AGID", "SOURCE_AGID")
+  )
   # California doesn't record SAMPLE_TYPE so we assume they are all Market samples
   Pdata[Pdata$state == "CA" & is.na(Pdata$SAMPLE_TYPE), "SAMPLE_TYPE"] <- "M"
 
@@ -210,8 +215,10 @@ cleanPacFIN <- function(Pdata,
   Pdata[, "SEX"] <- nwfscSurvey::codify_sex(Pdata[, "SEX"])
 
   #### Lengths
-  Pdata[, "length"] <- getLength(Pdata, verbose = verbose,
-    keep = keep_length_type)
+  Pdata[, "length"] <- getLength(Pdata,
+    verbose = verbose,
+    keep = keep_length_type
+  )
   Pdata[, "lengthcm"] <- floor(Pdata[, "length"] / 10)
 
   #### Age (originally in cleanAges)
@@ -229,7 +236,7 @@ cleanPacFIN <- function(Pdata,
     weight = Pdata[["FISH_WEIGHT"]],
     unit.in = Pdata[["FISH_WEIGHT_UNITS"]],
     unit.out = "kg"
-    )
+  )
 
   #### Bad samples
   # Remove bad OR samples
@@ -254,16 +261,24 @@ cleanPacFIN <- function(Pdata,
   # Report removals
   if (verbose) {
     message("\n")
-    message("N SAMPLE_TYPEs changed from M to S",
+    message(
+      "N SAMPLE_TYPEs changed from M to S",
       " for special samples from OR: ",
-      sum(Pdata$SAMPLE_NO %in% paste0("OR", badORnums)))
-    message("N not in keep_sample_type (SAMPLE_TYPE): ",
-      sum(!bad[, "goodstype"]))
+      sum(Pdata$SAMPLE_NO %in% paste0("OR", badORnums))
+    )
+    message(
+      "N not in keep_sample_type (SAMPLE_TYPE): ",
+      sum(!bad[, "goodstype"])
+    )
     message("N with SAMPLE_TYPE of NA: ", sum(is.na(Pdata[["SAMPLE_TYPE"]])))
-    message("N not in keep_sample_method (SAMPLE_METHOD): ",
-      sum(!bad[, "goodsmeth"]))
-    message("N with SAMPLE_NO of NA: ",
-      sum(!bad[, "goodsno"]))
+    message(
+      "N not in keep_sample_method (SAMPLE_METHOD): ",
+      sum(!bad[, "goodsmeth"])
+    )
+    message(
+      "N with SAMPLE_NO of NA: ",
+      sum(!bad[, "goodsno"])
+    )
     message("N without length: ", sum(is.na(Pdata$length)))
     message("N without Age: ", sum(is.na(Pdata$Age)))
     message("N without length and Age: ", sum(is.na(Pdata$length) | is.na(Pdata$Age)))
@@ -295,13 +310,17 @@ cleanPacFIN <- function(Pdata,
 
   if (!missing(savedir)) {
     wlpars <- getWLpars(Pdata, verbose = FALSE)
-    utils::write.table(wlpars, sep = ",",
+    utils::write.table(wlpars,
+      sep = ",",
       row.names = FALSE, col.names = TRUE,
-      file = file.path(savedir, "PacFIN_WLpars.csv"))
+      file = file.path(savedir, "PacFIN_WLpars.csv")
+    )
     if (verbose) {
-      message("WL parameter estimates: see 'PacFIN_WLpars.csv'\n",
+      message(
+        "WL parameter estimates: see 'PacFIN_WLpars.csv'\n",
         "If some rows are NA, consider setting ALL of them individually\n",
-        "'getExpansion_1('fa' = , 'fb' = , 'ma' = , ...)")
+        "'getExpansion_1('fa' = , 'fb' = , 'ma' = , ...)"
+      )
     }
   }
 

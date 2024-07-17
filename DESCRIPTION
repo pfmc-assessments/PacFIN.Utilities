@@ -2,60 +2,25 @@ Package: PacFIN.Utilities
 Title: Generate fishery composition data from PacFIN data for the NWFSC
 Version: 0.2.9
 Authors@R: c(
-    person(
-      given = c("Kelli", "F."),
-      family = "Johnson",
-      role = c("aut", "cre"),
-      email = "kelli.johnson@noaa.gov",
-      comment = c(ORCID = "0000-0002-5149-451X")
-    ),
-    person(
-      given = c("Chantel", "R."),
-      family = "Wetzel",
-      role = "aut",
-      email = "chantel.wetzel@noaa.gov",
-      comment = c(ORCID = "0000-0002-7573-8240")
-    ),
-    person(
-      given = c("Kathryn", "L."),
-      family = "Doering",
-      role = "ctb",
-      email = "kathryn.doering@noaa.gov",
-      comment = c(ORCID = "0000-0002-0396-7044")
-    ),
-    person(
-      given = c("Brian", "J."),
-      family = "Langseth",
-      role = "ctb",
-      email = "brian.langseth@noaa.gov",
-      comment = c(ORCID = "0000-0002-9901-6146")
-    ),
-    person(
-      given = "Andi",
-      family = "Stephens",
-      role = "ctb",
-      email = "andi.stephens@noaa.gov"
-    ),
-    person(
-      given = c("Ian", "G."),
-      family = "Taylor",
-      role = "ctb",
-      email = "ian.taylor@noaa.gov",
-      comment = c(ORCID = "0000-0002-4232-5669")
-    ),
-    person(
-      given = c("John", "R."),
-      family = "Wallace",
-      role = "ctb",
-      email = "john.wallace@noaa.gov",
-      comment = c(ORCID = "0000-0002-2333-1262")
-    )
-    )
-Description: Manipulates data from the PacFIN database for stock synthesis.
+    person(c("Kelli", "F."), "Johnson", , "kelli.johnson@noaa.gov", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-5149-451X")),
+    person(c("Chantel", "R."), "Wetzel", , "chantel.wetzel@noaa.gov", role = "aut",
+           comment = c(ORCID = "0000-0002-7573-8240")),
+    person(c("Kathryn", "L."), "Doering", , "kathryn.doering@noaa.gov", role = "ctb",
+           comment = c(ORCID = "0000-0002-0396-7044")),
+    person(c("Brian", "J."), "Langseth", , "brian.langseth@noaa.gov", role = "ctb",
+           comment = c(ORCID = "0000-0002-9901-6146")),
+    person("Andi", "Stephens", , "andi.stephens@noaa.gov", role = "ctb"),
+    person(c("Ian", "G."), "Taylor", , "ian.taylor@noaa.gov", role = "ctb",
+           comment = c(ORCID = "0000-0002-4232-5669")),
+    person(c("John", "R."), "Wallace", , "john.wallace@noaa.gov", role = "ctb",
+           comment = c(ORCID = "0000-0002-2333-1262"))
+  )
+Description: Manipulates data from the PacFIN database for stock
+    synthesis.
+License: MIT + file LICENSE
 Depends:
     R (>= 4.2)
-License: MIT + file LICENSE
-LazyData: true
 Imports:
     cli,
     dplyr,
@@ -81,10 +46,12 @@ Suggests:
     RODBC,
     testthat (>= 3.0.0),
     usethis
+VignetteBuilder: 
+    knitr
 Remotes:
-  github::pfmc-assessments/nwfscSurvey
-VignetteBuilder: knitr
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
-Encoding: UTF-8
+    github::pfmc-assessments/nwfscSurvey
 Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

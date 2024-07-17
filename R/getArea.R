@@ -20,7 +20,7 @@
 #' fish tickets. See Table 3 on page 15 of [Tsou et al.
 #' (2015)](https://wdfw.wa.gov/sites/default/files/publications/01754/wdfw01754.pdf)
 #' for a table that converts WDFW management region to PSMFC area.
-#' 
+#'
 #' A partial map of the WDFW management regions for the Puget Sound areas is
 #' provided in the [Puget Sound Groundfish Management
 #' Plan](https://wdfw.wa.gov/sites/default/files/publications/00927/wdfw00927.pdf)

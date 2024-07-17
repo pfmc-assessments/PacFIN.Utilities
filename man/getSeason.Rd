@@ -61,7 +61,8 @@ in \link{cleanPacFIN}. If a specialized season structure is required,
 \examples{
 test <- getSeason(
   data.frame(SAMPLE_MONTH = 1:12, fishyr = rep(1:2, each = 6)),
-  verbose = TRUE)
+  verbose = TRUE
+)
 testthat::expect_true(all(test[, "season"] == 1))
 test <- getSeason(Pdata = test, season_type = 1, yearUp = 12)
 testthat::expect_equivalent(test[test[, "fishyr"] == 3, "season"], 1)

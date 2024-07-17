@@ -26,15 +26,23 @@ plotWL <- function(length,
     sex <- rep("all", length = length(length))
   }
   data <- data.frame(length, sex, weight, "pred" = weight.calc)[
-    order(length), ]
-  gg <- ggplot2::ggplot(data = data,
-    ggplot2::aes(x = .data[["length"]], y = .data[["weight"]],
-      col = .data[["sex"]])) +
+    order(length),
+  ]
+  gg <- ggplot2::ggplot(
+    data = data,
+    ggplot2::aes(
+      x = .data[["length"]], y = .data[["weight"]],
+      col = .data[["sex"]]
+    )
+  ) +
     ggplot2::geom_point(pch = 21, alpha = 0.8) +
     ggplot2::geom_line(ggplot2::aes(y = .data[["pred"]]),
-      lwd = 1.2) +
+      lwd = 1.2
+    ) +
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
-    ggplot2::theme_bw() + scale_colour_grey() + scale_fill_grey()
+    ggplot2::theme_bw() +
+    scale_colour_grey() +
+    scale_fill_grey()
   return(gg)
 }

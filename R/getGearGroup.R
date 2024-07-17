@@ -24,20 +24,21 @@
 #' table(ex)
 #' testthat::expect_equal(ex[ex[, "geargroup"] == "POT", "GRID"], "FPT")
 #'
-getGearGroup <- function (Pdata,
-                          spp = NULL,
-                          verbose = TRUE) {
-
+getGearGroup <- function(Pdata,
+                         spp = NULL,
+                         verbose = TRUE) {
   #### Checks
   if (verbose) {
-    message("\nGear groupings reflect those in the table at\n",
-       "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt")
+    message(
+      "\nGear groupings reflect those in the table at\n",
+      "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt"
+    )
   }
   if (!"GRID" %in% colnames(Pdata)) {
     if ("PACFIN_GEAR_CODE" %in% colnames(Pdata)) {
       Pdata[, "GRID"] <- Pdata[, "PACFIN_GEAR_CODE"]
     } else {
-    stop("Pdata must have 'GRID' or 'PACFIN_GEAR_CODE' as a column.")
+      stop("Pdata must have 'GRID' or 'PACFIN_GEAR_CODE' as a column.")
     }
   }
   if (is.factor(Pdata[, "GRID"])) {
@@ -52,7 +53,8 @@ getGearGroup <- function (Pdata,
         if (verbose) {
           message("The following samples were assigned to the gear group 'MSC':")
           utils::write.table(table(msc[, "GRID"]),
-            col.names = FALSE, row.names = FALSE)
+            col.names = FALSE, row.names = FALSE
+          )
         }
         # Danish/Scottish Seine trawl
         GearTable[, "GROUP"][GearTable$GRID == "DNT"] <- "MSC"
@@ -64,8 +66,10 @@ getGearGroup <- function (Pdata,
     } # end if spp == sablefish
     if (any(grepl("dogfish|dsrk", spp, ignore.case = TRUE))) {
       if (verbose) {
-        message("Dogfish uses a mid-water trawl (MID), TWL (including shrimp), and HKL fleets\n",
-          "everything else is assigned to MSC.")
+        message(
+          "Dogfish uses a mid-water trawl (MID), TWL (including shrimp), and HKL fleets\n",
+          "everything else is assigned to MSC."
+        )
       }
       GearTable[grepl("MIDWATER", GearTable[["DESCRIPTION"]]), "GROUP"] <- "MID"
       GearTable[grepl("DRG|NET|NTW|POT|TLS", GearTable[["GROUP"]]), "GROUP"] <- "MSC"
@@ -76,7 +80,8 @@ getGearGroup <- function (Pdata,
   #### Create geargroup
   Pdata[, "geargroup"] <- GearTable[match(Pdata[, "GRID"], GearTable[, "GRID"]), "GROUP"]
   Pdata[, "geargroup"] <- ifelse(is.na(Pdata[, "geargroup"]),
-    Pdata[, "GRID"], Pdata[, "geargroup"])
+    Pdata[, "GRID"], Pdata[, "geargroup"]
+  )
 
   if (verbose) {
     message("GRID was assigned to geargroup with the following names:")
@@ -84,5 +89,4 @@ getGearGroup <- function (Pdata,
   }
 
   return(Pdata)
-
 }

@@ -39,8 +39,8 @@ centimeter is not its own bin.
 comps_bins(1:8, breaks = c(-Inf, 3:5))
 comps_bins(1:8, breaks = c(3:5), includeplusgroup = FALSE)
 testthat::expect_equal(
-comps_bins(1:8, breaks = c(-Inf, 3:5, Inf)),
-comps_bins(1:8, breaks = c(-Inf, 3:5), includeplusgroup = TRUE)
+  comps_bins(1:8, breaks = c(-Inf, 3:5, Inf)),
+  comps_bins(1:8, breaks = c(-Inf, 3:5), includeplusgroup = TRUE)
 )
 
 }
