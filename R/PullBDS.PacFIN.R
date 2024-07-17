@@ -90,8 +90,8 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   # Input checks
   stopifnot(
     "`verbose` must be a logical." =
-    is.logical(verbose) &&
-    length(verbose) == 1
+      is.logical(verbose) &&
+        length(verbose) == 1
   )
   file_species_code <- paste(pacfin_species_code, collapse = "--")
 
@@ -271,7 +271,8 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   }
 
   # Save appropriate summaries
-  savefn <- file.path(savedir,
+  savefn <- file.path(
+    savedir,
     paste(
       sep = ".",
       "PacFIN",

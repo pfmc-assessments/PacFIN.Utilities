@@ -37,8 +37,7 @@ sql_area <- function() {
   sqlcall <- glue::glue("
     SELECT *
     FROM PACFIN.BDS_AR;
-    "
-  )
+    ")
   sqlcall <- gsub("\\n", " ", sqlcall)
   return(sqlcall)
 }
@@ -62,8 +61,7 @@ sql_bds <- function(pacfin_species_code) {
    SELECT *
    FROM PACFIN_MARTS.COMPREHENSIVE_BDS_COMM
    WHERE REGEXP_LIKE (PACFIN_SPECIES_CODE, {spid});
-   "
-  )
+   ")
   sqlcall <- gsub("\\n", " ", sqlcall)
   return(sqlcall)
 }
@@ -85,10 +83,9 @@ sql_catch <- function(pacfin_species_code, council_code = "P") {
   sqlcall <- glue::glue("
     SELECT *
     FROM PACFIN_MARTS.COMPREHENSIVE_FT
-    WHERE PACFIN_SPECIES_CODE = ANY ({species}) 
+    WHERE PACFIN_SPECIES_CODE = ANY ({species})
      AND COUNCIL_CODE = ANY ({council})
-    "
-  )
+    ")
   sqlcall <- gsub("\\n", " ", sqlcall)
   return(sqlcall)
 }
@@ -100,8 +97,7 @@ sql_species <- function() {
     SELECT DISTINCT PACFIN_SPECIES_CODE, PACFIN_SPECIES_COMMON_NAME
     FROM PACFIN_MARTS.COMPREHENSIVE_FT
     ORDER BY PACFIN_SPECIES_COMMON_NAME, PACFIN_SPECIES_CODE;
-    "
-  )
+    ")
   sqlcall <- gsub("\\n", " ", sqlcall)
   return(sqlcall)
 }
@@ -123,8 +119,7 @@ sql_check_FINAL_FISH_AGE_IN_YEARS <- function() {
     WHERE AGE_IN_YEARS is not null and FINAL_FISH_AGE_IN_YEARS is null
     group by PACFIN_SPECIES_CODE, AGENCY_CODE
     ORDER by PACFIN_SPECIES_CODE, AGENCY_CODE;
-    "
-  )
+    ")
   sqlcall <- gsub("\\n", " ", sqlcall)
   return(sqlcall)
 }

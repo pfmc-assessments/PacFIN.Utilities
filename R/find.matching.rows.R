@@ -1,5 +1,5 @@
 #' Function find.matching.rows
-#' 
+#'
 #' @description
 #'   Takes two tables with a shared primary key, and
 #'   returns the rows of the second table for which the
@@ -13,7 +13,7 @@
 #' @param tcol  Still mysterious.
 #' @param round. if values are numeric, round.  Default:  TRUE.
 #' @author John R. Wallace (John.Wallace@@noaa.gov), (revised) Andi Stephens, 2010.
-#' 
+#'
 #' @details
 #'  NOTE:  The way this is written assumes that the second table is a
 #'         superset of the first (i.e., that each value is matched).
@@ -38,7 +38,6 @@ find.matching.rows <- function(file,
                                tindex = 1,
                                tcol = 2,
                                round. = TRUE) {
-
   # Coerce a vector argument into a matrix
 
   if (is.null(dim(file))) {
@@ -48,7 +47,6 @@ find.matching.rows <- function(file,
   # If the primary keys are numeric, round them.
 
   if (round.) {
-
     if (is.numeric(file[, findex])) {
       file[, findex] <- round(file[, findex])
     }
@@ -56,7 +54,6 @@ find.matching.rows <- function(file,
     if (is.numeric(table[, tindex])) {
       table[, tindex] <- round(table[, tindex])
     }
-
   } # End if round.
 
   # Convert the indices to character strings for comparison, and get the
@@ -64,10 +61,10 @@ find.matching.rows <- function(file,
 
   matched.rows <- match(
     apply(file[, findex, drop = FALSE], 1, paste, collapse = " "),
-    apply(table[, tindex, drop = FALSE], 1, paste, collapse = " "))
+    apply(table[, tindex, drop = FALSE], 1, paste, collapse = " ")
+  )
 
   # Return the 'tcol' values in the rows of the 'table' that matched.
 
   return(table[matched.rows, tcol, drop = FALSE])
-
 } # End function find.matching.rows

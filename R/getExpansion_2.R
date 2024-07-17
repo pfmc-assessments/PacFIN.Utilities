@@ -65,21 +65,25 @@ getExpansion_2 <- function(Pdata,
                            stratification.cols,
                            verbose = TRUE,
                            savedir) {
-
   #### Set up
   # Check Unit input
-  Units <- match.arg(Units, several.ok = FALSE,
-    choices = c(measurements::conv_unit_options[["mass"]], "MT", "LB"))
+  Units <- match.arg(Units,
+    several.ok = FALSE,
+    choices = c(measurements::conv_unit_options[["mass"]], "MT", "LB")
+  )
   Units <- switch(Units,
     MT = "metric_ton",
     LB = "lbs",
-    Units)
+    Units
+  )
 
   # Check and stop if Convert input is used since it is not deprecated
-  if(!is.null(Convert)) {
-    stop("Convert is deprecated.",
+  if (!is.null(Convert)) {
+    stop(
+      "Convert is deprecated.",
       "Please specify the units of Catch via the Unit input (MT or LB).\n",
-      paste(measurements::conv_unit_options[["mass"]], collapse = ", "))
+      paste(measurements::conv_unit_options[["mass"]], collapse = ", ")
+    )
   }
 
   # Start clean
@@ -95,10 +99,14 @@ getExpansion_2 <- function(Pdata,
         if (length(stratification.cols) == 1) {
           Pdata[, "stratification"] <- Pdata[, stratification.cols]
         } else {
-        separate <- unique(gsub("^[a-zA-Z]+(\\s*[[:punct:]]\\s*)[a-zA-Z]+$",
-          "\\1", colnames(Catch)[-1]))
-        Pdata[, "stratification"] <- apply(Pdata[, stratification.cols],
-          1, paste, collapse = separate)
+          separate <- unique(gsub(
+            "^[a-zA-Z]+(\\s*[[:punct:]]\\s*)[a-zA-Z]+$",
+            "\\1", colnames(Catch)[-1]
+          ))
+          Pdata[, "stratification"] <- apply(Pdata[, stratification.cols],
+            1, paste,
+            collapse = separate
+          )
         }
       } else {
         stop("Pdata must have stratification column or provide stratification.cols")
@@ -119,22 +127,27 @@ getExpansion_2 <- function(Pdata,
     message("Data: ", paste(collapse = ", ", Pstrat))
 
     if (sum(Pstrat %in% Catchgears) == 0) {
-      stop("No Pdata stratifications,\n",
+      stop(
+        "No Pdata stratifications,\n",
         paste(Pstrat, collapse = ", "), "\n",
         "were found in catch columns,\n",
-        paste(Catchgears, collapse = ", "))
+        paste(Catchgears, collapse = ", ")
+      )
     } else {
       Pdata <- Pdata[Pdata[, "stratification"] %in% colnames(Catch), ]
       Catch <- Catch[, c(colnames(Catch)[yearcol], unique(Pdata[, "stratification"]))]
       if (verbose) {
         message("Data were truncated to just these stratifications:")
-        message("Catch: ",
-          paste(sort(names(Catch)[-1]), collapse = ", "))
-        message("Pdata: ",
-          paste(sort(unique(Pdata$stratification)), collapse = ", "))
+        message(
+          "Catch: ",
+          paste(sort(names(Catch)[-1]), collapse = ", ")
+        )
+        message(
+          "Pdata: ",
+          paste(sort(unique(Pdata$stratification)), collapse = ", ")
+        )
       }
     }
-
   } # End if
 
   #### Expansion
@@ -152,11 +165,14 @@ getExpansion_2 <- function(Pdata,
     dplyr::ungroup()
 
   # Convert Catch to lbs.
-  Catch[, -1] <- measurements::conv_unit(to = "lbs",
-    x = Catch[, -1], from = Units)
+  Catch[, -1] <- measurements::conv_unit(
+    to = "lbs",
+    x = Catch[, -1], from = Units
+  )
 
   # Matching rows in Pdata with Catch[, "Year"] and correct column in Catch
-  tows$catch <- apply(tows[, c("fishyr", "stratification")], 1,
+  tows$catch <- apply(
+    tows[, c("fishyr", "stratification")], 1,
     function(x) {
       Catch[match(x[1], Catch[, yearcol]), match(x[2], colnames(Catch))]
     }
@@ -180,24 +196,32 @@ getExpansion_2 <- function(Pdata,
   }
 
   # Expansion is calculated by dividing the catch by the Sum_Sampled_Lbs.
-  tows$EF2 <- tows$catch/tows$Sum_Sampled_Lbs
+  tows$EF2 <- tows$catch / tows$Sum_Sampled_Lbs
   tows$EF2[tows$EF2 < 1 | !is.finite(tows$EF2)] <- 1
   # Match EF2 to the larger dataset
-  Pdata$Sum_Sampled_Lbs <- find.matching.rows(Pdata,
-    tows, strat, strat,  "Sum_Sampled_Lbs")[[1]]
-  Pdata$catch <- find.matching.rows(Pdata,
-    tows, strat, strat,  "catch")[[1]]
-  Pdata$Expansion_Factor_2 <- find.matching.rows(Pdata,
-    tows, strat, strat,  "EF2")[[1]]
+  Pdata$Sum_Sampled_Lbs <- find.matching.rows(
+    Pdata,
+    tows, strat, strat, "Sum_Sampled_Lbs"
+  )[[1]]
+  Pdata$catch <- find.matching.rows(
+    Pdata,
+    tows, strat, strat, "catch"
+  )[[1]]
+  Pdata$Expansion_Factor_2 <- find.matching.rows(
+    Pdata,
+    tows, strat, strat, "EF2"
+  )[[1]]
 
   NA_EF2 <- Pdata[is.na(Pdata$Expansion_Factor_2), ]
   nNA <- nrow(NA_EF2)
   Pdata$Expansion_Factor_2[is.na(Pdata$Expansion_Factor_2)] <- 1
   Pdata$Expansion_Factor_2 <- capValues(Pdata$Expansion_Factor_2, maxExp)
   Pdata[, "Final_Sample_Size_L"] <- capValues(
-    Pdata$Expansion_Factor_1_L * Pdata$Expansion_Factor_2)
+    Pdata$Expansion_Factor_1_L * Pdata$Expansion_Factor_2
+  )
   Pdata[, "Final_Sample_Size_A"] <- capValues(
-    Pdata$Expansion_Factor_1_A * Pdata$Expansion_Factor_2)
+    Pdata$Expansion_Factor_1_A * Pdata$Expansion_Factor_2
+  )
 
   #### Summary information
   if (verbose) {
@@ -215,7 +239,8 @@ getExpansion_2 <- function(Pdata,
         stats::xtabs(NA_EF2$FREQ ~ NA_EF2$state + NA_EF2$fishyr),
         col = grDevices::rainbow(3),
         legend.text = TRUE, xlab = "Year", ylab = "Samples",
-        main = "Second-stage expansion values of NA replaced by 1")
+        main = "Second-stage expansion values of NA replaced by 1"
+      )
     } else {
       message("Specify savedir if you want a figure to show the NA Expansion_Factor_2 values replaced by 1.")
     }
@@ -225,9 +250,9 @@ getExpansion_2 <- function(Pdata,
     grDevices::png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
     on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,
-      main = "", xlab = "Year", ylab = "Second-stage expansion factor")
+      main = "", xlab = "Year", ylab = "Second-stage expansion factor"
+    )
   }
 
   invisible(Pdata)
-
 } # End function getExpansion_2

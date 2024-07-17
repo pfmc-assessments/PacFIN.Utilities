@@ -52,14 +52,18 @@ get_codelist <- function(x = c("GRID", "INPFC", "PORT")) {
 #'
 get_codelist.GRID <- function(x) {
   url <- "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt"
-  all <- utils::read.fwf(url(url), skip = 5, widths = c(5, 5, 6, 10, 38, 9),
-    blank.lines.skip = TRUE)
+  all <- utils::read.fwf(url(url),
+    skip = 5, widths = c(5, 5, 6, 10, 38, 9),
+    blank.lines.skip = TRUE
+  )
   colnames(all) <- toupper(gsub("^\\s+|\\s+$| Name", "", all[1, ]))
   all <- all[c(-1, -2), ]
-  all <- all[-1 * seq(grep("\\.\\.\\.", all[,3]), NROW(all)), ]
+  all <- all[-1 * seq(grep("\\.\\.\\.", all[, 3]), NROW(all)), ]
   all <- all[!grepl("^\\s+$", all[, 1]), ]
-  all[ , c("TYPE", "GRID", "GROUP")] <- t(apply(all[ , c("TYPE", "GRID", "GROUP")], 1,
-    function(x) gsub("^\\s*|\\s*$", "", x)))
+  all[, c("TYPE", "GRID", "GROUP")] <- t(apply(
+    all[, c("TYPE", "GRID", "GROUP")], 1,
+    function(x) gsub("^\\s*|\\s*$", "", x)
+  ))
   all <- all[, -which(colnames(all) == "ENTERED")]
   return(all)
 }

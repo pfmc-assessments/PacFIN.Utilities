@@ -30,7 +30,8 @@
 #'   state = rep(c("WA", "OR"), length.out = 30),
 #'   year = rep(2010:2015, each = 5),
 #'   Age = rep(1:15, 2),
-#'   ap = rlnorm(n = 30))
+#'   ap = rlnorm(n = 30)
+#' )
 #' comps <- comps_wide(temp, breaks = 3:8, col_proportions = "ap")
 #' testthat::expect_equal(NCOL(comps), 8)
 #' \dontrun{
@@ -42,26 +43,31 @@ comps_wide <- function(data,
                        col_bins = "Age",
                        col_proportions = "lf",
                        includeplusgroup = TRUE) {
-
   col_proportions.num <- which(colnames(data) == col_proportions)
   col_bins.num <- which(colnames(data) == col_bins)
   stopifnot(length(col_proportions.num) == 1)
   stopifnot(length(col_bins.num) == 1)
-  data <- data[, c(seq_along(data)[-c(col_bins.num, col_proportions.num)],
-    col_bins.num, col_proportions.num)]
+  data <- data[, c(
+    seq_along(data)[-c(col_bins.num, col_proportions.num)],
+    col_bins.num, col_proportions.num
+  )]
   data[, NCOL(data) - 1] <- comps_bins(
     vector = data[, NCOL(data) - 1, drop = TRUE],
     breaks = breaks, includeplusgroup = includeplusgroup,
     returnclass = "numeric"
-    )
+  )
 
   outformula <- stats::formula(paste(col_proportions, "~ ."))
-  out <- stats::reshape(direction = "wide", stats::aggregate(outformula, data = data, sum),
-    idvar = colnames(data)[1:(NCOL(data)-2)],
-    timevar = colnames(data)[NCOL(data)-1])
+  out <- stats::reshape(
+    direction = "wide", stats::aggregate(outformula, data = data, sum),
+    idvar = colnames(data)[1:(NCOL(data) - 2)],
+    timevar = colnames(data)[NCOL(data) - 1]
+  )
   out[is.na(out)] <- 0
-  out <- out[do.call(order,
-    as.list(out[, colnames(out)[-(NCOL(out):(NCOL(out)-1))]])), ]
+  out <- out[do.call(
+    order,
+    as.list(out[, colnames(out)[-(NCOL(out):(NCOL(out) - 1))]])
+  ), ]
 
   return(out)
 }

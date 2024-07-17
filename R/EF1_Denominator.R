@@ -12,7 +12,7 @@
 #' For a survey, tow- or haul-level data are typically available.
 #' The sum of the weight in the sample is calculated different for each state
 #' based on the data that are available.
-#' 
+#'
 #' Oregon provides information on the weight of females and males in the sample
 #' via the `WEIGHT_OF_FEMALES` and `WEIGHT_OF_MALES` columns. These are often
 #' model-based weights, which would be the only way they can get weights when
@@ -20,7 +20,7 @@
 #' internally by the code and added to the female and male weight.
 #' **todo**: Let Oregon know that this calculation is being done and they may want
 #' to provide UNK_WGT.
-#' 
+#'
 #' California sample weights were previously based on the column labeled
 #' `SPECIES_WEIGHT`. Now, California data is parsed by PacFIN to furnish
 #' species-specific cluster weights. Prior, cluster weights included the weight
@@ -59,7 +59,7 @@
 #' * `Wt_Sampled_1`: the sum of sex-specific weights within the sample.
 #' * `Wt_Sampled_2`: the species-specific sample weight only provided by
 #'   California in cluster weight.
-#' * `LW_Calc_Wt`: individual weights predicted from the specified 
+#' * `LW_Calc_Wt`: individual weights predicted from the specified
 #'   length-weight relationships.
 #' * `Wt_Sampled_3`: The sum of empirical weights, for those fish within a
 #'   sample where this information is available, and weights calculated from the
@@ -79,12 +79,13 @@ EF1_Denominator <- function(Pdata,
                             verbose = TRUE,
                             plot = FALSE,
                             col.weight = "weightkg") {
-
   if (verbose) {
     cat("\nIndividual weights will be generated from the following values:\n\n")
-    cat(" Females:", fa,fb, "\n",
-        "Males:",  ma,mb, "\n",
-        "Unknowns and hermaphrodites:",  ua,ub, "\n\n")
+    cat(
+      " Females:", fa, fb, "\n",
+      "Males:", ma, mb, "\n",
+      "Unknowns and hermaphrodites:", ua, ub, "\n\n"
+    )
   } # End if verbose
 
   stopifnotcolumn(Pdata, col.weight)
@@ -95,65 +96,74 @@ EF1_Denominator <- function(Pdata,
     sex = Pdata$SEX,
     pars = data.frame(
       "A" = c("females" = fa, "males" = ma, "all" = ua),
-      "B" = c("females" = fb, "males" = mb, "all" = ub)),
+      "B" = c("females" = fb, "males" = mb, "all" = ub)
+    ),
     unit.out = "lb"
-    )
+  )
 
   #### Calculate sample weight using FISH_WEIGHT in lbs
   Pdata <- Pdata %>%
-  # Use weightkg if available and calculated from WL relationship when NA
-  # Note the change in units for weightkg from KG to LBS
-  dplyr::mutate(
-    bestweight = dplyr::case_when(
-      is.na(weightkg) ~ LW_Calc_Wt,
-      TRUE ~ weightkg * 2.20462)
+    # Use weightkg if available and calculated from WL relationship when NA
+    # Note the change in units for weightkg from KG to LBS
+    dplyr::mutate(
+      bestweight = dplyr::case_when(
+        is.na(weightkg) ~ LW_Calc_Wt,
+        TRUE ~ weightkg * 2.20462
+      )
     ) %>%
-  # Group by SAMPLE_NO so all subsequent calculations are done on subsets
-  # of the data, i.e., mean(bestweight) is mean of the bestweight in a
-  # specific sample
-  dplyr::group_by(SAMPLE_NO) %>%
-  dplyr::mutate(
-    bestweight = ifelse(
-      is.na(bestweight),
-      mean(bestweight),
-      bestweight)
+    # Group by SAMPLE_NO so all subsequent calculations are done on subsets
+    # of the data, i.e., mean(bestweight) is mean of the bestweight in a
+    # specific sample
+    dplyr::group_by(SAMPLE_NO) %>%
+    dplyr::mutate(
+      bestweight = ifelse(
+        is.na(bestweight),
+        mean(bestweight),
+        bestweight
+      )
     ) %>%
-  # Calculate sample weights and weight of unsexed fish per SAMPLE_NO
-  dplyr::mutate(
-    Wt_Sampled_3_L = sum(na.rm = TRUE,
-      ifelse(is.na(length), NA, bestweight)),
-    Wt_Sampled_3_A = sum(na.rm = TRUE,
-      ifelse(is.na(Age), NA, bestweight)),
-    UNK_WT = sum(ifelse(SEX == "U", bestweight, 0)),
-    UNK_NUM = sum(SEX == "U")
+    # Calculate sample weights and weight of unsexed fish per SAMPLE_NO
+    dplyr::mutate(
+      Wt_Sampled_3_L = sum(
+        na.rm = TRUE,
+        ifelse(is.na(length), NA, bestweight)
+      ),
+      Wt_Sampled_3_A = sum(
+        na.rm = TRUE,
+        ifelse(is.na(Age), NA, bestweight)
+      ),
+      UNK_WT = sum(ifelse(SEX == "U", bestweight, 0)),
+      UNK_NUM = sum(SEX == "U")
     ) %>%
-  # Back out the weight of fish that have no length or Age for each
-  # specific sample weight, if all are NA in sample, then set to 0.
-  dplyr::mutate(
-    Wt_Sampled_1_A = (-1 * sum(ifelse(is.na(Age), bestweight, 0)) +
-      FEMALES_WGT + MALES_WGT + UNK_WT) *
-      ifelse(all(is.na(Age)), 0, 1),
-    Wt_Sampled_1_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
-      FEMALES_WGT + MALES_WGT + UNK_WT) *
-      ifelse(all(is.na(length)), 0, 1)
-    ) %>% dplyr::ungroup() %>% dplyr::group_by(SAMPLE_NO, CLUSTER_NO) %>%
-  # Do the same for CLUSTER_WGT
-  dplyr::mutate(
-    Wt_Sampled_2_A = (-1 * sum(ifelse(is.na(Age), bestweight, 0)) +
-          CLUSTER_WGT) * ifelse(all(is.na(Age)), 0, 1),
-    Wt_Sampled_2_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
-          CLUSTER_WGT) * ifelse(all(is.na(length)), 0, 1)
-    ) %>% 
-  # Bring the calculations back to the full scale of the data frame
-  dplyr::ungroup() %>%
-  # Coalesce sets things to downstream values, only if NA, i.e.,
-  # Wt_Sampled_[AL] is set by priority left to right 1, 2, 3
-  dplyr::mutate(
-    Wt_Sampled_A = dplyr::coalesce(Wt_Sampled_1_A, Wt_Sampled_2_A, Wt_Sampled_3_A),
-    Wt_Sampled_L = dplyr::coalesce(Wt_Sampled_1_L, Wt_Sampled_2_L, Wt_Sampled_3_L)
+    # Back out the weight of fish that have no length or Age for each
+    # specific sample weight, if all are NA in sample, then set to 0.
+    dplyr::mutate(
+      Wt_Sampled_1_A = (-1 * sum(ifelse(is.na(Age), bestweight, 0)) +
+        FEMALES_WGT + MALES_WGT + UNK_WT) *
+        ifelse(all(is.na(Age)), 0, 1),
+      Wt_Sampled_1_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
+        FEMALES_WGT + MALES_WGT + UNK_WT) *
+        ifelse(all(is.na(length)), 0, 1)
     ) %>%
-  # Return a data frame rather than a tibble
-  data.frame
+    dplyr::ungroup() %>%
+    dplyr::group_by(SAMPLE_NO, CLUSTER_NO) %>%
+    # Do the same for CLUSTER_WGT
+    dplyr::mutate(
+      Wt_Sampled_2_A = (-1 * sum(ifelse(is.na(Age), bestweight, 0)) +
+        CLUSTER_WGT) * ifelse(all(is.na(Age)), 0, 1),
+      Wt_Sampled_2_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
+        CLUSTER_WGT) * ifelse(all(is.na(length)), 0, 1)
+    ) %>%
+    # Bring the calculations back to the full scale of the data frame
+    dplyr::ungroup() %>%
+    # Coalesce sets things to downstream values, only if NA, i.e.,
+    # Wt_Sampled_[AL] is set by priority left to right 1, 2, 3
+    dplyr::mutate(
+      Wt_Sampled_A = dplyr::coalesce(Wt_Sampled_1_A, Wt_Sampled_2_A, Wt_Sampled_3_A),
+      Wt_Sampled_L = dplyr::coalesce(Wt_Sampled_1_L, Wt_Sampled_2_L, Wt_Sampled_3_L)
+    ) %>%
+    # Return a data frame rather than a tibble
+    data.frame()
 
   #### Summary and boxplot
   # todo: revamp the summary and plots
@@ -162,7 +172,7 @@ EF1_Denominator <- function(Pdata,
     Pdata$Wt_Sampled_3_L, Pdata$Wt_Sampled_L
   ))
 
-  names(printemp) = c("M+F+U","Cluster","L-W","Final Wt_Sampled")
+  names(printemp) <- c("M+F+U", "Cluster", "L-W", "Final Wt_Sampled")
 
   if (verbose) {
     cat("\nSample weights\n\n")
@@ -200,13 +210,16 @@ EF1_Denominator <- function(Pdata,
         args.legend = list(x = "topleft", bty = "n")
       )
     }
-    gg <- plotWL(Pdata[,"lengthcm"], Pdata[, "SEX"], Pdata[, "weightkg"],
-      Pdata[, "LW_Calc_Wt"] * 0.453592)
-    ggplot2::ggsave(gg, file = plot2,
-      width = 6, height = 6, units = "in")
+    gg <- plotWL(
+      Pdata[, "lengthcm"], Pdata[, "SEX"], Pdata[, "weightkg"],
+      Pdata[, "LW_Calc_Wt"] * 0.453592
+    )
+    ggplot2::ggsave(gg,
+      file = plot2,
+      width = 6, height = 6, units = "in"
+    )
   }
   if (nNA == 0 & verbose) cat("\nSample Wts found for all samples.\n\n")
 
   return(Pdata)
-
 } # End EF1_Denominator

@@ -26,32 +26,32 @@ tableSample <- function(Pdata,
                         fname = paste0("fishery_", comps, "_samples.csv"),
                         strat = "SOURCE_AGID",
                         comps = c("LEN", "AGE"), remove_yrs = NULL) {
-
   Pdata$strat <- apply(Pdata[, strat, drop = FALSE], 1, paste0, collapse = ".")
   comps <- match.arg(comps, several.ok = FALSE)
-	if (comps == "LEN"){
-		temp = Pdata[!is.na(Pdata$FISH_LENGTH), ]
-	}
-	
-	if (comps == "AGE"){
-		temp = Pdata[!is.na(Pdata$Age), ]
-	}
+  if (comps == "LEN") {
+    temp <- Pdata[!is.na(Pdata$FISH_LENGTH), ]
+  }
 
-	if(!is.null(remove_yrs)){
-		temp = temp[!temp$SAMPLE_YEAR %in% remove_yrs, ]
-	}
+  if (comps == "AGE") {
+    temp <- Pdata[!is.na(Pdata$Age), ]
+  }
 
-	Ntow  = table(temp$SAMPLE_YEAR, temp$strat, !duplicated(as.character(temp$SAMPLE_NO)))[,,"TRUE"]
-  Nfish = table(temp$SAMPLE_YEAR, temp$strat)
+  if (!is.null(remove_yrs)) {
+    temp <- temp[!temp$SAMPLE_YEAR %in% remove_yrs, ]
+  }
 
-	samples = rownames(Ntow); names = "Year"
-	for (a in colnames(Ntow)){
-		get = cbind(Ntow[,a], Nfish[,a])
-		samples = cbind(samples, get)
-		names = c(names, paste0(a, ".tows"), paste0(a, ".fish"))
-	}
-	colnames(samples) = names	
+  Ntow <- table(temp$SAMPLE_YEAR, temp$strat, !duplicated(as.character(temp$SAMPLE_NO)))[, , "TRUE"]
+  Nfish <- table(temp$SAMPLE_YEAR, temp$strat)
 
-  utils::write.csv(samples, file = fname, row.names=FALSE)
+  samples <- rownames(Ntow)
+  names <- "Year"
+  for (a in colnames(Ntow)) {
+    get <- cbind(Ntow[, a], Nfish[, a])
+    samples <- cbind(samples, get)
+    names <- c(names, paste0(a, ".tows"), paste0(a, ".fish"))
+  }
+  colnames(samples) <- names
+
+  utils::write.csv(samples, file = fname, row.names = FALSE)
   return(invisible(samples))
 }

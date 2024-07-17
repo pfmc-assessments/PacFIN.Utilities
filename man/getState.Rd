@@ -70,9 +70,10 @@ please contact the package maintainer.
 \examples{
 data <- data.frame(
   AGENCY_CODE = rep(c("W", "O", "C"), each = 2),
-  info = 1:6)
+  info = 1:6
+)
 testthat::expect_true(
-all(getState(data)[["state"]] == rep(c("WA", "OR", "CA"), each = 2))
+  all(getState(data)[["state"]] == rep(c("WA", "OR", "CA"), each = 2))
 )
 
 }

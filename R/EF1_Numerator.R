@@ -1,5 +1,5 @@
 #' Calculate the numerator for the first level expansion factor
-#' 
+#'
 #' Calculate the numerator for the first-level expansion factor, where
 #' the numerator is the species-specific landing weight for a given sample.
 #' Thus, if two clusters were sampled from a single trip,
@@ -12,7 +12,7 @@
 #' For Washington, `Pdata$RWT_LBS`, `Pdata$TOTAL_WGT`, `RWT_LBS`, or
 #' `median(Pdata$TOTAL_WGT)`.
 #' Then, if all else failed, per-year, state-specific medians.
-#' 
+#'
 #' Now, PacFIN works hard behind the scenes to provide species-specific landing
 #' weights for each sampled fish. Therefore, we no longer rely on code to
 #' calculate a fabricated landing weight. Species-specific landing weights are
@@ -33,14 +33,14 @@
 #' @template plot
 #' @author Andi Stephens
 
-EF1_Numerator = function(Pdata,
-                         verbose = TRUE,
-                         plot = FALSE) {
-
+EF1_Numerator <- function(Pdata,
+                          verbose = TRUE,
+                          plot = FALSE) {
   Pdata$Trip_Sampled_Lbs <- dplyr::coalesce(
-    Pdata[["EXP_WT"]], Pdata[["RWT_LBS"]])
+    Pdata[["EXP_WT"]], Pdata[["RWT_LBS"]]
+  )
 
-  if (verbose){
+  if (verbose) {
     cat("\nSampled pounds per trip:\n\n")
     print(summary(Pdata$Trip_Sampled_Lbs))
   }
@@ -48,14 +48,17 @@ EF1_Numerator = function(Pdata,
   if (plot != FALSE) {
     numstate <- length(unique(Pdata$state))
     if (is.character(plot)) grDevices::png(plot)
-    graphics::par(mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
-      oma = c(4, 5, 3, 0.5))
+    graphics::par(
+      mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
+      oma = c(4, 5, 3, 0.5)
+    )
     for (st in unique(Pdata$state)) {
       plotdata <- Pdata[Pdata[, "state"] == st & !is.na(Pdata[["Trip_Sampled_Lbs"]]), ]
       if (all(is.na(plotdata$Trip_Sampled_Lbs))) next
       graphics::boxplot(plotdata$Trip_Sampled_Lbs ~ plotdata$fishyr,
         ylab = "", xlab = "", xaxt = "n",
-        at = unique(plotdata$fishyr), xlim = range(Pdata$fishyr))
+        at = unique(plotdata$fishyr), xlim = range(Pdata$fishyr)
+      )
       graphics::legend("topleft", legend = st, bty = "n")
     }
     graphics::axis(1)
@@ -67,6 +70,4 @@ EF1_Numerator = function(Pdata,
   }
 
   return(Pdata)
-
 } # End function EF1_Numerator
-
