@@ -28,8 +28,8 @@
 #' @return A \code{Pdata} with additional columns, where
 #' `Trip_Sampled_Lbs` is the sample weight in pounds.
 #'
-#' @template Pdata
-#' @template verbose
+#' @inheritParams cleanPacFIN
+#' @inheritParams cleanPacFIN
 #' @template plot
 #' @author Andi Stephens
 
@@ -47,7 +47,16 @@ EF1_Numerator <- function(Pdata,
 
   if (plot != FALSE) {
     numstate <- length(unique(Pdata$state))
-    if (is.character(plot)) grDevices::png(plot)
+    plot_filename <- fs::path(
+      ifelse(
+        as.character(plot) == "TRUE",
+        getwd(),
+        plot
+      ),
+      "PacFIN_exp1_numer.png"
+    )
+    grDevices::png(plot_filename)
+    on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::par(
       mgp = c(2.5, 0.5, 0), mfrow = c(numstate, 1), mar = rep(0, 4),
       oma = c(4, 5, 3, 0.5)
@@ -65,8 +74,6 @@ EF1_Numerator <- function(Pdata,
     graphics::mtext(side = 1, "Year", outer = TRUE, line = 2)
     graphics::mtext(side = 3, "Expansion factor 1 numerator", outer = TRUE, line = 1)
     graphics::mtext(side = 2, "Sample weight per trip (lbs)", outer = TRUE, line = 2)
-
-    if (is.character(plot)) grDevices::dev.off()
   }
 
   return(Pdata)

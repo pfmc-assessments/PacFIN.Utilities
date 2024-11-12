@@ -2,7 +2,7 @@
 % Please edit documentation in R/writeComps.R
 \name{writeComps}
 \alias{writeComps}
-\title{Write out composition data formatted for Stock Synthesis.}
+\title{Write out composition data formatted for Stock Synthesis}
 \usage{
 writeComps(
   inComps,
@@ -16,25 +16,27 @@ writeComps(
   dummybins = FALSE,
   sum1 = FALSE,
   digits = 4,
-  overwrite = TRUE,
+  overwrite = lifecycle::deprecated(),
   verbose = FALSE
 )
 }
 \arguments{
-\item{inComps}{A dataframe generated as described in Workflow, above.}
+\item{inComps}{A dataframe generated using \code{\link[=getComps]{getComps()}}.}
 
-\item{fname}{A filename with the appropriate extension,
-used to save the function output to the disk.
-For example, \code{LenComps.csv} or
-\code{file.path(getwd(), "SampleSize.csv")}.
-Full, relative, or simple paths are allowed because the argument is used as
-is, i.e., not redirected to a directory different than \code{getwd()}.
-Note that various functions within PacFIN.Utilities have different default
-values for this input argument.}
+\item{fname}{A filename with the appropriate extension, used to save the
+function output to the disk. For example, \code{LenComps.csv} or
+\code{file.path(getwd(), "SampleSize.csv")}. Full, relative, or simple paths are
+allowed because the argument is used as is, i.e., not redirected to a
+directory different than \code{\link[=getwd]{getwd()}}. Note that various functions within
+PacFIN.Utilities have different default values for this input argument. If
+\code{NULL} in \code{writeComps}, then the resulting file name will be based on what
+type of composition data is being generated, i.e., \code{PacFIN_lengths.out},
+\code{PacFIN_ages.out}, or \code{PacFIN_CAAL.out} for length, age, or conditional
+length-at-age data, respectively.}
 
-\item{abins}{Bins to use for ages.  Default is the data bins.}
-
-\item{lbins}{Bins to use for lengths.  Default is the data bins.}
+\item{abins, lbins}{The binning structure to use for ages and lengths. For
+both arguments, the default is \code{NULL} which leads to the natural bins of
+the data being used, i.e., no additional binning is performed.}
 
 \item{maxAge}{A numeric value specifying the maximum age of fish that
 should be included in the composition data, unless \code{dummybins = TRUE},
@@ -44,32 +46,32 @@ fish are binned according to user specified bins irregardless of \code{maxAge}.}
 
 \item{month}{Month for all observations. Defaults to 7. If input has multiple
 seasons, this must be a vector of equal length to the maximum seasons where
-the order of months in the vector will be assigned to season in ascending order.
-For example, if there  are two seasons and the month = c(1, 7) season 1 will be
-assigned to month 1 and season 2 to month 7.}
+the order of months in the vector will be assigned to season in ascending
+order. For example, if there  are two seasons and the month = c(1, 7)
+season 1 will be assigned to month 1 and season 2 to month 7.}
 
 \item{partition}{Used by Stock Synthesis for length- or age-composition data
-where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
-The default is to assume that these fish are retained only.
-The default was changed in 2020 from a value of 0,
-and code should be updated accordingly if you really want 0.}
+where 0 = retained + discarded, 1 = discarded, and 2 = retained fish. The
+default is to assume that these fish are retained only. The default was
+changed in 2020 from a value of 0, and code should be updated accordingly
+if you really want 0.}
 
-\item{ageErr}{Defaults to 1.}
+\item{ageErr}{Defaults to 1 to use the first ageing error matrix specified in
+your Stock Synthesis model.}
 
-\item{dummybins}{A logical value specifying whether data outside of the
-lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
-or be placed in the specified bins. Default is \code{TRUE}.  Dummy
-bins are useful for determining whether the current bin structure
-properly captures the data.}
+\item{dummybins}{A logical value specifying whether data outside of the lower
+and upper \code{abins} or \code{lbins} should be added to dummy bins, or be placed in
+the specified bins. Default is \code{TRUE}.  Dummy bins are useful for
+determining whether the current bin structure properly captures the data.}
 
 \item{sum1}{A logical value specifying whether to rescale the compositions
 to sum to 1 (they will also be rounded to 4 decimal places)}
 
 \item{digits}{Integer indicating the number of decimal places to round
-value to (value is passed to \code{round()}). NULL will skip rounding.}
+value to (value is passed to \code{\link[=round]{round()}}). NULL will skip rounding.}
 
-\item{overwrite}{A logical value specifying whether to overwrite an existing
-file if the file associated with the input \code{fname} already exists.}
+\item{overwrite}{Deprecated as of version 0.2.10. The file will be
+automatically overwritten if present.}
 
 \item{verbose}{A logical specifying if output should be written to the
 screen or not. Good for testing and exploring your data but can be turned
@@ -78,26 +80,21 @@ of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 }
 \value{
-Appends data to the file given in \code{fname}.
-
-Conditionally returns a dataframe if the \code{out} argument
-specifies the type of composition to return.
+A \code{.csv} file is created and written to with composition data. And, a list
+with all four types of composition data, i.e., different sex stratifications,
+are returned as a list.
 }
 \description{
-Write out composition data to a file, binning the data as specified.
-
-\subsection{Workflow}{
-PacFIN data should first be stratified using \code{\link{getComps}},
-before using \code{writeComps}.
-}
+Write out composition data to a file, binning the data as specified to work
+in a Stock Synthesis model.
 }
 \details{
-The structure of the input dataframe determines whether
-\code{writeComps} produces age-, length-, or conditional-age-at-length-
+The structure of the input dataframe determines whether the results
+produce age-, length-, or conditional-age-at-length-
 composition data.
 
 Four sets of composition data are written to a single file specified
-by \code{fname}.  These are:
+by \code{fname}. These are:
 \itemize{
 \item{females followed by males}
 \item{male data only}
@@ -105,18 +102,14 @@ by \code{fname}.  These are:
 \item{males and females recombined as unsexed fish}
 }
 
-The output file is appended to, rather than overwritten, so you may
-want to specify a new filename each time you generate a different
-stratification or bin structure, e.g., "out.1.csv", "out.2.csv".
-
 Composition data are raw weights rather than proportions. Stock Synthesis
 internally converts these to proportions.  The raw weights should be
 examined for anomalies.
 
-To create proportions use \code{prop.table} on the columns
+To create proportions use \code{\link[=prop.table]{prop.table()}} on the columns
 containing composition data.
 
-The columns in the output preceeding 'lengthcm' or 'age' are those that
+The columns in the output preceding 'lengthcm' or 'age' are those that
 were used in stratifying the data.
 
 \subsection{Reality Checks}{
@@ -127,7 +120,9 @@ were used in stratifying the data.
 }}
 }
 \seealso{
-\code{\link{getComps}}, \code{\link{doSexRatio}}
+\itemize{
+\item \code{getComps()}
+}
 }
 \author{
 Andi Stephens, Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor

@@ -5,7 +5,7 @@
 #' are meant to be included in the stock assessment document, but rather,
 #' are for exploring the data.
 #'
-#' @template Pdata
+#' @inheritParams cleanPacFIN
 #' @template savedir
 #' @return The following figures are saved to `savedir`:
 #'   * PacFIN_comp_Nbystate.png

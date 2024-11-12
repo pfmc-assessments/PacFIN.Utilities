@@ -1,0 +1,176 @@
+---
+title: "Working through sablefish PacFIN data"
+author: "Kelli F. Johnson"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Working through PacFIN data can be complex. This examples guides you through working up the data for sablefish. The fish ticket data contains information on catches and is labeled `catch.pacfin` within this vignette. The biological data that contains information on lengths and ages is labeled `bds.pacfin`. These names are standard for every data set that is downloaded and saved from PacFIN.
+
+Before working up any of the data, a few items need to be clarified. Such as what gear types you would like to use and what bins should be used for the biological data. As well as which files you would like to load.
+
+```{r setup}
+# Species
+common_name <- "sablefish"
+species_code <- "SABL"
+
+# Files
+file_bds <- fs::path("..", "PacFIN.SABL.bds.11.Nov.2024.RData")
+file_catch <- fs::path("..", "PacFIN.SABL.CompFT.11.Nov.2024.RData")
+
+# Bins for biological data
+dolbins <- seq(18, 90, by = 2)
+doabins <- seq(0, 60, by = 1)
+
+# Gear codes
+used_gears <- c("DRG", "HKL", "MSC", "NET", "POT", "TLS", "TWL", "TWS")
+
+# Additional settings
+expansion <- 0.95
+good_lengths <- c("", "A", "F")
+good_methods <- "R"
+good_samples <- c("", "M", "C")
+good_states <- c("WA", "OR", "CA")
+```
+
+```{r read-data}
+# catch.pacfin
+# PullCatch.PacFIN(pacfin_species_code = species_code)
+load(file_catch)
+# bds.pacfin
+# PullBDS.PacFIN(pacfin_species_code = species_code)
+load(file_bds)
+```
+
+## Calculate the weight--length relationship
+
+A choice must be made about which data set you want to fit for estimating the weight--length relationships by sex and across sexes. Many scientists choose to use the survey data because it is thought to best represent the population. You could use the data retrieved from PacFIN to calculate this relationship but that option is not shown here.
+
+```{r weight-length-data, message = FALSE, warning = FALSE}
+bds_survey <- nwfscSurvey::pull_bio(
+  common_name = common_name,
+  survey = "NWFSC.Combo"
+)
+weight_length_estimates <- nwfscSurvey::estimate_weight_length(
+  bds_survey,
+  verbose = FALSE
+  )
+```
+
+```{r print-weight-length-table}
+knitr::kable(weight_length_estimates, "markdown")
+```
+
+## Catch data
+
+The catch data must be summarized because it will be used in the analysis of the biological data. Where, `formatCatch()` takes a long data frame as input and converts it to a wide data frame with one row per year and one column per catch group. In the `r common_name` example the catch is stratified by `state` and `geargroup`, leading to one column for each state-gear combination. Catches are summarized in pounds because the weighting is done in pounds.
+
+```{r catch}
+catch_formatted <- catch.pacfin |>
+  getGearGroup(spp = common_name) |>
+  getState() |>
+  formatCatch(
+    strat = c("state", "geargroup"),
+    # TODO: Determine if we want ROUND_WEIGHT_LBS
+    valuename = "LANDED_WEIGHT_LBS"
+  )
+```
+
+## Biological data
+
+The biological data must first be cleaned using `cleanPacFIN()`. Here, we choose to remove the rows of data that should not be used in the assessment by choosing `CLEAN = TRUE` but you can change that to `FALSE` and all rows will be saved. We also create an additional column that matches records to the same stratification used for the catch data above for weighting.
+
+```{r biological-data}
+bds_cleaned <- cleanPacFIN(
+  Pdata = bds.pacfin,
+  keep_gears = used_gears,
+  CLEAN = TRUE,
+  keep_sample_type = good_samples,
+  keep_sample_method = good_methods,
+  keep_length_type = good_lengths,
+  keep_states = good_states,
+  spp = common_name
+) |>
+  dplyr::mutate(
+    stratification = paste(state, geargroup, sep = ".")
+  )
+
+data_exp1 <- getExpansion_1(
+  Pdata = bds_cleaned,
+  maxExp = expansion,
+  fa = weight_length_estimates |>
+    dplyr::filter(group == "female") |>
+    dplyr::pull("A"),
+  fb = weight_length_estimates |>
+    dplyr::filter(group == "female") |>
+    dplyr::pull("B"),
+  ma = weight_length_estimates |>
+    dplyr::filter(group == "male") |>
+    dplyr::pull("A"),
+  mb = weight_length_estimates |>
+    dplyr::filter(group == "female") |>
+    dplyr::pull("B"),
+  ua = weight_length_estimates |>
+    dplyr::filter(group == "all") |>
+    dplyr::pull("A"),
+  ub = weight_length_estimates |>
+    dplyr::filter(group == "all") |>
+    dplyr::pull("B"),
+  plot = TRUE
+)
+
+data_exp2 <- getExpansion_2(
+  data_exp1,
+  catch_formatted,
+  maxExp = expansion
+)
+
+data_exp2[["Final_Sample_Size"]] <- capValues(
+  data_exp2[["Expansion_Factor_1_L"]] * data_exp2[["Expansion_Factor_2"]],
+  maxVal = 0.90
+)
+```
+
+Create the length composition data. 
+
+```{r length-composition-data}
+length_composition_data <- writeComps(
+  verbose = TRUE,
+  inComps = getComps(
+    dplyr::filter(data_exp2, !is.na(lengthcm)),
+    Comps = "LEN"
+  ),
+  fname = fs::path(
+    getwd(),
+    glue::glue("{species_code}_lcomps_{max(dolbins)}.csv")
+  ),
+  lbins = dolbins,
+  partition = 2,
+  sum1 = TRUE
+)
+```
+
+```{r age-composition-data}
+age_comps_long <- getComps(
+  Pdata = dplyr::filter(data_exp2, Age != -1) |>
+    dplyr::mutate(
+      Final_Sample_Size = capValues(
+        Expansion_Factor_1_A * Expansion_Factor_2,
+        maxVal = 0.90 # where 90th is based on Petrale code
+      )
+    ),
+  Comps = "AGE"
+)
+age_composition_data <- writeComps(
+  age_comps_long,
+  fname = fs::path(
+    getwd(),
+    glue::glue("{species_code}_acomps_{max(doabins)}.csv")
+  ),
+  abins = 0:max(doabins),
+  sum1 = TRUE
+)
+```

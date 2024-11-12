@@ -1,70 +1,60 @@
-##########################################################################
+#' Write out composition data formatted for Stock Synthesis
 #'
-#' Write out composition data formatted for Stock Synthesis.
-#'
-#' @description
-#' Write out composition data to a file, binning the data as specified.
-#'
-#' \subsection{Workflow}{
-#' PacFIN data should first be stratified using \code{\link{getComps}},
-#' before using \code{writeComps}.
-#' }
-#'
+#' Write out composition data to a file, binning the data as specified to work
+#' in a Stock Synthesis model.
 #'
 #' @export
 #'
-#' @param inComps A dataframe generated as described in Workflow, above.
-#'
-#' @template fname
-#'
-#' @param abins  Bins to use for ages.  Default is the data bins.
-#' @param lbins  Bins to use for lengths.  Default is the data bins.
-#'
+#' @param inComps A dataframe generated using [getComps()].
+#' @param fname A filename with the appropriate extension, used to save the
+#'   function output to the disk. For example, `LenComps.csv` or
+#'   `file.path(getwd(), "SampleSize.csv")`. Full, relative, or simple paths are
+#'   allowed because the argument is used as is, i.e., not redirected to a
+#'   directory different than [getwd()]. Note that various functions within
+#'   PacFIN.Utilities have different default values for this input argument. If
+#'   `NULL` in `writeComps`, then the resulting file name will be based on what
+#'   type of composition data is being generated, i.e., `PacFIN_lengths.out`,
+#'   `PacFIN_ages.out`, or `PacFIN_CAAL.out` for length, age, or conditional
+#'   length-at-age data, respectively.
+#' @param abins,lbins The binning structure to use for ages and lengths. For
+#'   both arguments, the default is `NULL` which leads to the natural bins of
+#'   the data being used, i.e., no additional binning is performed.
 #' @param maxAge A numeric value specifying the maximum age of fish that
-#'   should be included in the composition data, unless \code{dummybins = TRUE},
+#'   should be included in the composition data, unless `dummybins = TRUE`,
 #'   then those fish will be included in a plus group which you can investigate
-#'   later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
-#'   fish are binned according to user specified bins irregardless of \code{maxAge}.
-#'
+#'   later. Note that `maxAge` is only used if `abins = NULL`, otherwise
+#'   fish are binned according to user specified bins irregardless of `maxAge`.
 #' @param month Month for all observations. Defaults to 7. If input has multiple
-#' seasons, this must be a vector of equal length to the maximum seasons where
-#' the order of months in the vector will be assigned to season in ascending order.
-#' For example, if there  are two seasons and the month = c(1, 7) season 1 will be
-#' assigned to month 1 and season 2 to month 7.
-#'
+#'   seasons, this must be a vector of equal length to the maximum seasons where
+#'   the order of months in the vector will be assigned to season in ascending
+#'   order. For example, if there  are two seasons and the month = c(1, 7)
+#'   season 1 will be assigned to month 1 and season 2 to month 7.
 #' @param partition  Used by Stock Synthesis for length- or age-composition data
-#' where 0 = retained + discarded, 1= discarded, and 2 = retained fish.
-#' The default is to assume that these fish are retained only.
-#' The default was changed in 2020 from a value of 0,
-#' and code should be updated accordingly if you really want 0.
-#'
-#' @param ageErr     Defaults to 1.
-#'
-#' @param dummybins A logical value specifying whether data outside of the
-#'   lower and upper \code{abins} or \code{lbins} should be added to dummy bins,
-#'   or be placed in the specified bins. Default is \code{TRUE}.  Dummy
-#'   bins are useful for determining whether the current bin structure
-#'   properly captures the data.
-#'
+#'   where 0 = retained + discarded, 1 = discarded, and 2 = retained fish. The
+#'   default is to assume that these fish are retained only. The default was
+#'   changed in 2020 from a value of 0, and code should be updated accordingly
+#'   if you really want 0.
+#' @param ageErr Defaults to 1 to use the first ageing error matrix specified in
+#'   your Stock Synthesis model.
+#' @param dummybins A logical value specifying whether data outside of the lower
+#'   and upper `abins` or `lbins` should be added to dummy bins, or be placed in
+#'   the specified bins. Default is `TRUE`.  Dummy bins are useful for
+#'   determining whether the current bin structure properly captures the data.
 #' @param sum1 A logical value specifying whether to rescale the compositions
 #'   to sum to 1 (they will also be rounded to 4 decimal places)
-#'
 #' @param digits Integer indicating the number of decimal places to round
-#'   value to (value is passed to \code{round()}). NULL will skip rounding.
-#'
-#' @param overwrite A logical value specifying whether to overwrite an existing
-#'   file if the file associated with the input \code{fname} already exists.
-#'
-#' @template verbose
-#'
+#'   value to (value is passed to [round()]). NULL will skip rounding.
+#' @param overwrite Deprecated as of version 0.2.10. The file will be
+#'   automatically overwritten if present.
+#' @inheritParams cleanPacFIN
 #' @details
 #'
-#'   The structure of the input dataframe determines whether
-#'   \code{writeComps} produces age-, length-, or conditional-age-at-length-
+#'   The structure of the input dataframe determines whether the results
+#'   produce age-, length-, or conditional-age-at-length-
 #'   composition data.
 #'
 #'   Four sets of composition data are written to a single file specified
-#'   by \code{fname}.  These are:
+#'   by `fname`. These are:
 #'   \itemize{
 #'   \item{females followed by males}
 #'   \item{male data only}
@@ -72,35 +62,31 @@
 #'   \item{males and females recombined as unsexed fish}
 #'   }
 #'
-#'   The output file is appended to, rather than overwritten, so you may
-#'   want to specify a new filename each time you generate a different
-#'   stratification or bin structure, e.g., "out.1.csv", "out.2.csv".
-#'
 #'   Composition data are raw weights rather than proportions. Stock Synthesis
 #'   internally converts these to proportions.  The raw weights should be
 #'   examined for anomalies.
 #'
-#'   To create proportions use \code{prop.table} on the columns
+#'   To create proportions use [prop.table()] on the columns
 #'   containing composition data.
 #'
-#'   The columns in the output preceeding 'lengthcm' or 'age' are those that
+#'   The columns in the output preceding 'lengthcm' or 'age' are those that
 #'   were used in stratifying the data.
 #'
 #' \subsection{Reality Checks}{
 #' \itemize{
-#' \item{Set \code{verbose = TRUE} to follow progress}
-#' \item{Use \code{dummybins} to evaluate bin structure}
+#' \item{Set `verbose = TRUE` to follow progress}
+#' \item{Use `dummybins` to evaluate bin structure}
 #' \item{Examine the raw-weight output for anomalies}
 #' }}
-#' @return Appends data to the file given in \code{fname}.
-#'
-#'   Conditionally returns a dataframe if the \code{out} argument
-#'   specifies the type of composition to return.
+#' @return
+#' A `.csv` file is created and written to with composition data. And, a list
+#' with all four types of composition data, i.e., different sex stratifications,
+#' are returned as a list.
 #'
 #' @author Andi Stephens, Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
-#' @seealso \code{\link{getComps}}, \code{\link{doSexRatio}}
+#' @seealso
+#' * `getComps()`
 #'
-##############################################################################
 writeComps <- function(inComps,
                        fname = NULL,
                        abins = NULL,
@@ -112,15 +98,24 @@ writeComps <- function(inComps,
                        dummybins = FALSE,
                        sum1 = FALSE,
                        digits = 4,
-                       overwrite = TRUE,
+                       overwrite = lifecycle::deprecated(),
                        verbose = FALSE) {
-  # Check month input vs seasons in data
-  if ("season" %in% names(inComps) && max(inComps[["season"]]) != length(month)) {
-    stop(
-      "Input 'month' should have length equal to the maximum season:",
-      "\nmonth: ", month,
-      "\nseasons: ", paste(sort(unique(inComps[["season"]])), collapse = " ")
+  if (lifecycle::is_present(overwrite)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "writeComps(overwrite)",
+      details = "File is automatically overwritten."
     )
+  }
+  # Check month input vs seasons in data
+  if ("season" %in% names(inComps) &&
+      max(inComps[["season"]]) != length(month)) {
+    cli::cli_abort(c(
+      "i" = "Input 'month' should have length equal to the maximum season",
+      "x" = "month = {.var {month}}",
+      "x" = "seasons = {sort(unique(1:10))}",
+      "x" = "seasons = {sort(unique(inComps[['season']]))}"
+    ))
   }
 
   # To stop warning of no visible binding b/c assign is used
@@ -131,28 +126,27 @@ writeComps <- function(inComps,
   lbins_in <- lbins
   abins_in <- abins
 
-  # Which comps are we doing?
+  # Which comps are we doing, where either Age or lengthcm must be present in
+  # inComps and both will be present for conditional data?
   Names <- names(inComps)
   AGE <- which(Names == "Age")
   LEN <- which(Names == "lengthcm")
+  if (length(AGE) + length(LEN) == 0) {
+    cli::cli_abort("lengthcm or AGE are not columns in {.val inComps}")
+  }
 
   if (is.null(fname)) {
-    if (length(LEN) > 0) {
-      fname <- "PacFIN_lengths.out"
-    }
-    if (length(AGE) > 0) {
-      fname <- "PacFIN_ages.out"
-    }
-    if (length(AGE) > 0 & length(LEN) > 0) {
-      fname <- "PacFIN_CAAL.out"
-    }
+    fname <- dplyr::case_when(
+      length(LEN) > 0 && length(AGE) > 0 ~ "PacFIN_CAAL.out",
+      length(LEN) > 0 ~ "PacFIN_lengths.out",
+      length(AGE) > 0 ~ "PacFIN_ages.out"
+    )
   }
 
   if (verbose) {
-    cat(paste("Writing comps to file", fname, "\n"))
-    # cat(paste("\nNote that if you didn't run doSexRatio,",
-    #  "all unsexed fish disappear at this point.\n\n"))
-    utils::flush.console()
+    cli::cli_bullets(c(
+      "*" = "Writing composition data to {fname}."
+    ))
   }
 
   dir.create(
@@ -160,21 +154,6 @@ writeComps <- function(inComps,
     recursive = TRUE,
     showWarnings = FALSE
   )
-
-  # check for existence of the file before writing anything
-  if (file.exists(fname)) {
-    if (overwrite) {
-      warning(
-        "The file ", fname,
-        "\n  exists, and overwrite = TRUE, ",
-        "so deleting the file before writing new tables."
-      )
-      file.remove(fname)
-    } else {
-      stop("The file ", fname, "\n  exists and overwrite = FALSE.")
-    }
-    utils::flush.console()
-  }
 
   # Adding columns in case a sex is not represented in inComps
   if (length(inComps$male) == 0) {
@@ -194,7 +173,7 @@ writeComps <- function(inComps,
   if (!is.null(inComps$lengthcm)) {
     if (is.null(lbins)) {
       if (verbose) {
-        cat("\nNo length bins provided, using data as-is\n\n")
+        cli::cli_alert_info("No length bins provided, using data as-is.")
       }
       lbins <- sort(unique(inComps$lengthcm))
     } # End if for lbins
@@ -202,6 +181,9 @@ writeComps <- function(inComps,
     # Re-code actual lengths to be lbins
     # Note that the last bin is a dummy bin,
     # created because of how findInterval works. It is stripped later.
+    # TODO: deprecate dummybins because people can run the function multiple
+    #       times with different bins rather than having this imbedded in the
+    #       function
     if (dummybins) {
       # KFJ(2015-06-15): Only add zero to the left tail if the user
       # does not want this data included in the compositions and
@@ -230,7 +212,7 @@ writeComps <- function(inComps,
   if (!is.null(inComps$Age)) {
     if (is.null(abins)) {
       if (verbose) {
-        cat("\nNo age bins provided, using data as-is\n\n")
+        cli::cli_alert_info("No age bins provided, using data as-is.")
       }
       abins <- sort(unique(inComps$Age))
       abins <- abins[abins < maxAge]
@@ -253,52 +235,68 @@ writeComps <- function(inComps,
   AAL <- FALSE
   if (length(AGE) > 0) {
     target <- "abin"
-    STRAT <- AGE - 1
+    STRAT  <- AGE - 1
     KeyNames <- c(Names[1:STRAT])
-    inComps$key <- apply(inComps[, KeyNames, drop = FALSE], 1, paste, collapse = " ")
+    # TODO: Replace call to apply because apply is not best practice
+    inComps$key <- apply(
+      inComps[, KeyNames, drop = FALSE],
+      1,
+      paste,
+      collapse = " "
+    )
 
     # matrix will be Ages, Ntows, Nsamps.
     # it gets re-ordered later.
     NCOLS <- 2 + length(abins)
-    OutNames <- c(paste("A", abins, sep = ""), "Ntows", "Nsamps")
+    OutNames <- c(paste0("A", abins), "Ntows","Nsamps")
 
     if (length(LEN) > 0) {
       AAL <- TRUE
       STRAT <- AGE - 2
       KeyNames <- c(Names[1:STRAT], "lbin")
-      inComps$key <- apply(inComps[, KeyNames, drop = FALSE], 1, paste, collapse = " ")
+      inComps$key <- apply(
+        inComps[,KeyNames, drop = FALSE],
+        1,
+        paste,
+        collapse = " "
+      )
 
       # matrix will be Ages, LbinLo, LbinHi, Ntows, Nsamps.
       # it gets re-ordered later.
-      NCOLS <- 4 + length(abins)
-      OutNames <- c(paste("A", abins, sep = ""), "lbin", "Ntows", "Nsamps")
+      NCOLS <-  4 + length(abins)
+      OutNames <- c(paste0("A", abins), "lbin","Ntows","Nsamps")
     } # End if
   } else {
     target <- "lbin"
     STRAT <- LEN - 1
     KeyNames <- c(Names[1:STRAT])
-    inComps$key <- apply(inComps[, KeyNames, drop = FALSE], 1, paste, collapse = " ")
+    inComps$key <- apply(
+      inComps[, KeyNames, drop = FALSE],
+      1,
+      paste,
+      collapse = " "
+    )
 
     # matrix will have Lbins, Ntows, Nsamps
     # it gets re-ordered later.
     NCOLS <- 2 + length(lbins)
-    OutNames <- c(paste0("L", lbins), "Ntows", "Nsamps")
+    OutNames <- c(paste0("L", lbins), "Ntows","Nsamps")
   } # End if-else
 
   # Rename columns to be used below
   if (!AAL) {
     names(inComps)[which(names(inComps) == "both")] <- "b"
     names(inComps)[which(names(inComps) == "female")] <- "f"
-    names(inComps)[which(names(inComps) == "male")] <- "m"
+    names(inComps)[which(names(inComps) == "male")]   <- "m"
     names(inComps)[which(names(inComps) == "unsexed")] <- "u"
   } else {
     # Overwrite the expansion value to match sample sizes for AAL
-    # This should really be done in the getComps function
+    # TODO: This should really be done in the getComps function
     inComps$b <- inComps$bsamps
     inComps$f <- inComps$fsamps
     inComps$m <- inComps$msamps
     inComps$u <- inComps$usamps
-  }
+  } 
 
   # We'll work key by key
   uKeys <- inComps$key[!duplicated(inComps$key)]
@@ -307,20 +305,17 @@ writeComps <- function(inComps,
   uStrat <- inComps[!duplicated(inComps$key), 1:STRAT]
 
   if (verbose) {
-    cat(length(uKeys), "unique keys for", nrow(inComps), "records\n\n")
-    # head(inComps)
-    cat("\n\n")
-    utils::flush.console()
+    cli::cli_alert_info(c(
+      "{length(uKeys)} unique keys for {nrow(inComps)} records"
+    ))
   }
 
   # For each sex in turn
   for (g in c("m", "f", "u", "b")) {
-    myname <- g
     if (verbose) {
-      cat(paste("Assembling, sex is:", myname, "\n"))
-      utils::flush.console()
+      cli::cli_bullets(c("*" = "Assembling, sex {g}"))
     }
-    tows <- which(names(inComps) == paste(g, "tows", sep = ""))
+    tows  <- which(names(inComps) == paste(g, "tows", sep = ""))
     samps <- which(names(inComps) == paste(g, "samps", sep = ""))
 
     # Create output matrix
@@ -334,7 +329,7 @@ writeComps <- function(inComps,
       if (AAL) {
         output$lbin[k] <- slice$lbin[1]
       } # End if
-      output$Nsamps[k] <- sum(slice[, samps], na.rm = TRUE)
+      output$Nsamps[k] <- sum(slice[,samps], na.rm = TRUE)
 
       # Use max here to take care of spurious NA problem that arises in getComps
       # for lengths where there are unsexed fish and no sexed fish.
@@ -344,6 +339,7 @@ writeComps <- function(inComps,
         index <- slice[s, target]
         output[k, index] <- slice[s, g] + output[k, index]
       } # End for s
+
     } # End for k
 
     # Save and identify
@@ -353,10 +349,10 @@ writeComps <- function(inComps,
       output$LbinLo <- LbinLo[output$lbin]
       # The low and high lbin on AAL typically are the same and match
       # the lower lbin
-      output$LbinHi <- LbinLo[output$lbin] # LbinHi[output$lbin]
+      output$LbinHi <- LbinLo[output$lbin]
     } # End if
 
-    # assign to a name like 'mComps' or 'fComps'
+    # assign to a name like "mComps" or "fComps"
     assign(paste(g, "Comps", sep = ""), output)
   } # End for g
 
@@ -371,19 +367,16 @@ writeComps <- function(inComps,
   blanks[, ] <- 0
 
   if (!"fishyr" %in% colnames(uStrat)) stop("fishyr should be a column")
-  if (!"fleet" %in% colnames(uStrat)) stop("fleet should be a column")
+  if (!"fleet"  %in% colnames(uStrat)) stop("fleet should be a column")
 
   if ("season" %in% names(inComps)) {
     use_month <- month[uStrat[, "season"]]
   } else {
     use_month <- month
   }
-
-  uStrat <- data.frame(uStrat[, "fishyr"],
-    month = use_month,
-    uStrat[, "fleet"]
-  )
-  colnames(uStrat) <- c("year", "month", "fleet")
+                                      
+  uStrat <- data.frame(uStrat[, "fishyr"], month = use_month, uStrat[, "fleet"])
+  colnames(uStrat) <-  c("year", "month", "fleet")
 
   # Fill the rest of the values
   uStrat$sex <- NA
@@ -403,29 +396,25 @@ writeComps <- function(inComps,
     uStrat$LbinHi <- fComps$LbinHi
   }
 
-  Ninput_b <- round(ifelse(
-    bComps$Nsamps / bComps$Ntows < 44,
-    bComps$Ntows + 0.138 * bComps$Nsamps,
-    7.06 * bComps$Ntows
-  ), 0)
+  Ninput_b <- round(ifelse( 
+                      bComps$Nsamps / bComps$Ntows < 44,
+                      bComps$Ntows + 0.138 * bComps$Nsamps,
+                      7.06 * bComps$Ntows), 0)
   Ninput_b[is.na(Ninput_b)] <- 0
-  Ninput_f <- round(ifelse(
-    fComps$Nsamps / fComps$Ntows < 44,
-    fComps$Ntows + 0.138 * fComps$Nsamps,
-    7.06 * fComps$Ntows
-  ), 0)
+  Ninput_f <- round(ifelse( 
+                      fComps$Nsamps / fComps$Ntows < 44,
+                      fComps$Ntows + 0.138 * fComps$Nsamps,
+                      7.06 * fComps$Ntows), 0)
   Ninput_f[is.na(Ninput_f)] <- 0
-  Ninput_m <- round(ifelse(
-    mComps$Nsamps / mComps$Ntows < 44,
-    mComps$Ntows + 0.138 * mComps$Nsamps,
-    7.06 * mComps$Ntows
-  ), 0)
-  Ninput_m[is.na(Ninput_m)] <- 0
-  Ninput_u <- round(ifelse(
-    uComps$Nsamps / uComps$Ntows < 44,
-    uComps$Ntows + 0.138 * uComps$Nsamps,
-    7.06 * uComps$Ntows
-  ), 0)
+  Ninput_m <- round(ifelse( 
+                      mComps$Nsamps / mComps$Ntows < 44,
+                      mComps$Ntows + 0.138 * mComps$Nsamps,
+                      7.06 * mComps$Ntows), 0)
+  Ninput_m[is.na(Ninput_m)] = 0
+  Ninput_u <- round(ifelse( 
+                      uComps$Nsamps / uComps$Ntows < 44,
+                      uComps$Ntows + 0.138 * uComps$Nsamps,
+                      7.06 * uComps$Ntows), 0)
   Ninput_u[is.na(Ninput_u)] <- 0
 
   if (!AAL) {
@@ -435,62 +424,86 @@ writeComps <- function(inComps,
       bins <- lbins_in
     }
     FthenM <- cbind(
-      uStrat, round(bComps$Ntows, 0), round(bComps$Nsamps, 0), Ninput_b,
-      fComps[, 1:NCOLS], mComps[, 1:NCOLS]
+      uStrat,
+      round(bComps$Ntows, 0),
+      round(bComps$Nsamps, 0),
+      Ninput_b,
+      fComps[,1:NCOLS], mComps[,1:NCOLS]
     )
     index <- grep("Ninput", names(FthenM))
-    names(FthenM)[(index + 1):ncol(FthenM)] <- c(paste0("F", bins), paste0("M", bins))
-
-    Fout <- cbind(
-      uStrat, round(fComps$Ntows, 0), round(fComps$Nsamps, 0), Ninput_f,
-      fComps[, 1:NCOLS], fComps[, 1:NCOLS]
+    names(FthenM)[(index + 1):ncol(FthenM)] <- c(
+      paste0("F", bins),
+      paste0("M", bins)
+    )
+    
+    Fout  <- cbind(
+      uStrat,
+      round(fComps$Ntows, 0),
+      round(fComps$Nsamps, 0),
+      Ninput_f,
+      fComps[,1:NCOLS], fComps[,1:NCOLS]
     )
     index <- grep("Ninput", names(Fout))
-    colnames(Fout)[(index + 1):ncol(Fout)] <- c(paste0("F", bins), paste0("F.", bins))
-
-    Mout <- cbind(
-      uStrat, round(mComps$Ntows, 0), round(mComps$Nsamps, 0), Ninput_m,
-      mComps[, 1:NCOLS], mComps[, 1:NCOLS]
+    colnames(Fout)[(index + 1):ncol(Fout)] <- c(
+      paste0("F", bins),
+      paste0("F.", bins)
+    )
+    
+    Mout  <- cbind(
+      uStrat,
+      round(mComps$Ntows, 0),
+      round(mComps$Nsamps, 0),
+      Ninput_m,
+      mComps[,1:NCOLS], mComps[,1:NCOLS]
     )
     index <- grep("Ninput", names(Mout))
-    colnames(Mout)[(index + 1):ncol(Mout)] <- c(paste0("M", bins), paste0("M.", bins))
-
-    Uout <- cbind(
-      uStrat, round(uComps$Ntows, 0), round(uComps$Nsamps, 0), Ninput_u,
-      uComps[, 1:NCOLS], uComps[, 1:NCOLS]
+    colnames(Mout)[(index + 1):ncol(Mout)] <- c(
+      paste0("M", bins),
+      paste0("M.", bins)
+    )
+    
+    Uout  <- cbind(
+      uStrat,
+      round(uComps$Ntows, 0),
+      round(uComps$Nsamps, 0),
+      Ninput_u,
+      uComps[,1:NCOLS], uComps[,1:NCOLS]
     )
     index <- grep("Ninput", names(Uout))
-    colnames(Uout)[(index + 1):ncol(Uout)] <- c(paste0("U", bins), paste0("U.", bins))
+    colnames(Uout)[(index + 1):ncol(Uout)] <- c(
+      paste0("U", bins),
+      paste0("U.", bins)
+    )
   } else {
     # AAL
-    Fout <- cbind(uStrat, fComps$Nsamps, fComps[, 1:NCOLS], fComps[, 1:NCOLS])
-    Mout <- cbind(uStrat, mComps$Nsamps, mComps[, 1:NCOLS], mComps[, 1:NCOLS])
-    Uout <- cbind(uStrat, uComps$Nsamps, uComps[, 1:NCOLS], uComps[, 1:NCOLS])
+    Fout <- cbind(uStrat, fComps$Nsamps, fComps[,1:NCOLS], fComps[,1:NCOLS])
+    Mout <- cbind(uStrat, mComps$Nsamps, mComps[,1:NCOLS], mComps[,1:NCOLS])
+    Uout <- cbind(uStrat, uComps$Nsamps, uComps[,1:NCOLS], uComps[,1:NCOLS])
     FthenM <- NULL
   }
 
   # Make it pretty
   if (!AAL) {
     index <- grep("Ntows", names(Fout))
-    names(Mout)[index] <- "Ntows"
-    names(Fout)[index] <- "Ntows"
-    names(Uout)[index] <- "Ntows"
+    names(Mout)[index]   <- "Ntows"
+    names(Fout)[index]   <- "Ntows"
+    names(Uout)[index]   <- "Ntows"
     names(FthenM)[index] <- "Ntows"
   }
 
   index <- grep("Nsamp", names(Fout))
-  names(Mout)[index] <- "Nsamps"
-  names(Fout)[index] <- "Nsamps"
-  names(Uout)[index] <- "Nsamps"
+  names(Mout)[index]   <- "Nsamps"
+  names(Fout)[index]   <- "Nsamps"
+  names(Uout)[index]   <- "Nsamps"
   if (!AAL) {
     names(FthenM)[index] <- "Nsamps"
   }
 
   if (!AAL) {
     index <- grep("Ninput", names(Fout))
-    names(Mout)[index] <- "InputN"
-    names(Fout)[index] <- "InputN"
-    names(Uout)[index] <- "InputN"
+    names(Mout)[index]   <- "InputN"
+    names(Fout)[index]   <- "InputN"
+    names(Uout)[index]   <- "InputN"
     names(FthenM)[index] <- "InputN"
   }
 
@@ -500,21 +513,14 @@ writeComps <- function(inComps,
   Mout <- Mout[Mout$Nsamps > 0, ]
   Uout <- Uout[Uout$Nsamps > 0, ]
 
-  if (dim(Uout)[1] != 0) {
-    Uout$sex <- 0
-  }
-  if (dim(Fout)[1] != 0) {
-    Fout$sex <- 1
-  }
-  if (dim(Mout)[1] != 0) {
-    Mout$sex <- 2
-  }
+  if (dim(Uout)[1] != 0)   { Uout$sex <- 0}
+  if (dim(Fout)[1] != 0)   { Fout$sex <- 1}
+  if (dim(Mout)[1] != 0)   { Mout$sex <- 2}
   if (!AAL) {
     if (dim(FthenM)[1] != 0) {
       FthenM$sex <- 3
     }
   }
-
   # function to rescale comps to sum to 1
   # IGT(2019-04-25): I tried using an apply function but kept messing up,
   # so fell back on a simple loop over the rows
@@ -560,8 +566,7 @@ writeComps <- function(inComps,
     if (length(value.names) < (dim(out)[2] - adj)) {
       find <- which(names(out) == value.names[1])
       ind <- (length(value.names) + find):dim(out)[2]
-      out[, ind] <-
-        round(out[, names(out) %in% value.names], digits = digits)
+      out[, ind] <- round(out[, names(out) %in% value.names], digits = digits)
     }
     return(out)
   }
@@ -569,19 +574,13 @@ writeComps <- function(inComps,
   # optionally rescale to sum to 1
   # this needs to happen after combining FthenM rather than to
   # the sex-specific parts
-  if (sum1 & !AAL) {
+  if (sum1 && !AAL) {
     if (verbose) {
-      message("rescaling comps to sum to 1")
+      cli::cli_alert_info("Rescaling comps to sum to 1")
     }
-    if (dim(Uout)[1] != 0) {
-      Uout <- rescale.comps(Uout)
-    }
-    if (dim(Fout)[1] != 0) {
-      Fout <- rescale.comps(Fout)
-    }
-    if (dim(Mout)[1] != 0) {
-      Mout <- rescale.comps(Mout)
-    }
+    if (dim(Uout)[1] != 0) { Uout <- rescale.comps(Uout) }
+    if (dim(Fout)[1] != 0) { Fout <- rescale.comps(Fout) }
+    if (dim(Mout)[1] != 0) { Mout <- rescale.comps(Mout) }
     if (!AAL) {
       if (dim(FthenM)[1] != 0) {
         FthenM <- rescale.comps(FthenM)
@@ -615,65 +614,43 @@ writeComps <- function(inComps,
   oldwarn <- options("warn")
   options("warn" = -1)
 
-  if (verbose) {
-    cat("Writing FthenM, dimensions:", dim(FthenM), "\n")
-  }
-  IDstring <- paste("\n\n", "Females then males")
-  cat(file = fname, IDstring, "\n", append = FALSE)
   utils::write.table(
-    file = fname, FthenM, sep = ",", col.names = TRUE,
-    row.names = FALSE, append = TRUE
+    file = fname,
+    FthenM,
+    sep = ",",
+    col.names = TRUE,
+    row.names = FALSE,
+    append = FALSE
   )
-
-  if (verbose) {
-    cat("Writing F only, dimensions:", dim(Fout), "\n")
-  }
-  IDstring <- paste("\n\n", "Females only")
-  cat(file = fname, IDstring, "\n", append = TRUE)
   utils::write.table(
-    file = fname, Fout, sep = ",", col.names = TRUE,
-    row.names = FALSE, append = TRUE
+    file = fname,
+    Fout,
+    sep = ",",
+    col.names = FALSE,
+    row.names = FALSE,
+    append = TRUE
   )
-
-  if (verbose) {
-    cat("Writing M only, dimensions:", dim(Mout), "\n")
-  }
-  IDstring <- paste("\n\n", "Males only")
-  cat(file = fname, IDstring, "\n", append = TRUE)
   utils::write.table(
-    file = fname, Mout, sep = ",", col.names = TRUE,
-    row.names = FALSE, append = TRUE
+    file = fname,
+    Mout,
+    sep = ",",
+    col.names = FALSE,
+    row.names = FALSE,
+    append = TRUE
   )
-
-  if (verbose) {
-    cat("Writing U only, dimensions:", dim(Uout), " \n")
-  }
-
-  if ("sexRatio" %in% colnames(inComps)) {
-    u_message <- paste(
-      "\n\n",
-      "Sex ratio was applied and unsexed are included above: only reported as a diagnostic"
-    )
-  } else {
-    u_message <- paste("\n\n", "Usexed only")
-  }
-
-  IDstring <- u_message
-  cat(file = fname, IDstring, "\n", append = TRUE)
   utils::write.table(
-    file = fname, Uout, sep = ",", col.names = TRUE,
-    row.names = FALSE, append = TRUE
+    file = fname,
+    Uout,
+    sep = ",",
+    col.names = FALSE,
+    row.names = FALSE,
+    append = TRUE
   )
 
   # Reset warnings
-  # options("warn" = oldwarn[[1]])
-  # invisible(eval(parse(text = returns)))
+  # TODO: make this an on.exit call
+  options("warn" = oldwarn[[1]])
 
   # return tables
-  invisible(list(
-    FthenM = FthenM,
-    Fout = Fout,
-    Mout = Mout,
-    Uout = Uout
-  ))
+  invisible(list(FthenM = FthenM, Fout = Fout, Mout = Mout, Uout = Uout))
 } # End function writeComps

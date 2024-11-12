@@ -1,93 +1,100 @@
-#' First-Stage Expansion for Composition Data
+#' First-Stage expansion for composition data
 #'
-#' First-stage expansions account for unsampled fish in the smallest
-#' measured unit. Where, in PacFIN data, the smallest unit is that
-#' which is available to the port or dockside sampler, so more than
-#' likely a trip rather than a tow as would be with survey data.
+#' First-stage expansions account for unsampled fish in the smallest measured
+#' unit. Where, in PacFIN data, the smallest measured unit typically a trip
+#' because that is what is available to the port or dockside sampler. Whereas,
+#' in survey data the smallest measured unit is typically a tow. Tow would be
+#' the smallest if we had samples from onboard observers rather than from
+#' dockside samplers.
 #'
 #' @export
-#' @seealso Called within this function are
-#' \code{\link{EF1_Numerator}} \code{\link{EF1_Denominator}}.
-#' Called after this function should be \code{\link{getExpansion_2}}.
+#' @seealso
+#' * [cleanPacFIN()] (upstream)
+#' * [nwfscSurvey::estimate_weight_length()] (upstream())
+#' * [EF1_Numerator()] (contained within)
+#' * [EF1_Denominator()] (contained within)
+#' * [getExpansion_2()] (downstream)
 #'
 #' @details
-#' The workflow is to run \code{getExpansion_1} after \code{\link{cleanPacFIN}},
+#' The workflow is to run this function [cleanPacFIN(),
 #' which assures that all of the necessary columns are available and that the
-#' data are in the correct units.
-#' \code{getExpansion_1} calls
-#' \code{\link{EF1_Numerator}} and \code{\link{EF1_Denominator}}
-#' (i.e., the weight of sampled fish and
-#' the weight of all fish of the respective species in the tow)
-#' and returns their ratio.
+#' data are in the correct units. This function then calls two helper functions,
+#' [EF1_Numerator()] and [EF1_Denominator()] to calculate the weight of sampled fish and the weight of all fish of the respective species in the tow, respectively. Finally, the ratio of the two values is returned.
 #'
-#' @template secExpansion
+#' @section Expansion:
+#' \itemize{
+#' \item{Age data are expanded separately from lengths.}
+#' \item{WA fish are generally only expanded using Expansion_Factor_2.}
+#' \item{Other expansions are the product of
+#'   Expansion_Factor_1 * Expansion_Factor_2.
+#' }
+#' \item{For age-at-length comps, set Final_Expansion_Factor to 1 because
+#'   each fish represents only itself.}
+#' }
 #'
-#' @template Pdata
-#' @template maxExp
-#' @param Exp_WA Default FALSE.  If TRUE, expand the WA samples.
-#' @template weightlengthparams
-#' @template verbose
-#' @template plot
+#' @inheritParams cleanPacFIN
+#' @param maxExp The maximum expansion factor (either a number or a quantile)
+#'   for building expansions. Typically, the default is 0.95. Set `maxExp =
+#'   Inf` to see largest values.
+#' @param Exp_WA A logical values specifying if the samples from Washington
+#'   should be exanded. The default is `FALSE`.
+#' @param fa,ma,ua Female-, male-, and unsexed-specific weight--length
+#'   coefficients for Stock Synthesis where the relationships were calculated
+#'   using length in cm and weight in kg. There are no default values. You must
+#'   calculate these values and pass them to the function. If a particular sex
+#'   does not pertain to your data, then just pass `NA` for that relationship.
+#' @param fb,mb,ub Female-, male, and unsexed-specific weight--length exponents
+#'   for Stock Synthesis where the relationships were calculated using length in
+#'   cm and weight in kg. If a particular sex does not pertain to your data,
+#'   then just pass `NA` for that relationship.
+#' @param plot Typically, a logical is passed defining if you would like the
+#'   default plots to be created but users can also pass a string providing a
+#'   path to a directory where those plots will be stored. The default is
+#'   `FALSE` and no figures will be created unless this is changed. If `TRUE` is
+#'   passed, then the figures will be saved to your current working directory.
 #'
-#' @return A \code{data.frame} where all of the original columns in
-#' \code{Pdata} remain unaltered but additional columns are added.
-#' In particular columns starting with
-#' Expansion_Factor_1 are available for setting the Final_Expansion_Factor.
+#' @examples
+#' # Calculate the weight--length parameters for input to this function
+#' pars <- nwfscSurvey::estimate_weight_length(
+#'   data = Pdata,
+#'   col_length = "lengthcm",
+#'   col_weight = "weightkg",
+#'   verbose = verbose
+#'  )
+#' @return
+#' A `data.frame` where all of the original columns in `Pdata` remain unaltered
+#' but additional columns are added. In particular columns starting with
+#' `Expansion_Factor_1` are available for setting the `Final_Expansion_Factor`.
 #'
 getExpansion_1 <- function(Pdata,
+                           fa,
+                           fb,
+                           ma,
+                           mb,
+                           ua,
+                           ub,
                            maxExp = 0.95,
                            Exp_WA = TRUE,
-                           fa = NA,
-                           fb = NA,
-                           ma = NA,
-                           mb = NA,
-                           ua = NA,
-                           ub = NA,
                            verbose = TRUE,
                            plot = FALSE) {
-  # Calculate length-weight relationship
-  if (all(mapply(is.na, c(fa, ma, ua)))) {
-    pars <- getWLpars(data = Pdata, verbose = verbose)
-    fa <- ifelse(is.na(fa), pars["females", "A"], fa)
-    fb <- ifelse(is.na(fb), pars["females", "B"], fb)
-    ma <- ifelse(is.na(ma), pars["males", "A"], ma)
-    mb <- ifelse(is.na(mb), pars["males", "B"], mb)
-    ua <- ifelse(is.na(ua), pars["all", "A"], ua)
-    ub <- ifelse(is.na(ub), pars["all", "B"], ub)
-  }
 
   if (is.character(plot)) {
-    plot.denom <- ifelse(grepl("png", tools::file_ext(plot)),
-      dirname(plot), plot
-    )
+    fs::dir_create(plot)
   } else {
     if (plot == TRUE) {
-      plot.denom <- TRUE
-    } else {
-      plot.denom <- FALSE
+      plot <- getwd()
     }
   }
 
-  Pdata <- EF1_Denominator(Pdata,
+  Pdata <- EF1_Denominator(
+    Pdata,
     fa = fa, fb = fb, ma = ma, mb = mb, ua = ua, ub = ub,
-    verbose = verbose, plot = plot.denom
+    verbose = verbose,
+    plot = plot
   )
 
   # Get Trip_Sampled_Lbs
-  if (is.character(plot)) {
-    fn <- gsub(".png", "", plot)
-    plot.num <- file.path(ifelse(!grepl("png", tools::file_ext(plot)),
-      plot, dirname(plot)
-    ), "PacFIN_exp1_numer.png")
-  } else {
-    if (plot == TRUE) {
-      plot.num <- TRUE
-      grDevices::dev.new()
-    } else {
-      plot.num <- FALSE
-    }
-  }
-  Pdata <- EF1_Numerator(Pdata, verbose = verbose, plot = plot.num)
+  Pdata <- EF1_Numerator(Pdata, verbose = verbose, plot = plot)
 
   # Expansion_Factor_1
 
@@ -101,14 +108,19 @@ getExpansion_1 <- function(Pdata,
   if (Exp_WA != TRUE) {
     Pdata$Expansion_Factor_1_L[Pdata$state == "WA"] <- 1
     Pdata$Expansion_Factor_1_A[Pdata$state == "WA"] <- 1
-    cat("\n\nWA expansions set to 1. Fish tickets do not represent whole trips in WA.\n\n")
-  } # End if
+    cli::cli_bullets(c(
+      "i" = "Fish tickets do not represent whole trips in WA.",
+      "i" = "WA expansions set to 1 because {.code Exp_WA = {Exp_WA}}."
+    ))
+  }
 
   NA_EF1 <- Pdata[is.na(Pdata$Expansion_Factor_1_L), ]
   nNA <- NROW(NA_EF1)
 
   if (verbose) {
-    cat("\n", nNA, "NA Expansion_Factor_1 values replaced by 1.\n\n")
+    cli::cli_alert_info(
+      "{NROW(NA_EF1)} {.code NA} Expansion_Factor_1 values replaced by 1."
+    )
   }
 
   # Now replace NAs with 1.
@@ -119,19 +131,16 @@ getExpansion_1 <- function(Pdata,
   Pdata$Expansion_Factor_1_A <- capValues(Pdata$Expansion_Factor_1_A, maxExp)
 
   if (verbose) {
-    cat("\nCapping Expansion_Factor_1 at ", maxExp, "\n\n")
+    cli::cli_alert_info(
+      "Capping Expansion_Factor_1 at {.val {maxExp}}"
+    )
     print(summary(Pdata$Expansion_Factor_1_L))
   }
 
   # Generate plots and save them to the disk if specified.
-  if (plot != FALSE) {
-    if (is.character(plot)) {
-      grDevices::png(file.path(ifelse(!grepl("png", tools::file_ext(plot)),
-        plot, dirname(plot)
-      ), "PacFIN_exp1.png"))
-    } else {
-      grDevices::dev.new()
-    }
+  # TODO: move away from {grDevices}
+  if (is.character(plot)) {
+    grDevices::png(fs::path(plot, "PacFIN_exp1.png"))
 
     if (nNA > 0) {
       # Plot NA values by year and state.  Early years data or CALCOM data?
@@ -170,10 +179,8 @@ getExpansion_1 <- function(Pdata,
     )
 
     graphics::mtext(side = 1, outer = TRUE, "Year", line = 2)
-
-    if (is.character(plot)) {
-      grDevices::dev.off()
-    }
+    grDevices::dev.off()
   }
+
   return(Pdata)
 } # End function getExpansion_1

@@ -7,7 +7,7 @@
 getExpansion_2(
   Pdata,
   Catch,
-  Units = c("MT", "LB"),
+  Units = "LB",
   Convert = NULL,
   maxExp = 0.95,
   stratification.cols,
@@ -16,20 +16,19 @@ getExpansion_2(
 )
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
 \item{Catch}{A data frame of catch data, in pounds or in metric tonnes.}
 
 \item{Units}{The units of the \code{Catch} data frame, see
-\code{measurements::conv_unit_options[["mass"]]}
-for options. Typical units are metric tonnes (e.g., \code{"metric_ton"})
-because that is the unit used in Stock Synthesis, but
-expansions are done in pounds because fish weights are in pounds.
-Thus, catches also need to be in pounds and will be converted as such.}
+\code{measurements::conv_unit_options[["mass"]]} for options. Typical units
+are metric tonnes (e.g., \code{"metric_ton"}) because that is the unit used
+in Stock Synthesis, but expansions are done in pounds because fish weights
+are in pounds. Thus, catches also need to be in pounds and will be
+converted as such.}
 
 \item{Convert}{A deprecated argument that is now set to \code{NULL}.
 Previously, it was a logical that defined if the Catch should be converted from
@@ -38,25 +37,23 @@ metric tonnes to pounds, where \code{TRUE} is now the same as setting
 \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
 i.e., \code{Convert = TRUE} or \code{Units = "MT"},
 such that it can be used within Stock Synthesis.
-todo: remove this input argument}
+TODO: remove this input argument}
 
-\item{maxExp}{The maximum expansion factor
-(either a number or a quantile) for building expansions.
-Typically, the default is 0.95.
-Set \code{maxExp = Inf} to see largest values.}
+\item{maxExp}{The maximum expansion factor (either a number or a quantile)
+for building expansions. Typically, the default is 0.95. Set \code{maxExp = Inf} to see largest values.}
 
 \item{stratification.cols}{A vector of column names in \code{Pdata} that you want
-to use as strata. These will match the way in which the catches are transformed
-from long to wide prior to inputting them into this function. If you leave
-this argument empty, then \code{Pdata} must already have a column named
-\code{stratification}. The function will look in the column names of the \code{Catch}
-data to determine the appropriate separator to use between columns when
-pasting the words together, which is done using \link{apply} and \link{paste}.
+to use as strata. These will match the way in which the catches are
+transformed from long to wide prior to inputting them into this function.
+If you leave this argument empty, then \code{Pdata} must already have a column
+named \code{stratification}. The function will look in the column names of the
+\code{Catch} data to determine the appropriate separator to use between columns
+when pasting the words together, which is done using \link{apply} and \link{paste}.
 Historically, it was mandatory to make this column yourself, but in 2021,
 this input argument was added to reduce the number of extraneous calls that
-were needed between functions.
-You can use as many levels of stratification as you want except year because
-it is already included in the call to \link[stats:aggregate]{stats::aggregate}.}
+were needed between functions. You can use as many levels of stratification
+as you want except year because it is already included in the call to
+\link[stats:aggregate]{stats::aggregate}.}
 
 \item{verbose}{A logical specifying if output should be written to the
 screen or not. Good for testing and exploring your data but can be turned
@@ -90,15 +87,18 @@ Thus, per-stratum Expansion_Factor_2 is the catch / sampled catch.
 \itemize{
 \item{Age data are expanded separately from lengths.}
 \item{WA fish are generally only expanded using Expansion_Factor_2.}
-\item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
+\item{Other expansions are the product of
+Expansion_Factor_1 * Expansion_Factor_2.
+}
 \item{For age-at-length comps, set Final_Expansion_Factor to 1 because
 each fish represents only itself.}
 }
 }
 
 \seealso{
-\code{getExpansion_2} is ran after \link{getExpansion_1} using the
-returned data frame.
+\itemize{
+\item \link{getExpansion_1} should be ran first
+}
 }
 \author{
 Andi Stephens

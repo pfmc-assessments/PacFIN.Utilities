@@ -46,9 +46,9 @@
 #' create length- and age-specific sample weights. Only these specific sample
 #' weights should be used going forward.
 #'
-#' @template Pdata
-#' @template weightlengthparams
-#' @template verbose
+#' @inheritParams cleanPacFIN
+#' @inheritParams getExpansion_1
+#' @inheritParams cleanPacFIN
 #' @param plot A logical that specifies if plots should be created or not.
 #' The default is `FALSE`.
 #' @param col.weight The name of column that contains the weight of the fish
@@ -70,27 +70,30 @@
 #' @seealso [EF1_Numerator], [getExpansion_1], [getExpansion_2]
 #'
 EF1_Denominator <- function(Pdata,
-                            fa = 2e-06,
-                            fb = 3.5,
-                            ma = 2e-06,
-                            mb = 3.5,
-                            ua = 2e-06,
-                            ub = 3.5,
+                            fa,
+                            fb,
+                            ma,
+                            mb,
+                            ua,
+                            ub,
                             verbose = TRUE,
                             plot = FALSE,
                             col.weight = "weightkg") {
   if (verbose) {
-    cat("\nIndividual weights will be generated from the following values:\n\n")
-    cat(
-      " Females:", fa, fb, "\n",
-      "Males:", ma, mb, "\n",
-      "Unknowns and hermaphrodites:", ua, ub, "\n\n"
-    )
-  } # End if verbose
+    cli::cli_inform(c(
+      "i" = "Individual weights will be generated from the passed parameters.",
+      "i" = "Females: a = {.val {fa}} and b = {.val {fb}}",
+      "i" = "Males: a = {.val {ma}} and b = {.val {mb}}",
+      "i" = "Unsexed and hermaphrodites: a = {.val {ua}} and b = {.val {ub}}"
+    ))
+  }
 
   stopifnotcolumn(Pdata, col.weight)
 
-  # Calculate weight based on length-weight relationship
+  # Calculate weight based on length--weight relationship
+  # TODO: Check that this function can handle NA values for the weight--length
+  #       parameters if the sex does not exist. What happens if missing values
+  #       are in getExpansion_1?
   Pdata$LW_Calc_Wt <- getweight(
     length = Pdata$length,
     sex = Pdata$SEX,
@@ -102,6 +105,8 @@ EF1_Denominator <- function(Pdata,
   )
 
   #### Calculate sample weight using FISH_WEIGHT in lbs
+  # TODO: use !! instead of the actual column name
+  # TODO: use native pipe |>
   Pdata <- Pdata %>%
     # Use weightkg if available and calculated from WL relationship when NA
     # Note the change in units for weightkg from KG to LBS
@@ -166,7 +171,7 @@ EF1_Denominator <- function(Pdata,
     data.frame()
 
   #### Summary and boxplot
-  # todo: revamp the summary and plots
+  # TODO: revamp the summary and plots
   printemp <- data.frame(cbind(
     Pdata$Wt_Sampled_1_L, Pdata$Wt_Sampled_2_L,
     Pdata$Wt_Sampled_3_L, Pdata$Wt_Sampled_L
@@ -175,25 +180,22 @@ EF1_Denominator <- function(Pdata,
   names(printemp) <- c("M+F+U", "Cluster", "L-W", "Final Wt_Sampled")
 
   if (verbose) {
-    cat("\nSample weights\n\n")
+    cli::cli_alert_info("Sample weights")
     print(summary(printemp))
   }
 
   NA_Wt_Sampled <- Pdata[is.na(Pdata$Wt_Sampled_L), ]
   nNA <- NROW(NA_Wt_Sampled)
 
-  if (plot != FALSE) {
-    if (is.character(plot)) {
-      if (tools::file_ext(plot) == "png") {
-        savedir <- dirname(plot)
-      } else {
-        savedir <- plot
-      }
-      plot <- file.path(savedir, "PacFIN_exp1_denom.png")
-      plot2 <- file.path(savedir, "PacFIN_WL.png")
-      grDevices::png(plot)
-      on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
+  if (as.character(plot) != "FALSE") {
+    if (as.character(plot) == "TRUE") {
+      plot <- getwd()
     }
+
+    plot1 <- file.path(plot, "PacFIN_exp1_denom.png")
+    plot2 <- file.path(plot, "PacFIN_WL.png")
+    grDevices::png(plot1)
+    on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::par(mfrow = c(1, ifelse(nNA > 0, 2, 1)), mgp = c(2.5, 0.5, 0))
     graphics::boxplot(
       as.data.frame(printemp),
@@ -203,7 +205,9 @@ EF1_Denominator <- function(Pdata,
     )
     if (nNA > 0) {
       graphics::barplot(
-        stats::xtabs(NA_Wt_Sampled$FREQ ~ NA_Wt_Sampled$state + NA_Wt_Sampled$fishyr),
+        stats::xtabs(
+          NA_Wt_Sampled$FREQ ~ NA_Wt_Sampled$state + NA_Wt_Sampled$fishyr
+        ),
         col = grDevices::rainbow(length(unique(NA_Wt_Sampled$state))),
         legend.text = TRUE, xlab = "Year",
         ylab = "N samples w/ first-stage expansion denominator = NA",
@@ -214,12 +218,17 @@ EF1_Denominator <- function(Pdata,
       Pdata[, "lengthcm"], Pdata[, "SEX"], Pdata[, "weightkg"],
       Pdata[, "LW_Calc_Wt"] * 0.453592
     )
-    ggplot2::ggsave(gg,
+    ggplot2::ggsave(
+      gg,
       file = plot2,
-      width = 6, height = 6, units = "in"
+      width = 6,
+      height = 6,
+      units = "in"
     )
   }
-  if (nNA == 0 & verbose) cat("\nSample Wts found for all samples.\n\n")
+  if (nNA == 0 && verbose) {
+    cli::cli_alert_success("Sample Wts found for all samples.")
+  }
 
   return(Pdata)
-} # End EF1_Denominator
+}

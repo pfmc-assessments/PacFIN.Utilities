@@ -7,74 +7,82 @@
 #' include information that is not appropriate for use in
 #' US West Coast stock assessments.
 #'
-#' @template Pdata
+#' @param Pdata A data frame returned from [PullBDS.PacFIN()] containing
+#'   biological samples. These data are stored in the Pacific Fishieries
+#'   Information Network (PacFIN) data warehouse, which originated in 2014 and
+#'   are pulled using sql calls.
 #' @param keep_INPFC *Deprecated*. Areas are now defined using different methods.
-#' @param keep_gears A character vector including only the gear types you want
-#' to label as unique fleets. Order matters and will define fleet numbering.
-#' If the argument is missing, which is the default, then all found gear groups
-#' are maintained and ordered alphabetically. For more details see
-#' [getGearGroup] that lists a web link for where you can find the
-#' available gear groupings and how they link to `"GRID"` within your data.
-#' GRID is a legacy term from PacFIN, now identified as
-#' PACFIN_GEAR_CODE in the biological and fish ticket data, where
-#' GR is short for gear and
-#' ID is short for identification.
-#' Typical entries will include character values such as `HKL`, `POT`, `TWL`,
-#' where the latter is short for all non-shrimp trawls and
-#' `TWS` is shrimp trawls.
-#' Other gear identification codes and their definitions include
-#' `DRG` which is dredge gear,
-#' `MSC` which is all other miscellaneous gear such as diving or river trawls,
-#' `NET` which is all non-trawl net gear,
-#' `NTW` which is non-trawl gear, and
-#' `TLS` which is trolling gear.
-#' As a special case, `MID` is available for spiny dogfish to extract
-#' mid-water trawl data as a separate fleet.
+#' @param keep_gears A character vector including the gear types you want
+#'   to label as unique fleets. Order matters and will define fleet numbering.
+#'   If the argument is missing, which is the default, then all found gear
+#'   groups are maintained and ordered alphabetically. For more details see
+#'   [getGearGroup()], which lists a link where you can find the available gear
+#'   groupings and how they link to `"GRID"` within your data. The vector
+#'   supplied to this argument should consist of only options available in
+#'   `unique(GearTable[["GROUP"]])`.
+#'   `GRID` is a legacy term from PacFIN, now identified as `PACFIN_GEAR_CODE`
+#'   in the biological and fish ticket data, where GR is short for gear and ID
+#'   is short for identification. Typical entries will include character values
+#'   such as `HKL`, `POT`, `TWL`, where the latter is short for all non-shrimp
+#'   trawls and `TWS` is shrimp trawls. Other gear identification codes and
+#'   their definitions include `DRG` which is dredge gear, `MSC` which is all
+#'   other miscellaneous gear such as diving or river trawls, `NET` which is all
+#'   non-trawl net gear, `NTW` which is non-trawl gear, and `TLS` which is
+#'   trolling gear. As a special case, `MID` is available for spiny dogfish to
+#'   extract mid-water trawl data as a separate fleet.
 #' @param keep_sample_type A vector of character values specifying the types of
-#' samples you want to keep. The default is to keep `c("M")`. Available
-#' types include market (M), research (R), special request (S), and
-#' commercial on-board (C). There are additional samples without a `SAMPLE_TYPE`,
-#' but they are only kept if you include `NA` in your call.
-#' All sample types from California are assigned to `M`.
-#' Including commercial on-board samples is not recommended because
-#' they might also be in WCGOP data and would lead to double counting.
-#' @param keep_sample_method A vector of character values specifying the types of
-#' sampling methods you want to keep. The default is to keep \code{"R"}, which
-#' refers to samples that were sampled randomly. Available types include
-#' random (R), stratified (S), systematic (N), purposive (P), and special (X).
-#' As of February 17, 2021,
-#' Washington is the only state with a sample type of `""`, and it was limited
-#' to two special samples of yelloweye rockfish.
+#'   samples you want to keep. The default is to keep `c("M")`. Available types
+#'   include market (M), research (R), special request (S), and commercial
+#'   on-board (C). There are additional samples without a `SAMPLE_TYPE`, but
+#'   they are only kept if you include `NA` in your call. All sample types from
+#'   California are assigned to `M`. Including commercial on-board samples is
+#'   not recommended because they might also be in WCGOP data and would lead to
+#'    double counting.
+#' @param keep_sample_method A vector of character values specifying the types
+#'   of sampling methods you want to keep. The default is to keep \code{"R"},
+#'   which refers to samples that were sampled randomly. Available types include
+#'   random (R), stratified (S), systematic (N), purposive (P), and special (X).
+#'   As of February 17, 2021, Washington is the only state with a sample type of
+#'   `""`, and it was limited to two special samples of yelloweye rockfish.
 #' @param keep_length_type A vector of character values specifying the types of
-#' length samples to keep. There is no default value, though users will typically
-#' want to keep `c("", "F", "A")`, but should also think about using
-#' `c("", "F", "A", NA)`. Note that types other than those listed below
-#' can be present, especially if you are dealing with a skate.
-#' `A` is alternate length,
-#' `D` is dorsal length,
-#' `F` is fork length,
-#' `S` is standard length, and
-#' `T` is total length.
-#' @param keep_age_method A vector of ageing methods to retain in the data. All fish
-#' aged with methods other than those listed will no longer be considered aged.
-#' A value of `NULL`, the default, will keep all ageing methods. However,
-#' a vector of `c("B", "BB", S", "", NA, 1, 2)` will keep all unaged fish and those
-#' that were aged with break and burn and surface reads. You do not really need
-#' to include such a verbose vector of values though because numbers are converted
-#' to appropriate character codes in [getAge]. Therefore, something like
-#' `c("B", "S")` would be sufficient to keep all break and burn and surface reads.
+#'   length samples to keep. There is no default value, though users will
+#'   typically want to keep `c("", "F", "A")`, but should also think about using
+#'   `c("", "F", "A", NA)`. Note that types other than those listed below can be
+#'   present, especially if you are dealing with a skate.
+#'   `A` is alternate length,
+#'   `D` is dorsal length,
+#'   `F` is fork length,
+#'   `S` is standard length, and
+#'   `T` is total length.
+#' @param keep_age_method A vector of ageing methods to retain in the data. All
+#'   fish aged with methods other than those listed will no longer be considered
+#'   aged. A value of `NULL`, the default, will keep all ageing methods.
+#'   However, a vector of `c("B", "BB", S", "", NA, 1, 2)` will keep all unaged
+#'   fish and those that were aged with break and burn and surface reads. You do
+#'   not really need to include such a verbose vector of values though because
+#'   numbers are converted to appropriate character codes in [getAge].
+#'   Therefore, something like `c("B", "S")` would be sufficient to keep all
+#'   break and burn and surface reads.
 #' @param keep_missing_lengths *Deprecated*. Just subset them using
-#' `is.na(Pdata[, 'length']) after running `cleanPacFIN` if you want to remove
-#' lengths, though there is no need because the package accommodates keeping them in.
+#'   `is.na(Pdata[, 'length']) after running `cleanPacFIN` if you want to remove
+#'   lengths, though there is no need because the package accommodates keeping
+#'   them in.
 #' @param keep_states A vector of states that you want to keep, where each state
-#' is defined using a two-letter abbreviation, e.g., `WA`. The default is to keep
-#' data from all three states, `keep_states = c("WA", "OR", "CA")`.
-#' Add `'UNK'` to the vector if you want to keep data not assigned to a state.
+#'   is defined using a two-letter abbreviation, e.g., `WA`. The default is to
+#'   keep data from all three states, `keep_states = c("WA", "OR", "CA")`. Add
+#'   `'UNK'` to the vector if you want to keep data not assigned to a state.
 #' @param CLEAN A logical value used when you want to remove data from the input
-#' data set. The default is `TRUE`. Where the opposite returns the original
-#' data with additional columns and reports on what would have been removed.
-#' @template spp
-#' @template verbose
+#'   data set. The default is `TRUE`. Where the opposite returns the original
+#'   data with additional columns and reports on what would have been removed.
+#' @param spp A character string giving the species name to ensure that the
+#'   methods are species specific. Leave \code{NULL} if generic methods work for
+#'   your species. Currently, sablefish is the only species with
+#'   species-specific code.
+#' @param verbose A logical specifying if output should be written to the
+#'   screen or not. Good for testing and exploring your data but can be turned
+#'   off when output indicates information that you already know. The printing
+#'   of output to the screen does not affect any of the returned objects. The
+#'   default is to always print to the screen, i.e., `verbose = TRUE`.
 #' @template savedir
 #'
 #' @export
@@ -228,6 +236,7 @@ cleanPacFIN <- function(Pdata,
     verbose = verbose,
     keep = keep_age_method
   )
+  # TODO: speed up this function
   Pdata[, "age_method"] <- getAgeMethod(Pdata)
 
   #### Weight (random units in)

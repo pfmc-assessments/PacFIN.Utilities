@@ -2,7 +2,7 @@
 #'
 #' Ensure that each sample number has only one grade of fish in it.
 #'
-#' @template Pdata
+#' @inheritParams cleanPacFIN
 #'
 #' @author Kelli F. Johnson
 #' @return todo: document what checkGrade returns.

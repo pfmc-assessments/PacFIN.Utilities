@@ -74,8 +74,6 @@ Expansion_Factor_2 are available to use in manually setting the Final_Expansion_
 \link{getComps} uses the column specified in \code{weightid} and the user-specified
 stratification to create comps.
 
-\link{doSexRatio} separates the unsexed fish into males and females
-
 \link{writeComps} formats the composition data for SS3 and writes it to a file.
 }
 

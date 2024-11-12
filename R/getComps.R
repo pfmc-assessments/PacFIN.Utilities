@@ -24,8 +24,6 @@
 #'   and `Age` to the grouping structure.
 #' @param defaults The default stratification columns which will typically be
 #'   left at their default value of `c("fleet", "fishyr", "season")`.
-#' @param verbose Is deprecated as of version 0.2.8. No information is printed
-#'   to the screen from this function.
 #' @param ... Pass additional arguments to `getcomps_long()`, such as
 #'   `dropmissing = FALSE` where the default behavior is `dropmissing = TRUE`.
 #'   The most important argument to consider modifying is `getComps(weightid =
@@ -56,15 +54,9 @@
 #'
 getComps <- function(Pdata,
                      strat = NULL,
-                     Comps = c("AAL", "LEN", "AGE"),
+                     Comps = c("LEN", "AGE", "AAL"),
                      defaults = c("fleet", "fishyr", "season"),
-                     verbose = lifecycle::deprecated(),
                      ...) {
-  if (lifecycle::is_present(verbose)) {
-    # Signal the deprecation to the user
-    lifecycle::deprecate_warn("0.2.8", "getComps(verbose = )")
-  }
-
   # Check for expansion factor
   if (length(Pdata$Final_Sample_Size) == 0) {
     stop(paste(
@@ -81,16 +73,17 @@ getComps <- function(Pdata,
 
   # Avoid duplication
   strat <- strat[!strat %in% usualSuspects]
-  Comps <- match.arg(
-    toupper(substr(Comps, 1, 3)),
-    choices = c("LEN", "AGE", "AAL", "NA")
+  Comps <- match.arg(Comps)
+  TowStrat <- c(
+    strat,
+    switch(Comps,
+      LEN = usualSuspects,
+      AGE = usualSuspects,
+      c(usualSuspects, "lengthcm", "Age")
+    )
   )
-  TowStrat <- c(strat, switch(Comps,
-    LEN = usualSuspects,
-    AGE = usualSuspects,
-    c(usualSuspects, "lengthcm", "Age")
-  ))
-  usualSuspects <- switch(Comps,
+  usualSuspects <- switch(
+    Comps,
     LEN = c(usualSuspects, "lengthcm"),
     AGE = c(usualSuspects, "Age"),
     c(usualSuspects, "lengthcm", "Age")

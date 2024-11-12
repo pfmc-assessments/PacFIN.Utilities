@@ -11,7 +11,7 @@
 #' }
 #'
 #' @param rawData an unfiltered PacFIN dataset
-#' @template fname
+#' @inheritParams writeComps
 #'
 #' @export
 #'

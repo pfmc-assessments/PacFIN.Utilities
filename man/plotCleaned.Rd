@@ -7,11 +7,10 @@
 plotCleaned(Pdata, savedir = getwd())
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is the current working directory.

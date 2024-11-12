@@ -8,9 +8,8 @@
 getComps(
   Pdata,
   strat = NULL,
-  Comps = c("AAL", "LEN", "AGE"),
+  Comps = c("LEN", "AGE", "AAL"),
   defaults = c("fleet", "fishyr", "season"),
-  verbose = lifecycle::deprecated(),
   ...
 )
 
@@ -24,11 +23,10 @@ getcomps_long(
 )
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
 \item{strat}{A vector of column names to stratify the output over. For
 example, if you wish to summarize by ageing method, then the argument
@@ -42,9 +40,6 @@ and \code{Age} to the grouping structure.}
 
 \item{defaults}{The default stratification columns which will typically be
 left at their default value of \code{c("fleet", "fishyr", "season")}.}
-
-\item{verbose}{Is deprecated as of version 0.2.8. No information is printed
-to the screen from this function.}
 
 \item{...}{Pass additional arguments to \code{getcomps_long()}, such as
 \code{dropmissing = FALSE} where the default behavior is \code{dropmissing = TRUE}.

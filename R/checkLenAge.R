@@ -5,7 +5,7 @@
 #' Outliers are determined using standard deviations
 #' (i.e., \code{sdFactor} input parameter).
 #'
-#' @template Pdata
+#' @inheritParams cleanPacFIN
 #' @param Par A list of five initial or externally estimated parameter values for the
 #' von Bertalanffy growth function. List entries should be named as follows:
 #' "K", "Linf", "L0", "CV0", "CV1".
@@ -36,7 +36,7 @@
 #' @param precision An integer providing the precision for the predicted lengths or the number
 #' of digits the results will have after passing them through
 #' \code{\link{round}(x, digits = precision)}.
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #' @param dir A file path to a directory where you want information saved to
 #' a file, or multiple files. If \code{NULL}, which is the default, then
 #' nothing is saved.
