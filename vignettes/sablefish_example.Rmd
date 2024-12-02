@@ -26,7 +26,7 @@ dolbins <- seq(18, 90, by = 2)
 doabins <- seq(0, 60, by = 1)
 
 # Gear codes
-used_gears <- c("DRG", "HKL", "MSC", "NET", "POT", "TLS", "TWL", "TWS")
+used_gears <- c("HKL", "POT", "TWL")
 
 # Additional settings
 expansion <- 0.95
@@ -57,7 +57,7 @@ bds_survey <- nwfscSurvey::pull_bio(
 weight_length_estimates <- nwfscSurvey::estimate_weight_length(
   bds_survey,
   verbose = FALSE
-  )
+)
 ```
 
 ```{r print-weight-length-table}
@@ -141,15 +141,16 @@ length_composition_data <- writeComps(
   verbose = TRUE,
   inComps = getComps(
     dplyr::filter(data_exp2, !is.na(lengthcm)),
-    Comps = "LEN"
+    Comps = "LEN",
+    weightid = "Final_Sample_Size_L"
   ),
   fname = fs::path(
     getwd(),
-    glue::glue("{species_code}_lcomps_{max(dolbins)}.csv")
+    "test.csv"
+    # glue::glue("{species_code}_lcomps_{max(dolbins)}.csv")
   ),
   lbins = dolbins,
-  partition = 2,
-  sum1 = TRUE
+  partition = 2
 )
 ```
 
@@ -162,7 +163,8 @@ age_comps_long <- getComps(
         maxVal = 0.90 # where 90th is based on Petrale code
       )
     ),
-  Comps = "AGE"
+  Comps = "AGE",
+  weightid = "Final_Sample_Size_A"
 )
 age_composition_data <- writeComps(
   age_comps_long,
