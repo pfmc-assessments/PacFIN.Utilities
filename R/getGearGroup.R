@@ -69,7 +69,7 @@ getGearGroup <- function(Pdata,
           c(
             "i" = "sablefish uses HKL, POT, and TWL",
             "i" = "{change_to_hkl} are recoded to HKL.",
-            "i" = "almost everything outside of the above is recoded to TWL."
+            "i" = "everything not assigned to HKL or POT is recoded to TWL."
           )
         )
       }
