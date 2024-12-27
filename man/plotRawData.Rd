@@ -17,8 +17,7 @@ directory different than \code{\link[=getwd]{getwd()}}. Note that various functi
 PacFIN.Utilities have different default values for this input argument. If
 \code{NULL} in \code{writeComps}, then the resulting file name will be based on what
 type of composition data is being generated, i.e., \code{PacFIN_lengths.out},
-\code{PacFIN_ages.out}, or \code{PacFIN_CAAL.out} for length, age, or conditional
-length-at-age data, respectively.}
+or \code{PacFIN_ages.out} for length or age data, respectively.}
 }
 \description{
 \code{plotRawData} creates a set of diagnostic plots and summaries, writing

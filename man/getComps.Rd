@@ -2,7 +2,6 @@
 % Please edit documentation in R/getComps.R
 \name{getComps}
 \alias{getComps}
-\alias{getcomps_long}
 \title{Aggregate length, age, or age-at-length composition data by strata}
 \usage{
 getComps(
@@ -10,16 +9,8 @@ getComps(
   strat = NULL,
   Comps = c("LEN", "AGE", "AAL"),
   defaults = c("fleet", "fishyr", "season"),
-  ...
-)
-
-getcomps_long(
-  data,
-  towstrat,
-  type,
-  towid = "SAMPLE_NO",
-  weightid = "Final_Sample_Size_L",
-  dropmissing = TRUE
+  towid = c("SAMPLE_NO"),
+  weightid = "Final_Sample_Size_L"
 )
 }
 \arguments{
@@ -41,58 +32,32 @@ and \code{Age} to the grouping structure.}
 \item{defaults}{The default stratification columns which will typically be
 left at their default value of \code{c("fleet", "fishyr", "season")}.}
 
-\item{...}{Pass additional arguments to \code{getcomps_long()}, such as
-\code{dropmissing = FALSE} where the default behavior is \code{dropmissing = TRUE}.
-The most important argument to consider modifying is \code{getComps(weightid = "Final_Sample_Size_L")}, which will only be applicable to length data.
-Instead of the default, you might want to weight each stratification by
-the final sample sizes found for age data, i.e., \code{getComps(weightid = "Final_Sample_Size_A")}. You can pass \code{weightid} any column that exists in
-\code{Pdata}. Legacy code required you to set \code{Final_Sample_Size} outside of a
-function call with something like \code{Pdata$Final_Sample_Size = Pdata$Expansion_Factor_1 * Pdata$Expansion_Factor_2} and all weighting was
-done on the column called \code{"Final_Sample_Size"} but this is no longer the
-case.}
-
-\item{data}{A data frame. The data frame must have the column names that
-are specified for the next four input arguments, \code{towstrat}, \code{type},
-\code{towid}, and \code{weightid}.}
-
-\item{towstrat}{A vector of character values providing the column names for
-which you want compositions for.}
-
-\item{type}{A character value specifying which category to summarize by,
-i.e., \code{"length"} or \code{"Age"}.}
-
 \item{towid}{A vector of character values providing the column names that
-generate a unique id for each sample.}
+generate a unique id for each sample. The default is \code{"SAMPLE_NO"} but you
+can pass a vector where all of the columns identified will be united to
+create a unique identifier for the tow/sample.}
 
-\item{weightid}{A character value giving the column name that holds the
-value to be summed for each type and strata.}
-
-\item{dropmissing}{A logical value supplied to the \code{drop} argument in
-\code{\link[stats:aggregate]{stats::aggregate()}} that specifies whether or not to keep all levels in
-the data even if there are no values to report for summaries.}
+\item{weightid}{A character value giving the column name that holds the value
+to be summed for each type and strata, such as \code{weightid = "Final_Sample_Size_L"}, if you are interested in length data. Instead of
+the default, you might want to weight each stratification by the final
+sample sizes found for age data, i.e., \code{weightid = "Final_Sample_Size_A"}.
+You can pass \code{weightid} any column that exists in \code{Pdata}. Legacy code did
+not allow you to name the column and \code{Final_Sample_Size} was hard coded in
+the function.}
 }
 \value{
-A long data frame of weights for each grouping structure. Columns
-identifying the grouping structures will come first, followed by columns
-with sample sizes per group by sex category. The documentation for these
-sample size columns is sparse because this function is set to be deprecated
-next cycle and replaced with a simplified path to writing composition data.
-But, information is present for males (sometimes abbreviated with an m),
-females (sometimes abbreviated with an f), unsexed (sometimes abbreviated
-with a u), and sexed (noted as both or b) records. If no sex is provided
-then it is assumed all are unsexed and will be returned as such.
+A long data frame of weights for each grouping structure. Columns identifying
+the grouping structures will come first, followed by columns with sample
+sizes per group by sex category. The documentation for these sample size
+columns is sparse because this function is set to be deprecated next cycle
+and replaced with a simplified path to writing composition data. But,
+information is present for males (abbreviated with an M), females
+(abbreviated with an F), unsexed (abbreviated with a U). If no sex is
+provided then it is assumed all are unsexed and will be returned as such.
 }
 \description{
-\code{getComps()} first sets up the local environment, then runs
-\code{getcomps_long()}, and finally returns the results of \code{getcomps_long()},
-which calculates summaries by groupings. \code{getcomps_long()} was developed to
-make use of {tidyverse} but it still produces all of the old output. In the
-future, this function will be replaced by code that can summarize both
-survey data or commercial data. Until then, this is the best we can do and
-it mimics old output such that legacy code will not break. You can and
-should pass arguments to \code{getcomps_long()} using pass through arguments in
-your call to \code{getComps()}, i.e., \code{...}, especially when calculating
-composition data related to age. See the input arguments for more details.
+\code{getComps()} first sets up the local environment and returns summaries by
+groupings.
 }
 \details{
 This function uses the expansions created in \code{\link[=getExpansion_1]{getExpansion_1()}} and
@@ -100,11 +65,6 @@ This function uses the expansions created in \code{\link[=getExpansion_1]{getExp
 to \code{weightid} will be used as the weight for each group. See the
 documentation for the pass-through arguments, i.e., \code{...}
 }
-\section{Functions}{
-\itemize{
-\item \code{getcomps_long()}: The actual workhorse behind \code{getComps()}.
-
-}}
 \seealso{
 \itemize{
 \item \code{\link[=getExpansion_2]{getExpansion_2()}} should be run before this function.

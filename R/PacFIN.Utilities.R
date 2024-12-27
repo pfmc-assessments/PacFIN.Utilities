@@ -63,6 +63,6 @@
 #'
 #' [capValues] Used to limit the maximum value in a vector.
 #'
-#' @docType package
+#' @docType _PACKAGE
 #' @name PacFIN.Utilities
 NULL

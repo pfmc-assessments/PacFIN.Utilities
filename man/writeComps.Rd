@@ -9,19 +9,20 @@ writeComps(
   fname = NULL,
   abins = NULL,
   lbins = NULL,
-  maxAge = Inf,
+  column_with_input_n = "n_tows",
+  maxAge = lifecycle::deprecated(),
   month = 7,
   partition = 2,
   ageErr = 0,
-  dummybins = FALSE,
-  sum1 = FALSE,
+  dummybins = lifecycle::deprecated(),
+  sum1 = lifecycle::deprecated(),
   digits = 4,
   overwrite = lifecycle::deprecated(),
   verbose = FALSE
 )
 }
 \arguments{
-\item{inComps}{A dataframe generated using \code{\link[=getComps]{getComps()}}.}
+\item{inComps}{A dataframe returned from \code{\link[=getComps]{getComps()}}.}
 
 \item{fname}{A filename with the appropriate extension, used to save the
 function output to the disk. For example, \code{LenComps.csv} or
@@ -31,18 +32,24 @@ directory different than \code{\link[=getwd]{getwd()}}. Note that various functi
 PacFIN.Utilities have different default values for this input argument. If
 \code{NULL} in \code{writeComps}, then the resulting file name will be based on what
 type of composition data is being generated, i.e., \code{PacFIN_lengths.out},
-\code{PacFIN_ages.out}, or \code{PacFIN_CAAL.out} for length, age, or conditional
-length-at-age data, respectively.}
+or \code{PacFIN_ages.out} for length or age data, respectively.}
 
 \item{abins, lbins}{The binning structure to use for ages and lengths. For
 both arguments, the default is \code{NULL} which leads to the natural bins of
 the data being used, i.e., no additional binning is performed.}
 
-\item{maxAge}{A numeric value specifying the maximum age of fish that
-should be included in the composition data, unless \code{dummybins = TRUE},
-then those fish will be included in a plus group which you can investigate
-later. Note that \code{maxAge} is only used if \code{abins = NULL}, otherwise
-fish are binned according to user specified bins irregardless of \code{maxAge}.}
+\item{column_with_input_n}{A string providing the column name with the
+appropriate value for the input sample size that will be given to Stock
+Synthesis as input_n (what we and {nwfscSurvey} provide as a column name)
+or NSamp (what Stock Synthesis wants as a name). The default is \code{"n_tows"},
+which is the number of tows that were performed for the given
+stratifications passed to \code{\link[=getComps]{getComps()}} that created \code{inComps}. One might
+want to use \code{"n_fish"} or some column that you created yourself.}
+
+\item{maxAge}{Deprecated as of 0.2.10 to reduce complication in the code and
+make it more intuitive for the user when running this function. All fish
+present in \code{inComps} will be binned according to the bins provided or the
+bins present.}
 
 \item{month}{Month for all observations. Defaults to 7. If input has multiple
 seasons, this must be a vector of equal length to the maximum seasons where
@@ -59,16 +66,21 @@ if you really want 0.}
 \item{ageErr}{Defaults to 1 to use the first ageing error matrix specified in
 your Stock Synthesis model.}
 
-\item{dummybins}{A logical value specifying whether data outside of the lower
-and upper \code{abins} or \code{lbins} should be added to dummy bins, or be placed in
-the specified bins. Default is \code{TRUE}.  Dummy bins are useful for
-determining whether the current bin structure properly captures the data.}
+\item{dummybins}{Deprecated as of version 0.2.10 because you can just run the
+function with different \code{abins} or \code{lbins} rather than this function
+changing the first and end bin for you. The original default, years ago was
+\code{TRUE}, then it was changed to \code{FALSE}. Now, without this argument, it is
+essentially \code{FALSE}.}
 
-\item{sum1}{A logical value specifying whether to rescale the compositions
-to sum to 1 (they will also be rounded to 4 decimal places)}
+\item{sum1}{Deprecated as of version 0.2.10 because SS3 will normalize the
+composition data for you and thus it does not need to be done here. The
+previous default was \code{FALSE} so the removal of this argument does not
+change the default behavior of this function.}
 
-\item{digits}{Integer indicating the number of decimal places to round
-value to (value is passed to \code{\link[=round]{round()}}). NULL will skip rounding.}
+\item{digits}{Integer indicating the number of decimal places to round value
+to (value is passed to \code{\link[=round]{round()}}). The default is 4, which will lead to
+rounding to four digits. If you do not want to round the results, then use
+\code{Inf}, which will lead to the use of R's default precision.}
 
 \item{overwrite}{Deprecated as of version 0.2.10. The file will be
 automatically overwritten if present.}
@@ -80,44 +92,27 @@ of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 }
 \value{
-A \code{.csv} file is created and written to with composition data. And, a list
-with all four types of composition data, i.e., different sex stratifications,
-are returned as a list.
+A data frame is returned and a \code{.csv} is created and written to the disk with
+the same data frame.
 }
 \description{
 Write out composition data to a file, binning the data as specified to work
-in a Stock Synthesis model.
+in a Stock Synthesis model. Note, that this function does not work for
+conditional age-at-length data because it is assumed that one would not want
+to estimate growth in that way from fishery-dependent data.
 }
 \details{
 The structure of the input dataframe determines whether the results
-produce age-, length-, or conditional-age-at-length-
-composition data.
-
-Four sets of composition data are written to a single file specified
-by \code{fname}. These are:
-\itemize{
-\item{females followed by males}
-\item{male data only}
-\item{female data only}
-\item{males and females recombined as unsexed fish}
-}
+produce age- or length-composition data. As of version 0.2.10, conditional
+age-at-length compositions are no longer available within this function.
 
 Composition data are raw weights rather than proportions. Stock Synthesis
 internally converts these to proportions.  The raw weights should be
-examined for anomalies.
+examined for anomalies. To create proportions use \code{\link[=prop.table]{prop.table()}} on the
+columns containing composition data.
 
-To create proportions use \code{\link[=prop.table]{prop.table()}} on the columns
-containing composition data.
-
-The columns in the output preceding 'lengthcm' or 'age' are those that
+The columns in the output preceding 'lengthcm' or 'Age' are those that
 were used in stratifying the data.
-
-\subsection{Reality Checks}{
-\itemize{
-\item{Set \code{verbose = TRUE} to follow progress}
-\item{Use \code{dummybins} to evaluate bin structure}
-\item{Examine the raw-weight output for anomalies}
-}}
 }
 \seealso{
 \itemize{
