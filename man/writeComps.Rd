@@ -7,8 +7,9 @@
 writeComps(
   inComps,
   fname = NULL,
-  abins = NULL,
-  lbins = NULL,
+  abins = lifecycle::deprecated(),
+  lbins = lifecycle::deprecated(),
+  comp_bins = NULL,
   column_with_input_n = "n_tows",
   maxAge = lifecycle::deprecated(),
   month = 7,
@@ -34,9 +35,15 @@ PacFIN.Utilities have different default values for this input argument. If
 type of composition data is being generated, i.e., \code{PacFIN_lengths.out},
 or \code{PacFIN_ages.out} for length or age data, respectively.}
 
-\item{abins, lbins}{The binning structure to use for ages and lengths. For
+\item{abins, lbins}{Deprecated as of 0.2.10 to reduce complication in the code and
+make it more intuitive for the user when running this function.
+The binning structure to use for ages and lengths. For
 both arguments, the default is \code{NULL} which leads to the natural bins of
 the data being used, i.e., no additional binning is performed.}
+
+\item{comp_bins}{The binning structure to use for ages and lengths. The default
+is \code{NULL} which leads to the natural bins of the data being used, i.e.,
+no additional binning is performed.}
 
 \item{column_with_input_n}{A string providing the column name with the
 appropriate value for the input sample size that will be given to Stock
