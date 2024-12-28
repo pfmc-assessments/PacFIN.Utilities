@@ -17,9 +17,14 @@
 #'   `NULL` in `writeComps`, then the resulting file name will be based on what
 #'   type of composition data is being generated, i.e., `PacFIN_lengths.out`,
 #'   or `PacFIN_ages.out` for length or age data, respectively.
-#' @param abins,lbins The binning structure to use for ages and lengths. For
+#' @param abins,lbins Deprecated as of 0.2.10 to reduce complication in the code and
+#'   make it more intuitive for the user when running this function.
+#'   The binning structure to use for ages and lengths. For
 #'   both arguments, the default is `NULL` which leads to the natural bins of
 #'   the data being used, i.e., no additional binning is performed.
+#' @param comp_bins The binning structure to use for ages and lengths. The default 
+#'   is `NULL` which leads to the natural bins of the data being used, i.e.,
+#'    no additional binning is performed.
 #' @param column_with_input_n A string providing the column name with the
 #'   appropriate value for the input sample size that will be given to Stock
 #'   Synthesis as input_n (what we and {nwfscSurvey} provide as a column name)
@@ -83,8 +88,9 @@
 #'
 writeComps <- function(inComps,
                        fname = NULL,
-                       abins = NULL,
-                       lbins = NULL,
+                       abins = lifecycle::deprecated(),
+                       lbins = lifecycle::deprecated(),
+                       comp_bins = NULL,
                        column_with_input_n = "n_tows",
                        maxAge = lifecycle::deprecated(),
                        month = 7,
@@ -124,6 +130,20 @@ writeComps <- function(inComps,
       details = "The bins are not truncated."
     )
   }
+  if (lifecycle::is_present(abins)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "writeComps(abins)",
+      details = "Please use comp_bins."
+    )
+  }
+  if (lifecycle::is_present(lbins)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "writeComps(lbins)",
+      details = "Please use comp_bins."
+    )
+  }
   # Check inputs
   if ("season" %in% names(inComps) &&
       max(inComps[["season"]]) != length(month)) {
@@ -149,20 +169,21 @@ writeComps <- function(inComps,
   if (!column_with_input_n  %in% colnames(inComps)) {
     cli::cli_abort("{.var {column_with_input_n}} should be a column")
   }
-
-  # Which comps are we doing, where either Age or lengthcm must be present in
-  # inComps and both will be present for conditional data?
+  
   Names <- names(inComps)
   AGE <- which(Names == "Age")
   LEN <- which(Names == "lengthcm")
+  # Which comps are we doing, where either Age or lengthcm must be present in
+  # inComps and both will be present for conditional data?
   if (length(AGE) + length(LEN) == 0) {
     cli::cli_abort("lengthcm or Age are not columns in {.val inComps}")
   }
+  
   # Create fname if it is not give based on what types of comps we are doing
   if (is.null(fname)) {
     fname <- dplyr::case_when(
-      length(LEN) > 0 ~ "PacFIN_lengths.out",
-      length(AGE) > 0 ~ "PacFIN_ages.out"
+      length(LEN) > 0 ~ "PacFIN_lengths.csv",
+      length(AGE) > 0 ~ "PacFIN_ages.csv"
     )
   }
   if (verbose) {
@@ -175,41 +196,49 @@ writeComps <- function(inComps,
     recurse = TRUE
   )
 
-  # TODO: Determine what happens if a sex does not exist
-  #       like no females or unsexed, what happens
+  type_loc <- ifelse(
+    type == "Age",
+    yes = AGE,
+    no = LEN
+  )
+  colnames(inComps)[type_loc] <- "comp_type"
+  
+  # Modify inComps to include all bins in comp_bins
+  check_bin_width <- diff(comp_bins)
+  if (any(check_bin_width != check_bin_width[1])) {
+    cli::cli_inform(
+      "The output should be careful checked to ensure correctness when unequal
+      bin intervals are used."
+    )
+  }
+  bin_width <- check_bin_width[1]
+  grid <- inComps |>
+    tibble::tibble() |>
+    tidyr::expand(fishyr, fleet, season, SEX, tidyr::full_seq(comp_bins, bin_width))
+  colnames(grid)[ncol(grid)] <- "comp_type"
+  expanded_comps <- inComps |>
+    dplyr::right_join(grid) |>
+    tibble::tibble() |>
+    tidyr::complete(fishyr, fleet, season, comp_type, 
+                    fill = list(
+                      n_tows = 0, 
+                      n_fish = 0,
+                      comp = 0
+                    )
+    )
 
-  # Fix length bins
-  if ("lengthcm" %in% colnames(inComps)) {
-    if (is.null(lbins)) {
-      if (verbose) {
-        cli::cli_alert_info("No length bins provided, using data as-is.")
-      }
-      lbins <- sort(unique(inComps$lengthcm))
-    } # End if for lbins
-
-    # Re-code actual lengths to be lbins
-    # Note that the last bin is a dummy bin,
-    # created because of how findInterval works. It is stripped later.
-    lbins <- c(lbins, Inf)
-    inComps$lbin <- findInterval(inComps$lengthcm, lbins, all.inside = TRUE)
-    target <- "lbin"
-    key_names <- c(Names[1:(LEN - 1)])
-  } # End if for lengthcm
-
-  # Fix age bins
-  if ("Age" %in% colnames(inComps)) {
-    if (is.null(abins)) {
-      if (verbose) {
-        cli::cli_alert_info("No age bins provided, using data as-is.")
-      }
-      abins <- sort(unique(inComps$Age))
-    } # End if for abins
-    abins <- c(abins, Inf)
-    # add extra, dummy bin because all.inside = TRUE
-    inComps$abin <- findInterval(inComps$Age, abins, all.inside = TRUE)
-    target <- "abin"
-    key_names <- c(Names[1:(AGE - 1)])
-  } # End if Age
+  if (is.null(comp_bins)) {
+    if (verbose) {
+      cli::cli_alert_info("No composition bins provided, using data as-is.")
+    }
+    comp_bins <- sort(unique(inComps[["comp_type"]]))
+  } 
+  
+  bins <- c(comp_bins, Inf)
+  # add extra, dummy bin because all.inside = TRUE
+  expanded_comps$bin <- findInterval(expanded_comps[["comp_type"]], bins, all.inside = TRUE)
+  target <- "bin"
+  key_names <- c(Names[1:(type_loc - 1)])
 
   # letter to paste with the bin to make f1 f2 f3 m1 m2 m3 for
   # a two sex model or u1 u2 u3 if just unsexed fish
@@ -218,7 +247,8 @@ writeComps <- function(inComps,
     "F" %in% inComps[["SEX"]] ~ "f",
     "U" %in% inComps[["SEX"]] ~ "u"
   )
-  wide_composition_data <- inComps |>
+  
+  wide_composition_data <- expanded_comps |>
     dplyr::group_by(
       dplyr::across(dplyr::all_of(
         c(key_names, column_with_input_n, "SEX", target)
@@ -260,19 +290,22 @@ writeComps <- function(inComps,
       year = fishyr,
       input_n = column_with_input_n
     ) |>
+    dplyr::filter(input_n > 0) |>
     dplyr::relocate(fleet, sex, partition, .after = month) |>
+    dplyr::arrange(fleet, sex, year) |>
     dplyr::rename_with(.fn = \(x) gsub("([a-z])0+([1-9])", "\\1\\2", x))
-    if (length(AGE) > 0) {
-      returned_composition_data <- wide_composition_data |>
-        dplyr::mutate(
-          ageerr = ageErr,
-          Lbin_lo = -1,
-          Lbin_hi =  -1,
-          .after = partition
-        )
-    } else {
-      returned_composition_data <- wide_composition_data
-    }
+  
+  if (length(AGE) > 0) {
+    returned_composition_data <- wide_composition_data |>
+      dplyr::mutate(
+        ageerr = ageErr,
+        Lbin_lo = -1,
+        Lbin_hi =  -1,
+        .after = partition
+      )
+  } else {
+    returned_composition_data <- wide_composition_data
+  }
 
   utils::write.table(
     file = fname,
