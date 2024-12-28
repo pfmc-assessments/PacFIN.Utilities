@@ -8,13 +8,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Working through PacFIN data can be complex. This examples guides you through working up the data for sablefish. The fish ticket data contains information on catches and is labeled `catch.pacfin` within this vignette. The biological data that contains information on lengths and ages is labeled `bds.pacfin`. These names are standard for every data set that is downloaded and saved from PacFIN.
+Working through PacFIN data can be complex. This examples guides you through working up the data for sablefish. The fish ticket data contains information on catches and is labeled `catch.pacfin` within this vignette. The biological data that contains information on lengths and ages is labeled `bds.pacfin`. These names are standard for every data set that is downloaded and saved from PacFIN using `PacFIN.Utilities` extraction code.
 
 Before working up any of the data, a few items need to be clarified. Such as what gear types you would like to use and what bins should be used for the biological data. As well as which files you would like to load.
 
 ```{r setup}
-# Species
+# Species common name based on NWFSC survey data
 common_name <- "sablefish"
+# PacFIN species code
 species_code <- "SABL"
 
 # Files
@@ -22,26 +23,36 @@ file_bds <- fs::path("..", "PacFIN.SABL.bds.11.Nov.2024.RData")
 file_catch <- fs::path("..", "PacFIN.SABL.CompFT.11.Nov.2024.RData")
 
 # Bins for biological data
-dolbins <- seq(18, 90, by = 2)
-doabins <- seq(0, 60, by = 1)
+length_bins <- seq(18, 90, by = 2)
+age_bins <- seq(0, 60, by = 1)
 
 # Gear codes
 used_gears <- c("HKL", "POT", "TWL")
 
-# Additional settings
+# The maximum quantile at which to cap all data expansions within getExpansion_1().
 expansion <- 0.95
-good_lengths <- c("", "A", "F")
+
+# Determine what samples to retain or filter out when using cleanPacFIN()
+# Keep all alternate (A), fork (F), and unknown (U) length types based on 
+# FISH_LENGTH_TYPE_CODE. This decision should be species-specific
+good_lengths <- c("U", "A", "F")
+# Keep only random (R) samples based on SAMPLE_METHOD_CODE. Only random samples
+# should be retained unless specified by a state agency.
 good_methods <- "R"
+# Keep commercial on-board (C), market (M), and blank samples based on SAMPLE_TYPE
 good_samples <- c("", "M", "C")
+# Keep data from all 3 states. This is the default.
 good_states <- c("WA", "OR", "CA")
+# Keep only break and burn (B, BB), unknown (U), and blank (") age reads based 
+# on AGE_METHOD. This decision should be species-specific.
+good_age_method <- c("B", "BB", "U", "")
+
 ```
 
 ```{r read-data}
 # catch.pacfin
-# PullCatch.PacFIN(pacfin_species_code = species_code)
 load(file_catch)
 # bds.pacfin
-# PullBDS.PacFIN(pacfin_species_code = species_code)
 load(file_bds)
 ```
 
@@ -50,10 +61,12 @@ load(file_bds)
 A choice must be made about which data set you want to fit for estimating the weight--length relationships by sex and across sexes. Many scientists choose to use the survey data because it is thought to best represent the population. You could use the data retrieved from PacFIN to calculate this relationship but that option is not shown here.
 
 ```{r weight-length-data, message = FALSE, warning = FALSE}
+# Pull survey data 
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = common_name,
   survey = "NWFSC.Combo"
 )
+# Estimate weight-length relationship by sex
 weight_length_estimates <- nwfscSurvey::estimate_weight_length(
   bds_survey,
   verbose = FALSE
@@ -74,8 +87,7 @@ catch_formatted <- catch.pacfin |>
   getState() |>
   formatCatch(
     strat = c("state", "geargroup"),
-    # TODO: Determine if we want ROUND_WEIGHT_LBS
-    valuename = "LANDED_WEIGHT_LBS"
+    valuename = "ROUND_WEIGHT_LBS"
   )
 ```
 
@@ -88,6 +100,7 @@ bds_cleaned <- cleanPacFIN(
   Pdata = bds.pacfin,
   keep_gears = used_gears,
   CLEAN = TRUE,
+  keep_age_method = good_age_method,
   keep_sample_type = good_samples,
   keep_sample_method = good_methods,
   keep_length_type = good_lengths,
@@ -102,22 +115,22 @@ data_exp1 <- getExpansion_1(
   Pdata = bds_cleaned,
   maxExp = expansion,
   fa = weight_length_estimates |>
-    dplyr::filter(group == "female") |>
+    dplyr::filter(sex == "female") |>
     dplyr::pull("A"),
   fb = weight_length_estimates |>
-    dplyr::filter(group == "female") |>
+    dplyr::filter(sex == "female") |>
     dplyr::pull("B"),
   ma = weight_length_estimates |>
-    dplyr::filter(group == "male") |>
+    dplyr::filter(sex == "male") |>
     dplyr::pull("A"),
   mb = weight_length_estimates |>
-    dplyr::filter(group == "female") |>
+    dplyr::filter(sex == "female") |>
     dplyr::pull("B"),
   ua = weight_length_estimates |>
-    dplyr::filter(group == "all") |>
+    dplyr::filter(sex == "all") |>
     dplyr::pull("A"),
   ub = weight_length_estimates |>
-    dplyr::filter(group == "all") |>
+    dplyr::filter(sex == "all") |>
     dplyr::pull("B"),
   plot = TRUE
 )
@@ -130,28 +143,28 @@ data_exp2 <- getExpansion_2(
 
 data_exp2[["Final_Sample_Size"]] <- capValues(
   data_exp2[["Expansion_Factor_1_L"]] * data_exp2[["Expansion_Factor_2"]],
-  maxVal = 0.90
+  maxVal = expansion
 )
 ```
 
 Create the length composition data. 
 
 ```{r length-composition-data}
-length_composition_data <- writeComps(
-  verbose = TRUE,
-  inComps = getComps(
+length_comps_long <- getComps(
     dplyr::filter(data_exp2, !is.na(lengthcm)),
     Comps = "LEN",
     weightid = "Final_Sample_Size_L"
-  ),
+  )
+
+length_composition_data <- writeComps(
+  inComps = length_comps_long,
   fname = fs::path(
     getwd(),
-    "test.csv"
-    # glue::glue("{species_code}_lcomps_{max(dolbins)}.csv")
+    glue::glue("{species_code}_lcomps_{min(length_bins)}-{max(length_bins)}.csv")
   ),
-  lbins = dolbins,
-  partition = 2
-)
+  lbins = length_bins,
+  verbose = TRUE
+) 
 ```
 
 ```{r age-composition-data}
@@ -160,19 +173,20 @@ age_comps_long <- getComps(
     dplyr::mutate(
       Final_Sample_Size = capValues(
         Expansion_Factor_1_A * Expansion_Factor_2,
-        maxVal = 0.90 # where 90th is based on Petrale code
+        maxVal = expansion
       )
     ),
   Comps = "AGE",
   weightid = "Final_Sample_Size_A"
 )
+
 age_composition_data <- writeComps(
-  age_comps_long,
+  inComps = age_comps_long,
   fname = fs::path(
     getwd(),
-    glue::glue("{species_code}_acomps_{max(doabins)}.csv")
+    glue::glue("{species_code}_acomps_{min(age_bins)}-{max(age_bins)}.csv")
   ),
-  abins = 0:max(doabins),
-  sum1 = TRUE
+  comp_bins = age_bins,
+  verbose = TRUE
 )
 ```
