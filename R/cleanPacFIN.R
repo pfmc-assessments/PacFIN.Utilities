@@ -149,7 +149,7 @@ cleanPacFIN <- function(Pdata,
                         CLEAN = TRUE,
                         spp = NULL,
                         verbose = TRUE,
-                        savedir) {
+                        savedir = NULL) {
   #### Deprecate old input arguments
   if (lifecycle::is_present(keep_INPFC)) {
     lifecycle::deprecate_stop(
@@ -172,6 +172,7 @@ cleanPacFIN <- function(Pdata,
     )
   }
 
+  nwfscSurvey::check_dir(dir = savedir, verbose = verbose)
   #### CLEAN COLUMNS
   if (check_columns_downloaded(Pdata)) {
     Pdata <- cleanColumns(Pdata)
@@ -179,11 +180,14 @@ cleanPacFIN <- function(Pdata,
   check_calcom <- any(Pdata[["SOURCE_AGID"]] == "CalCOM")
 
   #### Fill in missing input arguments
-  Pdata <- getGearGroup(Pdata, spp = spp, verbose = verbose)
+  Pdata <- getGearGroup(
+    Pdata = Pdata, 
+    spp = spp, 
+    verbose = verbose)
   if (missing(keep_gears)) {
     keep_gears <- sort(unique(Pdata[, "geargroup"]))
   }
-  Pdata[, "fleet"] <- match(Pdata$geargroup, keep_gears)
+  Pdata[, "fleet"] <- Pdata[, "geargroup"] #match(Pdata$geargroup, keep_gears)
   if (missing(keep_length_type)) {
     keep_length_type <- sort(unique(c(
       Pdata[, "FISH_LENGTH_TYPE"],
