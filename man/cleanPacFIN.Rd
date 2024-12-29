@@ -17,7 +17,7 @@ cleanPacFIN(
   CLEAN = TRUE,
   spp = NULL,
   verbose = TRUE,
-  savedir
+  savedir = NULL
 )
 }
 \arguments{
@@ -110,8 +110,7 @@ of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
-The default is the current working directory.
-The path can be relative or absolute.}
+The default is NULL.}
 }
 \value{
 The input data filtered for desired areas and record types

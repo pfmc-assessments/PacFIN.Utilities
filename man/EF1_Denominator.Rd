@@ -13,8 +13,9 @@ EF1_Denominator(
   ua,
   ub,
   verbose = TRUE,
-  plot = FALSE,
-  col.weight = "weightkg"
+  plot = lifecycle::deprecated(),
+  col.weight = "weightkg",
+  savedir = NULL
 )
 }
 \arguments{
@@ -47,6 +48,9 @@ The default is \code{FALSE}.}
 in kilograms. Units are important here because kilograms will be converted
 to pounds to match other weight calculations.
 The default is \code{weightkg}, which is created using \link{cleanPacFIN}.}
+
+\item{savedir}{A file path to the directory where the results will be saved.
+The default is NULL.}
 }
 \value{
 Additional columns are added to \code{Pdata}:

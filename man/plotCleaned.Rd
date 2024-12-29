@@ -13,8 +13,7 @@ Information Network (PacFIN) data warehouse, which originated in 2014 and
 are pulled using sql calls.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
-The default is the current working directory.
-The path can be relative or absolute.}
+The default is NULL.}
 }
 \value{
 The following figures are saved to \code{savedir}:

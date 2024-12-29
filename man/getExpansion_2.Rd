@@ -8,11 +8,11 @@ getExpansion_2(
   Pdata,
   Catch,
   Units = "LB",
-  Convert = NULL,
+  Convert = lifecycle::deprecated(),
   maxExp = 0.95,
   stratification.cols,
   verbose = TRUE,
-  savedir
+  savedir = NULL
 )
 }
 \arguments{
@@ -36,8 +36,7 @@ metric tonnes to pounds, where \code{TRUE} is now the same as setting
 \code{Units = "MT"} and \code{FALSE}, which was the default, would be
 \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
 i.e., \code{Convert = TRUE} or \code{Units = "MT"},
-such that it can be used within Stock Synthesis.
-TODO: remove this input argument}
+such that it can be used within Stock Synthesis.}
 
 \item{maxExp}{The maximum expansion factor (either a number or a quantile)
 for building expansions. Typically, the default is 0.95. Set \code{maxExp = Inf} to see largest values.}
@@ -62,8 +61,7 @@ of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
-The default is the current working directory.
-The path can be relative or absolute.}
+The default is NULL.}
 }
 \value{
 The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.

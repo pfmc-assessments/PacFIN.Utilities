@@ -15,7 +15,8 @@ getExpansion_1(
   maxExp = 0.95,
   Exp_WA = TRUE,
   verbose = TRUE,
-  plot = FALSE
+  plot = lifecycle::deprecated(),
+  savedir = NULL
 )
 }
 \arguments{
@@ -52,6 +53,9 @@ default plots to be created but users can also pass a string providing a
 path to a directory where those plots will be stored. The default is
 \code{FALSE} and no figures will be created unless this is changed. If \code{TRUE} is
 passed, then the figures will be saved to your current working directory.}
+
+\item{savedir}{A file path to the directory where the results will be saved.
+The default is NULL.}
 }
 \value{
 A \code{data.frame} where all of the original columns in \code{Pdata} remain unaltered
@@ -87,11 +91,15 @@ each fish represents only itself.}
 
 \examples{
 # Calculate the weight--length parameters for input to this function
+bds_survey <- nwfscSurvey::pull_bio(
+  common_name = "widow rockfish",
+  survey = "NWFSC.Combo"
+  )
 pars <- nwfscSurvey::estimate_weight_length(
-  data = Pdata,
-  col_length = "lengthcm",
-  col_weight = "weightkg",
-  verbose = verbose
+  data = bds_survey,
+  col_length = "length_cm",
+  col_weight = "weight_kg",
+  verbose = FALSE
  )
 }
 \seealso{
