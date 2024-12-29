@@ -31,28 +31,33 @@
 #' @inheritParams cleanPacFIN
 #' @inheritParams cleanPacFIN
 #' @template plot
+#' @template savedir
 #' @author Andi Stephens
 
 EF1_Numerator <- function(Pdata,
                           verbose = TRUE,
-                          plot = FALSE) {
+                          plot = lifecycle::deprecated(),
+                          savedir = NULL) {
+  if (lifecycle::is_present(plot)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "EF1_Denominator(plot)",
+      details = "Please use savedir to create and save plots."
+    )
+  }
   Pdata$Trip_Sampled_Lbs <- dplyr::coalesce(
     Pdata[["EXP_WT"]], Pdata[["RWT_LBS"]]
   )
 
   if (verbose) {
-    cat("\nSampled pounds per trip:\n\n")
+    cli::cli_inform("\nSampled pounds per trip:\n\n")
     print(summary(Pdata$Trip_Sampled_Lbs))
   }
 
-  if (plot != FALSE) {
+  if (!is.null(savedir)) {
     numstate <- length(unique(Pdata$state))
     plot_filename <- fs::path(
-      ifelse(
-        as.character(plot) == "TRUE",
-        getwd(),
-        plot
-      ),
+      savedir, 
       "PacFIN_exp1_numer.png"
     )
     grDevices::png(plot_filename)

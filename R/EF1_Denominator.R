@@ -55,6 +55,7 @@
 #' in kilograms. Units are important here because kilograms will be converted
 #' to pounds to match other weight calculations.
 #' The default is `weightkg`, which is created using [cleanPacFIN].
+#' @template savedir
 #' @return Additional columns are added to \code{Pdata}:
 #' * `Wt_Sampled_1`: the sum of sex-specific weights within the sample.
 #' * `Wt_Sampled_2`: the species-specific sample weight only provided by
@@ -77,8 +78,17 @@ EF1_Denominator <- function(Pdata,
                             ua,
                             ub,
                             verbose = TRUE,
-                            plot = FALSE,
-                            col.weight = "weightkg") {
+                            plot = lifecycle::deprecated(),
+                            col.weight = "weightkg",
+                            savedir = NULL) {
+  if (lifecycle::is_present(plot)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "EF1_Denominator(plot)",
+      details = "Please use savedir to create and save plots."
+    )
+  }
+  
   if (verbose) {
     cli::cli_inform(c(
       "i" = "Individual weights will be generated from the passed parameters.",
@@ -187,13 +197,9 @@ EF1_Denominator <- function(Pdata,
   NA_Wt_Sampled <- Pdata[is.na(Pdata$Wt_Sampled_L), ]
   nNA <- NROW(NA_Wt_Sampled)
 
-  if (as.character(plot) != "FALSE") {
-    if (as.character(plot) == "TRUE") {
-      plot <- getwd()
-    }
-
-    plot1 <- file.path(plot, "PacFIN_exp1_denom.png")
-    plot2 <- file.path(plot, "PacFIN_WL.png")
+  if (!is.null(savedir)) {
+    plot1 <- file.path(savedir, "PacFIN_exp1_denom.png")
+    plot2 <- file.path(savedir, "PacFIN_WL.png")
     grDevices::png(plot1)
     on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::par(mfrow = c(1, ifelse(nNA > 0, 2, 1)), mgp = c(2.5, 0.5, 0))

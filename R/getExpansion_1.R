@@ -52,14 +52,19 @@
 #'   path to a directory where those plots will be stored. The default is
 #'   `FALSE` and no figures will be created unless this is changed. If `TRUE` is
 #'   passed, then the figures will be saved to your current working directory.
+#' @template savedir
 #'
 #' @examples
 #' # Calculate the weight--length parameters for input to this function
+#' bds_survey <- nwfscSurvey::pull_bio(
+#'   common_name = "widow rockfish",
+#'   survey = "NWFSC.Combo"
+#'   )
 #' pars <- nwfscSurvey::estimate_weight_length(
-#'   data = Pdata,
-#'   col_length = "lengthcm",
-#'   col_weight = "weightkg",
-#'   verbose = verbose
+#'   data = bds_survey,
+#'   col_length = "length_cm",
+#'   col_weight = "weight_kg",
+#'   verbose = FALSE
 #'  )
 #' @return
 #' A `data.frame` where all of the original columns in `Pdata` remain unaltered
@@ -76,28 +81,29 @@ getExpansion_1 <- function(Pdata,
                            maxExp = 0.95,
                            Exp_WA = TRUE,
                            verbose = TRUE,
-                           plot = FALSE) {
-
-  if (is.character(plot)) {
-    fs::dir_create(plot)
-  } else {
-    if (plot == TRUE) {
-      plot <- getwd()
-    }
+                           plot = lifecycle::deprecated(),
+                           savedir = NULL) {
+  if (lifecycle::is_present(plot)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "getExpansion_1(plot)",
+      details = "Please use savedir to create and save plots."
+    )
   }
+
+  nwfscSurvey::check_dir(dir = savedir, verbose = verbose)
 
   Pdata <- EF1_Denominator(
     Pdata,
     fa = fa, fb = fb, ma = ma, mb = mb, ua = ua, ub = ub,
     verbose = verbose,
-    plot = plot
+    savedir = savedir
   )
 
   # Get Trip_Sampled_Lbs
-  Pdata <- EF1_Numerator(Pdata, verbose = verbose, plot = plot)
+  Pdata <- EF1_Numerator(Pdata, verbose = verbose, savedir = savedir)
 
   # Expansion_Factor_1
-
   Pdata$Expansion_Factor_1_L <- Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled_L
   Pdata$Expansion_Factor_1_A <- Pdata$Trip_Sampled_Lbs / Pdata$Wt_Sampled_A
 
@@ -139,8 +145,8 @@ getExpansion_1 <- function(Pdata,
 
   # Generate plots and save them to the disk if specified.
   # TODO: move away from {grDevices}
-  if (is.character(plot)) {
-    grDevices::png(fs::path(plot, "PacFIN_exp1.png"))
+  if (!is.null(savedir)) {
+    grDevices::png(fs::path(savedir, "PacFIN_exp1.png"))
 
     if (nNA > 0) {
       # Plot NA values by year and state.  Early years data or CALCOM data?

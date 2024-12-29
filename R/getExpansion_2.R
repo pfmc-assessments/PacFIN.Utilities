@@ -23,7 +23,6 @@
 #'   \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
 #'   i.e., \code{Convert = TRUE} or \code{Units = "MT"},
 #'   such that it can be used within Stock Synthesis.
-#'   TODO: remove this input argument
 #' @inheritParams getExpansion_1
 #' @param stratification.cols A vector of column names in `Pdata` that you want
 #'   to use as strata. These will match the way in which the catches are
@@ -38,7 +37,7 @@
 #'   as you want except year because it is already included in the call to
 #'   [stats::aggregate].
 #' @inheritParams cleanPacFIN
-#' @template savedir
+#' 
 #'
 #' @seealso
 #' * [getExpansion_1] should be ran first
@@ -60,11 +59,21 @@
 getExpansion_2 <- function(Pdata,
                            Catch,
                            Units = "LB",
-                           Convert = NULL,
+                           Convert = lifecycle::deprecated(),
                            maxExp = 0.95,
                            stratification.cols,
                            verbose = TRUE,
-                           savedir) {
+                           savedir = NULL) {
+  
+  if (lifecycle::is_present(Convert)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "getExpansion_2(Convert)",
+      details = "Please specify the units of Catch via the Unit input (MT or LB).\n",
+    )
+  }
+  
+  nwfscSurvey::check_dir(dir = savedir, verbose = verbose)
   #### Set up
   # Check Unit input
   Units <- match.arg(
@@ -78,15 +87,6 @@ getExpansion_2 <- function(Pdata,
     LB = "lbs",
     Units
   )
-
-  # Check and stop if Convert input is used since it is not deprecated
-  if (!is.null(Convert)) {
-    stop(
-      "Convert is deprecated.",
-      "Please specify the units of Catch via the Unit input (MT or LB).\n",
-      paste(measurements::conv_unit_options[["mass"]], collapse = ", ")
-    )
-  }
 
   # Start clean
   Pdata$Expansion_Factor_2 <- NA
@@ -127,12 +127,12 @@ getExpansion_2 <- function(Pdata,
   Pstrat <- sort(unique(Pdata$stratification))
 
   if (!identical(Pstrat, Catchgears)) {
-    message("Error:  mismatch between dataset and catch.")
-    message("Catch: ", paste(collapse = ", ", Catchgears))
-    message("Data: ", paste(collapse = ", ", Pstrat))
+    cli::cli_inform("Catch: ", paste(collapse = ", ", Catchgears))
+    cli::cli_inform("Data: ", paste(collapse = ", ", Pstrat))
+    cli::cli_abort("Mismatch between dataset and catch.")
 
     if (sum(Pstrat %in% Catchgears) == 0) {
-      stop(
+      cli::cli_abort(
         "No Pdata stratifications,\n",
         paste(Pstrat, collapse = ", "), "\n",
         "were found in catch columns,\n",
@@ -142,12 +142,12 @@ getExpansion_2 <- function(Pdata,
       Pdata <- Pdata[Pdata[, "stratification"] %in% colnames(Catch), ]
       Catch <- Catch[, c(colnames(Catch)[yearcol], unique(Pdata[, "stratification"]))]
       if (verbose) {
-        message("Data were truncated to just these stratifications:")
-        message(
+        cli::cli_inform("Data were truncated to just these stratifications:")
+        cli::cli_inform(
           "Catch: ",
           paste(sort(names(Catch)[-1]), collapse = ", ")
         )
-        message(
+        cli::cli_inform(
           "Pdata: ",
           paste(sort(unique(Pdata$stratification)), collapse = ", ")
         )
@@ -172,7 +172,8 @@ getExpansion_2 <- function(Pdata,
   # Convert Catch to lbs.
   Catch[, -1] <- measurements::conv_unit(
     to = "lbs",
-    x = Catch[, -1], from = Units
+    x = Catch[, -1], 
+    from = Units
   )
 
   # Matching rows in Pdata with Catch[, "Year"] and correct column in Catch
@@ -192,7 +193,7 @@ getExpansion_2 <- function(Pdata,
     ) %>%
       dplyr::count(Sum_Sampled_Lbs)
     if (length(NoCatch) > 0 && verbose) {
-      message(
+      cli::cli_inform(
         "No Catch was found for these rows in Pdata, where\n",
         "n is the number of rows with missing Catch info:"
       )
@@ -230,8 +231,8 @@ getExpansion_2 <- function(Pdata,
 
   #### Summary information
   if (verbose) {
-    message(nNA, " NA Expansion_Factor_2 values replaced by 1.")
-    message("Summary of Expansion_Factor_2")
+    cli::cli_inform(nNA, " NA Expansion_Factor_2 values replaced by 1.")
+    cli::cli_inform("Summary of Expansion_Factor_2")
     print(summary(Pdata$Expansion_Factor_2))
   }
 
@@ -247,7 +248,7 @@ getExpansion_2 <- function(Pdata,
         main = "Second-stage expansion values of NA replaced by 1"
       )
     } else {
-      message("Specify savedir if you want a figure to show the NA Expansion_Factor_2 values replaced by 1.")
+      cli::cli_inform("Specify savedir if you want a figure to show the NA Expansion_Factor_2 values replaced by 1.")
     }
   } # End if
 
