@@ -182,8 +182,8 @@ writeComps <- function(inComps,
   # Create fname if it is not give based on what types of comps we are doing
   if (is.null(fname)) {
     fname <- dplyr::case_when(
-      length(LEN) > 0 ~ "PacFIN_lengths.csv",
-      length(AGE) > 0 ~ "PacFIN_ages.csv"
+      length(LEN) > 0 ~ glue::glue("PacFIN_length_comps_{min(comp_bins)}-{max(comp_bins)}.csv"),
+      length(AGE) > 0 ~ glue::glue("PacFIN_age_comps_{min(comp_bins)}-{max(comp_bins)}.csv")
     )
   }
   if (verbose) {
@@ -197,7 +197,7 @@ writeComps <- function(inComps,
   )
 
   type_loc <- ifelse(
-    type == "Age",
+    length(AGE) > 0,
     yes = AGE,
     no = LEN
   )
