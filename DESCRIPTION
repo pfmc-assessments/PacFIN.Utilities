@@ -31,7 +31,6 @@ Imports:
     graphics,
     grDevices,
     lifecycle,
-    magrittr,
     measurements,
     methods,
     nwfscSurvey,
