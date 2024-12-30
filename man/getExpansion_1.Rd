@@ -2,47 +2,45 @@
 % Please edit documentation in R/getExpansion_1.R
 \name{getExpansion_1}
 \alias{getExpansion_1}
-\title{First-Stage Expansion for Composition Data}
+\title{First-Stage expansion for composition data}
 \usage{
 getExpansion_1(
   Pdata,
+  fa,
+  fb,
+  ma,
+  mb,
+  ua,
+  ub,
   maxExp = 0.95,
   Exp_WA = TRUE,
-  fa = NA,
-  fb = NA,
-  ma = NA,
-  mb = NA,
-  ua = NA,
-  ub = NA,
   verbose = TRUE,
-  plot = FALSE
+  plot = lifecycle::deprecated(),
+  savedir = NULL
 )
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
-\item{maxExp}{The maximum expansion factor
-(either a number or a quantile) for building expansions.
-Typically, the default is 0.95.
-Set \code{maxExp = Inf} to see largest values.}
+\item{fa, ma, ua}{Female-, male-, and unsexed-specific weight--length
+coefficients for Stock Synthesis where the relationships were calculated
+using length in cm and weight in kg. There are no default values. You must
+calculate these values and pass them to the function. If a particular sex
+does not pertain to your data, then just pass \code{NA} for that relationship.}
 
-\item{Exp_WA}{Default FALSE.  If TRUE, expand the WA samples.}
+\item{fb, mb, ub}{Female-, male, and unsexed-specific weight--length exponents
+for Stock Synthesis where the relationships were calculated using length in
+cm and weight in kg. If a particular sex does not pertain to your data,
+then just pass \code{NA} for that relationship.}
 
-\item{fa}{Female specific weight length coefficient.}
+\item{maxExp}{The maximum expansion factor (either a number or a quantile)
+for building expansions. Typically, the default is 0.95. Set \code{maxExp = Inf} to see largest values.}
 
-\item{fb}{Female specific weight length exponent.}
-
-\item{ma}{Male specific weight length coefficient.}
-
-\item{mb}{Male specific weight length exponent.}
-
-\item{ua}{Unsexed weight length coefficient.}
-
-\item{ub}{Unsexed weight length exponent.}
+\item{Exp_WA}{A logical values specifying if the samples from Washington
+should be exanded. The default is \code{FALSE}.}
 
 \item{verbose}{A logical specifying if output should be written to the
 screen or not. Good for testing and exploring your data but can be turned
@@ -50,47 +48,66 @@ off when output indicates information that you already know. The printing
 of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
-\item{plot}{Argument takes either a logical or character value specifying the file
-name if you want to write the plots to a disk rather than printing them
-to the console. If \code{plot = FALSE} no plots will be generated.
-If printing to the disk the character value should end in \code{.png}
-as \code{png()} is used to save the plotting device.}
+\item{plot}{Typically, a logical is passed defining if you would like the
+default plots to be created but users can also pass a string providing a
+path to a directory where those plots will be stored. The default is
+\code{FALSE} and no figures will be created unless this is changed. If \code{TRUE} is
+passed, then the figures will be saved to your current working directory.}
+
+\item{savedir}{A file path to the directory where the results will be saved.
+The default is NULL.}
 }
 \value{
-A \code{data.frame} where all of the original columns in
-\code{Pdata} remain unaltered but additional columns are added.
-In particular columns starting with
-Expansion_Factor_1 are available for setting the Final_Expansion_Factor.
+A \code{data.frame} where all of the original columns in \code{Pdata} remain unaltered
+but additional columns are added. In particular columns starting with
+\code{Expansion_Factor_1} are available for setting the \code{Final_Expansion_Factor}.
 }
 \description{
-First-stage expansions account for unsampled fish in the smallest
-measured unit. Where, in PacFIN data, the smallest unit is that
-which is available to the port or dockside sampler, so more than
-likely a trip rather than a tow as would be with survey data.
+First-stage expansions account for unsampled fish in the smallest measured
+unit. Where, in PacFIN data, the smallest measured unit typically a trip
+because that is what is available to the port or dockside sampler. Whereas,
+in survey data the smallest measured unit is typically a tow. Tow would be
+the smallest if we had samples from onboard observers rather than from
+dockside samplers.
 }
 \details{
-The workflow is to run \code{getExpansion_1} after \code{\link{cleanPacFIN}},
+The workflow is to run this function [cleanPacFIN(),
 which assures that all of the necessary columns are available and that the
-data are in the correct units.
-\code{getExpansion_1} calls
-\code{\link{EF1_Numerator}} and \code{\link{EF1_Denominator}}
-(i.e., the weight of sampled fish and
-the weight of all fish of the respective species in the tow)
-and returns their ratio.
+data are in the correct units. This function then calls two helper functions,
+\code{\link[=EF1_Numerator]{EF1_Numerator()}} and \code{\link[=EF1_Denominator]{EF1_Denominator()}} to calculate the weight of sampled fish and the weight of all fish of the respective species in the tow, respectively. Finally, the ratio of the two values is returned.
 }
 \section{Expansion}{
 
 \itemize{
 \item{Age data are expanded separately from lengths.}
 \item{WA fish are generally only expanded using Expansion_Factor_2.}
-\item{Other expansions are the product of Expansion_Factor_1 * Expansion_Factor_2}
+\item{Other expansions are the product of
+Expansion_Factor_1 * Expansion_Factor_2.
+}
 \item{For age-at-length comps, set Final_Expansion_Factor to 1 because
 each fish represents only itself.}
 }
 }
 
+\examples{
+# Calculate the weight--length parameters for input to this function
+bds_survey <- nwfscSurvey::pull_bio(
+  common_name = "widow rockfish",
+  survey = "NWFSC.Combo"
+  )
+pars <- nwfscSurvey::estimate_weight_length(
+  data = bds_survey,
+  col_length = "length_cm",
+  col_weight = "weight_kg",
+  verbose = FALSE
+ )
+}
 \seealso{
-Called within this function are
-\code{\link{EF1_Numerator}} \code{\link{EF1_Denominator}}.
-Called after this function should be \code{\link{getExpansion_2}}.
+\itemize{
+\item \code{\link[=cleanPacFIN]{cleanPacFIN()}} (upstream)
+\item \code{\link[nwfscSurvey:estimate_weight_length]{nwfscSurvey::estimate_weight_length()}} (upstream())
+\item \code{\link[=EF1_Numerator]{EF1_Numerator()}} (contained within)
+\item \code{\link[=EF1_Denominator]{EF1_Denominator()}} (contained within)
+\item \code{\link[=getExpansion_2]{getExpansion_2()}} (downstream)
+}
 }

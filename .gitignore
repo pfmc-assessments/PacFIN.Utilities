@@ -1,7 +1,9 @@
 .Rhistory
-inst/extdata/*
 PacFIN.*RData
 .Rproj.user
-data-raw/*
 password.txt
 .history/
+data-raw/*
+inst/extdata/*
+vignettes/*.html
+vignettes/*.md

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotWL.R
 \name{plotWL}
 \alias{plotWL}
-\title{Plot of the weight-length relationship by sex}
+\title{Plot of the weight--length relationship by sex}
 \usage{
 plotWL(
   length,
@@ -29,13 +29,13 @@ but it can also be passed to the \code{xlab} or \code{ylab} arguments of \link{p
 No additional formatting will take place.}
 }
 \description{
-Plot the weight-length relationship using \link[ggplot2:ggplot]{ggplot2::ggplot}.
+Plot the weight--length relationship using \link[ggplot2:ggplot]{ggplot2::ggplot}.
 Sex-specific relationships are plotted if available using shades of gray.
 Note that \code{sex} can be missing and a single relationship for all data
 will be plotted.
 }
 \seealso{
-\link{getWLpars} to calculate parameters of the weight-length relationship;
+\link{getWLpars} to calculate parameters of the weight--length relationship;
 \link{getweight} to predict weights from empirical lengths
 }
 \author{

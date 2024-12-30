@@ -13,20 +13,20 @@ tableSample(
 )
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
-\item{fname}{A filename with the appropriate extension,
-used to save the function output to the disk.
-For example, \code{LenComps.csv} or
-\code{file.path(getwd(), "SampleSize.csv")}.
-Full, relative, or simple paths are allowed because the argument is used as
-is, i.e., not redirected to a directory different than \code{getwd()}.
-Note that various functions within PacFIN.Utilities have different default
-values for this input argument.}
+\item{fname}{A filename with the appropriate extension, used to save the
+function output to the disk. For example, \code{LenComps.csv} or
+\code{file.path(getwd(), "SampleSize.csv")}. Full, relative, or simple paths are
+allowed because the argument is used as is, i.e., not redirected to a
+directory different than \code{\link[=getwd]{getwd()}}. Note that various functions within
+PacFIN.Utilities have different default values for this input argument. If
+\code{NULL} in \code{writeComps}, then the resulting file name will be based on what
+type of composition data is being generated, i.e., \code{PacFIN_lengths.out},
+or \code{PacFIN_ages.out} for length or age data, respectively.}
 
 \item{strat}{A vector of column names to stratify the output over. For
 example, if you wish to summarize by ageing method, then the argument

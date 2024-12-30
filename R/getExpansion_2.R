@@ -8,42 +8,41 @@
 #'
 #' @author Andi Stephens
 #'
-#' @template Pdata
+#' @inheritParams cleanPacFIN
 #' @param Catch A data frame of catch data, in pounds or in metric tonnes.
 #' @param Units The units of the \code{Catch} data frame, see
-#' \code{measurements::conv_unit_options[["mass"]]}
-#' for options. Typical units are metric tonnes (e.g., \code{"metric_ton"})
-#' because that is the unit used in Stock Synthesis, but
-#' expansions are done in pounds because fish weights are in pounds.
-#' Thus, catches also need to be in pounds and will be converted as such.
+#'   \code{measurements::conv_unit_options[["mass"]]} for options. Typical units
+#'   are metric tonnes (e.g., \code{"metric_ton"}) because that is the unit used
+#'   in Stock Synthesis, but expansions are done in pounds because fish weights
+#'   are in pounds. Thus, catches also need to be in pounds and will be
+#'   converted as such.
 #' @param Convert A deprecated argument that is now set to \code{NULL}.
-#' Previously, it was a logical that defined if the Catch should be converted from
-#' metric tonnes to pounds, where \code{TRUE} is now the same as setting
-#' \code{Units = "MT"} and \code{FALSE}, which was the default, would be
-#' \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
-#' i.e., \code{Convert = TRUE} or \code{Units = "MT"},
-#' such that it can be used within Stock Synthesis.
-#' todo: remove this input argument
-#' @template maxExp
+#'   Previously, it was a logical that defined if the Catch should be converted from
+#'   metric tonnes to pounds, where \code{TRUE} is now the same as setting
+#'   \code{Units = "MT"} and \code{FALSE}, which was the default, would be
+#'   \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
+#'   i.e., \code{Convert = TRUE} or \code{Units = "MT"},
+#'   such that it can be used within Stock Synthesis.
+#' @inheritParams getExpansion_1
 #' @param stratification.cols A vector of column names in `Pdata` that you want
-#' to use as strata. These will match the way in which the catches are transformed
-#' from long to wide prior to inputting them into this function. If you leave
-#' this argument empty, then `Pdata` must already have a column named
-#' `stratification`. The function will look in the column names of the `Catch`
-#' data to determine the appropriate separator to use between columns when
-#' pasting the words together, which is done using [apply] and [paste].
-#' Historically, it was mandatory to make this column yourself, but in 2021,
-#' this input argument was added to reduce the number of extraneous calls that
-#' were needed between functions.
-#' You can use as many levels of stratification as you want except year because
-#' it is already included in the call to [stats::aggregate].
-#' @template verbose
-#' @template savedir
+#'   to use as strata. These will match the way in which the catches are
+#'   transformed from long to wide prior to inputting them into this function.
+#'   If you leave this argument empty, then `Pdata` must already have a column
+#'   named `stratification`. The function will look in the column names of the
+#'   `Catch` data to determine the appropriate separator to use between columns
+#'   when pasting the words together, which is done using [apply] and [paste].
+#'   Historically, it was mandatory to make this column yourself, but in 2021,
+#'   this input argument was added to reduce the number of extraneous calls that
+#'   were needed between functions. You can use as many levels of stratification
+#'   as you want except year because it is already included in the call to
+#'   [stats::aggregate].
+#' @inheritParams cleanPacFIN
+#' 
 #'
-#' @seealso `getExpansion_2` is ran after [getExpansion_1] using the
-#' returned data frame.
+#' @seealso
+#' * [getExpansion_1] should be ran first
 #'
-#' @template secExpansion
+#' @inheritSection getExpansion_1 Expansion
 #'
 #' @return
 #' The input PacFIN dataset, with column \code{Expansion_Factor_2} appended.
@@ -59,38 +58,41 @@
 #'
 getExpansion_2 <- function(Pdata,
                            Catch,
-                           Units = c("MT", "LB"),
-                           Convert = NULL,
+                           Units = "LB",
+                           Convert = lifecycle::deprecated(),
                            maxExp = 0.95,
                            stratification.cols,
                            verbose = TRUE,
-                           savedir) {
+                           savedir = NULL) {
+  
+  if (lifecycle::is_present(Convert)) {
+    lifecycle::deprecate_soft(
+      when = "0.2.10",
+      what = "getExpansion_2(Convert)",
+      details = "Please specify the units of Catch via the Unit input (MT or LB).\n",
+    )
+  }
+  
+  nwfscSurvey::check_dir(dir = savedir, verbose = verbose)
   #### Set up
   # Check Unit input
-  Units <- match.arg(Units,
+  Units <- match.arg(
+    Units,
     several.ok = FALSE,
     choices = c(measurements::conv_unit_options[["mass"]], "MT", "LB")
   )
-  Units <- switch(Units,
+  Units <- switch(
+    Units,
     MT = "metric_ton",
     LB = "lbs",
     Units
   )
 
-  # Check and stop if Convert input is used since it is not deprecated
-  if (!is.null(Convert)) {
-    stop(
-      "Convert is deprecated.",
-      "Please specify the units of Catch via the Unit input (MT or LB).\n",
-      paste(measurements::conv_unit_options[["mass"]], collapse = ", ")
-    )
-  }
-
   # Start clean
   Pdata$Expansion_Factor_2 <- NA
-  if (length(Pdata$Trip_Sampled_Lbs) == 0) {
-    stop("Please run getExpansion_1 first")
-  } # End if
+  if (length(Pdata[["Trip_Sampled_Lbs"]]) == 0) {
+    cli::cli_abort("Please run {.func getExpansion_1} first")
+  }
 
   # Pdata must have a "stratification" column
   if (length(Pdata$stratification) == 0) {
@@ -109,7 +111,10 @@ getExpansion_2 <- function(Pdata,
           )
         }
       } else {
-        stop("Pdata must have stratification column or provide stratification.cols")
+        cli::cli_abort(
+          "Pdata must have stratification column or provide
+          {.var stratification.cols}."
+        )
       }
     }
   } # End if
@@ -122,12 +127,12 @@ getExpansion_2 <- function(Pdata,
   Pstrat <- sort(unique(Pdata$stratification))
 
   if (!identical(Pstrat, Catchgears)) {
-    message("Error:  mismatch between dataset and catch.")
-    message("Catch: ", paste(collapse = ", ", Catchgears))
-    message("Data: ", paste(collapse = ", ", Pstrat))
+    cli::cli_inform("Catch: ", paste(collapse = ", ", Catchgears))
+    cli::cli_inform("Data: ", paste(collapse = ", ", Pstrat))
+    cli::cli_abort("Mismatch between dataset and catch.")
 
     if (sum(Pstrat %in% Catchgears) == 0) {
-      stop(
+      cli::cli_abort(
         "No Pdata stratifications,\n",
         paste(Pstrat, collapse = ", "), "\n",
         "were found in catch columns,\n",
@@ -137,12 +142,12 @@ getExpansion_2 <- function(Pdata,
       Pdata <- Pdata[Pdata[, "stratification"] %in% colnames(Catch), ]
       Catch <- Catch[, c(colnames(Catch)[yearcol], unique(Pdata[, "stratification"]))]
       if (verbose) {
-        message("Data were truncated to just these stratifications:")
-        message(
+        cli::cli_inform("Data were truncated to just these stratifications:")
+        cli::cli_inform(
           "Catch: ",
           paste(sort(names(Catch)[-1]), collapse = ", ")
         )
-        message(
+        cli::cli_inform(
           "Pdata: ",
           paste(sort(unique(Pdata$stratification)), collapse = ", ")
         )
@@ -156,18 +161,19 @@ getExpansion_2 <- function(Pdata,
 
   # Get the total lbs sampled by year and stratification
   strat <- c("fishyr", "stratification")
-  tows <- tows %>%
+  tows <- tows |>
     # ... are levels to aggregate over
-    dplyr::group_by(fishyr, stratification) %>%
+    dplyr::group_by(fishyr, stratification) |>
     dplyr::mutate(
       Sum_Sampled_Lbs = sum(Trip_Sampled_Lbs, na.rm = TRUE)
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
   # Convert Catch to lbs.
   Catch[, -1] <- measurements::conv_unit(
     to = "lbs",
-    x = Catch[, -1], from = Units
+    x = Catch[, -1], 
+    from = Units
   )
 
   # Matching rows in Pdata with Catch[, "Year"] and correct column in Catch
@@ -187,7 +193,7 @@ getExpansion_2 <- function(Pdata,
     ) %>%
       dplyr::count(Sum_Sampled_Lbs)
     if (length(NoCatch) > 0 && verbose) {
-      message(
+      cli::cli_inform(
         "No Catch was found for these rows in Pdata, where\n",
         "n is the number of rows with missing Catch info:"
       )
@@ -225,8 +231,8 @@ getExpansion_2 <- function(Pdata,
 
   #### Summary information
   if (verbose) {
-    message(nNA, " NA Expansion_Factor_2 values replaced by 1.")
-    message("Summary of Expansion_Factor_2")
+    cli::cli_inform(nNA, " NA Expansion_Factor_2 values replaced by 1.")
+    cli::cli_inform("Summary of Expansion_Factor_2")
     print(summary(Pdata$Expansion_Factor_2))
   }
 
@@ -242,7 +248,7 @@ getExpansion_2 <- function(Pdata,
         main = "Second-stage expansion values of NA replaced by 1"
       )
     } else {
-      message("Specify savedir if you want a figure to show the NA Expansion_Factor_2 values replaced by 1.")
+      cli::cli_inform("Specify savedir if you want a figure to show the NA Expansion_Factor_2 values replaced by 1.")
     }
   } # End if
 

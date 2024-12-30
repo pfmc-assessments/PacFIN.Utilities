@@ -4,14 +4,18 @@
 \alias{EF1_Numerator}
 \title{Calculate the numerator for the first level expansion factor}
 \usage{
-EF1_Numerator(Pdata, verbose = TRUE, plot = FALSE)
+EF1_Numerator(
+  Pdata,
+  verbose = TRUE,
+  plot = lifecycle::deprecated(),
+  savedir = NULL
+)
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
 \item{verbose}{A logical specifying if output should be written to the
 screen or not. Good for testing and exploring your data but can be turned
@@ -19,11 +23,15 @@ off when output indicates information that you already know. The printing
 of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
-\item{plot}{Argument takes either a logical or character value specifying the file
+\item{plot}{Deprecated as of version 0.2.10 and replaced with savedir.
+Argument takes either a logical or character value specifying the file
 name if you want to write the plots to a disk rather than printing them
 to the console. If \code{plot = FALSE} no plots will be generated.
 If printing to the disk the character value should end in \code{.png}
 as \code{png()} is used to save the plotting device.}
+
+\item{savedir}{A file path to the directory where the results will be saved.
+The default is NULL.}
 }
 \value{
 A \code{Pdata} with additional columns, where

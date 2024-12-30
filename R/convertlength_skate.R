@@ -4,7 +4,7 @@
 #' Conversion parameters were derived from
 #' West Coast Groundfish Bottom Trawl Survey data.
 #'
-#' @template Pdata
+#' @inheritParams cleanPacFIN
 #' @param returntype A character value from the list supplied that specifies
 #' the data you want returned.
 #' \itemize{

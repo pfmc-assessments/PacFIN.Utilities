@@ -4,8 +4,8 @@
 #' Lengths are converted for skates from type R and A to actual lengths.
 #' Other, more standard lengths, are filtered for types in `keep`.
 #'
-#' @template Pdata
-#' @template verbose
+#' @inheritParams cleanPacFIN
+#' @inheritParams cleanPacFIN
 #' @param keep A vector of values that represent what you want to keep. Values
 #'   of `NA`, `""`, and numeric values are acceptable. Often, it is helpful to
 #'   run `unique(, useNA = "always") on the relevant data prior to running the

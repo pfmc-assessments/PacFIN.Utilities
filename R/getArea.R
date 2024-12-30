@@ -42,8 +42,8 @@
 #' Additionally, 3D and 3N make up VC, which is Canadian catches within the
 #' Vancouver area.
 #'
-#' @template Pdata
-#' @template verbose
+#' @inheritParams cleanPacFIN
+#' @inheritParams cleanPacFIN
 #'
 #' @export
 #' @seealso

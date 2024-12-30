@@ -1,6 +1,6 @@
-#' Calculate weight-length relationship parameters
+#' Calculate weight--length relationship parameters
 #'
-#' Estimate parameters of the weight-length relationship for each
+#' Estimate parameters of the weight--length relationship for each
 #' sex and all sexes combined, where the latter includes unsexed fish.
 #'
 #' @param data A data frame containing empirical weights and lengths
@@ -15,14 +15,14 @@
 #' be in kilograms The default value is `weightkg`, which is added
 #' to a data set automatically when running [cleanPacFIN].
 #' Using kilograms is the default because Stock Synthesis assumes the
-#' weight-length parameters are calculated using centimeters and kilograms.
+#' weight--length parameters are calculated using centimeters and kilograms.
 #' The reported values are easily scaled to give you results in grams if
 #' you wish to have more standard parameter estimates.
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #'
 #' @author Kelli F. Johnson
 #' @export
-#' @return A data frame of weight-length parameters by sex.
+#' @return A data frame of weight--length parameters by sex.
 #' Parameters A and B are in the appropriate units to input
 #' into Stock Synthesis Wtlen_1_Fem and Wtlen_2_Fem, or
 #' Wtlen_1_Mal and Wtlen_1_Mal, parameters in the
@@ -53,7 +53,7 @@ getWLpars <- function(data,
   ]
   if (verbose) {
     message(
-      "Calculating the weight-length relationship from ",
+      "Calculating the weight--length relationship from ",
       nrow(data), "\nfish because ", dims[1] - nrow(data),
       " fish did not have empirical weights and lengths."
     )
@@ -79,7 +79,7 @@ getWLpars <- function(data,
     data.frame()
 
   if (verbose) {
-    message("Weight-Length model results by SEX:")
+    message("weight--length model results by SEX:")
     utils::capture.output(lapply(mresults[["fits"]], summary), type = "message")
   }
 

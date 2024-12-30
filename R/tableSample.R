@@ -3,8 +3,8 @@
 #' Create a table of samples by fleet and year to
 #' be included in an assessment document.
 #'
-#' @template Pdata
-#' @template fname
+#' @inheritParams cleanPacFIN
+#' @inheritParams writeComps
 #' @param strat A vector of column names to stratify the output over. For
 #'   example, if you wish to summarize by ageing method, then the argument
 #'   would look like `strat = "agemethod"` or, if you want to look at fleets

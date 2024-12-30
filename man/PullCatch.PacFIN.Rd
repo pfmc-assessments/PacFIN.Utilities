@@ -52,8 +52,7 @@ password with anyone or push code to a repository that has your password
 saved in it.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
-The default is the current working directory.
-The path can be relative or absolute.}
+The default is NULL.}
 
 \item{addnominal}{A logical, where the default, \code{TRUE}, adds nominal
 PacFIN species code to \code{pacfin_species_code}. \code{FALSE}

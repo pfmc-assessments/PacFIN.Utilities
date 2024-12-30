@@ -1,6 +1,6 @@
-#' Plot of the weight-length relationship by sex
+#' Plot of the weight--length relationship by sex
 #'
-#' Plot the weight-length relationship using [ggplot2::ggplot].
+#' Plot the weight--length relationship using [ggplot2::ggplot].
 #' Sex-specific relationships are plotted if available using shades of gray.
 #' Note that `sex` can be missing and a single relationship for all data
 #' will be plotted.
@@ -13,7 +13,7 @@
 #' @author Kelli F. Johnson
 #' @export
 #' @seealso
-#' [getWLpars] to calculate parameters of the weight-length relationship;
+#' [getWLpars] to calculate parameters of the weight--length relationship;
 #' [getweight] to predict weights from empirical lengths
 #'
 plotWL <- function(length,
@@ -42,7 +42,7 @@ plotWL <- function(length,
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::theme_bw() +
-    scale_colour_grey() +
-    scale_fill_grey()
+    ggplot2::scale_colour_grey() +
+    ggplot2::scale_fill_grey()
   return(gg)
 }
