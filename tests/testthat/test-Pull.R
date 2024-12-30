@@ -34,11 +34,11 @@ test_that("Pull works for sablefish", {
     "),
     as.is = FALSE
   )
-  catch_summary <- catch.pacfin %>%
-    dplyr::group_by(LANDING_YEAR) %>%
+  catch_summary <- catch.pacfin |>
+    dplyr::group_by(LANDING_YEAR) |>
     dplyr::summarize(
       CATCH_MT = sum(ROUND_WEIGHT_MTONS)
-    ) %>%
+    ) |>
     dplyr::arrange(LANDING_YEAR)
   age_year <- RODBC::sqlQuery(
     database,
@@ -51,11 +51,11 @@ test_that("Pull works for sablefish", {
     "),
     as.is = FALSE
   )
-  bds_summary <- bds.pacfin %>%
-    dplyr::group_by(SAMPLE_YEAR) %>%
+  bds_summary <- bds.pacfin |>
+    dplyr::group_by(SAMPLE_YEAR) |>
     dplyr::summarize(
       MEAN_AGE = median(FINAL_FISH_AGE_IN_YEARS, na.rm = TRUE)
-    ) %>%
+    ) |>
     dplyr::arrange(SAMPLE_YEAR)
 
   # Tests for both data frames
@@ -68,7 +68,7 @@ test_that("Pull works for sablefish", {
   # Tests for biological data
   # Have to use a tolerance of 1 because medians are calculated differently
   expect_true(all(
-    abs(bds_summary %>% dplyr::pull(MEAN_AGE) - age_year[, "MEAN_AGE"]) <= 1,
+    abs(bds_summary |> dplyr::pull(MEAN_AGE) - age_year[, "MEAN_AGE"]) <= 1,
     na.rm = TRUE
   ))
   expect_equal(NROW(dplyr::filter(bds.pacfin, SAMPLE_YEAR == 2008)), 12552)

@@ -58,14 +58,14 @@
 #' catch.pacfin <- PullCatch.PacFIN("PTRL")
 #' # Check for confidentiality by year
 #' # though you would also want to do this by your gear types
-#' dplyr::group_by(catch.pacfin, LANDING_YEAR) %>%
-#'   dplyr::summarize(count = dplyr::n_distinct(VESSEL_ID)) %>%
+#' dplyr::group_by(catch.pacfin, LANDING_YEAR) |>
+#'   dplyr::summarize(count = dplyr::n_distinct(VESSEL_ID)) |>
 #'   dplyr::filter(count < 4)
 #'
 #' # look for foreign landings
 #' catch.pacfin <- PullCatch.PacFIN("PTRL", council_code = c("*", "N"))
 #' # Counts of NROW() by area code(s)
-#' dplyr::group_by(catch.pacfin, ORIG_PACFIN_CATCH_AREA_CODE) %>%
+#' dplyr::group_by(catch.pacfin, ORIG_PACFIN_CATCH_AREA_CODE) |>
 #'   dplyr::count()
 #' }
 #'
@@ -125,7 +125,7 @@ PullCatch.PacFIN <- function(pacfin_species_code,
       "\nThe following PACFIN_SPECIES_CODE(s) were found:\n",
       paste0(
         utils::capture.output(
-          dplyr::count(catch.pacfin, PACFIN_SPECIES_CODE) %>%
+          dplyr::count(catch.pacfin, PACFIN_SPECIES_CODE) |>
             dplyr::mutate(PACFIN_SPECIES_CODE = sQuote(PACFIN_SPECIES_CODE))
         ),
         collapse = "\n"

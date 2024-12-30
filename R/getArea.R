@@ -77,7 +77,7 @@ getArea <- function(Pdata,
     col = "new",
     tidyr::matches("^PSMFC_|CATCH_AREA|CDFW_AREA_BLOCK"),
     sep = " --- "
-  ) %>%
+  ) |>
     dplyr::pull(new)
 
   # Use PSMFC column to find Puget Sound area
@@ -100,7 +100,7 @@ getArea <- function(Pdata,
       dplyr::count(
         data.frame(region = out, strings),
         strings, region
-      ) %>%
+      ) |>
         dplyr::filter(!is.na(region))
     )
   }

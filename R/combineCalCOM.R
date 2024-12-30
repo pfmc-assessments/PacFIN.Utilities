@@ -49,7 +49,7 @@ combineCalCOM <- function(Pdata, CalCOM) {
   check_column_names <- purrr::map_lgl(
     colnames(CalCOM),
     .f = ~ .x %in% calcom_columns_example
-  ) %>%
+  ) |>
     all()
   if (!check_column_names) {
     message(
@@ -87,7 +87,7 @@ combineCalCOM <- function(Pdata, CalCOM) {
   CalCOM[[name_area]][CalCOM$PORT %in% c("OSB", "MRO", "2")] <- "1A"
 
   # Create PacFIN format matrix and fill
-  CalCOM <- CalCOM %>%
+  CalCOM <- CalCOM |>
     dplyr::rename(
       PACFIN_SPECIES_CODE = "SPECIES",
       SAMPLE_NUMBER = "SAMPLE_NO",
@@ -99,7 +99,7 @@ combineCalCOM <- function(Pdata, CalCOM) {
       WEIGHT_OF_LANDING_LBS = "TOTAL_WGT",
       CLUSTER_WEIGHT_LBS = "SumOfWEIGHT",
       AGE_METHOD1 = "AGE_METHOD"
-    ) %>%
+    ) |>
     dplyr::mutate(
       SEX_CODE = nwfscSurvey::codify_sex(SEX),
       AGENCY_CODE = "CalCOM",
@@ -119,7 +119,7 @@ combineCalCOM <- function(Pdata, CalCOM) {
       SAMPLE_TYPE = "M",
       PACFIN_GEAR_CODE = "GFT",
       AGENCY_GEAR_CODE = PACFIN_GEAR_CODE
-    ) %>%
+    ) |>
     dplyr::select(-SAMPLE_DATE, -AGE, -SEX, -SumOfTOTAL_CT)
 
   # Determine what colnames are in Pdata
@@ -139,6 +139,6 @@ combineCalCOM <- function(Pdata, CalCOM) {
 
 check_pacfin_species_code_calcom <- function(x) {
   species_codes_in_calcom_bin <- c("DOVR", "EGLS", "PTRL", "REX")
-  purrr::map_lgl(species_codes_in_calcom_bin, .f = ~ .x %in% x) %>%
+  purrr::map_lgl(species_codes_in_calcom_bin, .f = ~ .x %in% x) |>
     any()
 }

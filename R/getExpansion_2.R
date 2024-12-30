@@ -190,7 +190,7 @@ getExpansion_2 <- function(Pdata,
     NoCatch <- dplyr::group_by(
       .data = trips_without_catch,
       fishyr, stratification
-    ) %>%
+    ) |>
       dplyr::count(Sum_Sampled_Lbs)
     if (length(NoCatch) > 0 && verbose) {
       cli::cli_inform(

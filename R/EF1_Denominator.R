@@ -116,8 +116,7 @@ EF1_Denominator <- function(Pdata,
 
   #### Calculate sample weight using FISH_WEIGHT in lbs
   # TODO: use !! instead of the actual column name
-  # TODO: use native pipe |>
-  Pdata <- Pdata %>%
+  Pdata <- Pdata |>
     # Use weightkg if available and calculated from WL relationship when NA
     # Note the change in units for weightkg from KG to LBS
     dplyr::mutate(
@@ -125,18 +124,18 @@ EF1_Denominator <- function(Pdata,
         is.na(weightkg) ~ LW_Calc_Wt,
         TRUE ~ weightkg * 2.20462
       )
-    ) %>%
+    ) |>
     # Group by SAMPLE_NO so all subsequent calculations are done on subsets
     # of the data, i.e., mean(bestweight) is mean of the bestweight in a
     # specific sample
-    dplyr::group_by(SAMPLE_NO) %>%
+    dplyr::group_by(SAMPLE_NO) |>
     dplyr::mutate(
       bestweight = ifelse(
         is.na(bestweight),
         mean(bestweight),
         bestweight
       )
-    ) %>%
+    ) |>
     # Calculate sample weights and weight of unsexed fish per SAMPLE_NO
     dplyr::mutate(
       Wt_Sampled_3_L = sum(
@@ -149,7 +148,7 @@ EF1_Denominator <- function(Pdata,
       ),
       UNK_WT = sum(ifelse(SEX == "U", bestweight, 0)),
       UNK_NUM = sum(SEX == "U")
-    ) %>%
+    ) |>
     # Back out the weight of fish that have no length or Age for each
     # specific sample weight, if all are NA in sample, then set to 0.
     dplyr::mutate(
@@ -159,24 +158,24 @@ EF1_Denominator <- function(Pdata,
       Wt_Sampled_1_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
         FEMALES_WGT + MALES_WGT + UNK_WT) *
         ifelse(all(is.na(length)), 0, 1)
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(SAMPLE_NO, CLUSTER_NO) %>%
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::group_by(SAMPLE_NO, CLUSTER_NO) |>
     # Do the same for CLUSTER_WGT
     dplyr::mutate(
       Wt_Sampled_2_A = (-1 * sum(ifelse(is.na(Age), bestweight, 0)) +
         CLUSTER_WGT) * ifelse(all(is.na(Age)), 0, 1),
       Wt_Sampled_2_L = (-1 * sum(ifelse(is.na(length), bestweight, 0)) +
         CLUSTER_WGT) * ifelse(all(is.na(length)), 0, 1)
-    ) %>%
+    ) |>
     # Bring the calculations back to the full scale of the data frame
-    dplyr::ungroup() %>%
+    dplyr::ungroup() |>
     # Coalesce sets things to downstream values, only if NA, i.e.,
     # Wt_Sampled_[AL] is set by priority left to right 1, 2, 3
     dplyr::mutate(
       Wt_Sampled_A = dplyr::coalesce(Wt_Sampled_1_A, Wt_Sampled_2_A, Wt_Sampled_3_A),
       Wt_Sampled_L = dplyr::coalesce(Wt_Sampled_1_L, Wt_Sampled_2_L, Wt_Sampled_3_L)
-    ) %>%
+    ) |>
     # Return a data frame rather than a tibble
     data.frame()
 

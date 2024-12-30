@@ -117,7 +117,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
       "\nThe following PACFIN_SPECIES_CODE(s) were found:\n",
       paste0(
         utils::capture.output(
-          dplyr::count(data_raw, PACFIN_SPECIES_CODE) %>%
+          dplyr::count(data_raw, PACFIN_SPECIES_CODE) |>
             dplyr::mutate(PACFIN_SPECIES_CODE = sQuote(PACFIN_SPECIES_CODE))
         ),
         collapse = "\n"
@@ -160,20 +160,20 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   # Check that WA purposive samples only have duplicated information in
   # FISH_WEIGHT (because they will be made wider later)
   fish_id <- duplicated(data_raw[, c("FISH_ID", "AGE_SEQUENCE_NUMBER")])
-  data_fish <- data_raw %>%
+  data_fish <- data_raw |>
     dplyr::filter(
       AGENCY_CODE == "W",
       SAMPLE_METHOD_CODE == "P",
       FISH_ID %in% data_raw[fish_id, "FISH_ID"]
-    ) %>%
+    ) |>
     dplyr::group_by(FISH_ID)
   if (NROW(data_fish)) {
-    check <- data_fish %>%
-      dplyr::select_if(~ !all(is.na(.))) %>%
-      dplyr::select(-BDS_ID, -FISH_WEIGHT) %>%
+    check <- data_fish |>
+      dplyr::select_if(~ !all(is.na(.))) |>
+      dplyr::select(-BDS_ID, -FISH_WEIGHT) |>
       dplyr::group_map(
         .f = ~ duplicated(.x)
-      ) %>%
+      ) |>
       do.call(what = "rbind")
     if (!all(check[, 2])) {
       stop(
@@ -197,38 +197,38 @@ PullBDS.PacFIN <- function(pacfin_species_code,
       "removed prior to returning the data. Please notify the agency that\n",
       "provided the following duplicated samples:"
     )
-    data_raw[fish_id, ] %>%
-      dplyr::group_by(AGENCY_CODE, SAMPLE_YEAR, SAMPLE_NUMBER) %>%
-      dplyr::count() %>%
+    data_raw[fish_id, ] |>
+      dplyr::group_by(AGENCY_CODE, SAMPLE_YEAR, SAMPLE_NUMBER) |>
+      dplyr::count() |>
       print(n = sum(fish_id))
   }
   rm(fish_id)
 
   # todo: think about not changing column names
-  data <- data_raw %>%
+  data <- data_raw |>
     # Fix the data
-    dplyr::filter(!is.na(FISH_ID)) %>%
+    dplyr::filter(!is.na(FISH_ID)) |>
     # Move duplicated FISH_WEIGHT to FISH_WEIGHT_GUTTED from WA and remove
     # FISH_IDs that are duplicated for CA
-    dplyr::group_by(FISH_ID) %>%
+    dplyr::group_by(FISH_ID) |>
     dplyr::mutate(
       weight_type = ifelse(
         test = FISH_WEIGHT == max(FISH_WEIGHT),
         yes = "FISH_WEIGHT",
         no = "FISH_WEIGHT_GUTTED"
       )
-    ) %>%
+    ) |>
     tidyr::pivot_wider(
       id_cols = !dplyr::matches("BDS_ID"),
       names_from = "weight_type",
       values_from = "FISH_WEIGHT",
       values_fn = list(FISH_WEIGHT = unique)
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::relocate(FISH_WEIGHT, .after = FORK_LENGTH_IS_ESTIMATED) %>%
-    dplyr::select(-"NA") %>%
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::relocate(FISH_WEIGHT, .after = FORK_LENGTH_IS_ESTIMATED) |>
+    dplyr::select(-"NA") |>
     # Continue fixing the data
-    dplyr::select(-SAMPLE_AGENCY) %>%
+    dplyr::select(-SAMPLE_AGENCY) |>
     dplyr::mutate(
       FISH_LENGTH_TYPE_CODE = ifelse(
         test = FISH_LENGTH_TYPE_CODE != FALSE,
@@ -236,10 +236,10 @@ PullBDS.PacFIN <- function(pacfin_species_code,
         "F"
       ),
       AGE_SEQUENCE_NUMBER = tidyr::replace_na(AGE_SEQUENCE_NUMBER, 1)
-    ) %>%
+    ) |>
     # Do some renaming of columns
-    dplyr::rename(age = dplyr::matches("^AGE_IN_YEARS")) %>%
-    dplyr::rename(agedby = dplyr::matches("PERSON_WHO_AGED")) %>%
+    dplyr::rename(age = dplyr::matches("^AGE_IN_YEARS")) |>
+    dplyr::rename(agedby = dplyr::matches("PERSON_WHO_AGED")) |>
     dplyr::rename(AGE_METHOD = dplyr::matches("AGE_METHOD_CODE"))
 
   # Long to wide to facilitate estimating ageing error
@@ -247,7 +247,7 @@ PullBDS.PacFIN <- function(pacfin_species_code,
   # each BDS_ID is an age read
   # identical across rows: SAMPLE_ID, SAMPLE_NO, FISH_ID
   # unique across rows: BDS_ID, AGE_ID, AGE_SEQUENCE_NUMBER
-  bds.pacfin <- data %>%
+  bds.pacfin <- data |>
     tidyr::pivot_wider(
       id_cols = !dplyr::matches("BDS_ID"),
       names_from = AGE_SEQUENCE_NUMBER,

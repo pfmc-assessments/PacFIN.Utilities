@@ -136,7 +136,7 @@ getAge <- function(Pdata,
   }
 
   # Standardize all columns that have AGE_METHOD, AGE_METHOD2, ...
-  Pdata <- Pdata %>%
+  Pdata <- Pdata |>
     dplyr::mutate(dplyr::across(
       dplyr::matches("AGE_M"),
       .fns = codify_age_method
@@ -156,12 +156,12 @@ getAge <- function(Pdata,
   # 8300 WA records of various spp emailed Theresa on 2021-03-06 and emailed
   # Kristen H. again on 2023-04-07 to remind her of the discussion where
   # she had responded and said she was checking with IT
-  all_methods <- Pdata %>%
+  all_methods <- Pdata |>
     tidyr::unite(
       all_methods,
       dplyr::matches("^AGE_METHOD"),
       sep = "--"
-    ) %>%
+    ) |>
     dplyr::pull(all_methods)
   # Remove Age if none of the available age methods are in keep
   out <- dplyr::case_when(
@@ -171,36 +171,36 @@ getAge <- function(Pdata,
 
   if (verbose) {
     # Make summary objects
-    text_age_methods <- Pdata %>%
-      dplyr::select(dplyr::starts_with("AGE_M")) %>%
-      unlist() %>%
-      unique() %>%
-      sort(na.last = TRUE) %>%
-      sQuote() %>%
+    text_age_methods <- Pdata |>
+      dplyr::select(dplyr::starts_with("AGE_M")) |>
+      unlist() |>
+      unique() |>
+      sort(na.last = TRUE) |>
+      sQuote() |>
       glue::glue_collapse(sep = ", ", last = " and ")
     table_summary <- dplyr::mutate(
       .data = Pdata,
       final_age = out,
       age = rlang::eval_tidy(dplyr::sym(column_with_age))
-    ) %>%
-      dplyr::count(age, final_age) %>%
+    ) |>
+      dplyr::count(age, final_age) |>
       dplyr::arrange(final_age)
     table_summary_na <- dplyr::filter(
       .data = table_summary,
       is.na(final_age) &
         !is.na(age)
-    ) %>%
+    ) |>
       dplyr::select(-final_age)
     table_summary_n_age <- dplyr::filter(
       .data = table_summary,
       !is.na(final_age)
-    ) %>%
-      dplyr::select(, -age) %>%
+    ) |>
+      dplyr::select(, -age) |>
       tidyr::complete(
         final_age = 0:max(final_age, na.rm = TRUE),
         fill = list(n = 0)
-      ) %>%
-      dplyr::pull(n) %>%
+      ) |>
+      dplyr::pull(n) |>
       paste(collapse = ", ")
     text_n_na <- if (NROW(table_summary_na) > 0) {
       apply(
@@ -217,12 +217,12 @@ getAge <- function(Pdata,
       dplyr::matches("^age[0-9]"),
       na.rm = TRUE,
       sep = ""
-    ) %>%
+    ) |>
       dplyr::filter(
         is.na(rlang::eval_tidy(dplyr::sym(column_with_age))),
         all_ages != ""
-      ) %>%
-      NROW() %>%
+      ) |>
+      NROW() |>
       {
         glue::glue("{.} rows were missing a final age")
       }

@@ -50,13 +50,13 @@ formatCatch <- function(catch,
   }
 
   # Reshape the data into wide format and replace NA with zeros
-  out <- catch %>%
+  out <- catch |>
     tidyr::pivot_wider(
       values_fn = sum, values_fill = 0,
       id_cols = dplyr::matches(match = yearname, ignore.case = TRUE),
       names_from = strat, names_sep = ".",
       values_from = dplyr::matches(match = valuename, ignore.case = TRUE)
-    ) %>%
+    ) |>
     data.frame()
 
   return(out)

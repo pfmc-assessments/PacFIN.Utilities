@@ -29,11 +29,11 @@
 getAgeMethod <- function(Pdata, verbose = TRUE) {
   # Codify the AGE_METHOD[0-9]+ columns to use the standardized ageing error
   # names returned from codify_age_method()
-  text_original_methods <- Pdata %>%
-    dplyr::select(dplyr::starts_with("AGE_M")) %>%
-    unlist() %>%
-    unique() %>%
-    sQuote() %>%
+  text_original_methods <- Pdata |>
+    dplyr::select(dplyr::starts_with("AGE_M")) |>
+    unlist() |>
+    unique() |>
+    sQuote() |>
     glue::glue_collapse(sep = ", ", last = " or ")
   Pdata <- dplyr::mutate(
     .data = Pdata,
@@ -82,7 +82,7 @@ getAgeMethod <- function(Pdata, verbose = TRUE) {
     returned_methods_n <- table(used_method, useNA = "always")
     text_returned_methods_n <- glue::glue(
       "{names(returned_methods_n)} (n = {returned_methods_n})"
-    ) %>%
+    ) |>
       glue::glue_collapse(sep = ", ", last = " and ")
     cli::cli_bullets(c(
       " " = "{.fn getAgeMethod} summary information -",
