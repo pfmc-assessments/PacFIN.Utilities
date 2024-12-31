@@ -55,6 +55,16 @@
 #' Catches were already stratified (i.e., summed by group placed in a column
 #' for a given year or row). Catches are converted to pounds prior to dividing.
 #' Thus, per-stratum Expansion_Factor_2 is the catch / sampled catch.
+#' 
+#' @examples 
+#' \dontrun{
+#' data_exp2 <- getExpansion_2(
+#'   Pdata = data_exp1,
+#'   Catch = catch_formatted,
+#'   Units = "MT",
+#'   maxExp = 0.95
+#'   )
+#' }
 #'
 getExpansion_2 <- function(Pdata,
                            Catch,

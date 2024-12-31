@@ -10,7 +10,6 @@ get_pacfin_expansions(
   weight_length_estimates,
   stratification.cols,
   Units = "MT",
-  Comps = c("LEN", "AGE"),
   maxExp = 0.95,
   Exp_WA = TRUE,
   verbose = TRUE,
@@ -24,6 +23,10 @@ Information Network (PacFIN) data warehouse, which originated in 2014 and
 are pulled using sql calls.}
 
 \item{Catch}{A data frame of catch data, in pounds or in metric tonnes.}
+
+\item{weight_length_estimates}{Dataframe of length-weight estimates with the
+the following columns: sex, A, B. It is recommended to use to use
+\code{nwfscSurvey::estimate_weight_length()} and to use survey data.}
 
 \item{stratification.cols}{A vector of column names in \code{Pdata} that you want
 to use as strata. These will match the way in which the catches are
@@ -59,23 +62,6 @@ default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 
 \item{savedir}{A file path to the directory where the results will be saved.
 The default is NULL.}
-
-\item{fa, ma, ua}{Female-, male-, and unsexed-specific weight--length
-coefficients for Stock Synthesis where the relationships were calculated
-using length in cm and weight in kg. There are no default values. You must
-calculate these values and pass them to the function. If a particular sex
-does not pertain to your data, then just pass \code{NA} for that relationship.}
-
-\item{fb, mb, ub}{Female-, male, and unsexed-specific weight--length exponents
-for Stock Synthesis where the relationships were calculated using length in
-cm and weight in kg. If a particular sex does not pertain to your data,
-then just pass \code{NA} for that relationship.}
-
-\item{plot}{Typically, a logical is passed defining if you would like the
-default plots to be created but users can also pass a string providing a
-path to a directory where those plots will be stored. The default is
-\code{FALSE} and no figures will be created unless this is changed. If \code{TRUE} is
-passed, then the figures will be saved to your current working directory.}
 }
 \value{
 A \code{data.frame} with expanded data up to the trip and total catch level.
@@ -118,6 +104,7 @@ each fish represents only itself.}
 }
 
 \examples{
+\dontrun{
 # Calculate the weight--length parameters for input to this function
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = "widow rockfish",
@@ -129,6 +116,15 @@ pars <- nwfscSurvey::estimate_weight_length(
   col_weight = "weight_kg",
   verbose = FALSE
  )
+ 
+expanded_comps <- get_pacfin_expansions(
+  Pdata = bds_cleaned,
+  Catch = catch_dataframe,
+  weight_length_estimates = pars,
+  Units = "MT",
+  Comps = "LEN",
+  maxExp = 0.95)
+}
 }
 \seealso{
 \itemize{

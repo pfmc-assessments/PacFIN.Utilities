@@ -42,20 +42,14 @@
 #' }
 #'
 #' @inheritParams cleanPacFIN
+#' @param weight_length_estimates Dataframe of length-weight estimates with the 
+#'   the following columns: sex, A, B. It is recommended to use to use 
+#'   `nwfscSurvey::estimate_weight_length()` and to use survey data. 
 #' @param maxExp The maximum expansion factor (either a number or a quantile)
 #'   for building expansions. Typically, the default is 0.95. Set `maxExp =
 #'   Inf` to see largest values.
 #' @param Exp_WA A logical values specifying if the samples from Washington
 #'   should be exanded. The default is `FALSE`.
-#' @param fa,ma,ua Female-, male-, and unsexed-specific weight--length
-#'   coefficients for Stock Synthesis where the relationships were calculated
-#'   using length in cm and weight in kg. There are no default values. You must
-#'   calculate these values and pass them to the function. If a particular sex
-#'   does not pertain to your data, then just pass `NA` for that relationship.
-#' @param fb,mb,ub Female-, male, and unsexed-specific weight--length exponents
-#'   for Stock Synthesis where the relationships were calculated using length in
-#'   cm and weight in kg. If a particular sex does not pertain to your data,
-#'   then just pass `NA` for that relationship.
 #' @param Catch A data frame of catch data, in pounds or in metric tonnes.
 #' @param Units The units of the \code{Catch} data frame, see
 #'   \code{measurements::conv_unit_options[["mass"]]} for options. Typical units
@@ -75,14 +69,10 @@
 #'   were needed between functions. You can use as many levels of stratification
 #'   as you want except year because it is already included in the call to
 #'   [stats::aggregate].
-#' @param plot Typically, a logical is passed defining if you would like the
-#'   default plots to be created but users can also pass a string providing a
-#'   path to a directory where those plots will be stored. The default is
-#'   `FALSE` and no figures will be created unless this is changed. If `TRUE` is
-#'   passed, then the figures will be saved to your current working directory.
 #' @template savedir
 #'
 #' @examples
+#' \dontrun{
 #' # Calculate the weight--length parameters for input to this function
 #' bds_survey <- nwfscSurvey::pull_bio(
 #'   common_name = "widow rockfish",
@@ -94,6 +84,15 @@
 #'   col_weight = "weight_kg",
 #'   verbose = FALSE
 #'  )
+#'  
+#' expanded_comps <- get_pacfin_expansions(
+#'   Pdata = bds_cleaned,
+#'   Catch = catch_dataframe,
+#'   weight_length_estimates = pars,
+#'   Units = "MT",
+#'   Comps = "LEN",
+#'   maxExp = 0.95)
+#' }
 #' @return
 #' A `data.frame` with expanded data up to the trip and total catch level.
 #'
@@ -104,26 +103,24 @@ get_pacfin_expansions <- function(
     weight_length_estimates,
     stratification.cols,
     Units = "MT",
-    Comps = c("LEN", "AGE"),
     maxExp = 0.95,
     Exp_WA = TRUE,
     verbose = TRUE,
     savedir = NULL) {
   nwfscSurvey::check_dir(dir = savedir, verbose = verbose)
-  Comps <- match.arg(Comps)
   
   # Check weight-length data frame
   required_cols <- c("sex", "A", "B")
   if (any(!required_cols %in% colnames(weight_length_estimates))){
     cli::cli_abort(
       "The weight_length_estimates dataframe is required to have three columns 
-      named {required_cols}")
+    named {required_cols}")
   }
   required_sexes <- c("female", "male", "all") 
   if (any(!required_sexes %in% weight_length_estimates[,"sex"])){
     cli::cli_abort(
       "The weight_length_estimates dataframe is required to have three rows in  
-      the sex column for {required_sexes}")
+    the sex column for {required_sexes}")
   }
   if (verbose) {
     cli::cli_inform(
@@ -134,11 +131,6 @@ get_pacfin_expansions <- function(
         "Catches will be converted to pounds for the second-stage expansion."
       )
     }
-  }
-  if (verbose) {
-    cli::cli_inform(
-      "Expanding {Comps} data."
-    )
   }
   fa = weight_length_estimates |>
     dplyr::filter(sex == "female") |>
@@ -158,7 +150,7 @@ get_pacfin_expansions <- function(
   ub = weight_length_estimates |>
     dplyr::filter(sex == "all") |>
     dplyr::pull("B")
-  
+    
   data_exp1 <- getExpansion_1(
     Pdata = Pdata,
     fa = fa,
@@ -171,7 +163,7 @@ get_pacfin_expansions <- function(
     Exp_WA = Exp_WA,
     verbose = verbose,
     savedir = savedir)
-  
+    
   # Check for the "stratification" column
   if (length(data_exp1$stratification) == 0) {
     if (!missing(stratification.cols)) {
@@ -191,12 +183,12 @@ get_pacfin_expansions <- function(
       } else {
         cli::cli_abort(
           "Pdata must have stratification column or provide
-          {.var stratification.cols}."
+        {.var stratification.cols}."
         )
       }
     }
   } # End if
-  
+    
   data_exp2 <- getExpansion_2(
     Pdata = data_exp1,
     Catch = Catch,
@@ -206,17 +198,14 @@ get_pacfin_expansions <- function(
     savedir = savedir
   )
   
-  if (Comps == "LEN") {
-    data_exp2[["Final_Sample_Size"]] <- capValues(
-      data_exp2[["Expansion_Factor_1_L"]] * data_exp2[["Expansion_Factor_2"]],
-      maxVal = expansion
-    )
-  }
-  if (Comps == "AGE") {
-    data_exp2[["Final_Sample_Size"]] <- capValues(
-      data_exp2[["Expansion_Factor_1_A"]] * data_exp2[["Expansion_Factor_2"]],
-      maxVal = expansion
-    )
-  }
-  return(data_exp2)
+  data_exp2[["Final_Sample_Size_L"]] <- capValues(
+    data_exp2[["Expansion_Factor_1_L"]] * data_exp2[["Expansion_Factor_2"]],
+    maxVal = expansion
+  )
+  data_exp2[["Final_Sample_Size_A"]] <- capValues(
+   data_exp2[["Expansion_Factor_1_A"]] * data_exp2[["Expansion_Factor_2"]],
+   maxVal = expansion
+  )
+  data <- data_exp2 
+  return(data)
 }

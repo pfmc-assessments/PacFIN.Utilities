@@ -93,6 +93,17 @@ each fish represents only itself.}
 }
 }
 
+\examples{
+\dontrun{
+data_exp2 <- getExpansion_2(
+  Pdata = data_exp1,
+  Catch = catch_formatted,
+  Units = "MT",
+  maxExp = 0.95
+  )
+}
+
+}
 \seealso{
 \itemize{
 \item \link{getExpansion_1} should be ran first

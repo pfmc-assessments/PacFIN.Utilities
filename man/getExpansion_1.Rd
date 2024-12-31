@@ -90,6 +90,7 @@ each fish represents only itself.}
 }
 
 \examples{
+\dontrun{
 # Calculate the weight--length parameters for input to this function
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = "widow rockfish",
@@ -101,6 +102,29 @@ pars <- nwfscSurvey::estimate_weight_length(
   col_weight = "weight_kg",
   verbose = FALSE
  )
+data_exp1 <- getExpansion_1(
+  Pdata = bds_cleaned,
+  fa = weight_length_estimates |>
+  dplyr::filter(sex == "female") |>
+    dplyr::pull("A"),
+  fb = weight_length_estimates |>
+    dplyr::filter(sex == "female") |>
+    dplyr::pull("B"),
+  ma = weight_length_estimates |>
+    dplyr::filter(sex == "male") |>
+    dplyr::pull("A"),
+  mb = weight_length_estimates |>
+    dplyr::filter(sex == "female") |>
+    dplyr::pull("B"),
+  ua = weight_length_estimates |>
+    dplyr::filter(sex == "all") |>
+    dplyr::pull("A"),
+  ub = weight_length_estimates |>
+    dplyr::filter(sex == "all") |>
+    dplyr::pull("B"),
+  maxExp = 0.95)
+
+}
 }
 \seealso{
 \itemize{
