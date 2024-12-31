@@ -231,14 +231,19 @@ getExpansion_2 <- function(Pdata,
 
   #### Summary information
   if (verbose) {
-    cli::cli_inform(nNA, " NA Expansion_Factor_2 values replaced by 1.")
-    cli::cli_inform("Summary of Expansion_Factor_2")
-    print(summary(Pdata$Expansion_Factor_2))
+    cli::cli_inform(
+      "There were {nNA} NA records replaced with a value of 1 during second-stage expansions.")
+    cli::cli_inform(
+      "Maximum second-stage length expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_L), 2)}"
+    )
+    cli::cli_inform(
+      "Maximum first-stage age expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_A), 2)}"
+    )
   }
 
   if (nNA > 0) {
     NA_EF2[, "FREQ"] <- 1
-    if (!missing(savedir)) {
+    if (!is.null(savedir)) {
       grDevices::png(file.path(savedir, "PacFIN_exp2_NAreplace.png"))
       on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
       graphics::barplot(
@@ -252,7 +257,7 @@ getExpansion_2 <- function(Pdata,
     }
   } # End if
 
-  if (!missing(savedir)) {
+  if (!is.null(savedir)) {
     grDevices::png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
     on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,

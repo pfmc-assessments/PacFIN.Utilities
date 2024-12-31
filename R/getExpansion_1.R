@@ -135,12 +135,13 @@ getExpansion_1 <- function(Pdata,
 
   Pdata$Expansion_Factor_1_L <- capValues(Pdata$Expansion_Factor_1_L, maxExp)
   Pdata$Expansion_Factor_1_A <- capValues(Pdata$Expansion_Factor_1_A, maxExp)
-
   if (verbose) {
-    cli::cli_alert_info(
-      "Capping Expansion_Factor_1 at {.val {maxExp}}"
+    cli::cli_inform(
+      "Maximum first-stage length expansion capped at the {maxExp} quantile of {round(max(Pdata$Expansion_Factor_1_L), 2)}"
     )
-    print(summary(Pdata$Expansion_Factor_1_L))
+    cli::cli_inform(
+      "Maximum first-stage age expansion capped at the {maxExp} quantile of {round(max(Pdata$Expansion_Factor_1_A), 2)}"
+    )
   }
 
   # Generate plots and save them to the disk if specified.

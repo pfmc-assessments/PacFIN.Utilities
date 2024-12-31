@@ -40,10 +40,10 @@
 capValues <- function(DataCol,  maxVal = 0.95) {
   if (maxVal > 1) {
     max.val <- maxVal
-    cat("\nMaximum value capped at", max.val, "\n\n")
+    #cat("\nMaximum value capped at", max.val, "\n\n")
   } else {
     max.val <- stats::quantile(DataCol, maxVal, na.rm = T)
-    cat("\nMaximum expansion capped at", maxVal, "quantile:", max.val, "\n\n")
+    #cat("\nMaximum expansion capped at", maxVal, "quantile:", max.val, "\n\n")
   } # End if-else
 
   DataCol[DataCol > max.val] <- max.val
