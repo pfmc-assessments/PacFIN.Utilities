@@ -52,5 +52,5 @@ table(X[["geargroup"]])
 }
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

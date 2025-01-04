@@ -6,7 +6,7 @@
 #'
 #' @export
 #'
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 #'
 #' @inheritParams cleanPacFIN
 #' @param Catch A data frame of catch data, in pounds or in metric tonnes.

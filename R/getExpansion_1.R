@@ -8,6 +8,9 @@
 #' dockside samplers.
 #'
 #' @export
+#'
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
+#' 
 #' @seealso
 #' * [cleanPacFIN()] (upstream)
 #' * [nwfscSurvey::estimate_weight_length()] (upstream())

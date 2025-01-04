@@ -29,7 +29,7 @@
 #' @return An additional column `season` is added to `Pdata`.
 #' No columns are modified.
 #' @export
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson
 #' @examples
 #' test <- getSeason(
 #'   data.frame(SAMPLE_MONTH = 1:12, fishyr = rep(1:2, each = 6)),

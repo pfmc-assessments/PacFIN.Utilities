@@ -68,5 +68,5 @@ sample weight should not be used more than likely anyway.
 \link{getExpansion_1} calls this function.
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

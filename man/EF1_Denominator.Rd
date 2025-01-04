@@ -117,5 +117,5 @@ weights should be used going forward.
 \link{EF1_Numerator}, \link{getExpansion_1}, \link{getExpansion_2}
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

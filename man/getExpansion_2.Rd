@@ -110,5 +110,5 @@ data_exp2 <- getExpansion_2(
 }
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

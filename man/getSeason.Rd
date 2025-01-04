@@ -68,5 +68,5 @@ testthat::expect_equivalent(test[test[, "fishyr"] == 3, "season"], 1)
 
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson
 }

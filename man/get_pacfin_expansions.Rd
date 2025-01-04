@@ -134,3 +134,6 @@ expanded_comps <- get_pacfin_expansions(
 \item \code{\link[=getExpansion_2]{getExpansion_2()}} (contain within)
 }
 }
+\author{
+Chantel R. Wetzel
+}

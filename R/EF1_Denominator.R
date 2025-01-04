@@ -67,7 +67,7 @@
 #'   length-weight relationship. This uses the empirical data if available and
 #'   fills in with the expected weight or mean-sample weight.
 #'
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 #' @seealso [EF1_Numerator], [getExpansion_1], [getExpansion_2]
 #'
 EF1_Denominator <- function(Pdata,

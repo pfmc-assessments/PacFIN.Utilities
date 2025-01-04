@@ -135,3 +135,6 @@ data_exp1 <- getExpansion_1(
 \item \code{\link[=getExpansion_2]{getExpansion_2()}} (downstream)
 }
 }
+\author{
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
+}

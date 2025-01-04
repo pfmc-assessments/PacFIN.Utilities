@@ -96,6 +96,7 @@
 #' @return
 #' A `data.frame` with expanded data up to the trip and total catch level.
 #'
+#' @author Chantel R. Wetzel
 #'
 get_pacfin_expansions <- function(
     Pdata,

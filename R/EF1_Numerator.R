@@ -32,7 +32,7 @@
 #' @inheritParams cleanPacFIN
 #' @template plot
 #' @template savedir
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 
 EF1_Numerator <- function(Pdata,
                           verbose = TRUE,
