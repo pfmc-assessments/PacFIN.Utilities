@@ -68,15 +68,15 @@ getExpansion_2 <- function(Pdata,
   #### Set up
   # Check Unit input
   Units <- match.arg(Units,
-    several.ok = FALSE,
-    choices = c(measurements::conv_unit_options[["mass"]], "MT", "LB")
+                     several.ok = FALSE,
+                     choices = c(measurements::conv_unit_options[["mass"]], "MT", "LB")
   )
   Units <- switch(Units,
-    MT = "metric_ton",
-    LB = "lbs",
-    Units
+                  MT = "metric_ton",
+                  LB = "lbs",
+                  Units
   )
-
+  
   # Check and stop if Convert input is used since it is not deprecated
   if (!is.null(Convert)) {
     stop(
@@ -85,13 +85,13 @@ getExpansion_2 <- function(Pdata,
       paste(measurements::conv_unit_options[["mass"]], collapse = ", ")
     )
   }
-
+  
   # Start clean
   Pdata$Expansion_Factor_2 <- NA
   if (length(Pdata$Trip_Sampled_Lbs) == 0) {
     stop("Please run getExpansion_1 first")
   } # End if
-
+  
   # Pdata must have a "stratification" column
   if (length(Pdata$stratification) == 0) {
     if (!missing(stratification.cols)) {
@@ -104,8 +104,8 @@ getExpansion_2 <- function(Pdata,
             "\\1", colnames(Catch)[-1]
           ))
           Pdata[, "stratification"] <- apply(Pdata[, stratification.cols],
-            1, paste,
-            collapse = separate
+                                             1, paste,
+                                             collapse = separate
           )
         }
       } else {
@@ -113,19 +113,19 @@ getExpansion_2 <- function(Pdata,
       }
     }
   } # End if
-
+  
   # Check Catch columns against Pdata
   # Ensure Year is first column
   yearcol <- grep("year", colnames(Catch), ignore.case = TRUE)
   Catch <- Catch[, c(yearcol, seq(1:NCOL(Catch))[-yearcol])]
   Catchgears <- sort(names(Catch)[-1])
   Pstrat <- sort(unique(Pdata$stratification))
-
+  
   if (!identical(Pstrat, Catchgears)) {
     message("Error:  mismatch between dataset and catch.")
     message("Catch: ", paste(collapse = ", ", Catchgears))
     message("Data: ", paste(collapse = ", ", Pstrat))
-
+    
     if (sum(Pstrat %in% Catchgears) == 0) {
       stop(
         "No Pdata stratifications,\n",
@@ -149,11 +149,22 @@ getExpansion_2 <- function(Pdata,
       }
     }
   } # End if
-
+  
   #### Expansion
   # Get summed sampled lbs per individual sample (trip, tow, sample number).
+  
+  # Convert Catch to lbs.
+  Catch[, -1] <- measurements::conv_unit(
+    to = "lbs",
+    x = Catch[, -1], from = Units
+  )
+  
+  Catch_long <- tidyr::pivot_longer(Catch, -tidyr::all_of(yearcol), 
+                                    names_to = 'stratification', 
+                                    values_to = 'catch')
+  
   tows <- Pdata[!duplicated(Pdata$SAMPLE_NO), ]
-
+  
   # Get the total lbs sampled by year and stratification
   strat <- c("fishyr", "stratification")
   tows <- tows %>%
@@ -162,22 +173,11 @@ getExpansion_2 <- function(Pdata,
     dplyr::mutate(
       Sum_Sampled_Lbs = sum(Trip_Sampled_Lbs, na.rm = TRUE)
     ) %>%
-    dplyr::ungroup()
-
-  # Convert Catch to lbs.
-  Catch[, -1] <- measurements::conv_unit(
-    to = "lbs",
-    x = Catch[, -1], from = Units
-  )
-
-  # Matching rows in Pdata with Catch[, "Year"] and correct column in Catch
-  tows$catch <- apply(
-    tows[, c("fishyr", "stratification")], 1,
-    function(x) {
-      Catch[match(x[1], Catch[, yearcol]), match(x[2], colnames(Catch))]
-    }
-  )
-
+    dplyr::ungroup() %>%
+    # Matching rows in Pdata with Catch[, "Year"] and correct column in Catch
+    dplyr::left_join(Catch_long, by = c('fishyr' = names(Catch_long)[yearcol],
+                                        'stratification' = 'stratification'))
+  
   # Find which trips don't have catch values associated with them
   trips_without_catch <- dplyr::filter(tows, is.na(catch))
   if (NROW(trips_without_catch) > 0) {
@@ -194,7 +194,7 @@ getExpansion_2 <- function(Pdata,
       print(NoCatch)
     } # End if
   }
-
+  
   # Expansion is calculated by dividing the catch by the Sum_Sampled_Lbs.
   tows$EF2 <- tows$catch / tows$Sum_Sampled_Lbs
   tows$EF2[tows$EF2 < 1 | !is.finite(tows$EF2)] <- 1
@@ -211,7 +211,7 @@ getExpansion_2 <- function(Pdata,
     Pdata,
     tows, strat, strat, "EF2"
   )[[1]]
-
+  
   NA_EF2 <- Pdata[is.na(Pdata$Expansion_Factor_2), ]
   nNA <- nrow(NA_EF2)
   Pdata$Expansion_Factor_2[is.na(Pdata$Expansion_Factor_2)] <- 1
@@ -222,14 +222,14 @@ getExpansion_2 <- function(Pdata,
   Pdata[, "Final_Sample_Size_A"] <- capValues(
     Pdata$Expansion_Factor_1_A * Pdata$Expansion_Factor_2
   )
-
+  
   #### Summary information
   if (verbose) {
     message(nNA, " NA Expansion_Factor_2 values replaced by 1.")
     message("Summary of Expansion_Factor_2")
     print(summary(Pdata$Expansion_Factor_2))
   }
-
+  
   if (nNA > 0) {
     NA_EF2[, "FREQ"] <- 1
     if (!missing(savedir)) {
@@ -245,14 +245,14 @@ getExpansion_2 <- function(Pdata,
       message("Specify savedir if you want a figure to show the NA Expansion_Factor_2 values replaced by 1.")
     }
   } # End if
-
+  
   if (!missing(savedir)) {
     grDevices::png(file.path(savedir, "PacFIN_exp2_summarybyyear.png"))
     on.exit(grDevices::dev.off(), add = TRUE, after = FALSE)
     graphics::boxplot(Pdata$Expansion_Factor_2 ~ Pdata$fishyr,
-      main = "", xlab = "Year", ylab = "Second-stage expansion factor"
+                      main = "", xlab = "Year", ylab = "Second-stage expansion factor"
     )
   }
-
+  
   invisible(Pdata)
 } # End function getExpansion_2
