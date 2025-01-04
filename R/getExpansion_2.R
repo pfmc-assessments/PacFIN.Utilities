@@ -176,7 +176,8 @@ getExpansion_2 <- function(Pdata,
     dplyr::ungroup() %>%
     # Matching rows in Pdata with Catch[, "Year"] and correct column in Catch
     dplyr::left_join(Catch_long, by = c('fishyr' = names(Catch_long)[yearcol],
-                                        'stratification' = 'stratification'))
+                                        'stratification' = 'stratification'), 
+                     relationship = 'many-to-one')
   
   # Find which trips don't have catch values associated with them
   trips_without_catch <- dplyr::filter(tows, is.na(catch))
