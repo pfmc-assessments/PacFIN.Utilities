@@ -86,7 +86,7 @@ knitr::kable(weight_length_estimates, "markdown")
 
 The catch data must be summarized because it will be used in the second stage expansion of the biological data. Where, `formatCatch()` takes a long data frame as input and converts it to a wide data frame with one row per year and one column per catch group. In the `r common_name` example the catch is stratified by `state` and `geargroup`, leading to one column for each state-gear combination. Catches can be summarized in pounds of metric tons where the units should be explicitly passed to `getExpansion_2()` to convert the catches to pounds if necessary. 
 
-It is recommended to pass a pre-processed catch file to `formatCatch()` that includes data stratified by state, gear (e.g., expected name of geargroup), year (e.g., can use yr, year, landing_year, or sample_year), and catch values. Depending upon the species biological data in PacFIN can be present before the start of PacFIN catch records (1981), hence, catch amounts from historical reconstructions may be necessary to ensure proper expansion. Additionally, the stratification should always include areas (e.g., state or areas within states) even if using coastwide fleets in the model due to variable catch and sampling by areas.
+It is recommended to pass a pre-processed long format catch file to `formatCatch()` that includes data stratified by state, gear (e.g., expected name of geargroup), year (e.g., can use yr, year, landing_year, or sample_year), and catch values. Depending upon the species biological data in PacFIN can be present before the start of PacFIN catch records (1981), hence, catch amounts from historical reconstructions may be necessary to ensure proper expansion. Additionally, the stratification should always include areas (e.g., state or areas within states) even if using coastwide fleets in the model due to variable catch and sampling by areas.
 
 
 ```{r catch, eval = FALSE}
@@ -118,7 +118,7 @@ bds_cleaned <- cleanPacFIN(
   )
 ```
 
-`cleanPacFIN()` filters out data and adds additional columns that are used in the data processing.  One of the columns added, `fleet`, is used to separate the data by model fleet. The default values in `fleet` are set to the gear names defined by `keep_gears` in `cleanPacFIN()`.  The values in this column should be modified the user, if necessary.
+`cleanPacFIN()` filters out data and adds additional columns that are used in the data processing.  One of the columns added, `fleet`, is used to separate the data by model fleet. The default values in `fleet` are set to the gear names defined by `keep_gears` in `cleanPacFIN()`.  The values in this column should be modified by the user, if necessary.
 
 A new function, `get_pacfin_expansions()`, has been added in the package that does both the first- and second-stage expansions (`getExpansion_1()` and `getExpansion_2()`) in a single call. This function also returns the product of the first-stage and second-stage expansion. Previously, users had to multiply the `Expansion_Factor_1_L` or `Expansion_Factor_1_A` and `Expansion_Factor_2` columns external to the expansion functions. 
 
