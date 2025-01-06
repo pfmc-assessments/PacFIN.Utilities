@@ -20,7 +20,7 @@
 #' @export
 #' @seealso
 #' * [cleanPacFIN()] (upstream)
-#' * [nwfscSurvey::estimate_weight_length()] (upstream())
+#' * [nwfscSurvey::estimate_weight_length()] (upstream)
 #' * [getExpansion_1()] (contain within)
 #' * [getExpansion_2()] (contain within)
 #'
@@ -49,11 +49,11 @@
 #'   for building expansions. Typically, the default is 0.95. Set `maxExp =
 #'   Inf` to see largest values.
 #' @param Exp_WA A logical values specifying if the samples from Washington
-#'   should be exanded. The default is `FALSE`.
-#' @param Catch A data frame of catch data, in pounds or in metric tonnes.
+#'   should be expanded. The default is `FALSE`.
+#' @param Catch A data frame of catch data, in pounds or in metric tons.
 #' @param Units The units of the \code{Catch} data frame, see
 #'   \code{measurements::conv_unit_options[["mass"]]} for options. Typical units
-#'   are metric tonnes (e.g., \code{"metric_ton"}) because that is the unit used
+#'   are metric tons (e.g., \code{"metric_ton"}) because that is the unit used
 #'   in Stock Synthesis, but expansions are done in pounds because fish weights
 #'   are in pounds. Thus, catches also need to be in pounds and will be
 #'   converted as such.
@@ -73,7 +73,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Calculate the weight--length parameters for input to this function
+#' # Calculate the weight-length parameters for input to this function
 #' bds_survey <- nwfscSurvey::pull_bio(
 #'   common_name = "widow rockfish",
 #'   survey = "NWFSC.Combo"
@@ -133,22 +133,22 @@ get_pacfin_expansions <- function(
       )
     }
   }
-  fa = weight_length_estimates |>
+  fa <- weight_length_estimates |>
     dplyr::filter(sex == "female") |>
     dplyr::pull("A")
-  fb = weight_length_estimates |>
+  fb <- weight_length_estimates |>
     dplyr::filter(sex == "female") |>
     dplyr::pull("B")
-  ma = weight_length_estimates |>
+  ma <- weight_length_estimates |>
     dplyr::filter(sex == "male") |>
     dplyr::pull("A")
-  mb = weight_length_estimates |>
+  mb <- weight_length_estimates |>
     dplyr::filter(sex == "female") |>
     dplyr::pull("B")
-  ua = weight_length_estimates |>
+  ua <- weight_length_estimates |>
     dplyr::filter(sex == "all") |>
     dplyr::pull("A")
-  ub = weight_length_estimates |>
+  ub <- weight_length_estimates |>
     dplyr::filter(sex == "all") |>
     dplyr::pull("B")
     

@@ -13,7 +13,7 @@
 #' 
 #' @seealso
 #' * [cleanPacFIN()] (upstream)
-#' * [nwfscSurvey::estimate_weight_length()] (upstream())
+#' * [nwfscSurvey::estimate_weight_length()] (upstream)
 #' * [EF1_Numerator()] (contained within)
 #' * [EF1_Denominator()] (contained within)
 #' * [getExpansion_2()] (downstream)
