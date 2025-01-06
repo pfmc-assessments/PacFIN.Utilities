@@ -90,11 +90,11 @@ EF1_Denominator <- function(Pdata,
   }
   
   if (verbose) {
-    cli::cli_inform(c(
+    cli::cli_bullets(c(
       "i" = "Individual weights will be generated from the passed parameters.",
       "i" = "Females: a = {.val {signif(fa, 3)}} and b = {.val {round(fb, 3)}}",
       "i" = "Males: a = {.val {signif(ma, 3)}} and b = {.val {round(mb, 3)}}",
-      "i" = "Unsexed and hermaphrodites: a = {.val {signif(ua, 3)}} and b = {.val {round(ub, 3)}}"
+      "i" = "Unsexed: a = {.val {signif(ua, 3)}} and b = {.val {round(ub, 3)}}"
     ))
   }
 
