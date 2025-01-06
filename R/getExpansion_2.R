@@ -135,13 +135,7 @@ getExpansion_2 <- function(Pdata,
   Catch <- Catch[, c(yearcol, seq(1:NCOL(Catch))[-yearcol])]
   Catchgears <- sort(names(Catch)[-1])
   Pstrat <- sort(unique(Pdata$stratification))
-  if(min(Catch[, yearcol]) > min(Pdata[,year])) {
-    cli::cli_inform(
-      "There years of bds data that are not included in the Catch file and 
-      won't be expanded."
-    )
-  }
-
+  
   if (!identical(Pstrat, Catchgears)) {
     cli::cli_inform("Catch: ", paste(collapse = ", ", Catchgears))
     cli::cli_inform("Data: ", paste(collapse = ", ", Pstrat))
@@ -170,6 +164,23 @@ getExpansion_2 <- function(Pdata,
       }
     }
   } # End if
+  
+  # Convert Catch to lbs.
+  Catch[, -1] <- measurements::conv_unit(
+    to = "lbs",
+    x = Catch[, -1], 
+    from = Units
+  )
+  
+  # TODO: this converts the wide catch data frame to a long object, hence, eliminating
+  # the need to have the wide format.  Revise this and the formatCatch function
+  # to remove this now unneeded data manipulation.
+  Catch_long <- tidyr::pivot_longer(
+    Catch, 
+    -tidyr::all_of(yearcol), 
+    names_to = 'stratification', 
+    values_to = 'catch'
+  )
 
   #### Expansion
   # Get summed sampled lbs per individual sample (trip, tow, sample number).
@@ -183,22 +194,24 @@ getExpansion_2 <- function(Pdata,
     dplyr::mutate(
       Sum_Sampled_Lbs = sum(Trip_Sampled_Lbs, na.rm = TRUE)
     ) |>
-    dplyr::ungroup()
-
-  # Convert Catch to lbs.
-  Catch[, -1] <- measurements::conv_unit(
-    to = "lbs",
-    x = Catch[, -1], 
-    from = Units
-  )
-
-  # Matching rows in Pdata with Catch[, "Year"] and correct column in Catch
-  tows$catch <- apply(
-    tows[, c("fishyr", "stratification")], 1,
-    function(x) {
-      Catch[match(x[1], Catch[, yearcol]), match(x[2], colnames(Catch))]
+    dplyr::ungroup() |>
+    dplyr::left_join(
+      Catch_long, 
+      by = c('fishyr' = names(Catch_long)[yearcol], 'stratification' = 'stratification'), 
+      relationship = 'many-to-one'
+    )
+  
+  if (any(tows[,"catch"] == 0)) {
+    missing_data <- unique(
+      apply(tows[which(tows[["catch"]] == 0), c("year", "stratification")], 1, paste, collapse = "-"))
+    if (verbose) {
+      cli::cli_alert_danger(
+        "There are {sum(tows$catch == 0)} bds records where catch was 0 in the Catch 
+        file for the requested stratification. The following years and stratifications 
+        have 0 catch but bds data: {missing_data}"
+      )
     }
-  )
+  }
 
   # Find which trips don't have catch values associated with them
   trips_without_catch <- dplyr::filter(tows, is.na(catch))
@@ -206,12 +219,13 @@ getExpansion_2 <- function(Pdata,
     NoCatch <- dplyr::group_by(
       .data = trips_without_catch,
       fishyr, stratification
-    ) %>%
+    ) |>
       dplyr::count(Sum_Sampled_Lbs)
     if (length(NoCatch) > 0 && verbose) {
-      cli::cli_inform(
-        "No Catch was found for these rows in Pdata, where\n",
-        "n is the number of rows with missing Catch info:"
+      cli::cli_alert_danger(
+        "The following years and stratification are not included in the Catch 
+        file but were found for in the Pdata, where n is the number of rows 
+        with missing Catch information:"
       )
       print(NoCatch)
     } # End if
@@ -237,23 +251,29 @@ getExpansion_2 <- function(Pdata,
   NA_EF2 <- Pdata[is.na(Pdata$Expansion_Factor_2), ]
   nNA <- nrow(NA_EF2)
   Pdata$Expansion_Factor_2[is.na(Pdata$Expansion_Factor_2)] <- 1
-  Pdata$Expansion_Factor_2 <- capValues(Pdata$Expansion_Factor_2, maxExp)
+  Pdata$Expansion_Factor_2 <- capValues(
+    DataCol = Pdata$Expansion_Factor_2, 
+    maxVal = maxExp)
   Pdata[, "Final_Sample_Size_L"] <- capValues(
-    Pdata$Expansion_Factor_1_L * Pdata$Expansion_Factor_2
+    DataCol = Pdata$Expansion_Factor_1_L * Pdata$Expansion_Factor_2,
+    maxVal = maxExp
   )
   Pdata[, "Final_Sample_Size_A"] <- capValues(
-    Pdata$Expansion_Factor_1_A * Pdata$Expansion_Factor_2
+    DataCol = Pdata$Expansion_Factor_1_A * Pdata$Expansion_Factor_2,
+    maxVal = maxExp
   )
 
   #### Summary information
   if (verbose) {
-    cli::cli_inform(
-      "There were {nNA} NA records replaced with a value of 1 during second-stage expansions.")
-    cli::cli_inform(
-      "Maximum second-stage length expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_L), 2)}"
-    )
-    cli::cli_inform(
-      "Maximum first-stage age expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_A), 2)}"
+    cli::cli_bullets(c(
+      "i" =   glue::glue(
+        "There were {nNA} NA records replaced with a value of 1 during second-stage expansions."),
+      "i" = glue::glue(
+        "Maximum second-stage length expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_L), 2)}"
+      ),
+      "i" = glue::glue(
+        "Maximum first-stage age expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_A), 2)}"
+      ))
     )
   }
 
