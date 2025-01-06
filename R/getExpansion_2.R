@@ -9,18 +9,18 @@
 #' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 #'
 #' @inheritParams cleanPacFIN
-#' @param Catch A data frame of catch data, in pounds or in metric tonnes.
+#' @param Catch A data frame of catch data, in pounds or in metric tons.
 #' @param Units The units of the \code{Catch} data frame, see
 #'   \code{measurements::conv_unit_options[["mass"]]} for options. Typical units
-#'   are metric tonnes (e.g., \code{"metric_ton"}) because that is the unit used
+#'   are metric tons (e.g., \code{"metric_ton"}) because that is the unit used
 #'   in Stock Synthesis, but expansions are done in pounds because fish weights
 #'   are in pounds. Thus, catches also need to be in pounds and will be
 #'   converted as such.
 #' @param Convert A deprecated argument that is now set to \code{NULL}.
 #'   Previously, it was a logical that defined if the Catch should be converted from
-#'   metric tonnes to pounds, where \code{TRUE} is now the same as setting
+#'   metric tons to pounds, where \code{TRUE} is now the same as setting
 #'   \code{Units = "MT"} and \code{FALSE}, which was the default, would be
-#'   \code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
+#'   \code{Units = "LB"}. Normally, one would have their catch in metric tons,
 #'   i.e., \code{Convert = TRUE} or \code{Units = "MT"},
 #'   such that it can be used within Stock Synthesis.
 #' @inheritParams getExpansion_1
@@ -135,6 +135,12 @@ getExpansion_2 <- function(Pdata,
   Catch <- Catch[, c(yearcol, seq(1:NCOL(Catch))[-yearcol])]
   Catchgears <- sort(names(Catch)[-1])
   Pstrat <- sort(unique(Pdata$stratification))
+  if(min(Catch[, yearcol]) > min(Pdata[,year])) {
+    cli::cli_inform(
+      "There years of bds data that are not included in the Catch file and 
+      won't be expanded."
+    )
+  }
 
   if (!identical(Pstrat, Catchgears)) {
     cli::cli_inform("Catch: ", paste(collapse = ", ", Catchgears))
