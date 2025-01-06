@@ -19,10 +19,15 @@
 #' * [getExpansion_2()] (downstream)
 #'
 #' @details
-#' The workflow is to run this function [cleanPacFIN(),
+#' The workflow is to run this function after [cleanPacFIN()],
 #' which assures that all of the necessary columns are available and that the
 #' data are in the correct units. This function then calls two helper functions,
-#' [EF1_Numerator()] and [EF1_Denominator()] to calculate the weight of sampled fish and the weight of all fish of the respective species in the tow, respectively. Finally, the ratio of the two values is returned.
+#' [EF1_Numerator()] and [EF1_Denominator()] to calculate the weight of sampled 
+#' fish and the weight of all fish of the respective species in the tow, 
+#' respectively. Finally, the ratio of the two values is returned. Alternatively,
+#' users should consider using [get_pacfin_expansions()] which is a wrapper
+#' function that calls both the first and second stage functions for expanding
+#' composition data.
 #'
 #' @section Expansion:
 #' \itemize{
