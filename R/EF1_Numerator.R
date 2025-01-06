@@ -50,7 +50,7 @@ EF1_Numerator <- function(Pdata,
   )
 
   if (verbose) {
-    cli::cli_inform("\nSampled pounds per trip:\n\n")
+    cli::cli_inform("Sampled pounds per trip:")
     print(summary(Pdata$Trip_Sampled_Lbs))
   }
 
