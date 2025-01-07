@@ -52,8 +52,6 @@
 #' [getComps] uses the column specified in `weightid` and the user-specified
 #' stratification to create comps.
 #'
-#' [doSexRatio] separates the unsexed fish into males and females
-#'
 #' [writeComps] formats the composition data for SS3 and writes it to a file.
 #'
 #' @section Infrequently used functions:
@@ -65,6 +63,6 @@
 #'
 #' [capValues] Used to limit the maximum value in a vector.
 #'
-#' @docType package
+#' @docType _PACKAGE
 #' @name PacFIN.Utilities
 NULL

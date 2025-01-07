@@ -2,7 +2,7 @@
 % Please edit documentation in R/getweight.R
 \name{getweight}
 \alias{getweight}
-\title{Calculate weight from length and the weight-length relationship}
+\title{Calculate weight from length and the weight--length relationship}
 \usage{
 getweight(length, sex, pars, unit.out = c("lb", "kg"), weight, unit.in)
 }
@@ -12,7 +12,7 @@ getweight(length, sex, pars, unit.out = c("lb", "kg"), weight, unit.in)
 \item{sex}{A vector of sexes for each entry in \code{length}.
 Entries must be one of the following: 'U', 'F', 'M', or 'H'.}
 
-\item{pars}{A data frame of parameters for the weight-length
+\item{pars}{A data frame of parameters for the weight--length
 relationship as determined from empirical data. The data frame
 must have columns of \code{'A'} and \code{'B'}, as well as
 rows named \code{'U'}, at a minimum, \code{'F'}, and \code{'M'}.
@@ -34,12 +34,12 @@ as such.}
 A vector of measurements in the unit specified using
 \code{unit.out}. If weights were provided, then the weights are also
 the output. If lengths were provided, then they are converted
-to weights. Where, weights are determined from lengths and weight-length
+to weights. Where, weights are determined from lengths and weight--length
 parameters input to the function.
 Weights are in the same units used to calculate things, i.e., kg.
 }
 \description{
-Estimate fish weights from potentially sex-specific weight-length
+Estimate fish weights from potentially sex-specific weight--length
 relationship parameters returned from \link{getWLpars}.
 }
 \author{

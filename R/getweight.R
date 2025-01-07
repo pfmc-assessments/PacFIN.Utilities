@@ -1,12 +1,12 @@
-#' Calculate weight from length and the weight-length relationship
+#' Calculate weight from length and the weight--length relationship
 #'
-#' Estimate fish weights from potentially sex-specific weight-length
+#' Estimate fish weights from potentially sex-specific weight--length
 #' relationship parameters returned from [getWLpars].
 #'
 #' @param length A vector of fish lengths in mm.
 #' @param sex A vector of sexes for each entry in \code{length}.
 #' Entries must be one of the following: 'U', 'F', 'M', or 'H'.
-#' @param pars A data frame of parameters for the weight-length
+#' @param pars A data frame of parameters for the weight--length
 #' relationship as determined from empirical data. The data frame
 #' must have columns of \code{'A'} and \code{'B'}, as well as
 #' rows named \code{'U'}, at a minimum, \code{'F'}, and \code{'M'}.
@@ -24,7 +24,7 @@
 #' @return A vector of measurements in the unit specified using
 #' `unit.out`. If weights were provided, then the weights are also
 #' the output. If lengths were provided, then they are converted
-#' to weights. Where, weights are determined from lengths and weight-length
+#' to weights. Where, weights are determined from lengths and weight--length
 #' parameters input to the function.
 #' Weights are in the same units used to calculate things, i.e., kg.
 #'

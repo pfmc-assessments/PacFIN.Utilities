@@ -35,11 +35,11 @@
 #' @export
 #' @seealso [cleanPacFIN] calls `getState`.
 #'
-#' @template Pdata
+#' @inheritParams cleanPacFIN
 #' @param source The column name where state information is located in
 #' \code{Pdata}. See the function call for options, where only the first
 #' value will be used.
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #'
 #' @return The input data frame is returned with an additional column,
 #' `state`, which is filled with two-character values identifying the state or

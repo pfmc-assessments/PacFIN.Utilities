@@ -2,7 +2,7 @@
 % Please edit documentation in R/getWLpars.R
 \name{getWLpars}
 \alias{getWLpars}
-\title{Calculate weight-length relationship parameters}
+\title{Calculate weight--length relationship parameters}
 \usage{
 getWLpars(
   data,
@@ -26,7 +26,7 @@ to use in \code{data} for weight information. These weights are assumed to
 be in kilograms The default value is \code{weightkg}, which is added
 to a data set automatically when running \link{cleanPacFIN}.
 Using kilograms is the default because Stock Synthesis assumes the
-weight-length parameters are calculated using centimeters and kilograms.
+weight--length parameters are calculated using centimeters and kilograms.
 The reported values are easily scaled to give you results in grams if
 you wish to have more standard parameter estimates.}
 
@@ -37,7 +37,7 @@ of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 }
 \value{
-A data frame of weight-length parameters by sex.
+A data frame of weight--length parameters by sex.
 Parameters A and B are in the appropriate units to input
 into Stock Synthesis Wtlen_1_Fem and Wtlen_2_Fem, or
 Wtlen_1_Mal and Wtlen_1_Mal, parameters in the
@@ -47,7 +47,7 @@ This will happen when there are no females in your data set,
 for example.
 }
 \description{
-Estimate parameters of the weight-length relationship for each
+Estimate parameters of the weight--length relationship for each
 sex and all sexes combined, where the latter includes unsexed fish.
 }
 \author{

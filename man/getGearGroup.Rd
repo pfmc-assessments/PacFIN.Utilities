@@ -7,16 +7,14 @@
 getGearGroup(Pdata, spp = NULL, verbose = TRUE)
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame, typically one extracted from PacFIN but for this
+function just one column is needed, \code{GRID}. If a newer data pull is used,
+the function will change \code{PACFIN_GEAR_CODE} to \code{GRID} for you.}
 
-\item{spp}{A character string giving the species name to
-ensure that the methods are species specific. Leave \code{NULL}
-if generic methods work for your species.
-Currently, sablefish is the only species with species-specific code.}
+\item{spp}{A character string giving the species name to ensure that the
+methods are species specific. Leave \code{NULL} if generic methods work for
+your species. Currently, sablefish is the only species with
+species-specific code.}
 
 \item{verbose}{A logical specifying if output should be written to the
 screen or not. Good for testing and exploring your data but can be turned
@@ -25,28 +23,34 @@ of output to the screen does not affect any of the returned objects. The
 default is to always print to the screen, i.e., \code{verbose = TRUE}.}
 }
 \value{
-A modified data frame where an additional column labeled
-\code{geargroup} is added to \code{Pdata}. No original columns are modified
-in the process.
+A modified data frame where an additional column labeled \code{geargroup} is
+added to \code{Pdata}. No original columns are modified in the process.
 }
 \description{
-Data from the PacFIN
-\href{http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt}{gear table}
+Data from the PacFIN \href{http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt}{gear table}
 is used to create a column in \code{Pdata} called \code{geargroup}, where
-\code{Pdata$GRID} is recoded to \code{geargroup} according to the gear table.
+\verb{Pdata[["GRID"]] is recoded to }geargroup` according to the gear group listed
+in the table.
+}
+\details{
+For some species the recoding is more intense. For example, sablefish
+\code{GROUPS} are recoded into just three gears, hook and line (HKL), pot (POT),
+and trawl (TWL). This is done internally to maintain consistency across
+assessment authors. Other species can easily be added to this function. If a
+species name is not passed then no additional recoding is performed compared
+to the matching available in the table pulled from online.
 }
 \examples{
-ex <- getGearGroup(
-  data.frame(GRID = c("PRT", "BMT", "FPT")),
-  verbose = FALSE
-)
-table(ex)
-testthat::expect_equal(ex[ex[, "geargroup"] == "POT", "GRID"], "FPT")
+gears <- c("PRT", "FPT", "TWL", "MDP")
+X <- getGearGroup(data.frame(GRID = gears), verbose = TRUE)
+table(X[["geargroup"]])
 
 }
 \seealso{
-Reverse dependency of \link{cleanPacFIN}
+\itemize{
+\item \code{\link[=cleanPacFIN]{cleanPacFIN()}} uses this function
+}
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

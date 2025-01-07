@@ -69,7 +69,7 @@ Weights of the sample are found using the following three methods:
 
   1. Oregon provides the total weight of males, females, and unsexed fish within a given sample; these are summed to calculate the weight of all fish within the sample. 
   2. The species-specific weight for the species of concern within that sample is provided by California as `SPECIES_WGT`.
-  3. The weight of all fish within the sample are summed. Fish weights are preferably empirically measured weights and secondarily calculated using a weight-length relationship. For fish in a sample without a length, the median length of all fish within the sample is used. 
+  3. The weight of all fish within the sample are summed. Fish weights are preferably empirically measured weights and secondarily calculated using a weight--length relationship. For fish in a sample without a length, the median length of all fish within the sample is used. 
 
 ### Stage-2 expansion
 The stage-2 expansion typically operates at the state x gear x year level. Regardless, whatever level the stratum are defined at, the expansion is the ratio of the landings to the weight of fish that were sampled from those landings. 

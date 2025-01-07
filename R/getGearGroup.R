@@ -1,91 +1,120 @@
 #' Create column for gear called `geargroup` according to PacFIN gears
 #'
-#' Data from the PacFIN
-#' [gear table](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
-#' is used to create a column in \code{Pdata} called \code{geargroup}, where
-#' \code{Pdata$GRID} is recoded to \code{geargroup} according to the gear table.
+#' Data from the PacFIN [gear
+#' table](http://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt)
+#' is used to create a column in `Pdata` called `geargroup`, where
+#' `Pdata[["GRID"]] is recoded to `geargroup` according to the gear group listed
+#' in the table.
 #'
-#' @template Pdata
-#' @template spp
-#' @template verbose
+#' @details
+#' For some species the recoding is more intense. For example, sablefish
+#' `GROUPS` are recoded into just three gears, hook and line (HKL), pot (POT),
+#' and trawl (TWL). This is done internally to maintain consistency across
+#' assessment authors. Other species can easily be added to this function. If a
+#' species name is not passed then no additional recoding is performed compared
+#' to the matching available in the table pulled from online.
+#'
+#' @param Pdata A data frame, typically one extracted from PacFIN but for this
+#'   function just one column is needed, `GRID`. If a newer data pull is used,
+#'   the function will change `PACFIN_GEAR_CODE` to `GRID` for you.
+#' @inheritParams cleanPacFIN
 #'
 #' @export
-#' @seealso Reverse dependency of [cleanPacFIN]
+#' @seealso
+#' * [cleanPacFIN()] uses this function
 #'
-#' @return A modified data frame where an additional column labeled
-#'   \code{geargroup} is added to \code{Pdata}. No original columns are modified
-#'   in the process.
-#' @author Andi Stephens
+#' @return
+#' A modified data frame where an additional column labeled \code{geargroup} is
+#' added to \code{Pdata}. No original columns are modified in the process.
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 #' @examples
-#' ex <- getGearGroup(
-#'   data.frame(GRID = c("PRT", "BMT", "FPT")),
-#'   verbose = FALSE
-#' )
-#' table(ex)
-#' testthat::expect_equal(ex[ex[, "geargroup"] == "POT", "GRID"], "FPT")
+#' gears <- c("PRT", "FPT", "TWL", "MDP")
+#' X <- getGearGroup(data.frame(GRID = gears), verbose = TRUE)
+#' table(X[["geargroup"]])
 #'
 getGearGroup <- function(Pdata,
                          spp = NULL,
                          verbose = TRUE) {
-  #### Checks
+  # Checks
   if (verbose) {
-    message(
-      "\nGear groupings reflect those in the table at\n",
+    cli::cli_bullets(c(
+      "i" = "Gear groupings reflect those in the table at",
       "https://pacfin.psmfc.org/pacfin_pub/data_rpts_pub/code_lists/gr.txt"
-    )
+    ))
   }
   if (!"GRID" %in% colnames(Pdata)) {
     if ("PACFIN_GEAR_CODE" %in% colnames(Pdata)) {
       Pdata[, "GRID"] <- Pdata[, "PACFIN_GEAR_CODE"]
     } else {
-      stop("Pdata must have 'GRID' or 'PACFIN_GEAR_CODE' as a column.")
+      cli::cli_abort("Pdata must have 'GRID' or 'PACFIN_GEAR_CODE' column.")
     }
   }
   if (is.factor(Pdata[, "GRID"])) {
     Pdata[, "GRID"] <- as.character(Pdata[, "GRID"])
   }
 
-  #### Species-specific code to alter the PacFIN gear table
+  # Species-specific code to alter the PacFIN gear table
   if (!is.null(spp)) {
     if (tolower(spp) %in% c("sablefish", "sabl")) {
-      msc <- Pdata[Pdata[, "GRID"] %in% c("DNT", "LJ", "JIG", "MDT", "MPT"), ]
-      if (nrow(msc) > 0) {
-        if (verbose) {
-          message("The following samples were assigned to the gear group 'MSC':")
-          utils::write.table(table(msc[, "GRID"]),
-            col.names = FALSE, row.names = FALSE
+      change_to_trawl <- c(
+        # Midwater trawl, diving (b/c there is so little), other trawls, dredge
+        "DGN", "DPN", "DVG", "DRG", "GLN", "MDT", "MPT", "MSC", "ODG", "ONT",
+        "OTH", "PWT", "RVT", "SCD", "SEN", "STN", "TWS", "USP",
+        # all nets
+        "BTR", "DST", "NET", "SGN", "SHT", "SST", "TML", "TRL"
+      )
+      change_to_hkl <- c("HTR", "NTW", "PTR", "TLS")
+      if (verbose) {
+        cli::cli_bullets(
+          c(
+            "i" = "sablefish uses HKL, POT, and TWL",
+            "i" = "{change_to_hkl} are recoded to HKL.",
+            "i" = "everything not assigned to HKL or POT is recoded to TWL."
           )
-        }
-        # Danish/Scottish Seine trawl
-        GearTable[, "GROUP"][GearTable$GRID == "DNT"] <- "MSC"
-        # Midwater trawl
-        GearTable[, "GROUP"][GearTable$GRID %in% c("MDT", "MPT")] <- "MSC"
-        # Handline jigger
-        GearTable[, "GROUP"][GearTable$GRID == "JIG"] <- "MSC"
+        )
       }
+      GearTable[, "GROUP"][GearTable$GRID %in% change_to_trawl] <- "TWL"
+      # Trolling gear and non-trawl
+      GearTable[, "GROUP"][
+        GearTable$GRID %in% change_to_hkl
+      ] <- "HKL"
     } # end if spp == sablefish
     if (any(grepl("dogfish|dsrk", spp, ignore.case = TRUE))) {
       if (verbose) {
-        message(
-          "Dogfish uses a mid-water trawl (MID), TWL (including shrimp), and HKL fleets\n",
-          "everything else is assigned to MSC."
-        )
+        cli::cli_bullets(c(
+          "i" = "Dogfish uses a mid-water trawl (MID), TWL (including shrimp),
+                 and HKL fleets",
+          "i" = "everything else is assigned to MSC."
+        ))
       }
       GearTable[grepl("MIDWATER", GearTable[["DESCRIPTION"]]), "GROUP"] <- "MID"
-      GearTable[grepl("DRG|NET|NTW|POT|TLS", GearTable[["GROUP"]]), "GROUP"] <- "MSC"
       GearTable[grepl("TWS", GearTable[["GROUP"]]), "GROUP"] <- "TWL"
+      # Assign everything else to MSC
+      GearTable[!GearTable[["GROUP"]] %in% c("MID", "TWL"), "GROUP"] <- "MSC"
     } # end if spp == dogfish
   }
 
   #### Create geargroup
-  Pdata[, "geargroup"] <- GearTable[match(Pdata[, "GRID"], GearTable[, "GRID"]), "GROUP"]
-  Pdata[, "geargroup"] <- ifelse(is.na(Pdata[, "geargroup"]),
-    Pdata[, "GRID"], Pdata[, "geargroup"]
+  Pdata[, "geargroup"] <- GearTable[
+    match(Pdata[, "GRID"], GearTable[, "GRID"]),
+    "GROUP"
+  ]
+  Pdata[, "geargroup"] <- ifelse(
+    test = is.na(Pdata[, "geargroup"]),
+    Pdata[, "GRID"],
+    Pdata[, "geargroup"]
   )
 
   if (verbose) {
-    message("GRID was assigned to geargroup with the following names:")
-    utils::capture.output(type = "message", table(Pdata[, "geargroup"]))
+    table_gears <- table(Pdata[, "geargroup"])
+    message_table <- paste0(
+      names(table_gears),
+      " (", table_gears, ")"
+    )
+    cli::cli_bullets(c(
+      "i" = "`GRID` was used to create `geargroup`",
+      "i" = "geargroup includes: {message_table}"
+    ))
   }
 
   return(Pdata)

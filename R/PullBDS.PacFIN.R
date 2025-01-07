@@ -5,7 +5,7 @@
 #' @inheritParams sql
 #' @inheritParams getDB
 #' @template savedir
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #'
 #' @return
 #' An `RData` file is saved to the disk and the pulled data are returned as an

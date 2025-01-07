@@ -14,11 +14,10 @@ getSeason(
 )
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
 \item{season_type}{Specify a \code{numeric} value for season type.
 If negative then all months will be assigned to season \code{1}.
@@ -69,5 +68,5 @@ testthat::expect_equivalent(test[test[, "fishyr"] == 3, "season"], 1)
 
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson
 }

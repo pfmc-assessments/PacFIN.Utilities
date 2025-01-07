@@ -6,7 +6,7 @@
 #' in [cleanPacFIN]. If a specialized season structure is required,
 #' `getSeason` should be run immediately after [cleanPacFIN].
 #'
-#' @template Pdata
+#' @inheritParams cleanPacFIN
 #' @param season_type Specify a `numeric` value for season type.
 #' If negative then all months will be assigned to season `1`.
 #' If `0` then seasons will be assigned from `Pdata$SAMPLE_MONTH`,
@@ -24,12 +24,12 @@
 #' if winter months belong to the previous year then use `yearUp = 1:2`.
 #' @param plotResults A logical value specifying if plots should or should not
 #' be created and shown in the console.
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #'
 #' @return An additional column `season` is added to `Pdata`.
 #' No columns are modified.
 #' @export
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson
 #' @examples
 #' test <- getSeason(
 #'   data.frame(SAMPLE_MONTH = 1:12, fishyr = rep(1:2, each = 6)),

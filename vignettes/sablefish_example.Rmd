@@ -1,0 +1,175 @@
+---
+title: "Working through sablefish PacFIN data"
+author: "Kelli F. Johnson"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Working through PacFIN data can be complex. This examples guides you through working up the data for sablefish. The fish ticket data contains information on catches and is labeled `catch.pacfin` within this vignette. The biological data that contains information on lengths and ages is labeled `bds.pacfin`. These names are standard for every data set that is downloaded and saved from PacFIN using `PacFIN.Utilities` extraction code.
+
+Before working up any of the data, a few items need to be clarified. Such as what gear types you would like to use and what bins should be used for the biological data. As well as which files you would like to load.
+
+```{r setup}
+# Species common name based on NWFSC survey data
+common_name <- "sablefish"
+# PacFIN species code
+species_code <- "SABL"
+
+# Files
+file_bds <- fs::path("..", "PacFIN.SABL.bds.11.Nov.2024.RData")
+file_catch <- fs::path("..", "data_commercial_catch_expansions.csv")
+
+# Bins for biological data
+length_bins <- seq(18, 90, by = 2)
+age_bins <- seq(0, 60, by = 1)
+
+# Gear codes
+used_gears <- c("HKL", "POT", "TWL")
+
+# The maximum quantile at which to cap all data expansions within getExpansion_1().
+expansion <- 0.95
+```
+
+Specify specific records to retain when running `cleanPacFIN()`. 
+
+```{r clean-settings}
+# Determine what samples to retain or filter out when using cleanPacFIN()
+# Keep all alternate (A), fork (F), and unknown (U) length types based on 
+# FISH_LENGTH_TYPE_CODE. This decision should be species-specific
+good_lengths <- c("U", "A", "F")
+# Keep only random (R) samples based on SAMPLE_METHOD_CODE. Only random samples
+# should be retained unless specified by a state agency.
+good_methods <- "R"
+# Keep commercial on-board (C), market (M), and blank samples based on SAMPLE_TYPE
+good_samples <- c("", "M", "C")
+# Keep data from all 3 states. This is the default.
+good_states <- c("WA", "OR", "CA")
+# Keep only break and burn (B, BB), unknown (U), and blank (") age reads based 
+# on AGE_METHOD. This decision should be species-specific.
+good_age_method <- c("B", "BB", "U", "")
+```
+
+Load the PacFIN biological data.
+
+```{r read-data, eval = FALSE}
+# bds.pacfin
+load(file_bds)
+# pre-processed catch data by year, state, and geargroup
+catch <- utils::read.csv(file_catch)
+```
+
+## Calculate the weight--length relationship
+
+A choice must be made about which data set you want to fit for estimating the weight--length relationships by sex and across sexes. Many scientists choose to use the survey data because it is thought to best represent the population. You could use the data retrieved from PacFIN to calculate this relationship but that option is not shown here.
+
+```{r weight-length-data, message = FALSE, warning = FALSE}
+# Pull survey data 
+bds_survey <- nwfscSurvey::pull_bio(
+  common_name = common_name,
+  survey = "NWFSC.Combo"
+)
+# Estimate weight-length relationship by sex
+weight_length_estimates <- nwfscSurvey::estimate_weight_length(
+  bds_survey,
+  verbose = FALSE
+)
+```
+
+```{r print-weight-length-table}
+knitr::kable(weight_length_estimates, "markdown")
+```
+
+## Catch data
+
+The catch data must be summarized because it will be used in the second stage expansion of the biological data. Where, `formatCatch()` takes a long data frame as input and converts it to a wide data frame with one row per year and one column per catch group. In the `r common_name` example the catch is stratified by `state` and `geargroup`, leading to one column for each state-gear combination. Catches can be summarized in pounds of metric tons where the units should be explicitly passed to `getExpansion_2()` to convert the catches to pounds if necessary. 
+
+It is recommended to pass a pre-processed long format catch file to `formatCatch()` that includes data stratified by state, gear (e.g., expected name of geargroup), year (e.g., can use yr, year, landing_year, or sample_year), and catch values. Depending upon the species biological data in PacFIN can be present before the start of PacFIN catch records (1981), hence, catch amounts from historical reconstructions may be necessary to ensure proper expansion. Additionally, the stratification should always include areas (e.g., state or areas within states) even if using coastwide fleets in the model due to variable catch and sampling by areas.
+
+
+```{r catch, eval = FALSE}
+catch_formatted <- catch |>
+  formatCatch(
+    strat = c("state", "geargroup"),
+    valuename = "catch_mt"
+  )
+```
+
+## Biological data
+
+The biological data must first be cleaned using `cleanPacFIN()`. Here, we choose to remove the rows of data that should not be used in the assessment by choosing `CLEAN = TRUE` but you can change that to `FALSE` and all rows will be saved. We also create an additional column that matches records to the same stratification used for the catch data above for weighting.
+
+```{r biological-data, eval = FALSE}
+bds_cleaned <- cleanPacFIN(
+  Pdata = bds.pacfin,
+  keep_gears = used_gears,
+  CLEAN = TRUE,
+  keep_age_method = good_age_method,
+  keep_sample_type = good_samples,
+  keep_sample_method = good_methods,
+  keep_length_type = good_lengths,
+  keep_states = good_states,
+  spp = common_name
+) |>
+  dplyr::mutate(
+    stratification = paste(state, geargroup, sep = ".")
+  )
+```
+
+`cleanPacFIN()` filters out data and adds additional columns that are used in the data processing.  One of the columns added, `fleet`, is used to separate the data by model fleet. The default values in `fleet` are set to the gear names defined by `keep_gears` in `cleanPacFIN()`.  The values in this column should be modified by the user, if necessary.
+
+A new function, `get_pacfin_expansions()`, has been added in the package that does both the first- and second-stage expansions (`getExpansion_1()` and `getExpansion_2()`) in a single call. This function also returns the product of the first-stage and second-stage expansion. Previously, users had to multiply the `Expansion_Factor_1_L` or `Expansion_Factor_1_A` and `Expansion_Factor_2` columns external to the expansion functions. 
+
+```{r expand-data, eval = FALSE}
+expanded_comps <- get_pacfin_expansions(
+    Pdata = bds_cleaned,
+    Catch = catch_formatted,
+    weight_length_estimates = weight_length_estimates,
+    Units = "MT",
+    maxExp = expansion,
+    verbose = TRUE,
+    savedir = getwd())
+```
+
+Create the length composition data. 
+
+```{r length-composition-data, eval = FALSE}
+length_comps_long <- getComps(
+    Pdata = dplyr::filter(expanded_comps, !is.na(lengthcm)),
+    Comps = "LEN",
+    weightid = "Final_Sample_Size_L"
+  )
+
+length_composition_data <- writeComps(
+  inComps = length_comps_long,
+  fname = fs::path(
+    getwd(),
+    glue::glue("{species_code}_lcomps_{min(length_bins)}-{max(length_bins)}.csv")
+  ),
+  comp_bins = length_bins,
+  verbose = TRUE
+) 
+```
+
+Create the age composition data.
+
+```{r age-composition-data, eval = FALSE}
+age_comps_long <- getComps(
+  Pdata = dplyr::filter(expanded_comps, Age != -1),
+  Comps = "AGE",
+  weightid = "Final_Sample_Size_A"
+)
+
+age_composition_data <- writeComps(
+  inComps = age_comps_long,
+  fname = fs::path(
+    getwd(),
+    glue::glue("{species_code}_acomps_{min(age_bins)}-{max(age_bins)}.csv")
+  ),
+  comp_bins = age_bins,
+  verbose = TRUE
+)
+```
+

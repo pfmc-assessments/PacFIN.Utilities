@@ -6,35 +6,34 @@
 \usage{
 EF1_Denominator(
   Pdata,
-  fa = 2e-06,
-  fb = 3.5,
-  ma = 2e-06,
-  mb = 3.5,
-  ua = 2e-06,
-  ub = 3.5,
+  fa,
+  fb,
+  ma,
+  mb,
+  ua,
+  ub,
   verbose = TRUE,
-  plot = FALSE,
-  col.weight = "weightkg"
+  plot = lifecycle::deprecated(),
+  col.weight = "weightkg",
+  savedir = NULL
 )
 }
 \arguments{
-\item{Pdata}{A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-\code{\link{PullBDS.PacFIN}()}.}
+\item{Pdata}{A data frame returned from \code{\link[=PullBDS.PacFIN]{PullBDS.PacFIN()}} containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.}
 
-\item{fa}{Female specific weight length coefficient.}
+\item{fa, ma, ua}{Female-, male-, and unsexed-specific weight--length
+coefficients for Stock Synthesis where the relationships were calculated
+using length in cm and weight in kg. There are no default values. You must
+calculate these values and pass them to the function. If a particular sex
+does not pertain to your data, then just pass \code{NA} for that relationship.}
 
-\item{fb}{Female specific weight length exponent.}
-
-\item{ma}{Male specific weight length coefficient.}
-
-\item{mb}{Male specific weight length exponent.}
-
-\item{ua}{Unsexed weight length coefficient.}
-
-\item{ub}{Unsexed weight length exponent.}
+\item{fb, mb, ub}{Female-, male, and unsexed-specific weight--length exponents
+for Stock Synthesis where the relationships were calculated using length in
+cm and weight in kg. If a particular sex does not pertain to your data,
+then just pass \code{NA} for that relationship.}
 
 \item{verbose}{A logical specifying if output should be written to the
 screen or not. Good for testing and exploring your data but can be turned
@@ -49,6 +48,9 @@ The default is \code{FALSE}.}
 in kilograms. Units are important here because kilograms will be converted
 to pounds to match other weight calculations.
 The default is \code{weightkg}, which is created using \link{cleanPacFIN}.}
+
+\item{savedir}{A file path to the directory where the results will be saved.
+The default is NULL.}
 }
 \value{
 Additional columns are added to \code{Pdata}:
@@ -115,5 +117,5 @@ weights should be used going forward.
 \link{EF1_Numerator}, \link{getExpansion_1}, \link{getExpansion_2}
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

@@ -16,7 +16,7 @@
 #' you only want nominal catch for one or if you only wanted nominal catch.
 #' Nominal species code will be searched for using [PullNominal.PacFIN()] if
 #' the input value for `addnominal` is `TRUE`.
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #'
 #' @return
 #' A `.RData` file is saved with the object inside the file stored as

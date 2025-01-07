@@ -177,7 +177,7 @@ age_representativeness_plot <- function(bio,
 #' extracted from the survey-data warehouse.
 #'
 #' @param data A data frame with names matching those from PacFIN.
-#' @template verbose
+#' @inheritParams cleanPacFIN
 #' @return A data frame with names similar to those exported by the survey-data
 #' warehouse. No column are actually removed, columns are only added.
 #' @export
