@@ -88,7 +88,7 @@ EF1_Denominator <- function(Pdata,
       details = "Please use savedir to create and save plots."
     )
   }
-  
+
   if (verbose) {
     cli::cli_bullets(c(
       "i" = "Individual weights will be generated from the passed parameters.",
@@ -189,10 +189,10 @@ EF1_Denominator <- function(Pdata,
 
   names(printemp) <- c("M+F+U", "Cluster", "L-W", "Final Wt_Sampled")
 
-  #if (verbose) {
+  # if (verbose) {
   #  cli::cli_alert_info("Sample weights")
   #  print(summary(printemp))
-  #}
+  # }
 
   NA_Wt_Sampled <- Pdata[is.na(Pdata$Wt_Sampled_L), ]
   nNA <- NROW(NA_Wt_Sampled)

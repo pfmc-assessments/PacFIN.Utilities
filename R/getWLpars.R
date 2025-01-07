@@ -54,7 +54,7 @@ getWLpars <- function(data,
   if (verbose) {
     n <- dims[1] - nrow(data)
     cli::cli_inform(
-      "Calculating the weight-length relationship from {nrow(data)}, nfish 
+      "Calculating the weight-length relationship from {nrow(data)}, nfish
       because {n} fish did not have empirical weights and lengths."
     )
   }

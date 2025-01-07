@@ -57,7 +57,7 @@ EF1_Numerator <- function(Pdata,
   if (!is.null(savedir)) {
     numstate <- length(unique(Pdata$state))
     plot_filename <- fs::path(
-      savedir, 
+      savedir,
       "PacFIN_exp1_numer.png"
     )
     grDevices::png(plot_filename)

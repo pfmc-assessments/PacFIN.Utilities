@@ -22,7 +22,7 @@
 #'   The binning structure to use for ages and lengths. For
 #'   both arguments, the default is `NULL` which leads to the natural bins of
 #'   the data being used, i.e., no additional binning is performed.
-#' @param comp_bins The binning structure to use for ages and lengths. The default 
+#' @param comp_bins The binning structure to use for ages and lengths. The default
 #'   is `NULL` which leads to the natural bins of the data being used, i.e.,
 #'    no additional binning is performed.
 #' @param column_with_input_n A string providing the column name with the
@@ -146,7 +146,7 @@ writeComps <- function(inComps,
   }
   # Check inputs
   if ("season" %in% names(inComps) &&
-      max(inComps[["season"]]) != length(month)) {
+    max(inComps[["season"]]) != length(month)) {
     cli::cli_abort(c(
       "i" = "Input 'month' should have length equal to the maximum season",
       "x" = "month = {.var {month}}",
@@ -154,22 +154,22 @@ writeComps <- function(inComps,
     ))
   }
   if (!"season" %in% names(inComps) &&
-      length(month) != 1) {
+    length(month) != 1) {
     cli::cli_abort(c(
-      "x" = "month should have length 1 instead of length {length(month)} 
+      "x" = "month should have length 1 instead of length {length(month)}
         because {.var season} does not exist as a column in {.var inComps}"
     ))
   }
   if (!"fishyr" %in% colnames(inComps)) {
     cli::cli_abort("fishyr should be a column")
   }
-  if (!"fleet"  %in% colnames(inComps)) {
+  if (!"fleet" %in% colnames(inComps)) {
     cli::cli_abort("fleet should be a column")
   }
-  if (!column_with_input_n  %in% colnames(inComps)) {
+  if (!column_with_input_n %in% colnames(inComps)) {
     cli::cli_abort("{.var {column_with_input_n}} should be a column")
   }
-  
+
   Names <- names(inComps)
   AGE <- which(Names == "Age")
   LEN <- which(Names == "lengthcm")
@@ -178,7 +178,7 @@ writeComps <- function(inComps,
   if (length(AGE) + length(LEN) == 0) {
     cli::cli_abort("lengthcm or Age are not columns in {.val inComps}")
   }
-  
+
   # Create fname if it is not give based on what types of comps we are doing
   if (is.null(fname)) {
     fname <- dplyr::case_when(
@@ -202,7 +202,7 @@ writeComps <- function(inComps,
     no = LEN
   )
   colnames(inComps)[type_loc] <- "comp_type"
-  
+
   # Modify inComps to include all bins in comp_bins
   check_bin_width <- diff(comp_bins)
   if (any(check_bin_width != check_bin_width[1])) {
@@ -219,12 +219,12 @@ writeComps <- function(inComps,
   expanded_comps <- inComps |>
     dplyr::right_join(grid) |>
     tibble::tibble() |>
-    tidyr::complete(fishyr, fleet, season, comp_type, 
-                    fill = list(
-                      n_tows = 0, 
-                      n_fish = 0,
-                      comp = 0
-                    )
+    tidyr::complete(fishyr, fleet, season, comp_type,
+      fill = list(
+        n_tows = 0,
+        n_fish = 0,
+        comp = 0
+      )
     )
 
   if (is.null(comp_bins)) {
@@ -232,8 +232,8 @@ writeComps <- function(inComps,
       cli::cli_alert_info("No composition bins provided, using data as-is.")
     }
     comp_bins <- sort(unique(inComps[["comp_type"]]))
-  } 
-  
+  }
+
   bins <- c(comp_bins, Inf)
   # add extra, dummy bin because all.inside = TRUE
   expanded_comps$bin <- findInterval(expanded_comps[["comp_type"]], bins, all.inside = TRUE)
@@ -247,7 +247,7 @@ writeComps <- function(inComps,
     "F" %in% inComps[["SEX"]] ~ "f",
     "U" %in% inComps[["SEX"]] ~ "u"
   )
-  
+
   wide_composition_data <- expanded_comps |>
     dplyr::group_by(
       dplyr::across(dplyr::all_of(
@@ -294,13 +294,13 @@ writeComps <- function(inComps,
     dplyr::relocate(fleet, sex, partition, .after = month) |>
     dplyr::arrange(fleet, sex, year) |>
     dplyr::rename_with(.fn = \(x) gsub("([a-z])0+([1-9])", "\\1\\2", x))
-  
+
   if (length(AGE) > 0) {
     returned_composition_data <- wide_composition_data |>
       dplyr::mutate(
         ageerr = ageErr,
         Lbin_lo = -1,
-        Lbin_hi =  -1,
+        Lbin_hi = -1,
         .after = partition
       )
   } else {

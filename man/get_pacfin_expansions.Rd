@@ -109,21 +109,22 @@ each fish represents only itself.}
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = "widow rockfish",
   survey = "NWFSC.Combo"
-  )
+)
 pars <- nwfscSurvey::estimate_weight_length(
   data = bds_survey,
   col_length = "length_cm",
   col_weight = "weight_kg",
   verbose = FALSE
- )
- 
+)
+
 expanded_comps <- get_pacfin_expansions(
   Pdata = bds_cleaned,
   Catch = catch_dataframe,
   weight_length_estimates = pars,
   Units = "MT",
   Comps = "LEN",
-  maxExp = 0.95)
+  maxExp = 0.95
+)
 }
 }
 \seealso{
