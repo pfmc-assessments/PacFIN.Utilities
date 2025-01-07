@@ -113,7 +113,7 @@ load.</p>
 <code><a href="../reference/cleanPacFIN.html">cleanPacFIN()</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Determine what samples to retain or filter out when using cleanPacFIN()</span></span>
-<span><span class="co"># Keep all alternate (A), fork (F), and unknown (U) length types based on </span></span>
+<span><span class="co"># Keep all alternate (A), fork (F), and unknown (U) length types based on</span></span>
 <span><span class="co"># FISH_LENGTH_TYPE_CODE. This decision should be species-specific</span></span>
 <span><span class="va">good_lengths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"U"</span>, <span class="st">"A"</span>, <span class="st">"F"</span><span class="op">)</span></span>
 <span><span class="co"># Keep only random (R) samples based on SAMPLE_METHOD_CODE. Only random samples</span></span>
@@ -123,7 +123,7 @@ load.</p>
 <span><span class="va">good_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="st">"M"</span>, <span class="st">"C"</span><span class="op">)</span></span>
 <span><span class="co"># Keep data from all 3 states. This is the default.</span></span>
 <span><span class="va">good_states</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WA"</span>, <span class="st">"OR"</span>, <span class="st">"CA"</span><span class="op">)</span></span>
-<span><span class="co"># Keep only break and burn (B, BB), unknown (U), and blank (") age reads based </span></span>
+<span><span class="co"># Keep only break and burn (B, BB), unknown (U), and blank (") age reads based</span></span>
 <span><span class="co"># on AGE_METHOD. This decision should be species-specific.</span></span>
 <span><span class="va">good_age_method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="st">"BB"</span>, <span class="st">"U"</span>, <span class="st">""</span><span class="op">)</span></span></code></pre></div>
 <p>Load the PacFIN biological data.</p>
@@ -141,7 +141,7 @@ scientists choose to use the survey data because it is thought to best
 represent the population. You could use the data retrieved from PacFIN
 to calculate this relationship but that option is not shown here.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Pull survey data </span></span>
+<code class="sourceCode R"><span><span class="co"># Pull survey data</span></span>
 <span><span class="va">bds_survey</span> <span class="op">&lt;-</span> <span class="fu">nwfscSurvey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nwfscSurvey/man/pull_bio.html" class="external-link">pull_bio</a></span><span class="op">(</span></span>
 <span>  common_name <span class="op">=</span> <span class="va">common_name</span>,</span>
 <span>  survey <span class="op">=</span> <span class="st">"NWFSC.Combo"</span></span>
@@ -260,20 +260,21 @@ and <code>Expansion_Factor_2</code> columns external to the expansion
 functions.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expanded_comps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pacfin_expansions.html">get_pacfin_expansions</a></span><span class="op">(</span></span>
-<span>    Pdata <span class="op">=</span> <span class="va">bds_cleaned</span>,</span>
-<span>    Catch <span class="op">=</span> <span class="va">catch_formatted</span>,</span>
-<span>    weight_length_estimates <span class="op">=</span> <span class="va">weight_length_estimates</span>,</span>
-<span>    Units <span class="op">=</span> <span class="st">"MT"</span>,</span>
-<span>    maxExp <span class="op">=</span> <span class="va">expansion</span>,</span>
-<span>    verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    savedir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  Pdata <span class="op">=</span> <span class="va">bds_cleaned</span>,</span>
+<span>  Catch <span class="op">=</span> <span class="va">catch_formatted</span>,</span>
+<span>  weight_length_estimates <span class="op">=</span> <span class="va">weight_length_estimates</span>,</span>
+<span>  Units <span class="op">=</span> <span class="st">"MT"</span>,</span>
+<span>  maxExp <span class="op">=</span> <span class="va">expansion</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  savedir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Create the length composition data.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">length_comps_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getComps.html">getComps</a></span><span class="op">(</span></span>
-<span>    Pdata <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">expanded_comps</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lengthcm</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    Comps <span class="op">=</span> <span class="st">"LEN"</span>,</span>
-<span>    weightid <span class="op">=</span> <span class="st">"Final_Sample_Size_L"</span></span>
-<span>  <span class="op">)</span></span>
+<span>  Pdata <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">expanded_comps</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lengthcm</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Comps <span class="op">=</span> <span class="st">"LEN"</span>,</span>
+<span>  weightid <span class="op">=</span> <span class="st">"Final_Sample_Size_L"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">length_composition_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/writeComps.html">writeComps</a></span><span class="op">(</span></span>
 <span>  inComps <span class="op">=</span> <span class="va">length_comps_long</span>,</span>
@@ -283,7 +284,7 @@ functions.</p>
 <span>  <span class="op">)</span>,</span>
 <span>  comp_bins <span class="op">=</span> <span class="va">length_bins</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span> </span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Create the age composition data.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">age_comps_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getComps.html">getComps</a></span><span class="op">(</span></span>
