@@ -172,10 +172,12 @@ get_pacfin_expansions <- function(
         if (length(stratification.cols) == 1) {
           data_exp1[, "stratification"] <- data_exp1[, stratification.cols]
         } else {
+          # IGT 2025/01/07 (with support of github copilot): I think the regular expression looks for unique punctuation separators in the column names of Catch. The code may fail if you have multiple separators (e.g. "." vs "_"), but I'm not sure of that and it would be a bad idea anyway.
           separate <- unique(gsub(
             "^[a-zA-Z]+(\\s*[[:punct:]]\\s*)[a-zA-Z]+$",
             "\\1", colnames(Catch)[-1]
           ))
+          # if there is more than one stratification column, combine them into a single column using the separator calculated above
           data_exp1[, "stratification"] <- apply(data_exp1[, stratification.cols],
                                                  1, paste,
                                                  collapse = separate
