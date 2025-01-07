@@ -1,13 +1,13 @@
 #' Expand bds data up to the tow and catch level
 #'
-#' Calculate the first- and second-stage expansions. The first-stage expansion 
-#' account for unsampled fish in the smallest measured unit. 
+#' Calculate the first- and second-stage expansions. The first-stage expansion
+#' account for unsampled fish in the smallest measured unit.
 #' Where, in PacFIN data, the smallest measured unit typically a trip
 #' because that is what is available to the port or dockside sampler. Whereas,
 #' in survey data the smallest measured unit is typically a tow. Tow would be
 #' the smallest if we had samples from onboard observers rather than from
-#' dockside samplers. The second-stage expansion expands data up to the state 
-#' or area catch level for that year and stratificiation. 
+#' dockside samplers. The second-stage expansion expands data up to the state
+#' or area catch level for that year and stratificiation.
 #' Find the catch for each year and grouping in `Catch` and divide by the
 #' pounds of fish that were collected for sampling for that same year and
 #' grouping. Sampled biomass is stored in `All_Trips_Sampled_Lbs`, which is
@@ -42,9 +42,9 @@
 #' }
 #'
 #' @inheritParams cleanPacFIN
-#' @param weight_length_estimates Dataframe of length-weight estimates with the 
-#'   the following columns: sex, A, B. It is recommended to use to use 
-#'   `nwfscSurvey::estimate_weight_length()` and to use survey data. 
+#' @param weight_length_estimates Dataframe of length-weight estimates with the
+#'   the following columns: sex, A, B. It is recommended to use to use
+#'   `nwfscSurvey::estimate_weight_length()` and to use survey data.
 #' @param maxExp The maximum expansion factor (either a number or a quantile)
 #'   for building expansions. Typically, the default is 0.95. Set `maxExp =
 #'   Inf` to see largest values.
@@ -77,21 +77,22 @@
 #' bds_survey <- nwfscSurvey::pull_bio(
 #'   common_name = "widow rockfish",
 #'   survey = "NWFSC.Combo"
-#'   )
+#' )
 #' pars <- nwfscSurvey::estimate_weight_length(
 #'   data = bds_survey,
 #'   col_length = "length_cm",
 #'   col_weight = "weight_kg",
 #'   verbose = FALSE
-#'  )
-#'  
+#' )
+#'
 #' expanded_comps <- get_pacfin_expansions(
 #'   Pdata = bds_cleaned,
 #'   Catch = catch_dataframe,
 #'   weight_length_estimates = pars,
 #'   Units = "MT",
 #'   Comps = "LEN",
-#'   maxExp = 0.95)
+#'   maxExp = 0.95
+#' )
 #' }
 #' @return
 #' A `data.frame` with expanded data up to the trip and total catch level.
@@ -109,19 +110,21 @@ get_pacfin_expansions <- function(
     verbose = TRUE,
     savedir = NULL) {
   nwfscSurvey::check_dir(dir = savedir, verbose = verbose)
-  
+
   # Check weight-length data frame
   required_cols <- c("sex", "A", "B")
-  if (any(!required_cols %in% colnames(weight_length_estimates))){
+  if (any(!required_cols %in% colnames(weight_length_estimates))) {
     cli::cli_abort(
-      "The weight_length_estimates dataframe is required to have three columns 
-    named {required_cols}")
+      "The weight_length_estimates dataframe is required to have three columns
+    named {required_cols}"
+    )
   }
-  required_sexes <- c("female", "male", "all") 
-  if (any(!required_sexes %in% weight_length_estimates[,"sex"])){
+  required_sexes <- c("female", "male", "all")
+  if (any(!required_sexes %in% weight_length_estimates[, "sex"])) {
     cli::cli_abort(
-      "The weight_length_estimates dataframe is required to have three rows in  
-    the sex column for {required_sexes}")
+      "The weight_length_estimates dataframe is required to have three rows in
+    the sex column for {required_sexes}"
+    )
   }
   if (verbose) {
     cli::cli_inform(
@@ -151,7 +154,7 @@ get_pacfin_expansions <- function(
   ub <- weight_length_estimates |>
     dplyr::filter(sex == "all") |>
     dplyr::pull("B")
-    
+
   data_exp1 <- getExpansion_1(
     Pdata = Pdata,
     fa = fa,
@@ -163,8 +166,9 @@ get_pacfin_expansions <- function(
     maxExp = maxExp,
     Exp_WA = Exp_WA,
     verbose = verbose,
-    savedir = savedir)
-    
+    savedir = savedir
+  )
+
   # Check for the "stratification" column
   if (length(data_exp1$stratification) == 0) {
     if (!missing(stratification.cols)) {
@@ -179,8 +183,8 @@ get_pacfin_expansions <- function(
           ))
           # if there is more than one stratification column, combine them into a single column using the separator calculated above
           data_exp1[, "stratification"] <- apply(data_exp1[, stratification.cols],
-                                                 1, paste,
-                                                 collapse = separate
+            1, paste,
+            collapse = separate
           )
         }
       } else {
@@ -191,7 +195,7 @@ get_pacfin_expansions <- function(
       }
     }
   } # End if
-    
+
   data_exp2 <- getExpansion_2(
     Pdata = data_exp1,
     Catch = Catch,
@@ -200,6 +204,6 @@ get_pacfin_expansions <- function(
     verbose = verbose,
     savedir = savedir
   )
-  
+
   return(data_exp2)
 }

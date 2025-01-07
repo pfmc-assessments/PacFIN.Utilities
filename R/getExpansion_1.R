@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
-#' 
+#'
 #' @seealso
 #' * [cleanPacFIN()] (upstream)
 #' * [nwfscSurvey::estimate_weight_length()] (upstream)
@@ -22,8 +22,8 @@
 #' The workflow is to run this function after [cleanPacFIN()],
 #' which assures that all of the necessary columns are available and that the
 #' data are in the correct units. This function then calls two helper functions,
-#' [EF1_Numerator()] and [EF1_Denominator()] to calculate the weight of sampled 
-#' fish and the weight of all fish of the respective species in the tow, 
+#' [EF1_Numerator()] and [EF1_Denominator()] to calculate the weight of sampled
+#' fish and the weight of all fish of the respective species in the tow,
 #' respectively. Finally, the ratio of the two values is returned. Alternatively,
 #' users should consider using [get_pacfin_expansions()] which is a wrapper
 #' function that calls both the first and second stage functions for expanding
@@ -68,17 +68,17 @@
 #' bds_survey <- nwfscSurvey::pull_bio(
 #'   common_name = "widow rockfish",
 #'   survey = "NWFSC.Combo"
-#'   )
+#' )
 #' pars <- nwfscSurvey::estimate_weight_length(
 #'   data = bds_survey,
 #'   col_length = "length_cm",
 #'   col_weight = "weight_kg",
 #'   verbose = FALSE
-#'  )
+#' )
 #' data_exp1 <- getExpansion_1(
 #'   Pdata = bds_cleaned,
 #'   fa = weight_length_estimates |>
-#'   dplyr::filter(sex == "female") |>
+#'     dplyr::filter(sex == "female") |>
 #'     dplyr::pull("A"),
 #'   fb = weight_length_estimates |>
 #'     dplyr::filter(sex == "female") |>
@@ -95,8 +95,8 @@
 #'   ub = weight_length_estimates |>
 #'     dplyr::filter(sex == "all") |>
 #'     dplyr::pull("B"),
-#'   maxExp = 0.95)
-#' 
+#'   maxExp = 0.95
+#' )
 #' }
 #' @return
 #' A `data.frame` where all of the original columns in `Pdata` remain unaltered
@@ -167,7 +167,7 @@ getExpansion_1 <- function(Pdata,
   # Now replace Inf with 1
   Pdata$Expansion_Factor_1_L[!is.finite(Pdata$Expansion_Factor_1_L)] <- 1
   Pdata$Expansion_Factor_1_A[!is.finite(Pdata$Expansion_Factor_1_A)] <- 1
-  
+
   Pdata$Expansion_Factor_1_L <- capValues(Pdata$Expansion_Factor_1_L, maxExp)
   Pdata$Expansion_Factor_1_A <- capValues(Pdata$Expansion_Factor_1_A, maxExp)
   if (verbose) {

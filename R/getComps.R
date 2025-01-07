@@ -63,8 +63,7 @@ getComps <- function(Pdata,
       c(usualSuspects, "lengthcm", "Age")
     )
   )
-  usualSuspects <- switch(
-    Comps,
+  usualSuspects <- switch(Comps,
     LEN = c(usualSuspects, "lengthcm"),
     AGE = c(usualSuspects, "Age"),
     c(usualSuspects, "lengthcm", "Age")
@@ -127,10 +126,10 @@ getComps <- function(Pdata,
     dplyr::distinct() |>
     # Give n_fish by sex and weight by sex in 6 separate columns
     dplyr::rename(comp = weightid)
-    #  |>
-    # tidyr::pivot_wider(
-    #   names_from = SEX,
-    #   values_from = c("n_fish", "comp"),
-    #   values_fill = 0
-    # )
+  #  |>
+  # tidyr::pivot_wider(
+  #   names_from = SEX,
+  #   values_from = c("n_fish", "comp"),
+  #   values_fill = 0
+  # )
 }

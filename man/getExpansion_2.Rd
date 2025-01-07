@@ -100,7 +100,7 @@ data_exp2 <- getExpansion_2(
   Catch = catch_formatted,
   Units = "MT",
   maxExp = 0.95
-  )
+)
 }
 
 }
