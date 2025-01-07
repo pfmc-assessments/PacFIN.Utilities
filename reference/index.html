@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PacFIN.Utilities</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.10</span>
       </span>
     </div>
 
@@ -25,6 +25,16 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/sablefish_example.html">Working through sablefish PacFIN data</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -50,7 +60,7 @@
         </td>
         <td><p>Calculate the numerator for the first level expansion factor</p></td>
       </tr><tr><td>
-          <p><code><a href="PacFIN.Utilities.html">PacFIN.Utilities-package</a></code> <code><a href="PacFIN.Utilities.html">PacFIN.Utilities</a></code> </p>
+          <p><code><a href="PacFIN.Utilities.html">PacFIN.Utilities</a></code> </p>
         </td>
         <td><p>PacFIN.Utilities: Functions for working up PacFIN data</p></td>
       </tr><tr><td>
@@ -126,10 +136,6 @@
         </td>
         <td><p>Convert Disc and Interspiracular Width to Length</p></td>
       </tr><tr><td>
-          <p><code><a href="doSexRatio.html">doSexRatio()</a></code> </p>
-        </td>
-        <td><p>Assign gender for unsexed fish</p></td>
-      </tr><tr><td>
           <p><code><a href="find.matching.rows.html">find.matching.rows()</a></code> </p>
         </td>
         <td><p>Function find.matching.rows</p></td>
@@ -150,7 +156,7 @@
         </td>
         <td><p>Get the general area that the information was taken from</p></td>
       </tr><tr><td>
-          <p><code><a href="getComps.html">getComps()</a></code> <code><a href="getComps.html">getcomps_long()</a></code> </p>
+          <p><code><a href="getComps.html">getComps()</a></code> </p>
         </td>
         <td><p>Aggregate length, age, or age-at-length composition data by strata</p></td>
       </tr><tr><td>
@@ -160,7 +166,7 @@
       </tr><tr><td>
           <p><code><a href="getExpansion_1.html">getExpansion_1()</a></code> </p>
         </td>
-        <td><p>First-Stage Expansion for Composition Data</p></td>
+        <td><p>First-Stage expansion for composition data</p></td>
       </tr><tr><td>
           <p><code><a href="getExpansion_2.html">getExpansion_2()</a></code> </p>
         </td>
@@ -188,15 +194,19 @@
       </tr><tr><td>
           <p><code><a href="getWLpars.html">getWLpars()</a></code> </p>
         </td>
-        <td><p>Calculate weight-length relationship parameters</p></td>
+        <td><p>Calculate weight–length relationship parameters</p></td>
       </tr><tr><td>
           <p><code><a href="get_codelist.html">get_codelist()</a></code> </p>
         </td>
         <td><p>Get a list of available options, e.g., code_list, from PacFIN</p></td>
       </tr><tr><td>
+          <p><code><a href="get_pacfin_expansions.html">get_pacfin_expansions()</a></code> </p>
+        </td>
+        <td><p>Expand bds data up to the tow and catch level</p></td>
+      </tr><tr><td>
           <p><code><a href="getweight.html">getweight()</a></code> </p>
         </td>
-        <td><p>Calculate weight from length and the weight-length relationship</p></td>
+        <td><p>Calculate weight from length and the weight–length relationship</p></td>
       </tr><tr><td>
           <p><code><a href="grep_final_age.html">grep_final_age()</a></code> </p>
         </td>
@@ -216,7 +226,7 @@
       </tr><tr><td>
           <p><code><a href="plotWL.html">plotWL()</a></code> </p>
         </td>
-        <td><p>Plot of the weight-length relationship by sex</p></td>
+        <td><p>Plot of the weight–length relationship by sex</p></td>
       </tr><tr><td>
           <p><code><a href="sql.html">sql_area()</a></code> <code><a href="sql.html">sql_bds()</a></code> <code><a href="sql.html">sql_catch()</a></code> <code><a href="sql.html">sql_species()</a></code> <code><a href="sql.html">sql_check_FINAL_FISH_AGE_IN_YEARS()</a></code> </p>
         </td>
@@ -236,7 +246,7 @@
       </tr><tr><td>
           <p><code><a href="writeComps.html">writeComps()</a></code> </p>
         </td>
-        <td><p>Write out composition data formatted for Stock Synthesis.</p></td>
+        <td><p>Write out composition data formatted for Stock Synthesis</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -250,7 +260,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

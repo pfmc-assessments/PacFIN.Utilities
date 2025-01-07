@@ -1,6 +1,8 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>/404.html</loc></url>
 <url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/sablefish_example.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/EF1_Denominator.html</loc></url>
@@ -25,7 +27,6 @@
 <url><loc>/reference/comps_bins.html</loc></url>
 <url><loc>/reference/comps_wide.html</loc></url>
 <url><loc>/reference/convertlength_skate.html</loc></url>
-<url><loc>/reference/doSexRatio.html</loc></url>
 <url><loc>/reference/find.matching.rows.html</loc></url>
 <url><loc>/reference/formatCatch.html</loc></url>
 <url><loc>/reference/getAge.html</loc></url>
@@ -42,6 +43,7 @@
 <url><loc>/reference/getUserName.html</loc></url>
 <url><loc>/reference/getWLpars.html</loc></url>
 <url><loc>/reference/get_codelist.html</loc></url>
+<url><loc>/reference/get_pacfin_expansions.html</loc></url>
 <url><loc>/reference/getweight.html</loc></url>
 <url><loc>/reference/grep_final_age.html</loc></url>
 <url><loc>/reference/index.html</loc></url>

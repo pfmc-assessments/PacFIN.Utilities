@@ -1,5 +1,6 @@
 pandoc: 3.1.11
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-07-17T17:06Z
+articles:
+  sablefish_example: sablefish_example.html
+last_built: 2025-01-07T22:42Z

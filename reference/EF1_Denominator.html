@@ -20,7 +20,7 @@ getExpansion_1."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PacFIN.Utilities</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.10</span>
       </span>
     </div>
 
@@ -28,6 +28,16 @@ getExpansion_1."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/sablefish_example.html">Working through sablefish PacFIN data</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -52,15 +62,16 @@ is the weight of all fish in the sample.
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">EF1_Denominator</span><span class="op">(</span></span>
 <span>  <span class="va">Pdata</span>,</span>
-<span>  fa <span class="op">=</span> <span class="fl">2e-06</span>,</span>
-<span>  fb <span class="op">=</span> <span class="fl">3.5</span>,</span>
-<span>  ma <span class="op">=</span> <span class="fl">2e-06</span>,</span>
-<span>  mb <span class="op">=</span> <span class="fl">3.5</span>,</span>
-<span>  ua <span class="op">=</span> <span class="fl">2e-06</span>,</span>
-<span>  ub <span class="op">=</span> <span class="fl">3.5</span>,</span>
+<span>  <span class="va">fa</span>,</span>
+<span>  <span class="va">fb</span>,</span>
+<span>  <span class="va">ma</span>,</span>
+<span>  <span class="va">mb</span>,</span>
+<span>  <span class="va">ua</span>,</span>
+<span>  <span class="va">ub</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  col.weight <span class="op">=</span> <span class="st">"weightkg"</span></span>
+<span>  plot <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  col.weight <span class="op">=</span> <span class="st">"weightkg"</span>,</span>
+<span>  savedir <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -69,35 +80,25 @@ is the weight of all fish in the sample.
 
 
 <dl><dt id="arg-pdata">Pdata<a class="anchor" aria-label="anchor" href="#arg-pdata"></a></dt>
-<dd><p>A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-<code><a href="PullBDS.PacFIN.html">PullBDS.PacFIN</a>()</code>.</p></dd>
+<dd><p>A data frame returned from <code><a href="PullBDS.PacFIN.html">PullBDS.PacFIN()</a></code> containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.</p></dd>
 
 
-<dt id="arg-fa">fa<a class="anchor" aria-label="anchor" href="#arg-fa"></a></dt>
-<dd><p>Female specific weight length coefficient.</p></dd>
+<dt id="arg-fa-ma-ua">fa, ma, ua<a class="anchor" aria-label="anchor" href="#arg-fa-ma-ua"></a></dt>
+<dd><p>Female-, male-, and unsexed-specific weight–length
+coefficients for Stock Synthesis where the relationships were calculated
+using length in cm and weight in kg. There are no default values. You must
+calculate these values and pass them to the function. If a particular sex
+does not pertain to your data, then just pass <code>NA</code> for that relationship.</p></dd>
 
 
-<dt id="arg-fb">fb<a class="anchor" aria-label="anchor" href="#arg-fb"></a></dt>
-<dd><p>Female specific weight length exponent.</p></dd>
-
-
-<dt id="arg-ma">ma<a class="anchor" aria-label="anchor" href="#arg-ma"></a></dt>
-<dd><p>Male specific weight length coefficient.</p></dd>
-
-
-<dt id="arg-mb">mb<a class="anchor" aria-label="anchor" href="#arg-mb"></a></dt>
-<dd><p>Male specific weight length exponent.</p></dd>
-
-
-<dt id="arg-ua">ua<a class="anchor" aria-label="anchor" href="#arg-ua"></a></dt>
-<dd><p>Unsexed weight length coefficient.</p></dd>
-
-
-<dt id="arg-ub">ub<a class="anchor" aria-label="anchor" href="#arg-ub"></a></dt>
-<dd><p>Unsexed weight length exponent.</p></dd>
+<dt id="arg-fb-mb-ub">fb, mb, ub<a class="anchor" aria-label="anchor" href="#arg-fb-mb-ub"></a></dt>
+<dd><p>Female-, male, and unsexed-specific weight–length exponents
+for Stock Synthesis where the relationships were calculated using length in
+cm and weight in kg. If a particular sex does not pertain to your data,
+then just pass <code>NA</code> for that relationship.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -118,6 +119,11 @@ The default is <code>FALSE</code>.</p></dd>
 in kilograms. Units are important here because kilograms will be converted
 to pounds to match other weight calculations.
 The default is <code>weightkg</code>, which is created using <a href="cleanPacFIN.html">cleanPacFIN</a>.</p></dd>
+
+
+<dt id="arg-savedir">savedir<a class="anchor" aria-label="anchor" href="#arg-savedir"></a></dt>
+<dd><p>A file path to the directory where the results will be saved.
+The default is NULL.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -176,7 +182,7 @@ weights should be used going forward.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p>Andi Stephens</p>
+    <p>Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel</p>
     </div>
 
   </div>
@@ -191,7 +197,7 @@ weights should be used going forward.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

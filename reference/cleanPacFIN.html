@@ -22,7 +22,7 @@ US West Coast stock assessments."><!-- mathjax --><script src="https://cdnjs.clo
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PacFIN.Utilities</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.10</span>
       </span>
     </div>
 
@@ -30,6 +30,16 @@ US West Coast stock assessments."><!-- mathjax --><script src="https://cdnjs.clo
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/sablefish_example.html">Working through sablefish PacFIN data</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -67,7 +77,7 @@ US West Coast stock assessments.</p>
 <span>  CLEAN <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  spp <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">savedir</span></span>
+<span>  savedir <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -76,11 +86,10 @@ US West Coast stock assessments.</p>
 
 
 <dl><dt id="arg-pdata">Pdata<a class="anchor" aria-label="anchor" href="#arg-pdata"></a></dt>
-<dd><p>A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-<code><a href="PullBDS.PacFIN.html">PullBDS.PacFIN</a>()</code>.</p></dd>
+<dd><p>A data frame returned from <code><a href="PullBDS.PacFIN.html">PullBDS.PacFIN()</a></code> containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.</p></dd>
 
 
 <dt id="arg-keep-inpfc">keep_INPFC<a class="anchor" aria-label="anchor" href="#arg-keep-inpfc"></a></dt>
@@ -88,56 +97,52 @@ which originated in 2014. Data are pulled using sql calls, see
 
 
 <dt id="arg-keep-gears">keep_gears<a class="anchor" aria-label="anchor" href="#arg-keep-gears"></a></dt>
-<dd><p>A character vector including only the gear types you want
+<dd><p>A character vector including the gear types you want
 to label as unique fleets. Order matters and will define fleet numbering.
-If the argument is missing, which is the default, then all found gear groups
-are maintained and ordered alphabetically. For more details see
-<a href="getGearGroup.html">getGearGroup</a> that lists a web link for where you can find the
-available gear groupings and how they link to <code>"GRID"</code> within your data.
-GRID is a legacy term from PacFIN, now identified as
-PACFIN_GEAR_CODE in the biological and fish ticket data, where
-GR is short for gear and
-ID is short for identification.
-Typical entries will include character values such as <code>HKL</code>, <code>POT</code>, <code>TWL</code>,
-where the latter is short for all non-shrimp trawls and
-<code>TWS</code> is shrimp trawls.
-Other gear identification codes and their definitions include
-<code>DRG</code> which is dredge gear,
-<code>MSC</code> which is all other miscellaneous gear such as diving or river trawls,
-<code>NET</code> which is all non-trawl net gear,
-<code>NTW</code> which is non-trawl gear, and
-<code>TLS</code> which is trolling gear.
-As a special case, <code>MID</code> is available for spiny dogfish to extract
-mid-water trawl data as a separate fleet.</p></dd>
+If the argument is missing, which is the default, then all found gear
+groups are maintained and ordered alphabetically. For more details see
+<code><a href="getGearGroup.html">getGearGroup()</a></code>, which lists a link where you can find the available gear
+groupings and how they link to <code>"GRID"</code> within your data. The vector
+supplied to this argument should consist of only options available in
+<code>unique(GearTable[["GROUP"]])</code>.
+<code>GRID</code> is a legacy term from PacFIN, now identified as <code>PACFIN_GEAR_CODE</code>
+in the biological and fish ticket data, where GR is short for gear and ID
+is short for identification. Typical entries will include character values
+such as <code>HKL</code>, <code>POT</code>, <code>TWL</code>, where the latter is short for all non-shrimp
+trawls and <code>TWS</code> is shrimp trawls. Other gear identification codes and
+their definitions include <code>DRG</code> which is dredge gear, <code>MSC</code> which is all
+other miscellaneous gear such as diving or river trawls, <code>NET</code> which is all
+non-trawl net gear, <code>NTW</code> which is non-trawl gear, and <code>TLS</code> which is
+trolling gear. As a special case, <code>MID</code> is available for spiny dogfish to
+extract mid-water trawl data as a separate fleet.</p></dd>
 
 
 <dt id="arg-keep-sample-type">keep_sample_type<a class="anchor" aria-label="anchor" href="#arg-keep-sample-type"></a></dt>
 <dd><p>A vector of character values specifying the types of
-samples you want to keep. The default is to keep <code>c("M")</code>. Available
-types include market (M), research (R), special request (S), and
-commercial on-board (C). There are additional samples without a <code>SAMPLE_TYPE</code>,
-but they are only kept if you include <code>NA</code> in your call.
-All sample types from California are assigned to <code>M</code>.
-Including commercial on-board samples is not recommended because
-they might also be in WCGOP data and would lead to double counting.</p></dd>
+samples you want to keep. The default is to keep <code>c("M")</code>. Available types
+include market (M), research (R), special request (S), and commercial
+on-board (C). There are additional samples without a <code>SAMPLE_TYPE</code>, but
+they are only kept if you include <code>NA</code> in your call. All sample types from
+California are assigned to <code>M</code>. Including commercial on-board samples is
+not recommended because they might also be in WCGOP data and would lead to
+double counting.</p></dd>
 
 
 <dt id="arg-keep-sample-method">keep_sample_method<a class="anchor" aria-label="anchor" href="#arg-keep-sample-method"></a></dt>
-<dd><p>A vector of character values specifying the types of
-sampling methods you want to keep. The default is to keep <code>"R"</code>, which
-refers to samples that were sampled randomly. Available types include
+<dd><p>A vector of character values specifying the types
+of sampling methods you want to keep. The default is to keep <code>"R"</code>,
+which refers to samples that were sampled randomly. Available types include
 random (R), stratified (S), systematic (N), purposive (P), and special (X).
-As of February 17, 2021,
-Washington is the only state with a sample type of <code>""</code>, and it was limited
-to two special samples of yelloweye rockfish.</p></dd>
+As of February 17, 2021, Washington is the only state with a sample type of
+<code>""</code>, and it was limited to two special samples of yelloweye rockfish.</p></dd>
 
 
 <dt id="arg-keep-length-type">keep_length_type<a class="anchor" aria-label="anchor" href="#arg-keep-length-type"></a></dt>
 <dd><p>A vector of character values specifying the types of
-length samples to keep. There is no default value, though users will typically
-want to keep <code>c("", "F", "A")</code>, but should also think about using
-<code>c("", "F", "A", NA)</code>. Note that types other than those listed below
-can be present, especially if you are dealing with a skate.
+length samples to keep. There is no default value, though users will
+typically want to keep <code>c("", "F", "A")</code>, but should also think about using
+<code>c("", "F", "A", NA)</code>. Note that types other than those listed below can be
+present, especially if you are dealing with a skate.
 <code>A</code> is alternate length,
 <code>D</code> is dorsal length,
 <code>F</code> is fork length,
@@ -146,27 +151,29 @@ can be present, especially if you are dealing with a skate.
 
 
 <dt id="arg-keep-age-method">keep_age_method<a class="anchor" aria-label="anchor" href="#arg-keep-age-method"></a></dt>
-<dd><p>A vector of ageing methods to retain in the data. All fish
-aged with methods other than those listed will no longer be considered aged.
-A value of <code>NULL</code>, the default, will keep all ageing methods. However,
-a vector of <code>c("B", "BB", S", "", NA, 1, 2)</code> will keep all unaged fish and those
-that were aged with break and burn and surface reads. You do not really need
-to include such a verbose vector of values though because numbers are converted
-to appropriate character codes in <a href="getAge.html">getAge</a>. Therefore, something like
-<code>c("B", "S")</code> would be sufficient to keep all break and burn and surface reads.</p></dd>
+<dd><p>A vector of ageing methods to retain in the data. All
+fish aged with methods other than those listed will no longer be considered
+aged. A value of <code>NULL</code>, the default, will keep all ageing methods.
+However, a vector of <code>c("B", "BB", S", "", NA, 1, 2)</code> will keep all unaged
+fish and those that were aged with break and burn and surface reads. You do
+not really need to include such a verbose vector of values though because
+numbers are converted to appropriate character codes in <a href="getAge.html">getAge</a>.
+Therefore, something like <code>c("B", "S")</code> would be sufficient to keep all
+break and burn and surface reads.</p></dd>
 
 
 <dt id="arg-keep-missing-lengths">keep_missing_lengths<a class="anchor" aria-label="anchor" href="#arg-keep-missing-lengths"></a></dt>
 <dd><p><em>Deprecated</em>. Just subset them using
 <code>is.na(Pdata[, 'length']) after running </code>cleanPacFIN` if you want to remove
-lengths, though there is no need because the package accommodates keeping them in.</p></dd>
+lengths, though there is no need because the package accommodates keeping
+them in.</p></dd>
 
 
 <dt id="arg-keep-states">keep_states<a class="anchor" aria-label="anchor" href="#arg-keep-states"></a></dt>
 <dd><p>A vector of states that you want to keep, where each state
-is defined using a two-letter abbreviation, e.g., <code>WA</code>. The default is to keep
-data from all three states, <code>keep_states = c("WA", "OR", "CA")</code>.
-Add <code>'UNK'</code> to the vector if you want to keep data not assigned to a state.</p></dd>
+is defined using a two-letter abbreviation, e.g., <code>WA</code>. The default is to
+keep data from all three states, <code>keep_states = c("WA", "OR", "CA")</code>. Add
+<code>'UNK'</code> to the vector if you want to keep data not assigned to a state.</p></dd>
 
 
 <dt id="arg-clean">CLEAN<a class="anchor" aria-label="anchor" href="#arg-clean"></a></dt>
@@ -176,10 +183,10 @@ data with additional columns and reports on what would have been removed.</p></d
 
 
 <dt id="arg-spp">spp<a class="anchor" aria-label="anchor" href="#arg-spp"></a></dt>
-<dd><p>A character string giving the species name to
-ensure that the methods are species specific. Leave <code>NULL</code>
-if generic methods work for your species.
-Currently, sablefish is the only species with species-specific code.</p></dd>
+<dd><p>A character string giving the species name to ensure that the
+methods are species specific. Leave <code>NULL</code> if generic methods work for
+your species. Currently, sablefish is the only species with
+species-specific code.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -192,8 +199,7 @@ default is to always print to the screen, i.e., <code>verbose = TRUE</code>.</p>
 
 <dt id="arg-savedir">savedir<a class="anchor" aria-label="anchor" href="#arg-savedir"></a></dt>
 <dd><p>A file path to the directory where the results will be saved.
-The default is the current working directory.
-The path can be relative or absolute.</p></dd>
+The default is NULL.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -250,7 +256,7 @@ stratifying the data according to the particulars of an assessment.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p>Andi Stephens</p>
+    <p>Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel</p>
     </div>
 
   </div>
@@ -265,7 +271,7 @@ stratifying the data according to the particulars of an assessment.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

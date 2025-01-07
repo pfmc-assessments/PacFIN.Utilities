@@ -20,7 +20,7 @@ they would both use the same landing weight."><!-- mathjax --><script src="https
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PacFIN.Utilities</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.10</span>
       </span>
     </div>
 
@@ -28,6 +28,16 @@ they would both use the same landing weight."><!-- mathjax --><script src="https
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/sablefish_example.html">Working through sablefish PacFIN data</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -50,7 +60,12 @@ they would both use the same landing weight.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">EF1_Numerator</span><span class="op">(</span><span class="va">Pdata</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">EF1_Numerator</span><span class="op">(</span></span>
+<span>  <span class="va">Pdata</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  savedir <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -58,11 +73,10 @@ they would both use the same landing weight.</p>
 
 
 <dl><dt id="arg-pdata">Pdata<a class="anchor" aria-label="anchor" href="#arg-pdata"></a></dt>
-<dd><p>A data frame of biological samples
-originating from the
-Pacific Fishieries Information Network (PacFIN) data warehouse,
-which originated in 2014. Data are pulled using sql calls, see
-<code><a href="PullBDS.PacFIN.html">PullBDS.PacFIN</a>()</code>.</p></dd>
+<dd><p>A data frame returned from <code><a href="PullBDS.PacFIN.html">PullBDS.PacFIN()</a></code> containing
+biological samples. These data are stored in the Pacific Fishieries
+Information Network (PacFIN) data warehouse, which originated in 2014 and
+are pulled using sql calls.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -74,11 +88,17 @@ default is to always print to the screen, i.e., <code>verbose = TRUE</code>.</p>
 
 
 <dt id="arg-plot">plot<a class="anchor" aria-label="anchor" href="#arg-plot"></a></dt>
-<dd><p>Argument takes either a logical or character value specifying the file
+<dd><p>Deprecated as of version 0.2.10 and replaced with savedir.
+Argument takes either a logical or character value specifying the file
 name if you want to write the plots to a disk rather than printing them
 to the console. If <code>plot = FALSE</code> no plots will be generated.
 If printing to the disk the character value should end in <code>.png</code>
 as <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code> is used to save the plotting device.</p></dd>
+
+
+<dt id="arg-savedir">savedir<a class="anchor" aria-label="anchor" href="#arg-savedir"></a></dt>
+<dd><p>A file path to the directory where the results will be saved.
+The default is NULL.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -109,7 +129,7 @@ sample weight should not be used more than likely anyway.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p>Andi Stephens</p>
+    <p>Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel</p>
     </div>
 
   </div>
@@ -124,7 +144,7 @@ sample weight should not be used more than likely anyway.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
