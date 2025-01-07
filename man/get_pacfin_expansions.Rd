@@ -22,7 +22,7 @@ biological samples. These data are stored in the Pacific Fishieries
 Information Network (PacFIN) data warehouse, which originated in 2014 and
 are pulled using sql calls.}
 
-\item{Catch}{A data frame of catch data, in pounds or in metric tonnes.}
+\item{Catch}{A data frame of catch data, in pounds or in metric tons.}
 
 \item{weight_length_estimates}{Dataframe of length-weight estimates with the
 the following columns: sex, A, B. It is recommended to use to use
@@ -43,7 +43,7 @@ as you want except year because it is already included in the call to
 
 \item{Units}{The units of the \code{Catch} data frame, see
 \code{measurements::conv_unit_options[["mass"]]} for options. Typical units
-are metric tonnes (e.g., \code{"metric_ton"}) because that is the unit used
+are metric tons (e.g., \code{"metric_ton"}) because that is the unit used
 in Stock Synthesis, but expansions are done in pounds because fish weights
 are in pounds. Thus, catches also need to be in pounds and will be
 converted as such.}
@@ -52,7 +52,7 @@ converted as such.}
 for building expansions. Typically, the default is 0.95. Set \code{maxExp = Inf} to see largest values.}
 
 \item{Exp_WA}{A logical values specifying if the samples from Washington
-should be exanded. The default is \code{FALSE}.}
+should be expanded. The default is \code{FALSE}.}
 
 \item{verbose}{A logical specifying if output should be written to the
 screen or not. Good for testing and exploring your data but can be turned
@@ -105,7 +105,7 @@ each fish represents only itself.}
 
 \examples{
 \dontrun{
-# Calculate the weight--length parameters for input to this function
+# Calculate the weight-length parameters for input to this function
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = "widow rockfish",
   survey = "NWFSC.Combo"
@@ -129,7 +129,7 @@ expanded_comps <- get_pacfin_expansions(
 \seealso{
 \itemize{
 \item \code{\link[=cleanPacFIN]{cleanPacFIN()}} (upstream)
-\item \code{\link[nwfscSurvey:estimate_weight_length]{nwfscSurvey::estimate_weight_length()}} (upstream())
+\item \code{\link[nwfscSurvey:estimate_weight_length]{nwfscSurvey::estimate_weight_length()}} (upstream)
 \item \code{\link[=getExpansion_1]{getExpansion_1()}} (contain within)
 \item \code{\link[=getExpansion_2]{getExpansion_2()}} (contain within)
 }

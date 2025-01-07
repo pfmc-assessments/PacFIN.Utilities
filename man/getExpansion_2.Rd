@@ -21,20 +21,20 @@ biological samples. These data are stored in the Pacific Fishieries
 Information Network (PacFIN) data warehouse, which originated in 2014 and
 are pulled using sql calls.}
 
-\item{Catch}{A data frame of catch data, in pounds or in metric tonnes.}
+\item{Catch}{A data frame of catch data, in pounds or in metric tons.}
 
 \item{Units}{The units of the \code{Catch} data frame, see
 \code{measurements::conv_unit_options[["mass"]]} for options. Typical units
-are metric tonnes (e.g., \code{"metric_ton"}) because that is the unit used
+are metric tons (e.g., \code{"metric_ton"}) because that is the unit used
 in Stock Synthesis, but expansions are done in pounds because fish weights
 are in pounds. Thus, catches also need to be in pounds and will be
 converted as such.}
 
 \item{Convert}{A deprecated argument that is now set to \code{NULL}.
 Previously, it was a logical that defined if the Catch should be converted from
-metric tonnes to pounds, where \code{TRUE} is now the same as setting
+metric tons to pounds, where \code{TRUE} is now the same as setting
 \code{Units = "MT"} and \code{FALSE}, which was the default, would be
-\code{Units = "LB"}. Normally, one would have their catch in metric tonnes,
+\code{Units = "LB"}. Normally, one would have their catch in metric tons,
 i.e., \code{Convert = TRUE} or \code{Units = "MT"},
 such that it can be used within Stock Synthesis.}
 
