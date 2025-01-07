@@ -199,14 +199,5 @@ get_pacfin_expansions <- function(
     savedir = savedir
   )
   
-  data_exp2[["Final_Sample_Size_L"]] <- capValues(
-    data_exp2[["Expansion_Factor_1_L"]] * data_exp2[["Expansion_Factor_2"]],
-    maxVal = expansion
-  )
-  data_exp2[["Final_Sample_Size_A"]] <- capValues(
-   data_exp2[["Expansion_Factor_1_A"]] * data_exp2[["Expansion_Factor_2"]],
-   maxVal = expansion
-  )
-  data <- data_exp2 
-  return(data)
+  return(data_exp2)
 }
