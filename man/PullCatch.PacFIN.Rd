@@ -115,14 +115,14 @@ than the standard four letters.
 catch.pacfin <- PullCatch.PacFIN("PTRL")
 # Check for confidentiality by year
 # though you would also want to do this by your gear types
-dplyr::group_by(catch.pacfin, LANDING_YEAR) \%>\%
-  dplyr::summarize(count = dplyr::n_distinct(VESSEL_ID)) \%>\%
+dplyr::group_by(catch.pacfin, LANDING_YEAR) |>
+  dplyr::summarize(count = dplyr::n_distinct(VESSEL_ID)) |>
   dplyr::filter(count < 4)
 
 # look for foreign landings
 catch.pacfin <- PullCatch.PacFIN("PTRL", council_code = c("*", "N"))
 # Counts of NROW() by area code(s)
-dplyr::group_by(catch.pacfin, ORIG_PACFIN_CATCH_AREA_CODE) \%>\%
+dplyr::group_by(catch.pacfin, ORIG_PACFIN_CATCH_AREA_CODE) |>
   dplyr::count()
 }
 
