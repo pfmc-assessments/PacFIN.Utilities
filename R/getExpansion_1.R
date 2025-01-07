@@ -8,18 +8,26 @@
 #' dockside samplers.
 #'
 #' @export
+#'
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
+#' 
 #' @seealso
 #' * [cleanPacFIN()] (upstream)
-#' * [nwfscSurvey::estimate_weight_length()] (upstream())
+#' * [nwfscSurvey::estimate_weight_length()] (upstream)
 #' * [EF1_Numerator()] (contained within)
 #' * [EF1_Denominator()] (contained within)
 #' * [getExpansion_2()] (downstream)
 #'
 #' @details
-#' The workflow is to run this function [cleanPacFIN(),
+#' The workflow is to run this function after [cleanPacFIN()],
 #' which assures that all of the necessary columns are available and that the
 #' data are in the correct units. This function then calls two helper functions,
-#' [EF1_Numerator()] and [EF1_Denominator()] to calculate the weight of sampled fish and the weight of all fish of the respective species in the tow, respectively. Finally, the ratio of the two values is returned.
+#' [EF1_Numerator()] and [EF1_Denominator()] to calculate the weight of sampled 
+#' fish and the weight of all fish of the respective species in the tow, 
+#' respectively. Finally, the ratio of the two values is returned. Alternatively,
+#' users should consider using [get_pacfin_expansions()] which is a wrapper
+#' function that calls both the first and second stage functions for expanding
+#' composition data.
 #'
 #' @section Expansion:
 #' \itemize{
@@ -55,6 +63,7 @@
 #' @template savedir
 #'
 #' @examples
+#' \dontrun{
 #' # Calculate the weight--length parameters for input to this function
 #' bds_survey <- nwfscSurvey::pull_bio(
 #'   common_name = "widow rockfish",
@@ -66,6 +75,29 @@
 #'   col_weight = "weight_kg",
 #'   verbose = FALSE
 #'  )
+#' data_exp1 <- getExpansion_1(
+#'   Pdata = bds_cleaned,
+#'   fa = weight_length_estimates |>
+#'   dplyr::filter(sex == "female") |>
+#'     dplyr::pull("A"),
+#'   fb = weight_length_estimates |>
+#'     dplyr::filter(sex == "female") |>
+#'     dplyr::pull("B"),
+#'   ma = weight_length_estimates |>
+#'     dplyr::filter(sex == "male") |>
+#'     dplyr::pull("A"),
+#'   mb = weight_length_estimates |>
+#'     dplyr::filter(sex == "female") |>
+#'     dplyr::pull("B"),
+#'   ua = weight_length_estimates |>
+#'     dplyr::filter(sex == "all") |>
+#'     dplyr::pull("A"),
+#'   ub = weight_length_estimates |>
+#'     dplyr::filter(sex == "all") |>
+#'     dplyr::pull("B"),
+#'   maxExp = 0.95)
+#' 
+#' }
 #' @return
 #' A `data.frame` where all of the original columns in `Pdata` remain unaltered
 #' but additional columns are added. In particular columns starting with
@@ -132,15 +164,19 @@ getExpansion_1 <- function(Pdata,
   # Now replace NAs with 1.
   Pdata$Expansion_Factor_1_L[is.na(Pdata$Expansion_Factor_1_L)] <- 1
   Pdata$Expansion_Factor_1_A[is.na(Pdata$Expansion_Factor_1_A)] <- 1
-
+  # Now replace Inf with 1
+  Pdata$Expansion_Factor_1_L[!is.finite(Pdata$Expansion_Factor_1_L)] <- 1
+  Pdata$Expansion_Factor_1_A[!is.finite(Pdata$Expansion_Factor_1_A)] <- 1
+  
   Pdata$Expansion_Factor_1_L <- capValues(Pdata$Expansion_Factor_1_L, maxExp)
   Pdata$Expansion_Factor_1_A <- capValues(Pdata$Expansion_Factor_1_A, maxExp)
-
   if (verbose) {
-    cli::cli_alert_info(
-      "Capping Expansion_Factor_1 at {.val {maxExp}}"
+    cli::cli_inform(
+      "Maximum first-stage length expansion capped at the {maxExp} quantile of {round(max(Pdata$Expansion_Factor_1_L), 2)}"
     )
-    print(summary(Pdata$Expansion_Factor_1_L))
+    cli::cli_inform(
+      "Maximum first-stage age expansion capped at the {maxExp} quantile of {round(max(Pdata$Expansion_Factor_1_A), 2)}"
+    )
   }
 
   # Generate plots and save them to the disk if specified.

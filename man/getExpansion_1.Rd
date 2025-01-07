@@ -71,10 +71,15 @@ the smallest if we had samples from onboard observers rather than from
 dockside samplers.
 }
 \details{
-The workflow is to run this function [cleanPacFIN(),
+The workflow is to run this function after \code{\link[=cleanPacFIN]{cleanPacFIN()}},
 which assures that all of the necessary columns are available and that the
 data are in the correct units. This function then calls two helper functions,
-\code{\link[=EF1_Numerator]{EF1_Numerator()}} and \code{\link[=EF1_Denominator]{EF1_Denominator()}} to calculate the weight of sampled fish and the weight of all fish of the respective species in the tow, respectively. Finally, the ratio of the two values is returned.
+\code{\link[=EF1_Numerator]{EF1_Numerator()}} and \code{\link[=EF1_Denominator]{EF1_Denominator()}} to calculate the weight of sampled
+fish and the weight of all fish of the respective species in the tow,
+respectively. Finally, the ratio of the two values is returned. Alternatively,
+users should consider using \code{\link[=get_pacfin_expansions]{get_pacfin_expansions()}} which is a wrapper
+function that calls both the first and second stage functions for expanding
+composition data.
 }
 \section{Expansion}{
 
@@ -90,6 +95,7 @@ each fish represents only itself.}
 }
 
 \examples{
+\dontrun{
 # Calculate the weight--length parameters for input to this function
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = "widow rockfish",
@@ -101,13 +107,39 @@ pars <- nwfscSurvey::estimate_weight_length(
   col_weight = "weight_kg",
   verbose = FALSE
  )
+data_exp1 <- getExpansion_1(
+  Pdata = bds_cleaned,
+  fa = weight_length_estimates |>
+  dplyr::filter(sex == "female") |>
+    dplyr::pull("A"),
+  fb = weight_length_estimates |>
+    dplyr::filter(sex == "female") |>
+    dplyr::pull("B"),
+  ma = weight_length_estimates |>
+    dplyr::filter(sex == "male") |>
+    dplyr::pull("A"),
+  mb = weight_length_estimates |>
+    dplyr::filter(sex == "female") |>
+    dplyr::pull("B"),
+  ua = weight_length_estimates |>
+    dplyr::filter(sex == "all") |>
+    dplyr::pull("A"),
+  ub = weight_length_estimates |>
+    dplyr::filter(sex == "all") |>
+    dplyr::pull("B"),
+  maxExp = 0.95)
+
+}
 }
 \seealso{
 \itemize{
 \item \code{\link[=cleanPacFIN]{cleanPacFIN()}} (upstream)
-\item \code{\link[nwfscSurvey:estimate_weight_length]{nwfscSurvey::estimate_weight_length()}} (upstream())
+\item \code{\link[nwfscSurvey:estimate_weight_length]{nwfscSurvey::estimate_weight_length()}} (upstream)
 \item \code{\link[=EF1_Numerator]{EF1_Numerator()}} (contained within)
 \item \code{\link[=EF1_Denominator]{EF1_Denominator()}} (contained within)
 \item \code{\link[=getExpansion_2]{getExpansion_2()}} (downstream)
 }
+}
+\author{
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

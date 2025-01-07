@@ -135,7 +135,7 @@
 #'
 #' @seealso [getState], [getSeason]
 #'
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 
 cleanPacFIN <- function(Pdata,
                         keep_INPFC = lifecycle::deprecated(),

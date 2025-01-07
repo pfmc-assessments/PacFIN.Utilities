@@ -175,5 +175,5 @@ stratifying the data according to the particulars of an assessment.
 \link{getState}, \link{getSeason}
 }
 \author{
-Andi Stephens
+Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 }

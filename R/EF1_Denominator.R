@@ -67,7 +67,7 @@
 #'   length-weight relationship. This uses the empirical data if available and
 #'   fills in with the expected weight or mean-sample weight.
 #'
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 #' @seealso [EF1_Numerator], [getExpansion_1], [getExpansion_2]
 #'
 EF1_Denominator <- function(Pdata,
@@ -90,11 +90,11 @@ EF1_Denominator <- function(Pdata,
   }
   
   if (verbose) {
-    cli::cli_inform(c(
+    cli::cli_bullets(c(
       "i" = "Individual weights will be generated from the passed parameters.",
-      "i" = "Females: a = {.val {fa}} and b = {.val {fb}}",
-      "i" = "Males: a = {.val {ma}} and b = {.val {mb}}",
-      "i" = "Unsexed and hermaphrodites: a = {.val {ua}} and b = {.val {ub}}"
+      "i" = "Females: a = {.val {signif(fa, 3)}} and b = {.val {round(fb, 3)}}",
+      "i" = "Males: a = {.val {signif(ma, 3)}} and b = {.val {round(mb, 3)}}",
+      "i" = "Unsexed: a = {.val {signif(ua, 3)}} and b = {.val {round(ub, 3)}}"
     ))
   }
 
@@ -188,10 +188,10 @@ EF1_Denominator <- function(Pdata,
 
   names(printemp) <- c("M+F+U", "Cluster", "L-W", "Final Wt_Sampled")
 
-  if (verbose) {
-    cli::cli_alert_info("Sample weights")
-    print(summary(printemp))
-  }
+  #if (verbose) {
+  #  cli::cli_alert_info("Sample weights")
+  #  print(summary(printemp))
+  #}
 
   NA_Wt_Sampled <- Pdata[is.na(Pdata$Wt_Sampled_L), ]
   nNA <- NROW(NA_Wt_Sampled)

@@ -222,10 +222,8 @@ getAge <- function(Pdata,
         is.na(rlang::eval_tidy(dplyr::sym(column_with_age))),
         all_ages != ""
       ) |>
-      NROW() |>
-      {
-        glue::glue("{.} rows were missing a final age")
-      }
+      NROW() 
+    text_n_missing_final <- glue::glue("{text_n_missing_final} rows were missing a final age")
     names(text_n_missing_final) <- ifelse(
       substr(text_n_missing_final, 1, 1) == "0",
       "v",

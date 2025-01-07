@@ -26,7 +26,7 @@
 #' @return
 #' A modified data frame where an additional column labeled \code{geargroup} is
 #' added to \code{Pdata}. No original columns are modified in the process.
-#' @author Andi Stephens
+#' @author Andi Stephens, Kelli F. Johnson, Chantel R. Wetzel
 #' @examples
 #' gears <- c("PRT", "FPT", "TWL", "MDP")
 #' X <- getGearGroup(data.frame(GRID = gears), verbose = TRUE)
