@@ -118,6 +118,27 @@ bds_cleaned <- cleanPacFIN(
   )
 ```
 
+If the model is going to include both length and marginal ages, one needs to consider
+how to avoid double-use of the data (e.g., marginal ages are not conditioned on the 
+length and are considered indepented of the lengths in the model).  Historically, two
+common approaches have been used to handle this.  The first approach is to apply a 
+lambda to the lengths and ages from the same fleet in the model.  The second approach
+is to not use the lengths for any fish with an age that will be used in the model which
+is shown below.
+
+
+```{r modify-length-data, eval = FALSE}
+bds_cleaned <- bds_cleaned |>
+    # Set any length with an age to NA to avoid double use of data
+    # in the model via marginals.
+    dplyr::mutate(
+      lengthcm = dplyr::case_when(
+        !is.na(Age) ~ NA, is.na(Age) ~ lengthcm
+      )
+    )
+
+```
+
 `cleanPacFIN()` filters out data and adds additional columns that are used in the data processing.  One of the columns added, `fleet`, is used to separate the data by model fleet. The default values in `fleet` are set to the gear names defined by `keep_gears` in `cleanPacFIN()`.  The values in this column should be modified by the user, if necessary.
 
 A new function, `get_pacfin_expansions()`, has been added in the package that does both the first- and second-stage expansions (`getExpansion_1()` and `getExpansion_2()`) in a single call. This function also returns the product of the first-stage and second-stage expansion. Previously, users had to multiply the `Expansion_Factor_1_L` or `Expansion_Factor_1_A` and `Expansion_Factor_2` columns external to the expansion functions. 
@@ -158,7 +179,7 @@ Create the age composition data.
 
 ```{r age-composition-data, eval = FALSE}
 age_comps_long <- getComps(
-  Pdata = dplyr::filter(expanded_comps, Age != -1),
+  Pdata = dplyr::filter(expanded_comps, !is.na(Age)),
   Comps = "AGE",
   weightid = "Final_Sample_Size_A"
 )
