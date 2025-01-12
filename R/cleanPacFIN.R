@@ -181,13 +181,14 @@ cleanPacFIN <- function(Pdata,
 
   #### Fill in missing input arguments
   Pdata <- getGearGroup(
-    Pdata = Pdata, 
-    spp = spp, 
-    verbose = verbose)
+    Pdata = Pdata,
+    spp = spp,
+    verbose = verbose
+  )
   if (missing(keep_gears)) {
     keep_gears <- sort(unique(Pdata[, "geargroup"]))
   }
-  Pdata[, "fleet"] <- Pdata[, "geargroup"] #match(Pdata$geargroup, keep_gears)
+  Pdata[, "fleet"] <- Pdata[, "geargroup"] # match(Pdata$geargroup, keep_gears)
   if (missing(keep_length_type)) {
     keep_length_type <- sort(unique(c(
       Pdata[, "FISH_LENGTH_TYPE"],

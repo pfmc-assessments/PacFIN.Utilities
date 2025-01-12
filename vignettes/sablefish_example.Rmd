@@ -37,7 +37,7 @@ Specify specific records to retain when running `cleanPacFIN()`.
 
 ```{r clean-settings}
 # Determine what samples to retain or filter out when using cleanPacFIN()
-# Keep all alternate (A), fork (F), and unknown (U) length types based on 
+# Keep all alternate (A), fork (F), and unknown (U) length types based on
 # FISH_LENGTH_TYPE_CODE. This decision should be species-specific
 good_lengths <- c("U", "A", "F")
 # Keep only random (R) samples based on SAMPLE_METHOD_CODE. Only random samples
@@ -47,7 +47,7 @@ good_methods <- "R"
 good_samples <- c("", "M", "C")
 # Keep data from all 3 states. This is the default.
 good_states <- c("WA", "OR", "CA")
-# Keep only break and burn (B, BB), unknown (U), and blank (") age reads based 
+# Keep only break and burn (B, BB), unknown (U), and blank (") age reads based
 # on AGE_METHOD. This decision should be species-specific.
 good_age_method <- c("B", "BB", "U", "")
 ```
@@ -66,7 +66,7 @@ catch <- utils::read.csv(file_catch)
 A choice must be made about which data set you want to fit for estimating the weight--length relationships by sex and across sexes. Many scientists choose to use the survey data because it is thought to best represent the population. You could use the data retrieved from PacFIN to calculate this relationship but that option is not shown here.
 
 ```{r weight-length-data, message = FALSE, warning = FALSE}
-# Pull survey data 
+# Pull survey data
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = common_name,
   survey = "NWFSC.Combo"
@@ -145,23 +145,24 @@ A new function, `get_pacfin_expansions()`, has been added in the package that do
 
 ```{r expand-data, eval = FALSE}
 expanded_comps <- get_pacfin_expansions(
-    Pdata = bds_cleaned,
-    Catch = catch_formatted,
-    weight_length_estimates = weight_length_estimates,
-    Units = "MT",
-    maxExp = expansion,
-    verbose = TRUE,
-    savedir = getwd())
+  Pdata = bds_cleaned,
+  Catch = catch_formatted,
+  weight_length_estimates = weight_length_estimates,
+  Units = "MT",
+  maxExp = expansion,
+  verbose = TRUE,
+  savedir = getwd()
+)
 ```
 
 Create the length composition data. 
 
 ```{r length-composition-data, eval = FALSE}
 length_comps_long <- getComps(
-    Pdata = dplyr::filter(expanded_comps, !is.na(lengthcm)),
-    Comps = "LEN",
-    weightid = "Final_Sample_Size_L"
-  )
+  Pdata = dplyr::filter(expanded_comps, !is.na(lengthcm)),
+  Comps = "LEN",
+  weightid = "Final_Sample_Size_L"
+)
 
 length_composition_data <- writeComps(
   inComps = length_comps_long,
@@ -171,7 +172,7 @@ length_composition_data <- writeComps(
   ),
   comp_bins = length_bins,
   verbose = TRUE
-) 
+)
 ```
 
 Create the age composition data.

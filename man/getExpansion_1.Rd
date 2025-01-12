@@ -100,17 +100,17 @@ each fish represents only itself.}
 bds_survey <- nwfscSurvey::pull_bio(
   common_name = "widow rockfish",
   survey = "NWFSC.Combo"
-  )
+)
 pars <- nwfscSurvey::estimate_weight_length(
   data = bds_survey,
   col_length = "length_cm",
   col_weight = "weight_kg",
   verbose = FALSE
- )
+)
 data_exp1 <- getExpansion_1(
   Pdata = bds_cleaned,
   fa = weight_length_estimates |>
-  dplyr::filter(sex == "female") |>
+    dplyr::filter(sex == "female") |>
     dplyr::pull("A"),
   fb = weight_length_estimates |>
     dplyr::filter(sex == "female") |>
@@ -127,8 +127,8 @@ data_exp1 <- getExpansion_1(
   ub = weight_length_estimates |>
     dplyr::filter(sex == "all") |>
     dplyr::pull("B"),
-  maxExp = 0.95)
-
+  maxExp = 0.95
+)
 }
 }
 \seealso{

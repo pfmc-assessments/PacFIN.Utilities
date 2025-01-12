@@ -37,7 +37,7 @@
 #'   as you want except year because it is already included in the call to
 #'   [stats::aggregate].
 #' @inheritParams cleanPacFIN
-#' 
+#'
 #'
 #' @seealso
 #' * [getExpansion_1] should be ran first
@@ -55,15 +55,15 @@
 #' Catches were already stratified (i.e., summed by group placed in a column
 #' for a given year or row). Catches are converted to pounds prior to dividing.
 #' Thus, per-stratum Expansion_Factor_2 is the catch / sampled catch.
-#' 
-#' @examples 
+#'
+#' @examples
 #' \dontrun{
 #' data_exp2 <- getExpansion_2(
 #'   Pdata = data_exp1,
 #'   Catch = catch_formatted,
 #'   Units = "MT",
 #'   maxExp = 0.95
-#'   )
+#' )
 #' }
 #'
 getExpansion_2 <- function(Pdata,
@@ -74,7 +74,6 @@ getExpansion_2 <- function(Pdata,
                            stratification.cols,
                            verbose = TRUE,
                            savedir = NULL) {
-  
   if (lifecycle::is_present(Convert)) {
     lifecycle::deprecate_soft(
       when = "0.2.10",
@@ -82,7 +81,7 @@ getExpansion_2 <- function(Pdata,
       details = "Please specify the units of Catch via the Unit input (MT or LB).\n",
     )
   }
-  
+
   nwfscSurvey::check_dir(dir = savedir, verbose = verbose)
   #### Set up
   # Check Unit input
@@ -91,8 +90,7 @@ getExpansion_2 <- function(Pdata,
     several.ok = FALSE,
     choices = c(measurements::conv_unit_options[["mass"]], "MT", "LB")
   )
-  Units <- switch(
-    Units,
+  Units <- switch(Units,
     MT = "metric_ton",
     LB = "lbs",
     Units
@@ -135,7 +133,7 @@ getExpansion_2 <- function(Pdata,
   Catch <- Catch[, c(yearcol, seq(1:NCOL(Catch))[-yearcol])]
   Catchgears <- sort(names(Catch)[-1])
   Pstrat <- sort(unique(Pdata$stratification))
-  
+
   if (!identical(Pstrat, Catchgears)) {
     cli::cli_inform("Catch: ", paste(collapse = ", ", Catchgears))
     cli::cli_inform("Data: ", paste(collapse = ", ", Pstrat))
@@ -164,22 +162,22 @@ getExpansion_2 <- function(Pdata,
       }
     }
   } # End if
-  
+
   # Convert Catch to lbs.
   Catch[, -1] <- measurements::conv_unit(
     to = "lbs",
-    x = Catch[, -1], 
+    x = Catch[, -1],
     from = Units
   )
-  
+
   # TODO: this converts the wide catch data frame to a long object, hence, eliminating
   # the need to have the wide format.  Revise this and the formatCatch function
   # to remove this now unneeded data manipulation.
   Catch_long <- tidyr::pivot_longer(
-    Catch, 
-    -tidyr::all_of(yearcol), 
-    names_to = 'stratification', 
-    values_to = 'catch'
+    Catch,
+    -tidyr::all_of(yearcol),
+    names_to = "stratification",
+    values_to = "catch"
   )
 
   #### Expansion
@@ -196,18 +194,19 @@ getExpansion_2 <- function(Pdata,
     ) |>
     dplyr::ungroup() |>
     dplyr::left_join(
-      Catch_long, 
-      by = c('fishyr' = names(Catch_long)[yearcol], 'stratification' = 'stratification'), 
-      relationship = 'many-to-one'
+      Catch_long,
+      by = c("fishyr" = names(Catch_long)[yearcol], "stratification" = "stratification"),
+      relationship = "many-to-one"
     )
-  
-  if (any(tows[,"catch"] == 0)) {
+
+  if (any(tows[, "catch"] == 0)) {
     missing_data <- unique(
-      apply(tows[which(tows[["catch"]] == 0), c("year", "stratification")], 1, paste, collapse = "-"))
+      apply(tows[which(tows[["catch"]] == 0), c("year", "stratification")], 1, paste, collapse = "-")
+    )
     if (verbose) {
       cli::cli_alert_danger(
-        "There are {sum(tows$catch == 0)} bds records where catch was 0 in the Catch 
-        file for the requested stratification. The following years and stratifications 
+        "There are {sum(tows$catch == 0)} bds records where catch was 0 in the Catch
+        file for the requested stratification. The following years and stratifications
         have 0 catch but bds data: {missing_data}"
       )
     }
@@ -223,8 +222,8 @@ getExpansion_2 <- function(Pdata,
       dplyr::count(Sum_Sampled_Lbs)
     if (length(NoCatch) > 0 && verbose) {
       cli::cli_alert_danger(
-        "The following years and stratification are not included in the Catch 
-        file but were found for in the Pdata, where n is the number of rows 
+        "The following years and stratification are not included in the Catch
+        file but were found for in the Pdata, where n is the number of rows
         with missing Catch information:"
       )
       print(NoCatch)
@@ -252,8 +251,9 @@ getExpansion_2 <- function(Pdata,
   nNA <- nrow(NA_EF2)
   Pdata$Expansion_Factor_2[is.na(Pdata$Expansion_Factor_2)] <- 1
   Pdata$Expansion_Factor_2 <- capValues(
-    DataCol = Pdata$Expansion_Factor_2, 
-    maxVal = maxExp)
+    DataCol = Pdata$Expansion_Factor_2,
+    maxVal = maxExp
+  )
   Pdata[, "Final_Sample_Size_L"] <- capValues(
     DataCol = Pdata$Expansion_Factor_1_L * Pdata$Expansion_Factor_2,
     maxVal = maxExp
@@ -266,8 +266,9 @@ getExpansion_2 <- function(Pdata,
   #### Summary information
   if (verbose) {
     cli::cli_bullets(c(
-      "i" =   glue::glue(
-        "There were {nNA} NA records replaced with a value of 1 during second-stage expansions."),
+      "i" = glue::glue(
+        "There were {nNA} NA records replaced with a value of 1 during second-stage expansions."
+      ),
       "i" = glue::glue(
         "Maximum second-stage length expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_L), 2)}"
       ),
