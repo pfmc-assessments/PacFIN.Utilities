@@ -129,14 +129,13 @@ is shown below.
 
 ```{r modify-length-data, eval = FALSE}
 bds_cleaned <- bds_cleaned |>
-    # Set any length with an age to NA to avoid double use of data
-    # in the model via marginals.
-    dplyr::mutate(
-      lengthcm = dplyr::case_when(
-        !is.na(Age) ~ NA, is.na(Age) ~ lengthcm
-      )
+  # Set any length with an age to NA to avoid double use of data
+  # in the model via marginals.
+  dplyr::mutate(
+    lengthcm = dplyr::case_when(
+      !is.na(Age) ~ NA, is.na(Age) ~ lengthcm
     )
-
+  )
 ```
 
 `cleanPacFIN()` filters out data and adds additional columns that are used in the data processing.  One of the columns added, `fleet`, is used to separate the data by model fleet. The default values in `fleet` are set to the gear names defined by `keep_gears` in `cleanPacFIN()`.  The values in this column should be modified by the user, if necessary.
