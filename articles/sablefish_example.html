@@ -145,16 +145,13 @@ to calculate this relationship but that option is not shown here.</p>
 <span><span class="va">bds_survey</span> <span class="op">&lt;-</span> <span class="fu">nwfscSurvey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nwfscSurvey/man/pull_bio.html" class="external-link">pull_bio</a></span><span class="op">(</span></span>
 <span>  common_name <span class="op">=</span> <span class="va">common_name</span>,</span>
 <span>  survey <span class="op">=</span> <span class="st">"NWFSC.Combo"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">##   object 'type_sum.accel' not found</span></span></code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Estimate weight-length relationship by sex</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Estimate weight-length relationship by sex</span></span>
 <span><span class="va">weight_length_estimates</span> <span class="op">&lt;-</span> <span class="fu">nwfscSurvey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nwfscSurvey/man/estimate_weight_length.html" class="external-link">estimate_weight_length</a></span><span class="op">(</span></span>
 <span>  <span class="va">bds_survey</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">weight_length_estimates</span>, <span class="st">"markdown"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -212,7 +209,7 @@ reconstructions may be necessary to ensure proper expansion.
 Additionally, the stratification should always include areas (e.g.,
 state or areas within states) even if using coastwide fleets in the
 model due to variable catch and sampling by areas.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">catch_formatted</span> <span class="op">&lt;-</span> <span class="va">catch</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/formatCatch.html">formatCatch</a></span><span class="op">(</span></span>
 <span>    strat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"geargroup"</span><span class="op">)</span>,</span>
@@ -229,7 +226,7 @@ that should not be used in the assessment by choosing
 and all rows will be saved. We also create an additional column that
 matches records to the same stratification used for the catch data above
 for weighting.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bds_cleaned</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cleanPacFIN.html">cleanPacFIN</a></span><span class="op">(</span></span>
 <span>  Pdata <span class="op">=</span> <span class="va">bds.pacfin</span>,</span>
 <span>  keep_gears <span class="op">=</span> <span class="va">used_gears</span>,</span>
@@ -244,6 +241,23 @@ for weighting.</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    stratification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">geargroup</span>, sep <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
+<p>If the model is going to include both length and marginal ages, one
+needs to consider how to avoid double-use of the data (e.g., marginal
+ages are not conditioned on the length and are considered indepented of
+the lengths in the model). Historically, two common approaches have been
+used to handle this. The first approach is to apply a lambda to the
+lengths and ages from the same fleet in the model. The second approach
+is to not use the lengths for any fish with an age that will be used in
+the model which is shown below.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bds_cleaned</span> <span class="op">&lt;-</span> <span class="va">bds_cleaned</span> <span class="op">|&gt;</span></span>
+<span>    <span class="co"># Set any length with an age to NA to avoid double use of data</span></span>
+<span>    <span class="co"># in the model via marginals.</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      lengthcm <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>        <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span> <span class="op">~</span> <span class="cn">NA</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span> <span class="op">~</span> <span class="va">lengthcm</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/cleanPacFIN.html">cleanPacFIN()</a></code> filters out data and adds additional
 columns that are used in the data processing. One of the columns added,
 <code>fleet</code>, is used to separate the data by model fleet. The
@@ -258,7 +272,7 @@ and second-stage expansion. Previously, users had to multiply the
 <code>Expansion_Factor_1_L</code> or <code>Expansion_Factor_1_A</code>
 and <code>Expansion_Factor_2</code> columns external to the expansion
 functions.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expanded_comps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pacfin_expansions.html">get_pacfin_expansions</a></span><span class="op">(</span></span>
 <span>  Pdata <span class="op">=</span> <span class="va">bds_cleaned</span>,</span>
 <span>  Catch <span class="op">=</span> <span class="va">catch_formatted</span>,</span>
@@ -269,7 +283,7 @@ functions.</p>
 <span>  savedir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Create the length composition data.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">length_comps_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getComps.html">getComps</a></span><span class="op">(</span></span>
 <span>  Pdata <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">expanded_comps</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lengthcm</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  Comps <span class="op">=</span> <span class="st">"LEN"</span>,</span>
@@ -286,9 +300,9 @@ functions.</p>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Create the age composition data.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">age_comps_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getComps.html">getComps</a></span><span class="op">(</span></span>
-<span>  Pdata <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">expanded_comps</span>, <span class="va">Age</span> <span class="op">!=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Pdata <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">expanded_comps</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  Comps <span class="op">=</span> <span class="st">"AGE"</span>,</span>
 <span>  weightid <span class="op">=</span> <span class="st">"Final_Sample_Size_A"</span></span>
 <span><span class="op">)</span></span>
