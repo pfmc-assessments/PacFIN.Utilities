@@ -273,9 +273,9 @@ getExpansion_2 <- function(Pdata,
         "Maximum second-stage length expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_L), 2)}"
       ),
       "i" = glue::glue(
-        "Maximum first-stage age expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_A), 2)}"
-      )
-    ))
+        "Maximum second-stage age expansion capped at the {maxExp} quantile of {round(max(Pdata$Final_Sample_Size_A), 2)}"
+      ))
+    )
   }
 
   if (nNA > 0) {
