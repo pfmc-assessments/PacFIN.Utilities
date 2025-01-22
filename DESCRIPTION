@@ -1,23 +1,23 @@
-Package: PacFIN.Utilities
+Package: pacfintools
 Title: Generate fishery composition data from PacFIN data for the NWFSC
-Version: 0.2.10
+Version: 0.3.0
 Authors@R: c(
-    person(c("Kelli", "F."), "Johnson", , "kelli.johnson@noaa.gov", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-5149-451X")),
-    person(c("Chantel", "R."), "Wetzel", , "chantel.wetzel@noaa.gov", role = "aut",
+    person(c("Chantel", "R."), "Wetzel", , "chantel.wetzel@noaa.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7573-8240")),
+    person(c("Ian", "G."), "Taylor", , "ian.taylor@noaa.gov", role = "aut",
+           comment = c(ORCID = "0000-0002-4232-5669")),
+    person(c("Kelli", "F."), "Johnson", , "kelli.johnson@noaa.gov", role = "aut",
+           comment = c(ORCID = "0000-0002-5149-451X")),
     person(c("Kathryn", "L."), "Doering", , "kathryn.doering@noaa.gov", role = "ctb",
            comment = c(ORCID = "0000-0002-0396-7044")),
     person(c("Brian", "J."), "Langseth", , "brian.langseth@noaa.gov", role = "ctb",
            comment = c(ORCID = "0000-0002-9901-6146")),
     person("Andi", "Stephens", , "andi.stephens@noaa.gov", role = "ctb"),
-    person(c("Ian", "G."), "Taylor", , "ian.taylor@noaa.gov", role = "ctb",
-           comment = c(ORCID = "0000-0002-4232-5669")),
     person(c("John", "R."), "Wallace", , "john.wallace@noaa.gov", role = "ctb",
            comment = c(ORCID = "0000-0002-2333-1262"))
   )
 Description: Manipulates data from the PacFIN database for stock
-    synthesis.
+    assessment models
 License: MIT + file LICENSE
 Depends:
     R (>= 4.2)

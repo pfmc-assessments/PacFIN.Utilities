@@ -71,7 +71,7 @@ package starting with version 0.2.6.
 \subsection{Washington}{
 
 Washington uses the following order of operations to assign the best age
-given there are multiple reads. See \href{http://www.github.com/pfmc-assessments/PacFIN.Utilities/issues/49}{issue #49} for a
+given there are multiple reads. See \href{http://www.github.com/pfmc-assessments/pacfintools/issues/49}{issue #49} for a
 semi-detailed discussion. Note, that they will never report more than three
 reads because that is the limitation of their database.
 \itemize{

@@ -13,7 +13,7 @@
 #'   `file.path(getwd(), "SampleSize.csv")`. Full, relative, or simple paths are
 #'   allowed because the argument is used as is, i.e., not redirected to a
 #'   directory different than [getwd()]. Note that various functions within
-#'   PacFIN.Utilities have different default values for this input argument. If
+#'   pacfintools have different default values for this input argument. If
 #'   `NULL` in `writeComps`, then the resulting file name will be based on what
 #'   type of composition data is being generated, i.e., `PacFIN_lengths.out`,
 #'   or `PacFIN_ages.out` for length or age data, respectively.
