@@ -36,7 +36,7 @@ Create a categorical column that specifies which state each row is from.
 With the creation of the comprehensive bds table in PacFIN, the column called
 \code{SAMPLE_AGENCY} was deprecated; more specifically, the column is
 available but filled with \code{NULL} values.
-Thus, PacFIN.Utilities no longer maintains \code{SAMPLE_AGENCY} that was being converted
+Thus, pacfintools no longer maintains \code{SAMPLE_AGENCY} that was being converted
 to \code{SOURCE_AGID} and all identification of
 state records should be based on \code{AGENCY_CODE} or \code{SOURCE_AGID}, where the latter is
 just the converted column name (see \link{cleanColumns}).

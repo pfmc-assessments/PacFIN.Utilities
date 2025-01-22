@@ -1,6 +1,6 @@
-#' PacFIN.Utilities: Functions for working up PacFIN data
+#' pacfintools: Functions for working up PacFIN data
 #'
-#' The PacFIN.Utilities package provides functions for filtering, summarizing, expanding, and compiling
+#' The pacfintools package provides functions for filtering, summarizing, expanding, and compiling
 #' composition data, and writing out the final products:
 #' * length-
 #' * age- and
@@ -64,5 +64,5 @@
 #' [capValues] Used to limit the maximum value in a vector.
 #'
 #' @docType _PACKAGE
-#' @name PacFIN.Utilities
+#' @name pacfintools
 NULL

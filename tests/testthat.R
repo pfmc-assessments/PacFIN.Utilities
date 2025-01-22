@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(PacFIN.Utilities)
+library(pacfintools)
 
-test_check("PacFIN.Utilities")
+test_check("pacfintools")

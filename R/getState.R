@@ -6,7 +6,7 @@
 #' With the creation of the comprehensive bds table in PacFIN, the column called
 #' `SAMPLE_AGENCY` was deprecated; more specifically, the column is
 #' available but filled with `NULL` values.
-#' Thus, PacFIN.Utilities no longer maintains `SAMPLE_AGENCY` that was being converted
+#' Thus, pacfintools no longer maintains `SAMPLE_AGENCY` that was being converted
 #' to `SOURCE_AGID` and all identification of
 #' state records should be based on `AGENCY_CODE` or `SOURCE_AGID`, where the latter is
 #' just the converted column name (see [cleanColumns]).

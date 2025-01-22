@@ -36,7 +36,7 @@
 #' ### Washington
 #' Washington uses the following order of operations to assign the best age
 #' given there are multiple reads. See [issue
-#' #49](http://www.github.com/pfmc-assessments/PacFIN.Utilities/issues/49) for a
+#' #49](http://www.github.com/pfmc-assessments/pacfintools/issues/49) for a
 #' semi-detailed discussion. Note, that they will never report more than three
 #' reads because that is the limitation of their database.
 #' * age1 if only one read;

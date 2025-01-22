@@ -15,11 +15,11 @@
 #'
 #' @details
 #' This function was made defunct in March 2021 in [commit
-#' d5c0355](https://github.com/pfmc-assessments/PacFIN.Utilities/commit/d5c0355795d10b945a9e28bfb05cb6811697c852)
+#' d5c0355](https://github.com/pfmc-assessments/pacfintools/commit/d5c0355795d10b945a9e28bfb05cb6811697c852)
 #' because CalCOM data were expected to be available in PacFIN and restored in
 #' April 2023 after discovering that CalCOM data for flatfish prior to 1990 is
 #' not currently available in PacFIN, as discussed in [issue #101](
-#' https://github.com/pfmc-assessments/PacFIN.Utilities/issues/101) because the
+#' https://github.com/pfmc-assessments/pacfintools/issues/101) because the
 #' early data are "in separate tables because they are bin samples (# of fish)
 #' rather than cluster samples (weight based). PacFIN doesn't access those
 #' tables."

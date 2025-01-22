@@ -8,7 +8,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Working through PacFIN data can be complex. This examples guides you through working up the data for sablefish. The fish ticket data contains information on catches and is labeled `catch.pacfin` within this vignette. The biological data that contains information on lengths and ages is labeled `bds.pacfin`. These names are standard for every data set that is downloaded and saved from PacFIN using `PacFIN.Utilities` extraction code.
+Working through PacFIN data can be complex. This examples guides you through working up the data for sablefish. The fish ticket data contains information on catches and is labeled `catch.pacfin` within this vignette. The biological data that contains information on lengths and ages is labeled `bds.pacfin`. These names are standard for every data set that is downloaded and saved from PacFIN using `pacfintools` extraction code.
 
 Before working up any of the data, a few items need to be clarified. Such as what gear types you would like to use and what bins should be used for the biological data. As well as which files you would like to load.
 

@@ -1,4 +1,4 @@
-# PacFIN.Utilities/inst/images
+# pacfintools/inst/images
 
 This directory stores images that were sourced from outside of the NWFSC,
 and thus there is no associated code to create them.
