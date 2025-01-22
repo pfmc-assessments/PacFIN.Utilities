@@ -7,8 +7,6 @@
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/EF1_Denominator.html</loc></url>
 <url><loc>/reference/EF1_Numerator.html</loc></url>
-<url><loc>/reference/PacFIN.Utilities-deprecated.html</loc></url>
-<url><loc>/reference/PacFIN.Utilities.html</loc></url>
 <url><loc>/reference/PullBDS.PacFIN.html</loc></url>
 <url><loc>/reference/PullCatch.PacFIN.html</loc></url>
 <url><loc>/reference/PullNominal.PacFIN.html</loc></url>
@@ -47,6 +45,8 @@
 <url><loc>/reference/getweight.html</loc></url>
 <url><loc>/reference/grep_final_age.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/pacfintools-deprecated.html</loc></url>
+<url><loc>/reference/pacfintools.html</loc></url>
 <url><loc>/reference/pipe.html</loc></url>
 <url><loc>/reference/plotCleaned.html</loc></url>
 <url><loc>/reference/plotRawData.html</loc></url>
