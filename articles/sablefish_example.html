@@ -165,23 +165,23 @@ to calculate this relationship but that option is not shown here.</p>
 <tr class="odd">
 <td align="left">female</td>
 <td align="right">3.4e-06</td>
-<td align="right">0.0950741</td>
+<td align="right">0.0950202</td>
 <td align="right">3.4e-06</td>
-<td align="right">3.264309</td>
+<td align="right">3.264540</td>
 </tr>
 <tr class="even">
 <td align="left">male</td>
 <td align="right">3.7e-06</td>
-<td align="right">0.1077196</td>
+<td align="right">0.1071705</td>
 <td align="right">3.7e-06</td>
-<td align="right">3.246560</td>
+<td align="right">3.244728</td>
 </tr>
 <tr class="odd">
 <td align="left">all</td>
 <td align="right">3.8e-06</td>
-<td align="right">0.1030400</td>
+<td align="right">0.1026961</td>
 <td align="right">3.8e-06</td>
-<td align="right">3.237330</td>
+<td align="right">3.236617</td>
 </tr>
 </tbody>
 </table>
@@ -251,13 +251,13 @@ is to not use the lengths for any fish with an age that will be used in
 the model which is shown below.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bds_cleaned</span> <span class="op">&lt;-</span> <span class="va">bds_cleaned</span> <span class="op">|&gt;</span></span>
-<span>    <span class="co"># Set any length with an age to NA to avoid double use of data</span></span>
-<span>    <span class="co"># in the model via marginals.</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>      lengthcm <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>        <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span> <span class="op">~</span> <span class="cn">NA</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span> <span class="op">~</span> <span class="va">lengthcm</span></span>
-<span>      <span class="op">)</span></span>
-<span>    <span class="op">)</span></span></code></pre></div>
+<span>  <span class="co"># Set any length with an age to NA to avoid double use of data</span></span>
+<span>  <span class="co"># in the model via marginals.</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    lengthcm <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>      <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span> <span class="op">~</span> <span class="cn">NA</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span> <span class="op">~</span> <span class="va">lengthcm</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/cleanPacFIN.html">cleanPacFIN()</a></code> filters out data and adds additional
 columns that are used in the data processing. One of the columns added,
 <code>fleet</code>, is used to separate the data by model fleet. The
