@@ -4,7 +4,8 @@ about: Create a report to help us eliminate bugs
 title: ''
 labels: ["type: bug"]
 assignees:
-  - kellijohnson-NOAA
+  - chantelwetzel-NOAA
+  - iantaylor-NOAA
 ---
 
 **Describe the bug**
