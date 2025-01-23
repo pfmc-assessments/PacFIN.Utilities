@@ -4,7 +4,6 @@ description: >
 title: "Data request for species <replace with your species>"
 labels: ["type: request", "topic: database"]
 assignees:
-  - kellijohnson-NOAA
   - chantelwetzel-NOAA
 body:
   - type: markdown
